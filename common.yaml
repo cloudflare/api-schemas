@@ -18,95 +18,8 @@ components:
       maxLength: 32
       readOnly: true
       example: 023e105f4ecef8ad9ca31a8372d0c353
-    vanity_name_servers:
-      description: An array of domains used for custom name servers. This is only
-        available for Business and Enterprise plans.
-      type: array
-      items:
-        type: string
-        format: hostname
-        maxLength: 253
-      example:
-        - ns1.example.com
-        - ns2.example.com
-    zone:
-      type: object
-      required:
-        - id
-        - name
-        - development_mode
-        - owner
-        - account
-        - meta
-        - original_name_servers
-        - original_registrar
-        - original_dnshost
-        - created_on
-        - modified_on
-        - activated_on
-      properties:
-        id:
-          $ref: "#/components/schemas/identifier"
-        name:
-          description: The domain name
-          type: string
-          pattern: ^([a-zA-Z0-9][\-a-zA-Z0-9]*\.)+[\-a-zA-Z0-9]{2,20}$
-          maxLength: 253
-          readOnly: true
-          example: example.com
-        development_mode:
-          description: The interval (in seconds) from when development mode expires
-            (positive integer) or last expired (negative integer) for the
-            domain. If development mode has never been enabled, this value is 0.
-          type: number
-          readOnly: true
-          example: 7200
-        original_name_servers:
-          description: |-
-            Original name servers before moving to Cloudflare
-            Notes: Is this only available for full zones?
-          type: array
-          items:
-            type: string
-            format: hostname
-          readOnly: true
-          example:
-            - ns1.originaldnshost.com
-            - ns2.originaldnshost.com
-          nullable: true
-        original_registrar:
-          description: Registrar for the domain at the time of switching to Cloudflare
-          type: string
-          readOnly: true
-          example: GoDaddy
-          nullable: true
-        original_dnshost:
-          description: DNS host at the time of switching to Cloudflare
-          type: string
-          maxLength: 50
-          readOnly: true
-          example: NameCheap
-          nullable: true
-        created_on:
-          description: When the zone was created
-          type: string
-          format: date-time
-          readOnly: true
-          example: 2014-01-01T05:20:00.12345Z
-        modified_on:
-          description: When the zone was last modified
-          type: string
-          format: date-time
-          readOnly: true
-          example: 2014-01-01T05:20:00.12345Z
-        activated_on:
-          description: The last time proof of ownership was detected and the zone was made
-            active
-          type: string
-          format: date-time
-          readOnly: true
-          example: 2014-01-02T00:01:00.12345Z
-          nullable: true
+    
+    # API response envelopes
     result_info:
       type: object
       properties:
@@ -229,22 +142,8 @@ components:
               anyOf:
                 - type: object
                 - type: string
-    scope:
-      description: All zones owned by the account will have the rule applied.
-      type: object
-      properties:
-        id:
-          $ref: "#/components/schemas/identifier"
-        name:
-          $ref: "#/components/schemas/account/properties/name"
-        type:
-          type: string
-          enum:
-            - account
-          description: The scope of the rule
-          readOnly: true
-          example: account
-      x-$comment: Defined here for use by account-related rule systems
+
+    # Account
     account:
       type: object
       required:
@@ -278,3 +177,110 @@ components:
           format: date-time
           readOnly: true
           example: 2014-03-01T12:21:02.0000Z
+    scope:
+      description: All zones owned by the account will have the rule applied.
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/identifier"
+        name:
+          $ref: "#/components/schemas/account/properties/name"
+        type:
+          type: string
+          enum:
+            - account
+          description: The scope of the rule
+          readOnly: true
+          example: account
+
+    # Zone 
+    zone:
+      type: object
+      required:
+        - id
+        - name
+        - development_mode
+        - owner
+        - account
+        - meta
+        - original_name_servers
+        - original_registrar
+        - original_dnshost
+        - created_on
+        - modified_on
+        - activated_on
+      properties:
+        id:
+          $ref: "#/components/schemas/identifier"
+        name:
+          description: The domain name
+          type: string
+          pattern: ^([a-zA-Z0-9][\-a-zA-Z0-9]*\.)+[\-a-zA-Z0-9]{2,20}$
+          maxLength: 253
+          readOnly: true
+          example: example.com
+        development_mode:
+          description: The interval (in seconds) from when development mode expires
+            (positive integer) or last expired (negative integer) for the
+            domain. If development mode has never been enabled, this value is 0.
+          type: number
+          readOnly: true
+          example: 7200
+        original_name_servers:
+          description: |-
+            Original name servers before moving to Cloudflare
+            Notes: Is this only available for full zones?
+          type: array
+          items:
+            type: string
+            format: hostname
+          readOnly: true
+          example:
+            - ns1.originaldnshost.com
+            - ns2.originaldnshost.com
+          nullable: true
+        original_registrar:
+          description: Registrar for the domain at the time of switching to Cloudflare
+          type: string
+          readOnly: true
+          example: GoDaddy
+          nullable: true
+        original_dnshost:
+          description: DNS host at the time of switching to Cloudflare
+          type: string
+          maxLength: 50
+          readOnly: true
+          example: NameCheap
+          nullable: true
+        created_on:
+          description: When the zone was created
+          type: string
+          format: date-time
+          readOnly: true
+          example: 2014-01-01T05:20:00.12345Z
+        modified_on:
+          description: When the zone was last modified
+          type: string
+          format: date-time
+          readOnly: true
+          example: 2014-01-01T05:20:00.12345Z
+        activated_on:
+          description: The last time proof of ownership was detected and the zone was made
+            active
+          type: string
+          format: date-time
+          readOnly: true
+          example: 2014-01-02T00:01:00.12345Z
+          nullable: true
+    vanity_name_servers:
+      description: An array of domains used for custom name servers. This is only
+        available for Business and Enterprise plans.
+      type: array
+      items:
+        type: string
+        format: hostname
+        maxLength: 253
+      example:
+        - ns1.example.com
+        - ns2.example.com
+      
