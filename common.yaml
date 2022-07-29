@@ -289,3 +289,74 @@ components:
         - ns1.example.com
         - ns2.example.com
       
+    # User
+    user:
+      type: object
+      required:
+        - id
+        - email
+        - last_name
+        - first_name
+        - telephone
+        - country
+        - zipcode
+        - two_factor_authentication_enabled
+        - created_on
+        - modified_on
+      properties:
+        id:
+          $ref: "#/components/schemas/identifier"
+        email:
+          description: The contact email address of the user.
+          type: string
+          maxLength: 90
+          example: user@example.com
+        first_name:
+          description: User's first name
+          type: string
+          maxLength: 60
+          example: John
+          nullable: true
+        last_name:
+          description: User's last name
+          type: string
+          maxLength: 60
+          example: Appleseed
+          nullable: true
+        username:
+          description: A username used to access other cloudflare services, like support
+          type: string
+          pattern: ^[a-z0-9]+([\-\._]?[a-z0-9]+)+$
+          minLength: 3
+          maxLength: 90
+          example: cfuser12345
+        telephone:
+          description: User's telephone number
+          type: string
+          maxLength: 20
+          example: +1 123-123-1234
+          nullable: true
+        country:
+          description: The country in which the user lives.
+          type: string
+          maxLength: 30
+          example: US
+          nullable: true
+        zipcode:
+          description: The zipcode or postal code where the user lives.
+          type: string
+          maxLength: 20
+          example: "12345"
+          nullable: true
+        created_on:
+          description: When the user signed up.
+          readOnly: true
+          type: string
+          format: date-time
+          example: 2014-01-01T05:20:00Z
+        modified_on:
+          description: Last time the user was modified
+          readOnly: true
+          type: string
+          format: date-time
+          example: 2014-01-01T05:20:00Z
