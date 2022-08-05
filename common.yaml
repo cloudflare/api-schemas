@@ -360,3 +360,174 @@ components:
           type: string
           format: date-time
           example: 2014-01-01T05:20:00Z
+
+    # Token
+    token:
+      type: object
+      required:
+      - id
+      - name
+      - status
+      - policies
+      properties:
+        id:
+          $ref: '#/components/schemas/identifier'
+        name:
+          description: Token name
+          type: string
+          maxLength: 120
+          example: readonly token
+        status:
+          description: Status of the token
+          type: string
+          enum:
+          - active
+          - disabled
+          - expired
+          example: active
+        issued_on:
+          description: The time on which the token was created
+          readOnly: true
+          type: string
+          format: date-time
+          example: '2018-07-01T05:20:00Z'
+        modified_on:
+          description: Last time the token was modified
+          readOnly: true
+          type: string
+          format: date-time
+          example: '2018-07-02T05:20:00Z'
+        not_before:
+          description: The time before which the token MUST NOT be accepted for processing
+          type: string
+          format: date-time
+          example: '2018-07-01T05:20:00Z'
+        expires_on:
+          description: The expiration time on or after which the JWT MUST NOT be accepted
+            for processing
+          type: string
+          format: date-time
+          example: '2020-01-01T00:00:00Z'
+        policies:
+          description: List of access policies assigned to the token
+          type: array
+          items:
+            $ref: "#/components/schemas/access-policy"
+        condition:
+          $ref: "#/components/schemas/condition"
+
+    access-policy:
+      type: object
+      oneOf:
+      - policy_with_permission_groups:
+        title: policy_with_permission_groups
+        required:
+        - id
+        - effect
+        - resources
+        - permission_groups
+        properties:
+          id:
+            $ref: '#/components/schemas/identifier'
+          effect:
+            description: Allow or deny operations against the resources
+            type: string
+            enum:
+            - allow
+            - deny
+            example: allow
+          resources:
+            description: A list of resource names that the policy applies to
+            type: object
+            example:
+              com.cloudflare.api.account.zone.eb78d65290b24279ba6f44721b3ea3c4: '*'
+              com.cloudflare.api.account.zone.22b1de5f1c0e4b3ea97bb1e963b06a43: '*'
+          permission_groups:
+            description: A set of permission groups that are specified to the policy
+            type: array
+            items:
+              permission_group:
+                description: A named group of permissions that map to a group of operations
+                  against resources
+                type: object
+                required:
+                - id
+                properties:
+                  id:
+                    description: Identifier of the group
+                    type: string
+                    readOnly: true
+                    example: 6d7f2f5f5b1d4a0e9081fdc98d432fd1
+                  name:
+                    description: Name of the group
+                    type: string
+                    readOnly: true
+                    example: Load Balancers Write
+            example:
+            - id: c8fed203ed3043cba015a93ad1616f1f
+              name: Zone Read
+            - id: 82e64a83756745bbbb1c9c2701bf816b
+              name: DNS Read
+
+    cidr_list:
+      description: List of IPv4/IPv6 CIDR addresses
+      type: array
+      items:
+        type: string
+        description: IPv4/IPv6 CIDR
+        example: 199.27.128.0/21
+      example:
+      - 199.27.128.0/21
+      - 2400:cb00::/32
+    condition:
+      type: object
+      properties:
+        request.ip:
+          description: Client IP restrictions
+          type: object
+          properties:
+            in:
+              $ref: '#/components/schemas/cidr_list'
+            not_in:
+              $ref: '#/components/schemas/cidr_list'
+          example:
+            in:
+            - 123.123.123.0/24
+            - 2606:4700::/32
+            not_in:
+            - 123.123.123.100/24
+            - 2606:4700:4700::/48
+
+    # Plan
+    plan:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/identifier'
+        name:
+          description: The plan name
+          type: string
+          maxLength: 80
+          readOnly: true
+          example: Pro Plan
+        price:
+          description: The price of the subscription that will be billed, in US dollars
+          type: number
+          readOnly: true
+          example: 20
+        currency:
+          description: The monetary unit in which pricing information is displayed
+          type: string
+          readOnly: true
+          example: USD
+        frequency:
+          description: The frequency at which you will be billed for this plan
+          type: string
+          enum:
+          - weekly
+          - monthly
+          - quarterly
+          - yearly
+          - ''
+          readOnly: true
+          example: monthly
