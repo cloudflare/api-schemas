@@ -4078,7 +4078,7 @@ components:
         threshold:
           $ref: '#/components/schemas/threshold'
     components-schemas-ref:
-      description: An optional reference for the rule, defaults to the ID
+      description: A reference for the rule, defaults to the ID
       example: my_ref
       type: string
     components-schemas-response:
@@ -4847,6 +4847,25 @@ components:
       - actions
       - matchers
       type: object
+    create_ruleset:
+      description: A ruleset
+      properties:
+        description:
+          $ref: '#/components/schemas/rulesets_components-schemas-description'
+        kind:
+          $ref: '#/components/schemas/schemas-kind'
+        name:
+          $ref: '#/components/schemas/rulesets_components-schemas-name'
+        phase:
+          $ref: '#/components/schemas/phase'
+        rules:
+          $ref: '#/components/schemas/create_update_rules'
+      required:
+      - name
+      - kind
+      - phase
+      - rules
+      type: object
     create_update_rule:
       description: A rule
       properties:
@@ -4864,26 +4883,17 @@ components:
           $ref: '#/components/schemas/logging'
         ref:
           $ref: '#/components/schemas/components-schemas-ref'
+      required:
+      - expression
+      - action
+      type: object
     create_update_rules:
       description: The rules in the ruleset
       items:
-        oneOf:
+        anyOf:
         - $ref: '#/components/schemas/create_update_rule'
         - description: An ID of a rule
       type: array
-    create_update_ruleset:
-      description: A ruleset
-      properties:
-        description:
-          $ref: '#/components/schemas/rulesets_components-schemas-description'
-        kind:
-          $ref: '#/components/schemas/schemas-kind'
-        name:
-          $ref: '#/components/schemas/rulesets_components-schemas-name'
-        phase:
-          $ref: '#/components/schemas/phase'
-        rules:
-          $ref: '#/components/schemas/create_update_rules'
     created:
       description: The date and time the destination address has been created.
       example: "2014-01-02T02:20:00Z"
@@ -15185,6 +15195,7 @@ components:
           $ref: '#/components/schemas/components-schemas-rules'
         version:
           $ref: '#/components/schemas/version'
+      type: object
     ruleset-rules_components-schemas-action:
       description: The action to take when the rule matches
       example: execute
@@ -15192,7 +15203,7 @@ components:
       type: string
     ruleset-rules_components-schemas-description:
       default: ""
-      description: An optional description of the rule
+      description: A description of the rule
       example: Execute the OWASP ruleset when the IP address is not 1.1.1.1
       type: string
     ruleset-rules_components-schemas-enabled:
@@ -15227,6 +15238,14 @@ components:
           $ref: '#/components/schemas/components-schemas-ref'
         version:
           $ref: '#/components/schemas/schemas-version'
+      type: object
+    ruleset_response:
+      allOf:
+      - $ref: '#/components/schemas/api-response-common'
+      - properties:
+          result:
+            $ref: '#/components/schemas/ruleset'
+        type: object
     ruleset_without_rules:
       description: The ruleset
       properties:
@@ -15244,9 +15263,10 @@ components:
           $ref: '#/components/schemas/phase'
         version:
           $ref: '#/components/schemas/version'
+      type: object
     rulesets_components-schemas-description:
       default: ""
-      description: An optional description of the ruleset
+      description: A description of the ruleset
       example: My ruleset to execute managed rulesets
       type: string
     rulesets_components-schemas-id:
@@ -15258,6 +15278,16 @@ components:
       description: The human readable name for the ruleset
       example: My ruleset
       type: string
+    rulesets_response:
+      allOf:
+      - $ref: '#/components/schemas/api-response-common'
+      - properties:
+          result:
+            description: The rulesets
+            items:
+              $ref: '#/components/schemas/ruleset_without_rules'
+            type: array
+        type: object
     run_at:
       description: Indicates when the tunnel connection was started (formatted in
         RFC 3339)
@@ -19729,6 +19759,16 @@ components:
       - actions
       - matchers
       type: object
+    update_ruleset:
+      description: A ruleset
+      properties:
+        description:
+          $ref: '#/components/schemas/rulesets_components-schemas-description'
+        rules:
+          $ref: '#/components/schemas/create_update_rules'
+      required:
+      - rules
+      type: object
     updated:
       description: When the device was updated
       example: "2017-06-14T00:00:00Z"
@@ -21349,20 +21389,14 @@ paths:
             application/json:
               schema:
                 allOf:
-                - description: The rulesets in the account
-                  items:
-                    $ref: '#/components/schemas/ruleset_without_rules'
-                  type: array
+                - $ref: '#/components/schemas/rulesets_response'
                 - $ref: '#/components/schemas/api-response-common-failure'
           description: List account rulesets response failure
         "200":
           content:
             application/json:
               schema:
-                description: The rulesets in the account
-                items:
-                  $ref: '#/components/schemas/ruleset_without_rules'
-                type: array
+                $ref: '#/components/schemas/rulesets_response'
           description: List account rulesets response
       security:
       - api_email: []
@@ -21386,7 +21420,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/create_update_ruleset'
+              $ref: '#/components/schemas/create_ruleset'
         required: true
       responses:
         4xx:
@@ -21394,14 +21428,14 @@ paths:
             application/json:
               schema:
                 allOf:
-                - $ref: '#/components/schemas/ruleset'
+                - $ref: '#/components/schemas/ruleset_response'
                 - $ref: '#/components/schemas/api-response-common-failure'
           description: Create account ruleset response failure
         "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ruleset'
+                $ref: '#/components/schemas/ruleset_response'
           description: Create account ruleset response
       security:
       - api_email: []
@@ -21469,14 +21503,14 @@ paths:
             application/json:
               schema:
                 allOf:
-                - $ref: '#/components/schemas/ruleset'
+                - $ref: '#/components/schemas/ruleset_response'
                 - $ref: '#/components/schemas/api-response-common-failure'
           description: Get account ruleset response failure
         "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ruleset'
+                $ref: '#/components/schemas/ruleset_response'
           description: Get account ruleset response
       security:
       - api_email: []
@@ -21505,7 +21539,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ruleset'
+              $ref: '#/components/schemas/update_ruleset'
         required: true
       responses:
         4xx:
@@ -21513,14 +21547,14 @@ paths:
             application/json:
               schema:
                 allOf:
-                - $ref: '#/components/schemas/create_update_ruleset'
+                - $ref: '#/components/schemas/ruleset_response'
                 - $ref: '#/components/schemas/api-response-common-failure'
           description: Update account ruleset response failure
         "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/create_update_ruleset'
+                $ref: '#/components/schemas/ruleset_response'
           description: Update account ruleset response
       security:
       - api_email: []
@@ -21558,14 +21592,14 @@ paths:
             application/json:
               schema:
                 allOf:
-                - $ref: '#/components/schemas/ruleset'
+                - $ref: '#/components/schemas/ruleset_response'
                 - $ref: '#/components/schemas/api-response-common-failure'
           description: Create account ruleset rule response failure
         "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ruleset'
+                $ref: '#/components/schemas/ruleset_response'
           description: Create account ruleset rule response
       security:
       - api_email: []
@@ -21603,11 +21637,17 @@ paths:
       responses:
         4xx:
           content:
-            application/json: {}
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/ruleset_response'
+                - $ref: '#/components/schemas/api-response-common-failure'
           description: Delete account ruleset rule response failure
         "200":
           content:
-            application/json: {}
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ruleset_response'
           description: Delete account ruleset rule response
       security:
       - api_email: []
@@ -21649,14 +21689,14 @@ paths:
             application/json:
               schema:
                 allOf:
-                - $ref: '#/components/schemas/ruleset'
+                - $ref: '#/components/schemas/ruleset_response'
                 - $ref: '#/components/schemas/api-response-common-failure'
           description: Update account ruleset rule response failure
         "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ruleset'
+                $ref: '#/components/schemas/ruleset_response'
           description: Update account ruleset rule response
       security:
       - api_email: []
@@ -21688,20 +21728,14 @@ paths:
             application/json:
               schema:
                 allOf:
-                - description: The versions of the ruleset
-                  items:
-                    $ref: '#/components/schemas/ruleset_without_rules'
-                  type: array
+                - $ref: '#/components/schemas/rulesets_response'
                 - $ref: '#/components/schemas/api-response-common-failure'
           description: List account ruleset versions response failure
         "200":
           content:
             application/json:
               schema:
-                description: The versions of the ruleset
-                items:
-                  $ref: '#/components/schemas/ruleset_without_rules'
-                type: array
+                $ref: '#/components/schemas/rulesets_response'
           description: List account ruleset versions response
       security:
       - api_email: []
@@ -21779,14 +21813,14 @@ paths:
             application/json:
               schema:
                 allOf:
-                - $ref: '#/components/schemas/ruleset'
+                - $ref: '#/components/schemas/ruleset_response'
                 - $ref: '#/components/schemas/api-response-common-failure'
           description: Get account ruleset version response failure
         "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ruleset'
+                $ref: '#/components/schemas/ruleset_response'
           description: Get account ruleset version response
       security:
       - api_email: []
@@ -21818,14 +21852,14 @@ paths:
             application/json:
               schema:
                 allOf:
-                - $ref: '#/components/schemas/ruleset'
+                - $ref: '#/components/schemas/ruleset_response'
                 - $ref: '#/components/schemas/api-response-common-failure'
           description: Get account entrypoint ruleset response failure
         "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ruleset'
+                $ref: '#/components/schemas/ruleset_response'
           description: Get account entrypoint ruleset response
       security:
       - api_email: []
@@ -21854,7 +21888,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ruleset'
+              $ref: '#/components/schemas/update_ruleset'
         required: true
       responses:
         4xx:
@@ -21862,14 +21896,14 @@ paths:
             application/json:
               schema:
                 allOf:
-                - $ref: '#/components/schemas/create_update_ruleset'
+                - $ref: '#/components/schemas/ruleset_response'
                 - $ref: '#/components/schemas/api-response-common-failure'
           description: Update account entrypoint ruleset response failure
         "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/create_update_ruleset'
+                $ref: '#/components/schemas/ruleset_response'
           description: Update account entrypoint ruleset response
       security:
       - api_email: []
@@ -44963,20 +44997,14 @@ paths:
             application/json:
               schema:
                 allOf:
-                - description: The rulesets in the zone
-                  items:
-                    $ref: '#/components/schemas/ruleset_without_rules'
-                  type: array
+                - $ref: '#/components/schemas/rulesets_response'
                 - $ref: '#/components/schemas/api-response-common-failure'
           description: List zone rulesets response failure
         "200":
           content:
             application/json:
               schema:
-                description: The rulesets in the zone
-                items:
-                  $ref: '#/components/schemas/ruleset_without_rules'
-                type: array
+                $ref: '#/components/schemas/rulesets_response'
           description: List zone rulesets response
       security:
       - api_email: []
@@ -45000,7 +45028,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/create_update_ruleset'
+              $ref: '#/components/schemas/create_ruleset'
         required: true
       responses:
         4xx:
@@ -45008,14 +45036,14 @@ paths:
             application/json:
               schema:
                 allOf:
-                - $ref: '#/components/schemas/ruleset'
+                - $ref: '#/components/schemas/ruleset_response'
                 - $ref: '#/components/schemas/api-response-common-failure'
           description: Create zone ruleset response failure
         "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ruleset'
+                $ref: '#/components/schemas/ruleset_response'
           description: Create zone ruleset response
       security:
       - api_email: []
@@ -45083,14 +45111,14 @@ paths:
             application/json:
               schema:
                 allOf:
-                - $ref: '#/components/schemas/ruleset'
+                - $ref: '#/components/schemas/ruleset_response'
                 - $ref: '#/components/schemas/api-response-common-failure'
           description: Get zone ruleset response failure
         "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ruleset'
+                $ref: '#/components/schemas/ruleset_response'
           description: Get zone ruleset response
       security:
       - api_email: []
@@ -45119,7 +45147,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ruleset'
+              $ref: '#/components/schemas/update_ruleset'
         required: true
       responses:
         4xx:
@@ -45127,14 +45155,14 @@ paths:
             application/json:
               schema:
                 allOf:
-                - $ref: '#/components/schemas/create_update_ruleset'
+                - $ref: '#/components/schemas/ruleset_response'
                 - $ref: '#/components/schemas/api-response-common-failure'
           description: Update zone ruleset response failure
         "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/create_update_ruleset'
+                $ref: '#/components/schemas/ruleset_response'
           description: Update zone ruleset response
       security:
       - api_email: []
@@ -45172,14 +45200,14 @@ paths:
             application/json:
               schema:
                 allOf:
-                - $ref: '#/components/schemas/ruleset'
+                - $ref: '#/components/schemas/ruleset_response'
                 - $ref: '#/components/schemas/api-response-common-failure'
           description: Create zone ruleset rule response failure
         "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ruleset'
+                $ref: '#/components/schemas/ruleset_response'
           description: Create zone ruleset rule response
       security:
       - api_email: []
@@ -45217,11 +45245,17 @@ paths:
       responses:
         4xx:
           content:
-            application/json: {}
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/ruleset_response'
+                - $ref: '#/components/schemas/api-response-common-failure'
           description: Delete zone ruleset rule response failure
         "200":
           content:
-            application/json: {}
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ruleset_response'
           description: Delete zone ruleset rule response
       security:
       - api_email: []
@@ -45263,14 +45297,14 @@ paths:
             application/json:
               schema:
                 allOf:
-                - $ref: '#/components/schemas/ruleset'
+                - $ref: '#/components/schemas/ruleset_response'
                 - $ref: '#/components/schemas/api-response-common-failure'
           description: Update zone ruleset rule response failure
         "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ruleset'
+                $ref: '#/components/schemas/ruleset_response'
           description: Update zone ruleset rule response
       security:
       - api_email: []
@@ -45302,20 +45336,14 @@ paths:
             application/json:
               schema:
                 allOf:
-                - description: The versions of the ruleset
-                  items:
-                    $ref: '#/components/schemas/ruleset_without_rules'
-                  type: array
+                - $ref: '#/components/schemas/rulesets_response'
                 - $ref: '#/components/schemas/api-response-common-failure'
           description: List zone ruleset versions response failure
         "200":
           content:
             application/json:
               schema:
-                description: The versions of the ruleset
-                items:
-                  $ref: '#/components/schemas/ruleset_without_rules'
-                type: array
+                $ref: '#/components/schemas/rulesets_response'
           description: List zone ruleset versions response
       security:
       - api_email: []
@@ -45393,14 +45421,14 @@ paths:
             application/json:
               schema:
                 allOf:
-                - $ref: '#/components/schemas/ruleset'
+                - $ref: '#/components/schemas/ruleset_response'
                 - $ref: '#/components/schemas/api-response-common-failure'
           description: Get zone ruleset version response failure
         "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ruleset'
+                $ref: '#/components/schemas/ruleset_response'
           description: Get zone ruleset version response
       security:
       - api_email: []
@@ -45468,7 +45496,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/create_update_ruleset'
+              $ref: '#/components/schemas/update_ruleset'
         required: true
       responses:
         4xx:
@@ -45515,14 +45543,14 @@ paths:
             application/json:
               schema:
                 allOf:
-                - $ref: '#/components/schemas/ruleset'
+                - $ref: '#/components/schemas/ruleset_response'
                 - $ref: '#/components/schemas/api-response-common-failure'
           description: Get zone entrypoint ruleset response failure
         "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ruleset'
+                $ref: '#/components/schemas/ruleset_response'
           description: Get zone entrypoint ruleset response
       security:
       - api_email: []
@@ -45551,7 +45579,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ruleset'
+              $ref: '#/components/schemas/update_ruleset'
         required: true
       responses:
         4xx:
@@ -45559,14 +45587,14 @@ paths:
             application/json:
               schema:
                 allOf:
-                - $ref: '#/components/schemas/create_update_ruleset'
+                - $ref: '#/components/schemas/ruleset_response'
                 - $ref: '#/components/schemas/api-response-common-failure'
           description: Update zone entrypoint ruleset response failure
         "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/create_update_ruleset'
+                $ref: '#/components/schemas/ruleset_response'
           description: Update zone entrypoint ruleset response
       security:
       - api_email: []
@@ -45624,7 +45652,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/create_update_ruleset'
+              $ref: '#/components/schemas/update_ruleset'
         required: true
       responses:
         4xx:
