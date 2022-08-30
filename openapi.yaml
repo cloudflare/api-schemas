@@ -5030,8 +5030,6 @@ components:
           $ref: '#/components/schemas/keyless-certificate'
         modified_on:
           $ref: '#/components/schemas/components-schemas-modified_on'
-        policy:
-          $ref: '#/components/schemas/policy'
         priority:
           $ref: '#/components/schemas/schemas-priority'
         signature:
@@ -12930,17 +12928,6 @@ components:
       - properties:
           result:
             $ref: '#/components/schemas/components-schemas-policies'
-    policy:
-      description: 'Specify the policy that determines the region where your private
-        key will be held locally. HTTPS connections to any excluded data center will
-        still be fully encrypted, but will incur some latency while Keyless SSL is
-        used to complete the handshake with the nearest allowed data center. Any combination
-        of countries, specified by their two letter country code (https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#Officially_assigned_code_elements)
-        can be chosen, such as ''country: IN'', as well as ''region: EU'' which refers
-        to the EU region. If there are too few data centers satisfying the policy,
-        it will be rejected.'
-      example: '(country: US) or (region: EU)'
-      type: string
     policy_check_response:
       allOf:
       - $ref: '#/components/schemas/api-response-single'
@@ -19348,6 +19335,12 @@ components:
       - "on"
       - "off"
       type: string
+    toggle_output_request:
+      properties:
+        enabled:
+          $ref: '#/components/schemas/output_enabled'
+      required:
+      - enabled
     token:
       properties:
         condition:
@@ -19887,12 +19880,6 @@ components:
           $ref: '#/components/schemas/live_input_metadata'
         recording:
           $ref: '#/components/schemas/live_input_recording_settings'
-    update_output_request:
-      properties:
-        enabled:
-          $ref: '#/components/schemas/output_enabled'
-      required:
-      - enabled
     update_rule_properties:
       properties:
         actions:
@@ -31470,9 +31457,10 @@ paths:
       - api_email: []
         api_key: []
       summary: Remove an output from a live input
+  /accounts/{account_identifier}/stream/live_inputs/{live_input_identifier}/outputs/{output_identifier}/enabled:
     put:
-      description: Updates an output's details associated with a live input.
-      operationId: stream-live-inputs-update-a-single-output-on-a-live-input
+      description: Toggles the 'enabled' state on an output from a live input.
+      operationId: stream-live-inputs-toggle-an-output-on-a-live-input
       parameters:
       - in: path
         name: output_identifier
@@ -31493,7 +31481,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/update_output_request'
+              $ref: '#/components/schemas/toggle_output_request'
         required: true
       responses:
         4xx:
@@ -31503,17 +31491,17 @@ paths:
                 allOf:
                 - $ref: '#/components/schemas/output_response_single'
                 - $ref: '#/components/schemas/api-response-common-failure'
-          description: Update a single output on a live input response failure
+          description: Toggle an output on a live input response failure
         "200":
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/output_response_single'
-          description: Update a single output on a live input response
+          description: Toggle an output on a live input response
       security:
       - api_email: []
         api_key: []
-      summary: Update a single output on a live input
+      summary: Toggle an output on a live input
   /accounts/{account_identifier}/stream/watermarks:
     get:
       description: Lists all watermark profiles for an account.
@@ -36239,21 +36227,7 @@ paths:
           $ref: '#/components/schemas/common_components-schemas-identifier'
       requestBody:
         content:
-          application/json:
-            schema:
-              properties:
-                alert_type:
-                  $ref: '#/components/schemas/alert_type'
-                description:
-                  $ref: '#/components/schemas/policies_components-schemas-description'
-                enabled:
-                  $ref: '#/components/schemas/policies_components-schemas-enabled'
-                filters:
-                  $ref: '#/components/schemas/components-schemas-filters'
-                mechanisms:
-                  $ref: '#/components/schemas/mechanisms'
-                name:
-                  $ref: '#/components/schemas/policies_components-schemas-name-2'
+          application/json: {}
         required: true
       responses:
         4xx:
@@ -46810,8 +46784,6 @@ paths:
                   $ref: '#/components/schemas/certificate'
                 geo_restrictions:
                   $ref: '#/components/schemas/geo_restrictions'
-                policy:
-                  $ref: '#/components/schemas/policy'
                 private_key:
                   $ref: '#/components/schemas/private_key'
                 type:
@@ -46961,8 +46933,6 @@ paths:
                   $ref: '#/components/schemas/certificate'
                 geo_restrictions:
                   $ref: '#/components/schemas/geo_restrictions'
-                policy:
-                  $ref: '#/components/schemas/policy'
                 private_key:
                   $ref: '#/components/schemas/private_key'
               type: object
