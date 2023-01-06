@@ -1853,11 +1853,7 @@ components:
               green_compute:
                 readOnly: true
     account_identifier:
-      type: string
-      description: The account identifier tag.
-      example: 023e105f4ecef8ad9ca31a8372d0c353
-      readOnly: true
-      maxLength: 32
+      $ref: '#/components/schemas/identifier'
     account_subscription_response_collection:
       allOf:
       - $ref: '#/components/schemas/api-response-collection'
@@ -4086,7 +4082,7 @@ components:
         aud:
           $ref: '#/components/schemas/aud'
         id:
-          $ref: '#/components/schemas/CloudflareClientAPI_id'
+          $ref: '#/components/schemas/id'
         public_key:
           $ref: '#/components/schemas/public_key'
     ca_components-schemas-id:
@@ -4852,6 +4848,12 @@ components:
       description: The date and time the clip was created.
       example: "2014-01-02T02:20:00Z"
       readOnly: true
+    cloudflare-stream-client-api_account_identifier:
+      type: string
+      description: The account identifier tag.
+      example: 023e105f4ecef8ad9ca31a8372d0c353
+      readOnly: true
+      maxLength: 32
     cloudflare-stream-client-api_identifier:
       type: string
       description: A Cloudflare-generated unique identifier for a media item.
@@ -4928,6 +4930,18 @@ components:
       type: string
       description: The IP address assigned to the Cloudflare side of the IPsec tunnel.
       example: 203.0.113.1
+    cmb_config:
+      type: object
+      nullable: true
+      properties:
+        regions:
+          $ref: '#/components/schemas/regions'
+    cmb_config_response_single:
+      allOf:
+      - $ref: '#/components/schemas/api-response-single'
+      - properties:
+          result:
+            $ref: '#/components/schemas/cmb_config'
     cname_flattening:
       allOf:
       - $ref: '#/components/schemas/schemas-base'
@@ -11125,9 +11139,11 @@ components:
       - "off"
       default: "off"
     id:
-      type: integer
-      description: Unique id of the job.
-      minimum: 1
+      type: string
+      description: The ID of the CA.
+      example: 7eddae4619b50ab1361ba8ae9bd72269a432fea041529ed9
+      readOnly: true
+      maxLength: 48
     id_response:
       allOf:
       - $ref: '#/components/schemas/api-response-single'
@@ -13232,7 +13248,7 @@ components:
         frequency:
           $ref: '#/components/schemas/frequency'
         id:
-          $ref: '#/components/schemas/id'
+          $ref: '#/components/schemas/CloudflareClientAPI_id'
         last_complete:
           $ref: '#/components/schemas/last_complete'
         last_error:
@@ -13240,7 +13256,7 @@ components:
         logpull_options:
           $ref: '#/components/schemas/logpull_options'
         name:
-          $ref: '#/components/schemas/name'
+          $ref: '#/components/schemas/CloudflareClientAPI_name'
     logpush_job_response_collection:
       allOf:
       - $ref: '#/components/schemas/api-response-common'
@@ -14172,13 +14188,8 @@ components:
                   $ref: '#/components/schemas/schemas-route'
     name:
       type: string
-      description: Optional human readable job name. Not unique. Cloudflare suggests
-        that you set this to a meaningful string, like the domain name, to make it
-        easier to identify your job.
-      example: example.com
-      nullable: true
-      maxLength: 512
-      pattern: ^[a-zA-Z0-9\-\.]*$
+      description: The name of your Zero Trust organization.
+      example: Widget Corps Internal Applications
     name_servers:
       type: array
       description: List of name servers.
@@ -14755,7 +14766,7 @@ components:
         login_design:
           $ref: '#/components/schemas/login_design'
         name:
-          $ref: '#/components/schemas/CloudflareClientAPI_name'
+          $ref: '#/components/schemas/name'
         updated_at:
           $ref: '#/components/schemas/timestamp'
         user_seat_expiration_inactive_time:
@@ -17601,6 +17612,12 @@ components:
         WNAM:
         - de90f38ced07c2e2f4df50b1f61d4194
         - 9290f38c5d07c2e2f4df57b1f61d4196
+    regions:
+      type: string
+      description: Comma-separated list of regions.
+      example: eu
+      maxLength: 256
+      pattern: ^[a-z,]*$
     registrant_contact:
       allOf:
       - $ref: '#/components/schemas/contacts'
@@ -19977,7 +19994,7 @@ components:
             type: object
             properties:
               id:
-                $ref: '#/components/schemas/CloudflareClientAPI_id'
+                $ref: '#/components/schemas/id'
     schemas-identifier:
       type: string
       description: Identifier
@@ -30942,7 +30959,7 @@ paths:
                 logpull_options:
                   $ref: '#/components/schemas/logpull_options'
                 name:
-                  $ref: '#/components/schemas/name'
+                  $ref: '#/components/schemas/CloudflareClientAPI_name'
                 ownership_challenge:
                   $ref: '#/components/schemas/ownership_challenge'
       responses:
@@ -30976,7 +30993,7 @@ paths:
         in: path
         required: true
         schema:
-          $ref: '#/components/schemas/id'
+          $ref: '#/components/schemas/CloudflareClientAPI_id'
       - name: account_identifier
         in: path
         required: true
@@ -31028,7 +31045,7 @@ paths:
         in: path
         required: true
         schema:
-          $ref: '#/components/schemas/id'
+          $ref: '#/components/schemas/CloudflareClientAPI_id'
       - name: account_identifier
         in: path
         required: true
@@ -31064,7 +31081,7 @@ paths:
         in: path
         required: true
         schema:
-          $ref: '#/components/schemas/id'
+          $ref: '#/components/schemas/CloudflareClientAPI_id'
       - name: account_identifier
         in: path
         required: true
@@ -31272,6 +31289,120 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/validate_response'
+      security:
+      - api_email: []
+        api_key: []
+      - api_token: []
+  /accounts/{account_identifier}/logs/control/cmb/config:
+    delete:
+      tags:
+      - Logcontrol CMB config for an account
+      summary: Delete CMB config
+      description: Deletes CMB config.
+      operationId: delete-accounts-account_identifier-logs-control-cmb-config
+      parameters:
+      - name: account_identifier
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/identifier'
+      requestBody:
+        required: true
+        content:
+          application/json: {}
+      responses:
+        4xx:
+          description: Delete CMB config response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                - allOf:
+                  - $ref: '#/components/schemas/api-response-common'
+                  - properties:
+                      result:
+                        type: object
+                        example: {}
+                        nullable: true
+                - $ref: '#/components/schemas/api-response-common-failure'
+        "200":
+          description: Delete CMB config response
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/api-response-common'
+                - properties:
+                    result:
+                      type: object
+                      example: {}
+                      nullable: true
+      security:
+      - api_email: []
+        api_key: []
+      - api_token: []
+    get:
+      tags:
+      - Logcontrol CMB config for an account
+      summary: Get CMB config
+      description: Gets CMB config.
+      operationId: get-accounts-account_identifier-logs-control-cmb-config
+      parameters:
+      - name: account_identifier
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/identifier'
+      responses:
+        4xx:
+          description: Get CMB config response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/api-response-common-failure'
+        "200":
+          description: Get CMB config response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cmb_config_response_single'
+      security:
+      - api_email: []
+        api_key: []
+      - api_token: []
+    post:
+      tags:
+      - Logcontrol CMB config for an account
+      summary: Update CMB config
+      description: Updates CMB config.
+      operationId: put-accounts-account_identifier-logs-control-cmb-config
+      parameters:
+      - name: account_identifier
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/identifier'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/cmb_config'
+      responses:
+        4xx:
+          description: Update CMB config response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/api-response-common-failure'
+        "200":
+          description: Update CMB config response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cmb_config_response_single'
       security:
       - api_email: []
         api_key: []
@@ -72192,7 +72323,7 @@ paths:
                 logpull_options:
                   $ref: '#/components/schemas/logpull_options'
                 name:
-                  $ref: '#/components/schemas/name'
+                  $ref: '#/components/schemas/CloudflareClientAPI_name'
                 ownership_challenge:
                   $ref: '#/components/schemas/ownership_challenge'
       responses:
@@ -72226,7 +72357,7 @@ paths:
         in: path
         required: true
         schema:
-          $ref: '#/components/schemas/id'
+          $ref: '#/components/schemas/CloudflareClientAPI_id'
       - name: zone_identifier
         in: path
         required: true
@@ -72278,7 +72409,7 @@ paths:
         in: path
         required: true
         schema:
-          $ref: '#/components/schemas/id'
+          $ref: '#/components/schemas/CloudflareClientAPI_id'
       - name: zone_identifier
         in: path
         required: true
@@ -72314,7 +72445,7 @@ paths:
         in: path
         required: true
         schema:
-          $ref: '#/components/schemas/id'
+          $ref: '#/components/schemas/CloudflareClientAPI_id'
       - name: zone_identifier
         in: path
         required: true
