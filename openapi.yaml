@@ -475,6 +475,11 @@ components:
             type: array
             maxItems: 0
             items: {}
+    CloudflareClientAPI_enabled:
+      type: boolean
+      description: Whether or not the Keyless SSL is on or off.
+      example: false
+      readOnly: true
     CloudflareClientAPI_exclude:
       type: array
       description: Rules evaluated with a NOT logical operator. To match a policy,
@@ -496,6 +501,28 @@ components:
           $ref: '#/components/schemas/session_duration'
         type:
           $ref: '#/components/schemas/apps_components-schemas-type'
+    CloudflareClientAPI_filter:
+      type: object
+      properties:
+        description:
+          $ref: '#/components/schemas/filters_components-schemas-description'
+        expression:
+          $ref: '#/components/schemas/expression'
+        id:
+          $ref: '#/components/schemas/filters_components-schemas-id'
+        paused:
+          $ref: '#/components/schemas/filters_components-schemas-paused'
+        ref:
+          $ref: '#/components/schemas/schemas-ref'
+    CloudflareClientAPI_frequency:
+      type: string
+      description: How often the subscription is renewed automatically.
+      enum:
+      - weekly
+      - monthly
+      - quarterly
+      - yearly
+      example: monthly
     CloudflareClientAPI_groups:
       type: object
       description: An object that allows you to enable or disable WAF rule groups
@@ -868,6 +895,15 @@ components:
           $ref: '#/components/schemas/uid'
         updated_at:
           $ref: '#/components/schemas/timestamp'
+    CloudflareClientAPI_validate_response:
+      allOf:
+      - $ref: '#/components/schemas/api-response-single'
+      - properties:
+          result:
+            properties:
+              valid:
+                type: boolean
+                example: true
     CloudflareClientAPI_video_response_single:
       allOf:
       - $ref: '#/components/schemas/api-response-single'
@@ -1817,7 +1853,11 @@ components:
               green_compute:
                 readOnly: true
     account_identifier:
-      $ref: '#/components/schemas/identifier'
+      type: string
+      description: The account identifier tag.
+      example: 023e105f4ecef8ad9ca31a8372d0c353
+      readOnly: true
+      maxLength: 32
     account_subscription_response_collection:
       allOf:
       - $ref: '#/components/schemas/api-response-collection'
@@ -4046,7 +4086,7 @@ components:
         aud:
           $ref: '#/components/schemas/aud'
         id:
-          $ref: '#/components/schemas/id'
+          $ref: '#/components/schemas/CloudflareClientAPI_id'
         public_key:
           $ref: '#/components/schemas/public_key'
     ca_components-schemas-id:
@@ -4812,12 +4852,6 @@ components:
       description: The date and time the clip was created.
       example: "2014-01-02T02:20:00Z"
       readOnly: true
-    cloudflare-stream-client-api_account_identifier:
-      type: string
-      description: The account identifier tag.
-      example: 023e105f4ecef8ad9ca31a8372d0c353
-      readOnly: true
-      maxLength: 32
     cloudflare-stream-client-api_identifier:
       type: string
       description: A Cloudflare-generated unique identifier for a media item.
@@ -4894,18 +4928,6 @@ components:
       type: string
       description: The IP address assigned to the Cloudflare side of the IPsec tunnel.
       example: 203.0.113.1
-    cmb_config:
-      type: object
-      nullable: true
-      properties:
-        regions:
-          $ref: '#/components/schemas/regions'
-    cmb_config_response_single:
-      allOf:
-      - $ref: '#/components/schemas/api-response-single'
-      - properties:
-          result:
-            $ref: '#/components/schemas/cmb_config'
     cname_flattening:
       allOf:
       - $ref: '#/components/schemas/schemas-base'
@@ -7230,6 +7252,13 @@ components:
             $ref: '#/components/schemas/timeseries_by_colo'
           totals:
             $ref: '#/components/schemas/totals_by_colo'
+    dataset:
+      type: string
+      description: Name of the dataset.
+      example: http_requests
+      nullable: true
+      maxLength: 256
+      pattern: ^[a-zA-Z0-9_\-]*$
     days_until_next_rotation:
       type: number
       description: The number of days until the next key rotation.
@@ -8007,6 +8036,25 @@ components:
                 example: 20
               total_count:
                 example: 1
+    destination_conf:
+      type: string
+      format: uri
+      description: Uniquely identifies a resource (such as an s3 bucket) where data
+        will be pushed. Additional configuration parameters supported by the destination
+        may be included.
+      example: s3://mybucket/logs?region=us-west-2
+      maxLength: 4096
+    destination_exists_response:
+      allOf:
+      - $ref: '#/components/schemas/api-response-common'
+      - properties:
+          result:
+            type: object
+            nullable: true
+            properties:
+              exists:
+                type: boolean
+                example: false
     detection_mode:
       type: string
       description: The mode that defines how rules within the package are evaluated
@@ -9324,9 +9372,8 @@ components:
       example: Enabled
     enabled:
       type: boolean
-      description: Whether or not the Keyless SSL is on or off.
+      description: Flag that indicates if the job is enabled.
       example: false
-      readOnly: true
     enabled_download_phase:
       type: boolean
       description: Set to enable antivirus scan on downloads.
@@ -9376,6 +9423,14 @@ components:
       - 'Could not gather traceroute data: Code 3'
       - 'Could not gather traceroute data: Code 4'
       example: ""
+    error_message:
+      type: string
+      format: date-time
+      description: 'If not null, the job is currently failing. Failures are usually
+        repetitive (example: no permissions to write to destination bucket). Only
+        the last failure is recorded. On successful execution of a job the error_message
+        and last_error are set to null.'
+      nullable: true
     errorReasonCode:
       type: string
       description: Specifies why the video failed to encode. This field is empty if
@@ -9761,6 +9816,10 @@ components:
       type: string
       description: The timestamp of when the script was last fetched.
       nullable: true
+    fields:
+      type: string
+      description: Comma-separated list of fields.
+      example: ClientIP,ClientRequestHost,ClientRequestMethod,ClientRequestURI,EdgeEndTimestamp,EdgeResponseBytes,EdgeResponseStatus,EdgeStartTimestamp,RayID
     fields_response:
       type: object
       properties:
@@ -9774,18 +9833,9 @@ components:
       readOnly: true
       maxLength: 32
     filter:
-      type: object
-      properties:
-        description:
-          $ref: '#/components/schemas/filters_components-schemas-description'
-        expression:
-          $ref: '#/components/schemas/expression'
-        id:
-          $ref: '#/components/schemas/filters_components-schemas-id'
-        paused:
-          $ref: '#/components/schemas/filters_components-schemas-paused'
-        ref:
-          $ref: '#/components/schemas/schemas-ref'
+      type: string
+      description: Filters to drill down into specific events.
+      example: '{"where":{"and":[{"key":"ClientCountry","operator":"neq","value":"ca"}]}}'
     filter-delete-response-collection:
       allOf:
       - $ref: '#/components/schemas/api-response-collection'
@@ -9795,7 +9845,7 @@ components:
             type: array
             items:
               allOf:
-              - $ref: '#/components/schemas/filter'
+              - $ref: '#/components/schemas/CloudflareClientAPI_filter'
               - type: object
                 required:
                 - id
@@ -9808,7 +9858,7 @@ components:
         properties:
           result:
             allOf:
-            - $ref: '#/components/schemas/filter'
+            - $ref: '#/components/schemas/CloudflareClientAPI_filter'
             - type: object
               required:
               - id
@@ -9858,7 +9908,7 @@ components:
       - properties:
           filter:
             oneOf:
-            - $ref: '#/components/schemas/filter'
+            - $ref: '#/components/schemas/CloudflareClientAPI_filter'
             - $ref: '#/components/schemas/deleted-filter'
       type: object
     filter-rules-response-collection:
@@ -10099,13 +10149,16 @@ components:
       example: OK
     frequency:
       type: string
-      description: How often the subscription is renewed automatically.
+      description: The frequency at which Cloudflare sends batches of logs to your
+        destination. Setting frequency to high sends your logs in larger quantities
+        of smaller files. Setting frequency to low sends logs in smaller quantities
+        of larger files.
       enum:
-      - weekly
-      - monthly
-      - quarterly
-      - yearly
-      example: monthly
+      - high
+      - low
+      default: high
+      example: high
+      nullable: true
     full_response:
       allOf:
       - $ref: '#/components/schemas/api-response-single'
@@ -10282,6 +10335,23 @@ components:
           $ref: '#/components/schemas/use_cloudflare_reporting_endpoint'
         use_connection_url_path:
           $ref: '#/components/schemas/use_connection_url_path'
+    get_ownership_response:
+      allOf:
+      - $ref: '#/components/schemas/api-response-common'
+      - properties:
+          result:
+            type: object
+            nullable: true
+            properties:
+              filename:
+                type: string
+                example: logs/challenge-filename.txt
+              message:
+                type: string
+                example: ""
+              valid:
+                type: boolean
+                example: true
     get_response:
       allOf:
       - $ref: '#/components/schemas/api-response-collection'
@@ -11055,11 +11125,9 @@ components:
       - "off"
       default: "off"
     id:
-      type: string
-      description: The ID of the CA.
-      example: 7eddae4619b50ab1361ba8ae9bd72269a432fea041529ed9
-      readOnly: true
-      maxLength: 48
+      type: integer
+      description: Unique id of the job.
+      minimum: 1
     id_response:
       allOf:
       - $ref: '#/components/schemas/api-response-single'
@@ -11337,6 +11405,34 @@ components:
     install_id:
       type: string
       description: app install id.
+    instant_logs_job:
+      type: object
+      nullable: true
+      properties:
+        destination_conf:
+          $ref: '#/components/schemas/schemas-destination_conf'
+        fields:
+          $ref: '#/components/schemas/fields'
+        filter:
+          $ref: '#/components/schemas/filter'
+        sample:
+          $ref: '#/components/schemas/sample'
+        session_id:
+          $ref: '#/components/schemas/session_id'
+    instant_logs_job_response_collection:
+      allOf:
+      - $ref: '#/components/schemas/api-response-common'
+      - properties:
+          result:
+            type: array
+            items:
+              $ref: '#/components/schemas/instant_logs_job'
+    instant_logs_job_response_single:
+      allOf:
+      - $ref: '#/components/schemas/api-response-single'
+      - properties:
+          result:
+            $ref: '#/components/schemas/instant_logs_job'
     interconnect:
       type: object
       properties:
@@ -12103,7 +12199,7 @@ components:
           example: "2014-01-01T05:20:00Z"
           readOnly: true
         enabled:
-          $ref: '#/components/schemas/enabled'
+          $ref: '#/components/schemas/CloudflareClientAPI_enabled'
         host:
           $ref: '#/components/schemas/schemas-host'
         id:
@@ -12274,6 +12370,22 @@ components:
       - properties:
           result:
             type: object
+    last_complete:
+      type: string
+      format: date-time
+      description: Records the last time for which logs have been successfully pushed.
+        If the last successful push was for logs range 2018-07-23T10:00:00Z to 2018-07-23T10:01:00Z
+        then the value of this field will be 2018-07-23T10:01:00Z. If the job has
+        never run or has just been enabled and hasn't run yet then the field will
+        be empty.
+      nullable: true
+    last_error:
+      type: string
+      format: date-time
+      description: Records the last time the job failed. If not null, the job is currently
+        failing. If null, the job has either never failed or has run successfully
+        at least once since last failure. See also the error_message field.
+      nullable: true
     last_failure:
       type: string
       format: date-time
@@ -13082,6 +13194,67 @@ components:
       type: string
       description: The image URL for the logo shown in the App Launcher dashboard.
       example: https://www.cloudflare.com/img/logo-web-badges/cf-logo-on-white-bg.svg
+    logpull_options:
+      type: string
+      format: uri-reference
+      description: Configuration string. It specifies things like requested fields
+        and timestamp formats. If migrating from the logpull api, copy the url (full
+        url or just the query string) of your call here, and logpush will keep on
+        making this call for you, setting start and end times appropriately.
+      example: fields=RayID,ClientIP,EdgeStartTimestamp&timestamps=rfc3339
+      nullable: true
+      maxLength: 4096
+    logpush_field_response_collection:
+      allOf:
+      - $ref: '#/components/schemas/api-response-common'
+      - properties:
+          result:
+            type: object
+            items:
+              type: object
+              nullable: true
+              properties:
+                key:
+                  type: string
+                  example: value
+    logpush_job:
+      type: object
+      nullable: true
+      properties:
+        dataset:
+          $ref: '#/components/schemas/dataset'
+        destination_conf:
+          $ref: '#/components/schemas/destination_conf'
+        enabled:
+          $ref: '#/components/schemas/enabled'
+        error_message:
+          $ref: '#/components/schemas/error_message'
+        frequency:
+          $ref: '#/components/schemas/frequency'
+        id:
+          $ref: '#/components/schemas/id'
+        last_complete:
+          $ref: '#/components/schemas/last_complete'
+        last_error:
+          $ref: '#/components/schemas/last_error'
+        logpull_options:
+          $ref: '#/components/schemas/logpull_options'
+        name:
+          $ref: '#/components/schemas/name'
+    logpush_job_response_collection:
+      allOf:
+      - $ref: '#/components/schemas/api-response-common'
+      - properties:
+          result:
+            type: array
+            items:
+              $ref: '#/components/schemas/logpush_job'
+    logpush_job_response_single:
+      allOf:
+      - $ref: '#/components/schemas/api-response-single'
+      - properties:
+          result:
+            $ref: '#/components/schemas/logpush_job'
     logs:
       anyOf:
       - type: string
@@ -13999,8 +14172,13 @@ components:
                   $ref: '#/components/schemas/schemas-route'
     name:
       type: string
-      description: The name of your Zero Trust organization.
-      example: Widget Corps Internal Applications
+      description: Optional human readable job name. Not unique. Cloudflare suggests
+        that you set this to a meaningful string, like the domain name, to make it
+        easier to identify your job.
+      example: example.com
+      nullable: true
+      maxLength: 512
+      pattern: ^[a-zA-Z0-9\-\.]*$
     name_servers:
       type: array
       description: List of name servers.
@@ -14577,7 +14755,7 @@ components:
         login_design:
           $ref: '#/components/schemas/login_design'
         name:
-          $ref: '#/components/schemas/name'
+          $ref: '#/components/schemas/CloudflareClientAPI_name'
         updated_at:
           $ref: '#/components/schemas/timestamp'
         user_seat_expiration_inactive_time:
@@ -14905,6 +15083,12 @@ components:
       example: 1
       minimum: -1e+09
       maximum: 1e+09
+    ownership_challenge:
+      type: string
+      description: Ownership challenge token to prove destination ownership.
+      example: "00000000000000000000"
+      maxLength: 4096
+      pattern: ^[a-zA-Z0-9/\+\.\-_]*$
     ownership_verification:
       oneOf:
       - type: object
@@ -17417,12 +17601,6 @@ components:
         WNAM:
         - de90f38ced07c2e2f4df50b1f61d4194
         - 9290f38c5d07c2e2f4df57b1f61d4196
-    regions:
-      type: string
-      description: Comma-separated list of regions.
-      example: eu
-      maxLength: 256
-      pattern: ^[a-z,]*$
     registrant_contact:
       allOf:
       - $ref: '#/components/schemas/contacts'
@@ -18852,6 +19030,11 @@ components:
               type: string
               description: The SAML attribute value to look for.
               example: devs@cloudflare.com
+    sample:
+      type: integer
+      description: 'The sample parameter is the sample rate of the records set by
+        the client: "sample": 1 is 100% of records "sample": 10 is 10% and so on.'
+      example: 1
     scale:
       type: number
       description: The size of the image relative to the overall size of the video.
@@ -19451,6 +19634,13 @@ components:
       example: The billing item description
       readOnly: true
       maxLength: 255
+    schemas-destination_conf:
+      type: string
+      format: uri
+      description: Unique WebSocket address that will receive messages from Cloudflare’s
+        edge.
+      example: wss://logs.cloudflare.com/instant-logs/ws/sessions/99d471b1ca3c23cc8e30b6acec5db987
+      maxLength: 4096
     schemas-disabled_at:
       type: string
       format: date-time
@@ -19614,7 +19804,7 @@ components:
             type: array
             items:
               allOf:
-              - $ref: '#/components/schemas/filter'
+              - $ref: '#/components/schemas/CloudflareClientAPI_filter'
               - type: object
                 required:
                 - id
@@ -19630,7 +19820,7 @@ components:
           result:
             oneOf:
             - allOf:
-              - $ref: '#/components/schemas/filter'
+              - $ref: '#/components/schemas/CloudflareClientAPI_filter'
               - type: object
                 required:
                 - id
@@ -19787,7 +19977,7 @@ components:
             type: object
             properties:
               id:
-                $ref: '#/components/schemas/id'
+                $ref: '#/components/schemas/CloudflareClientAPI_id'
     schemas-identifier:
       type: string
       description: Identifier
@@ -21508,6 +21698,10 @@ components:
         ns, us (or µs), ms, s, m, h.'
       default: 24h
       example: 24h
+    session_id:
+      type: string
+      description: Unique session id of the job.
+      example: 99d471b1ca3c23cc8e30b6acec5db987
     setting:
       oneOf:
       - $ref: '#/components/schemas/always_online'
@@ -22502,7 +22696,7 @@ components:
         current_period_start:
           $ref: '#/components/schemas/current_period_start'
         frequency:
-          $ref: '#/components/schemas/frequency'
+          $ref: '#/components/schemas/CloudflareClientAPI_frequency'
         id:
           $ref: '#/components/schemas/subscription-v2_components-schemas-identifier'
         price:
@@ -23887,6 +24081,17 @@ components:
       example: f174e90a-fafe-4643-bbbc-4a0ed4fc8415
       readOnly: true
       maxLength: 36
+    validate_ownership_response:
+      allOf:
+      - $ref: '#/components/schemas/api-response-common'
+      - properties:
+          result:
+            type: object
+            nullable: true
+            properties:
+              valid:
+                type: boolean
+                example: true
     validate_pattern:
       type: object
       title: Pattern
@@ -23900,10 +24105,15 @@ components:
           example: ^4[0-9]{6,}$
     validate_response:
       allOf:
-      - $ref: '#/components/schemas/api-response-single'
+      - $ref: '#/components/schemas/api-response-common'
       - properties:
           result:
+            type: object
+            nullable: true
             properties:
+              message:
+                type: string
+                example: ""
               valid:
                 type: boolean
                 example: true
@@ -27624,14 +27834,14 @@ paths:
             application/json:
               schema:
                 allOf:
-                - $ref: '#/components/schemas/validate_response'
+                - $ref: '#/components/schemas/CloudflareClientAPI_validate_response'
                 - $ref: '#/components/schemas/api-response-common-failure'
         "200":
           description: Validate pattern response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/validate_response'
+                $ref: '#/components/schemas/CloudflareClientAPI_validate_response'
       security:
       - api_email: []
         api_key: []
@@ -30593,14 +30803,180 @@ paths:
       - api_email: []
         api_key: []
       - api_token: []
-  /accounts/{account_identifier}/logs/control/cmb/config:
+  /accounts/{account_identifier}/logpush/datasets/{dataset}/fields:
+    get:
+      tags:
+      - Logpush jobs for an account
+      summary: List fields
+      description: Lists all fields available for a dataset. The response result is
+        an object with key-value pairs, where keys are field names, and values are
+        descriptions.
+      operationId: get-accounts-account_identifier-logpush-datasets-dataset-fields
+      parameters:
+      - name: dataset
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/dataset'
+      - name: account_identifier
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/identifier'
+      responses:
+        4xx:
+          description: List fields response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/logpush_field_response_collection'
+                - $ref: '#/components/schemas/api-response-common-failure'
+        "200":
+          description: List fields response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/logpush_field_response_collection'
+      security:
+      - api_email: []
+        api_key: []
+      - api_token: []
+  /accounts/{account_identifier}/logpush/datasets/{dataset}/jobs:
+    get:
+      tags:
+      - Logpush jobs for an account
+      summary: List Logpush jobs for a dataset
+      description: Lists Logpush jobs for an account for a dataset.
+      operationId: get-accounts-account_identifier-logpush-datasets-dataset-jobs
+      parameters:
+      - name: dataset
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/dataset'
+      - name: account_identifier
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/identifier'
+      responses:
+        4xx:
+          description: List Logpush jobs for a dataset response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/logpush_job_response_collection'
+                - $ref: '#/components/schemas/api-response-common-failure'
+        "200":
+          description: List Logpush jobs for a dataset response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/logpush_job_response_collection'
+      security:
+      - api_email: []
+        api_key: []
+      - api_token: []
+  /accounts/{account_identifier}/logpush/jobs:
+    get:
+      tags:
+      - Logpush jobs for an account
+      summary: List Logpush jobs
+      description: Lists Logpush jobs for an account.
+      operationId: get-accounts-account_identifier-logpush-jobs
+      parameters:
+      - name: account_identifier
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/identifier'
+      responses:
+        4xx:
+          description: List Logpush jobs response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/logpush_job_response_collection'
+                - $ref: '#/components/schemas/api-response-common-failure'
+        "200":
+          description: List Logpush jobs response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/logpush_job_response_collection'
+      security:
+      - api_email: []
+        api_key: []
+      - api_token: []
+    post:
+      tags:
+      - Logpush jobs for an account
+      summary: Create Logpush job
+      description: Creates a new Logpush job for an account.
+      operationId: post-accounts-account_identifier-logpush-jobs
+      parameters:
+      - name: account_identifier
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/identifier'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+              - destination_conf
+              properties:
+                dataset:
+                  $ref: '#/components/schemas/dataset'
+                destination_conf:
+                  $ref: '#/components/schemas/destination_conf'
+                enabled:
+                  $ref: '#/components/schemas/enabled'
+                frequency:
+                  $ref: '#/components/schemas/frequency'
+                logpull_options:
+                  $ref: '#/components/schemas/logpull_options'
+                name:
+                  $ref: '#/components/schemas/name'
+                ownership_challenge:
+                  $ref: '#/components/schemas/ownership_challenge'
+      responses:
+        4xx:
+          description: Create Logpush job response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/logpush_job_response_single'
+                - $ref: '#/components/schemas/api-response-common-failure'
+        "200":
+          description: Create Logpush job response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/logpush_job_response_single'
+      security:
+      - api_email: []
+        api_key: []
+      - api_token: []
+  /accounts/{account_identifier}/logpush/jobs/{job_identifier}:
     delete:
       tags:
-      - Logcontrol CMB config for an account
-      summary: Delete CMB config
-      description: Deletes CMB config.
-      operationId: delete-accounts-account_identifier-logs-control-cmb-config
+      - Logpush jobs for an account
+      summary: Delete Logpush job
+      description: Deletes a Logpush job.
+      operationId: delete-accounts-account_identifier-logpush-jobs-job_identifier
       parameters:
+      - name: job_identifier
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/id'
       - name: account_identifier
         in: path
         required: true
@@ -30612,7 +30988,7 @@ paths:
           application/json: {}
       responses:
         4xx:
-          description: Delete CMB config response failure
+          description: Delete Logpush job response failure
           content:
             application/json:
               schema:
@@ -30626,7 +31002,7 @@ paths:
                         nullable: true
                 - $ref: '#/components/schemas/api-response-common-failure'
         "200":
-          description: Delete CMB config response
+          description: Delete Logpush job response
           content:
             application/json:
               schema:
@@ -30643,11 +31019,16 @@ paths:
       - api_token: []
     get:
       tags:
-      - Logcontrol CMB config for an account
-      summary: Get CMB config
-      description: Gets CMB config.
-      operationId: get-accounts-account_identifier-logs-control-cmb-config
+      - Logpush jobs for an account
+      summary: Get Logpush job details
+      description: Gets the details of a Logpush job.
+      operationId: get-accounts-account_identifier-logpush-jobs-job_identifier
       parameters:
+      - name: job_identifier
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/id'
       - name: account_identifier
         in: path
         required: true
@@ -30655,28 +31036,82 @@ paths:
           $ref: '#/components/schemas/identifier'
       responses:
         4xx:
-          description: Get CMB config response failure
+          description: Get Logpush job details response failure
           content:
             application/json:
               schema:
                 allOf:
+                - $ref: '#/components/schemas/logpush_job_response_single'
                 - $ref: '#/components/schemas/api-response-common-failure'
         "200":
-          description: Get CMB config response
+          description: Get Logpush job details response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/cmb_config_response_single'
+                $ref: '#/components/schemas/logpush_job_response_single'
       security:
       - api_email: []
         api_key: []
       - api_token: []
+    put:
+      tags:
+      - Logpush jobs for an account
+      summary: Update Logpush job
+      description: Updates a Logpush job.
+      operationId: put-accounts-account_identifier-logpush-jobs-job_identifier
+      parameters:
+      - name: job_identifier
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/id'
+      - name: account_identifier
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/identifier'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                destination_conf:
+                  $ref: '#/components/schemas/destination_conf'
+                enabled:
+                  $ref: '#/components/schemas/enabled'
+                frequency:
+                  $ref: '#/components/schemas/frequency'
+                logpull_options:
+                  $ref: '#/components/schemas/logpull_options'
+                ownership_challenge:
+                  $ref: '#/components/schemas/ownership_challenge'
+      responses:
+        4xx:
+          description: Update Logpush job response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/logpush_job_response_single'
+                - $ref: '#/components/schemas/api-response-common-failure'
+        "200":
+          description: Update Logpush job response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/logpush_job_response_single'
+      security:
+      - api_email: []
+        api_key: []
+      - api_token: []
+  /accounts/{account_identifier}/logpush/ownership:
     post:
       tags:
-      - Logcontrol CMB config for an account
-      summary: Update CMB config
-      description: Updates CMB config.
-      operationId: put-accounts-account_identifier-logs-control-cmb-config
+      - Logpush jobs for an account
+      summary: Get ownership challenge
+      description: Gets a new ownership challenge sent to your destination.
+      operationId: post-accounts-account_identifier-logpush-ownership
       parameters:
       - name: account_identifier
         in: path
@@ -30688,21 +31123,155 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/cmb_config'
+              required:
+              - destination_conf
+              properties:
+                destination_conf:
+                  $ref: '#/components/schemas/destination_conf'
       responses:
         4xx:
-          description: Update CMB config response failure
+          description: Get ownership challenge response failure
           content:
             application/json:
               schema:
                 allOf:
+                - $ref: '#/components/schemas/get_ownership_response'
                 - $ref: '#/components/schemas/api-response-common-failure'
         "200":
-          description: Update CMB config response
+          description: Get ownership challenge response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/cmb_config_response_single'
+                $ref: '#/components/schemas/get_ownership_response'
+      security:
+      - api_email: []
+        api_key: []
+      - api_token: []
+  /accounts/{account_identifier}/logpush/ownership/validate:
+    post:
+      tags:
+      - Logpush jobs for an account
+      summary: Validate ownership challenge
+      description: Validates ownership challenge of the destination.
+      operationId: post-accounts-account_identifier-logpush-ownership-validate
+      parameters:
+      - name: account_identifier
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/identifier'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+              - destination_conf
+              - ownership_challenge
+              properties:
+                destination_conf:
+                  $ref: '#/components/schemas/destination_conf'
+                ownership_challenge:
+                  $ref: '#/components/schemas/ownership_challenge'
+      responses:
+        4xx:
+          description: Validate ownership challenge response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/validate_ownership_response'
+                - $ref: '#/components/schemas/api-response-common-failure'
+        "200":
+          description: Validate ownership challenge response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/validate_ownership_response'
+      security:
+      - api_email: []
+        api_key: []
+      - api_token: []
+  /accounts/{account_identifier}/logpush/validate/destination/exists:
+    post:
+      tags:
+      - Logpush jobs for an account
+      summary: Check destination exists
+      description: Checks if there is an existing job with a destination.
+      operationId: delete-accounts-account_identifier-logpush-validate-destination-exists
+      parameters:
+      - name: account_identifier
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/identifier'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+              - destination_conf
+              properties:
+                destination_conf:
+                  $ref: '#/components/schemas/destination_conf'
+      responses:
+        4xx:
+          description: Check destination exists response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/destination_exists_response'
+                - $ref: '#/components/schemas/api-response-common-failure'
+        "200":
+          description: Check destination exists response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/destination_exists_response'
+      security:
+      - api_email: []
+        api_key: []
+      - api_token: []
+  /accounts/{account_identifier}/logpush/validate/origin:
+    post:
+      tags:
+      - Logpush jobs for an account
+      summary: Validate origin
+      description: Validates logpull origin with logpull_options.
+      operationId: post-accounts-account_identifier-logpush-validate-origin
+      parameters:
+      - name: account_identifier
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/identifier'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+              - logpull_options
+              properties:
+                logpull_options:
+                  $ref: '#/components/schemas/logpull_options'
+      responses:
+        4xx:
+          description: Validate origin response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/validate_response'
+                - $ref: '#/components/schemas/api-response-common-failure'
+        "200":
+          description: Validate origin response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/validate_response'
       security:
       - api_email: []
         api_key: []
@@ -71383,7 +71952,7 @@ paths:
               type: object
               properties:
                 enabled:
-                  $ref: '#/components/schemas/enabled'
+                  $ref: '#/components/schemas/CloudflareClientAPI_enabled'
                 host:
                   $ref: '#/components/schemas/schemas-host'
                 name:
@@ -71405,6 +71974,554 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/keyless_response_single'
+      security:
+      - api_email: []
+        api_key: []
+      - api_token: []
+  /zones/{zone_identifier}/logpush/datasets/{dataset}/fields:
+    get:
+      tags:
+      - Logpush jobs for a zone
+      summary: List fields
+      description: Lists all fields available for a dataset. The response result is
+        an object with key-value pairs, where keys are field names, and values are
+        descriptions.
+      operationId: get-zones-zone_identifier-logpush-datasets-dataset-fields
+      parameters:
+      - name: dataset
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/dataset'
+      - name: zone_identifier
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/identifier'
+      responses:
+        4xx:
+          description: List fields response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/logpush_field_response_collection'
+                - $ref: '#/components/schemas/api-response-common-failure'
+        "200":
+          description: List fields response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/logpush_field_response_collection'
+      security:
+      - api_email: []
+        api_key: []
+      - api_token: []
+  /zones/{zone_identifier}/logpush/datasets/{dataset}/jobs:
+    get:
+      tags:
+      - Logpush jobs for a zone
+      summary: List Logpush jobs for a dataset
+      description: Lists Logpush jobs for a zone for a dataset.
+      operationId: get-zones-zone_identifier-logpush-datasets-dataset-jobs
+      parameters:
+      - name: dataset
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/dataset'
+      - name: zone_identifier
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/identifier'
+      responses:
+        4xx:
+          description: List Logpush jobs for a dataset response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/logpush_job_response_collection'
+                - $ref: '#/components/schemas/api-response-common-failure'
+        "200":
+          description: List Logpush jobs for a dataset response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/logpush_job_response_collection'
+      security:
+      - api_email: []
+        api_key: []
+      - api_token: []
+  /zones/{zone_identifier}/logpush/edge:
+    get:
+      tags:
+      - Instant Logs jobs for a zone
+      summary: List Instant Logs jobs
+      description: Lists Instant Logs jobs for a zone.
+      operationId: get-zones-zone_identifier-logpush-edge-jobs
+      parameters:
+      - name: zone_identifier
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/identifier'
+      responses:
+        4xx:
+          description: List Instant Logs jobs response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/instant_logs_job_response_collection'
+                - $ref: '#/components/schemas/api-response-common-failure'
+        "200":
+          description: List Instant Logs jobs response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/instant_logs_job_response_collection'
+      security:
+      - api_email: []
+        api_key: []
+      - api_token: []
+    post:
+      tags:
+      - Instant Logs jobs for a zone
+      summary: Create Instant Logs job
+      description: Creates a new Instant Logs job for a zone.
+      operationId: post-zones-zone_identifier-logpush-edge-jobs
+      parameters:
+      - name: zone_identifier
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/identifier'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                fields:
+                  $ref: '#/components/schemas/fields'
+                filter:
+                  $ref: '#/components/schemas/filter'
+                sample:
+                  $ref: '#/components/schemas/sample'
+      responses:
+        4xx:
+          description: Create Instant Logs job response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/instant_logs_job_response_single'
+                - $ref: '#/components/schemas/api-response-common-failure'
+        "200":
+          description: Create Instant Logs job response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/instant_logs_job_response_single'
+      security:
+      - api_email: []
+        api_key: []
+      - api_token: []
+  /zones/{zone_identifier}/logpush/jobs:
+    get:
+      tags:
+      - Logpush jobs for a zone
+      summary: List Logpush jobs
+      description: Lists Logpush jobs for a zone.
+      operationId: get-zones-zone_identifier-logpush-jobs
+      parameters:
+      - name: zone_identifier
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/identifier'
+      responses:
+        4xx:
+          description: List Logpush jobs response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/logpush_job_response_collection'
+                - $ref: '#/components/schemas/api-response-common-failure'
+        "200":
+          description: List Logpush jobs response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/logpush_job_response_collection'
+      security:
+      - api_email: []
+        api_key: []
+      - api_token: []
+    post:
+      tags:
+      - Logpush jobs for a zone
+      summary: Create Logpush job
+      description: Creates a new Logpush job for a zone.
+      operationId: post-zones-zone_identifier-logpush-jobs
+      parameters:
+      - name: zone_identifier
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/identifier'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+              - destination_conf
+              properties:
+                dataset:
+                  $ref: '#/components/schemas/dataset'
+                destination_conf:
+                  $ref: '#/components/schemas/destination_conf'
+                enabled:
+                  $ref: '#/components/schemas/enabled'
+                frequency:
+                  $ref: '#/components/schemas/frequency'
+                logpull_options:
+                  $ref: '#/components/schemas/logpull_options'
+                name:
+                  $ref: '#/components/schemas/name'
+                ownership_challenge:
+                  $ref: '#/components/schemas/ownership_challenge'
+      responses:
+        4xx:
+          description: Create Logpush job response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/logpush_job_response_single'
+                - $ref: '#/components/schemas/api-response-common-failure'
+        "200":
+          description: Create Logpush job response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/logpush_job_response_single'
+      security:
+      - api_email: []
+        api_key: []
+      - api_token: []
+  /zones/{zone_identifier}/logpush/jobs/{job_identifier}:
+    delete:
+      tags:
+      - Logpush jobs for a zone
+      summary: Delete Logpush job
+      description: Deletes a Logpush job.
+      operationId: delete-zones-zone_identifier-logpush-jobs-job_identifier
+      parameters:
+      - name: job_identifier
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/id'
+      - name: zone_identifier
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/identifier'
+      requestBody:
+        required: true
+        content:
+          application/json: {}
+      responses:
+        4xx:
+          description: Delete Logpush job response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                - allOf:
+                  - $ref: '#/components/schemas/api-response-common'
+                  - properties:
+                      result:
+                        type: object
+                        example: {}
+                        nullable: true
+                - $ref: '#/components/schemas/api-response-common-failure'
+        "200":
+          description: Delete Logpush job response
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/api-response-common'
+                - properties:
+                    result:
+                      type: object
+                      example: {}
+                      nullable: true
+      security:
+      - api_email: []
+        api_key: []
+      - api_token: []
+    get:
+      tags:
+      - Logpush jobs for a zone
+      summary: Get Logpush job details
+      description: Gets the details of a Logpush job.
+      operationId: get-zones-zone_identifier-logpush-jobs-job_identifier
+      parameters:
+      - name: job_identifier
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/id'
+      - name: zone_identifier
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/identifier'
+      responses:
+        4xx:
+          description: Get Logpush job details response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/logpush_job_response_single'
+                - $ref: '#/components/schemas/api-response-common-failure'
+        "200":
+          description: Get Logpush job details response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/logpush_job_response_single'
+      security:
+      - api_email: []
+        api_key: []
+      - api_token: []
+    put:
+      tags:
+      - Logpush jobs for a zone
+      summary: Update Logpush job
+      description: Updates a Logpush job.
+      operationId: put-zones-zone_identifier-logpush-jobs-job_identifier
+      parameters:
+      - name: job_identifier
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/id'
+      - name: zone_identifier
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/identifier'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                destination_conf:
+                  $ref: '#/components/schemas/destination_conf'
+                enabled:
+                  $ref: '#/components/schemas/enabled'
+                frequency:
+                  $ref: '#/components/schemas/frequency'
+                logpull_options:
+                  $ref: '#/components/schemas/logpull_options'
+                ownership_challenge:
+                  $ref: '#/components/schemas/ownership_challenge'
+      responses:
+        4xx:
+          description: Update Logpush job response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/logpush_job_response_single'
+                - $ref: '#/components/schemas/api-response-common-failure'
+        "200":
+          description: Update Logpush job response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/logpush_job_response_single'
+      security:
+      - api_email: []
+        api_key: []
+      - api_token: []
+  /zones/{zone_identifier}/logpush/ownership:
+    post:
+      tags:
+      - Logpush jobs for a zone
+      summary: Get ownership challenge
+      description: Gets a new ownership challenge sent to your destination.
+      operationId: post-zones-zone_identifier-logpush-ownership
+      parameters:
+      - name: zone_identifier
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/identifier'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+              - destination_conf
+              properties:
+                destination_conf:
+                  $ref: '#/components/schemas/destination_conf'
+      responses:
+        4xx:
+          description: Get ownership challenge response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/get_ownership_response'
+                - $ref: '#/components/schemas/api-response-common-failure'
+        "200":
+          description: Get ownership challenge response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/get_ownership_response'
+      security:
+      - api_email: []
+        api_key: []
+      - api_token: []
+  /zones/{zone_identifier}/logpush/ownership/validate:
+    post:
+      tags:
+      - Logpush jobs for a zone
+      summary: Validate ownership challenge
+      description: Validates ownership challenge of the destination.
+      operationId: post-zones-zone_identifier-logpush-ownership-validate
+      parameters:
+      - name: zone_identifier
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/identifier'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+              - destination_conf
+              - ownership_challenge
+              properties:
+                destination_conf:
+                  $ref: '#/components/schemas/destination_conf'
+                ownership_challenge:
+                  $ref: '#/components/schemas/ownership_challenge'
+      responses:
+        4xx:
+          description: Validate ownership challenge response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/validate_ownership_response'
+                - $ref: '#/components/schemas/api-response-common-failure'
+        "200":
+          description: Validate ownership challenge response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/validate_ownership_response'
+      security:
+      - api_email: []
+        api_key: []
+      - api_token: []
+  /zones/{zone_identifier}/logpush/validate/destination/exists:
+    post:
+      tags:
+      - Logpush jobs for a zone
+      summary: Check destination exists
+      description: Checks if there is an existing job with a destination.
+      operationId: post-zones-zone_identifier-logpush-validate-destination-exists
+      parameters:
+      - name: zone_identifier
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/identifier'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+              - destination_conf
+              properties:
+                destination_conf:
+                  $ref: '#/components/schemas/destination_conf'
+      responses:
+        4xx:
+          description: Check destination exists response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/destination_exists_response'
+                - $ref: '#/components/schemas/api-response-common-failure'
+        "200":
+          description: Check destination exists response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/destination_exists_response'
+      security:
+      - api_email: []
+        api_key: []
+      - api_token: []
+  /zones/{zone_identifier}/logpush/validate/origin:
+    post:
+      tags:
+      - Logpush jobs for a zone
+      summary: Validate origin
+      description: Validates logpull origin with logpull_options.
+      operationId: post-zones-zone_identifier-logpush-validate-origin
+      parameters:
+      - name: zone_identifier
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/identifier'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+              - logpull_options
+              properties:
+                logpull_options:
+                  $ref: '#/components/schemas/logpull_options'
+      responses:
+        4xx:
+          description: Validate origin response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/validate_response'
+                - $ref: '#/components/schemas/api-response-common-failure'
+        "200":
+          description: Validate origin response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/validate_response'
       security:
       - api_email: []
         api_key: []
