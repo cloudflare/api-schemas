@@ -4112,7 +4112,7 @@ components:
         aud:
           $ref: '#/components/schemas/aud'
         id:
-          $ref: '#/components/schemas/CloudflareClientAPI_id'
+          $ref: '#/components/schemas/id'
         public_key:
           $ref: '#/components/schemas/public_key'
     ca_components-schemas-id:
@@ -4920,12 +4920,6 @@ components:
       example: ea95132c15732412d22c1476fa83f27a
       readOnly: true
       maxLength: 32
-    cloudflare-stream-client-api_name:
-      type: string
-      description: A short description of the watermark profile.
-      default: ""
-      example: Marketing Videos
-      readOnly: true
     cloudflare-tunnel_components-schemas-connection:
       properties:
         client_id:
@@ -11199,9 +11193,11 @@ components:
       - "off"
       default: "off"
     id:
-      type: integer
-      description: Unique id of the job.
-      minimum: 1
+      type: string
+      description: The ID of the CA.
+      example: 7eddae4619b50ab1361ba8ae9bd72269a432fea041529ed9
+      readOnly: true
+      maxLength: 48
     id_response:
       allOf:
       - $ref: '#/components/schemas/api-response-single'
@@ -13306,7 +13302,7 @@ components:
         frequency:
           $ref: '#/components/schemas/frequency'
         id:
-          $ref: '#/components/schemas/id'
+          $ref: '#/components/schemas/CloudflareClientAPI_id'
         last_complete:
           $ref: '#/components/schemas/last_complete'
         last_error:
@@ -13314,7 +13310,7 @@ components:
         logpull_options:
           $ref: '#/components/schemas/logpull_options'
         name:
-          $ref: '#/components/schemas/name'
+          $ref: '#/components/schemas/CloudflareClientAPI_name'
     logpush_job_response_collection:
       allOf:
       - $ref: '#/components/schemas/api-response-common'
@@ -14246,13 +14242,10 @@ components:
                   $ref: '#/components/schemas/schemas-route'
     name:
       type: string
-      description: Optional human readable job name. Not unique. Cloudflare suggests
-        that you set this to a meaningful string, like the domain name, to make it
-        easier to identify your job.
-      example: example.com
-      nullable: true
-      maxLength: 512
-      pattern: ^[a-zA-Z0-9\-\.]*$
+      description: A short description of the watermark profile.
+      default: ""
+      example: Marketing Videos
+      readOnly: true
     name_servers:
       type: array
       description: List of name servers.
@@ -20079,7 +20072,7 @@ components:
             type: object
             properties:
               id:
-                $ref: '#/components/schemas/CloudflareClientAPI_id'
+                $ref: '#/components/schemas/id'
     schemas-identifier:
       type: string
       description: Identifier
@@ -25014,7 +25007,7 @@ components:
           description: The image file to upload.
           example: '@/Users/rchen/Downloads/watermark.png'
         name:
-          $ref: '#/components/schemas/cloudflare-stream-client-api_name'
+          $ref: '#/components/schemas/name'
         opacity:
           $ref: '#/components/schemas/opacity'
         padding:
@@ -25072,7 +25065,7 @@ components:
         height:
           $ref: '#/components/schemas/height'
         name:
-          $ref: '#/components/schemas/cloudflare-stream-client-api_name'
+          $ref: '#/components/schemas/name'
         opacity:
           $ref: '#/components/schemas/opacity'
         padding:
@@ -31044,7 +31037,7 @@ paths:
                 logpull_options:
                   $ref: '#/components/schemas/logpull_options'
                 name:
-                  $ref: '#/components/schemas/name'
+                  $ref: '#/components/schemas/CloudflareClientAPI_name'
                 ownership_challenge:
                   $ref: '#/components/schemas/ownership_challenge'
       responses:
@@ -31078,7 +31071,7 @@ paths:
         in: path
         required: true
         schema:
-          $ref: '#/components/schemas/id'
+          $ref: '#/components/schemas/CloudflareClientAPI_id'
       - name: account_identifier
         in: path
         required: true
@@ -31130,7 +31123,7 @@ paths:
         in: path
         required: true
         schema:
-          $ref: '#/components/schemas/id'
+          $ref: '#/components/schemas/CloudflareClientAPI_id'
       - name: account_identifier
         in: path
         required: true
@@ -31166,7 +31159,7 @@ paths:
         in: path
         required: true
         schema:
-          $ref: '#/components/schemas/id'
+          $ref: '#/components/schemas/CloudflareClientAPI_id'
       - name: account_identifier
         in: path
         required: true
@@ -72517,7 +72510,7 @@ paths:
                 logpull_options:
                   $ref: '#/components/schemas/logpull_options'
                 name:
-                  $ref: '#/components/schemas/name'
+                  $ref: '#/components/schemas/CloudflareClientAPI_name'
                 ownership_challenge:
                   $ref: '#/components/schemas/ownership_challenge'
       responses:
@@ -72551,7 +72544,7 @@ paths:
         in: path
         required: true
         schema:
-          $ref: '#/components/schemas/id'
+          $ref: '#/components/schemas/CloudflareClientAPI_id'
       - name: zone_identifier
         in: path
         required: true
@@ -72603,7 +72596,7 @@ paths:
         in: path
         required: true
         schema:
-          $ref: '#/components/schemas/id'
+          $ref: '#/components/schemas/CloudflareClientAPI_id'
       - name: zone_identifier
         in: path
         required: true
@@ -72639,7 +72632,7 @@ paths:
         in: path
         required: true
         schema:
-          $ref: '#/components/schemas/id'
+          $ref: '#/components/schemas/CloudflareClientAPI_id'
       - name: zone_identifier
         in: path
         required: true
