@@ -561,7 +561,7 @@ components:
           name:
             $ref: '#/components/schemas/dns-record_components-schemas-name'
           priority:
-            $ref: '#/components/schemas/priority'
+            $ref: '#/components/schemas/CloudflareClientAPI_priority'
           type:
             description: Record type.
             enum:
@@ -731,7 +731,7 @@ components:
                 minimum: 0
                 maximum: 65535
               priority:
-                $ref: '#/components/schemas/priority'
+                $ref: '#/components/schemas/CloudflareClientAPI_priority'
               proto:
                 type: string
                 description: A valid protocol.
@@ -934,7 +934,7 @@ components:
           name:
             $ref: '#/components/schemas/dns-record_components-schemas-name'
           priority:
-            $ref: '#/components/schemas/priority'
+            $ref: '#/components/schemas/CloudflareClientAPI_priority'
           type:
             description: Record type.
             enum:
@@ -1937,8 +1937,12 @@ components:
               preview_id:
                 $ref: '#/components/schemas/monitor_components-schemas-identifier'
     CloudflareClientAPI_priority:
-      type: integer
-      description: Priority of the static route.
+      type: number
+      description: Required for MX, SRV and URI records; unused by other record types.
+        Records with lower priorities are preferred.
+      example: 10
+      minimum: 0
+      maximum: 65535
     CloudflareClientAPI_query_healthcheck:
       type: object
       required:
@@ -2517,9 +2521,19 @@ components:
         secret:
           $ref: '#/components/schemas/secret'
     CloudflareClientAPI_ttl:
-      type: integer
-      description: Time To Live (TTL) in number of hops of the GRE tunnel.
-      default: 64
+      anyOf:
+      - type: number
+        example: 3600
+        minimum: 30
+        maximum: 86400
+      - type: number
+        enum:
+        - 1
+      type: number
+      description: Time To Live (TTL) of the DNS record in seconds. Setting to 1 means
+        'automatic'. Value must be between 60 and 86400, with the minimum reduced
+        to 30 for Enterprise zones.
+      example: 3600
     CloudflareClientAPI_type:
       type: string
       description: The billing item type.
@@ -3013,7 +3027,7 @@ components:
           name:
             $ref: '#/components/schemas/CloudflareClientAPI_name'
           priority:
-            $ref: '#/components/schemas/priority'
+            $ref: '#/components/schemas/CloudflareClientAPI_priority'
           type:
             description: Record type.
             enum:
@@ -3193,7 +3207,7 @@ components:
                 minimum: 0
                 maximum: 65535
               priority:
-                $ref: '#/components/schemas/priority'
+                $ref: '#/components/schemas/CloudflareClientAPI_priority'
               proto:
                 type: string
                 description: A valid protocol.
@@ -3406,7 +3420,7 @@ components:
           name:
             $ref: '#/components/schemas/CloudflareClientAPI_name'
           priority:
-            $ref: '#/components/schemas/priority'
+            $ref: '#/components/schemas/CloudflareClientAPI_priority'
           type:
             description: Record type.
             enum:
@@ -5416,7 +5430,7 @@ components:
         tags:
           $ref: '#/components/schemas/tags'
         ttl:
-          $ref: '#/components/schemas/ttl'
+          $ref: '#/components/schemas/CloudflareClientAPI_ttl'
         type:
           $ref: '#/components/schemas/CloudflareClientAPI_type'
         zone_id:
@@ -10406,7 +10420,7 @@ components:
         minimum_cache_ttl:
           $ref: '#/components/schemas/minimum_cache_ttl'
         modified_on:
-          $ref: '#/components/schemas/modified_on'
+          $ref: '#/components/schemas/CloudflareClientAPI_modified_on'
         name:
           $ref: '#/components/schemas/CloudflareClientAPI_name'
         negative_cache_ttl:
@@ -10512,7 +10526,7 @@ components:
         tags:
           $ref: '#/components/schemas/tags'
         ttl:
-          $ref: '#/components/schemas/ttl'
+          $ref: '#/components/schemas/CloudflareClientAPI_ttl'
         type:
           $ref: '#/components/schemas/dns-record_components-schemas-type'
         zone_id:
@@ -12267,7 +12281,7 @@ components:
         name:
           $ref: '#/components/schemas/CloudflareClientAPI_name'
         ttl:
-          $ref: '#/components/schemas/CloudflareClientAPI_ttl'
+          $ref: '#/components/schemas/ttl'
     group:
       type: object
       properties:
@@ -15765,8 +15779,8 @@ components:
     modified_on:
       type: string
       format: date-time
-      description: Last modification of DNS Firewall cluster.
-      example: "2014-01-01T05:20:00.12345Z"
+      description: When the route was last modified.
+      example: "2017-06-14T05:20:00Z"
       readOnly: true
     modified_rules_count:
       type: number
@@ -18368,12 +18382,8 @@ components:
       example: 20
       readOnly: true
     priority:
-      type: number
-      description: Required for MX, SRV and URI records; unused by other record types.
-        Records with lower priorities are preferred.
-      example: 10
-      minimum: 0
-      maximum: 65535
+      type: integer
+      description: Priority of the static route.
     privacy:
       type: boolean
       description: Privacy option controls redacting WHOIS information.
@@ -19901,13 +19911,13 @@ components:
         id:
           $ref: '#/components/schemas/CloudflareClientAPI_identifier'
         modified_on:
-          $ref: '#/components/schemas/CloudflareClientAPI_modified_on'
+          $ref: '#/components/schemas/modified_on'
         nexthop:
           $ref: '#/components/schemas/nexthop'
         prefix:
           $ref: '#/components/schemas/prefix'
         priority:
-          $ref: '#/components/schemas/CloudflareClientAPI_priority'
+          $ref: '#/components/schemas/priority'
         scope:
           $ref: '#/components/schemas/scope'
         weight:
@@ -19948,7 +19958,7 @@ components:
         prefix:
           $ref: '#/components/schemas/prefix'
         priority:
-          $ref: '#/components/schemas/CloudflareClientAPI_priority'
+          $ref: '#/components/schemas/priority'
         scope:
           $ref: '#/components/schemas/scope'
         weight:
@@ -25391,19 +25401,9 @@ components:
       description: TSIG authentication will be used for zone transfer if configured.
       example: 69cd1e104af3e6ed3cb344f263fd0d5a
     ttl:
-      anyOf:
-      - type: number
-        example: 3600
-        minimum: 30
-        maximum: 86400
-      - type: number
-        enum:
-        - 1
-      type: number
-      description: Time To Live (TTL) of the DNS record in seconds. Setting to 1 means
-        'automatic'. Value must be between 60 and 86400, with the minimum reduced
-        to 30 for Enterprise zones.
-      example: 3600
+      type: integer
+      description: Time To Live (TTL) in number of hops of the GRE tunnel.
+      default: 64
     tunnel:
       type: object
       description: A Cloudflare Tunnel that connects your origin to Cloudflare's edge.
@@ -25455,7 +25455,7 @@ components:
         name:
           $ref: '#/components/schemas/CloudflareClientAPI_name'
         ttl:
-          $ref: '#/components/schemas/CloudflareClientAPI_ttl'
+          $ref: '#/components/schemas/ttl'
     tunnel_connection:
       type: object
       description: A connection between cloudflared and a Cloudflare data center.
@@ -26586,7 +26586,7 @@ components:
         minimum_cache_ttl:
           $ref: '#/components/schemas/minimum_cache_ttl'
         modified_on:
-          $ref: '#/components/schemas/modified_on'
+          $ref: '#/components/schemas/CloudflareClientAPI_modified_on'
         name:
           $ref: '#/components/schemas/CloudflareClientAPI_name'
         negative_cache_ttl:
@@ -82100,13 +82100,13 @@ paths:
                 name:
                   $ref: '#/components/schemas/dns-record_components-schemas-name'
                 priority:
-                  $ref: '#/components/schemas/priority'
+                  $ref: '#/components/schemas/CloudflareClientAPI_priority'
                 proxied:
                   $ref: '#/components/schemas/proxied'
                 tags:
                   $ref: '#/components/schemas/tags'
                 ttl:
-                  $ref: '#/components/schemas/ttl'
+                  $ref: '#/components/schemas/CloudflareClientAPI_ttl'
                 type:
                   $ref: '#/components/schemas/dns-record_components-schemas-type'
       responses:
@@ -82247,7 +82247,7 @@ paths:
                 tags:
                   $ref: '#/components/schemas/tags'
                 ttl:
-                  $ref: '#/components/schemas/ttl'
+                  $ref: '#/components/schemas/CloudflareClientAPI_ttl'
                 type:
                   $ref: '#/components/schemas/dns-record_components-schemas-type'
       responses:
@@ -82308,7 +82308,7 @@ paths:
                 tags:
                   $ref: '#/components/schemas/tags'
                 ttl:
-                  $ref: '#/components/schemas/ttl'
+                  $ref: '#/components/schemas/CloudflareClientAPI_ttl'
                 type:
                   $ref: '#/components/schemas/dns-record_components-schemas-type'
       responses:
