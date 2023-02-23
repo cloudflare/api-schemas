@@ -1306,6 +1306,19 @@ components:
       description: The timestamp of when the Page Rule was created.
       example: "2014-01-01T05:20:00.12345Z"
       readOnly: true
+    CloudflareClientAPI_custom-certificate-settings:
+      type: object
+      description: Custom certificate settings for BYO-PKI.
+      properties:
+        enabled:
+          type: boolean
+          description: Enable use of custom certificate authority for signing Gateway
+            traffic
+          example: true
+        id:
+          type: string
+          description: UUID of certificate (ID from MTLS certificate store)
+          example: d1b364c5-1311-466e-a194-f0e943e0799f
     CloudflareClientAPI_default:
       type: number
       description: The default amount allocated.
@@ -1656,6 +1669,28 @@ components:
       - quarterly
       - yearly
       example: monthly
+    CloudflareClientAPI_gateway-account-settings:
+      type: object
+      description: account settings.
+      properties:
+        settings:
+          type: object
+          description: account settings.
+          properties:
+            activity_log:
+              $ref: '#/components/schemas/activity-log-settings'
+            antivirus:
+              $ref: '#/components/schemas/anti-virus-settings'
+            block_page:
+              $ref: '#/components/schemas/block-page-settings'
+            browser_isolation:
+              $ref: '#/components/schemas/browser-isolation-settings'
+            custom_certificate:
+              $ref: '#/components/schemas/CloudflareClientAPI_custom-certificate-settings'
+            fips:
+              $ref: '#/components/schemas/fips-settings'
+            tls_decrypt:
+              $ref: '#/components/schemas/tls-settings'
     CloudflareClientAPI_groups:
       type: object
       description: An object that allows you to enable or disable WAF rule groups
@@ -1778,12 +1813,9 @@ components:
       default: 60
     CloudflareClientAPI_ip:
       type: string
-      description: IPv4/IPv6 address of primary or secondary nameserver, depending
-        on what zone this peer is linked to. For primary zones this IP defines the
-        IP of the secondary nameserver Cloudflare will NOTIFY upon zone changes. For
-        secondary zones this IP defines the IP of the primary nameserver Cloudflare
-        will send AXFR/IXFR requests to.
-      example: 192.0.2.53
+      description: IPV6 destination ip assigned to this location. DNS requests sent
+        to this IP will counted as the request under this location. (auto-generated).
+      example: 2001:0db8:85a3:0000:0000:8a2e:0370:7334
     CloudflareClientAPI_ips:
       type: array
       description: The set of IPs on the Address Map.
@@ -1967,7 +1999,7 @@ components:
         id:
           $ref: '#/components/schemas/peer_components-schemas-identifier'
         ip:
-          $ref: '#/components/schemas/CloudflareClientAPI_ip'
+          $ref: '#/components/schemas/ip'
         ixfr_enable:
           $ref: '#/components/schemas/ixfr_enable'
         name:
@@ -2308,6 +2340,129 @@ components:
           readOnly: true
         notes:
           $ref: '#/components/schemas/notes'
+    CloudflareClientAPI_rule-settings:
+      type: object
+      description: Additional settings that modify the rule's action.
+      properties:
+        add_headers:
+          type: object
+          description: Add custom headers to allowed requests, in the form of key-value
+            pairs. Keys are header names, pointing to an array with its header value(s).
+          example:
+            My-Next-Header:
+            - foo
+            - bar
+            X-Custom-Header-Name:
+            - somecustomvalue
+        biso_admin_controls:
+          type: object
+          description: Configure how browser isolation behaves.
+          properties:
+            dcp:
+              type: boolean
+              description: Disable copy-paste.
+              example: false
+            dd:
+              type: boolean
+              description: Disable download.
+              example: false
+            dk:
+              type: boolean
+              description: Disable keyboard usage.
+              example: false
+            dp:
+              type: boolean
+              description: Disable printing.
+              example: false
+            du:
+              type: boolean
+              description: Disable upload.
+              example: false
+        block_page_enabled:
+          type: boolean
+          description: Enable the custom block page.
+          example: true
+        block_reason:
+          type: string
+          description: The text describing why this block occurred that will be displayed
+            on the custom block page (if enabled).
+          example: This website is a security risk
+        check_session:
+          type: object
+          description: Configure how session check behaves.
+          properties:
+            duration:
+              type: string
+              description: Configure how fresh the session needs to be to be considered
+                valid.
+              example: 300s
+            enforce:
+              type: boolean
+              description: Enable session enforcement for this fule.
+              example: true
+        egress:
+          type: object
+          description: Configure how Proxy traffic egresses. Can be set for rules
+            with Egress action and Egress filter. Can be omitted to indicate local
+            egress via Warp IPs
+          properties:
+            ipv4:
+              type: string
+              description: The IPv4 address to be used for egress.
+              example: 192.0.2.2
+            ipv4_fallback:
+              type: string
+              description: The IPv4 address to be used for egress in the event of
+                an error egressing with the primary IPv4. Can be '0.0.0.0' to indicate
+                local egreass via Warp IPs.
+              example: 192.0.2.3
+            ipv6:
+              type: string
+              description: The IPv6 range to be used for egress.
+              example: 2001:DB8::/64
+        insecure_disable_dnssec_validation:
+          type: boolean
+          description: INSECURE - disable DNSSEC validation (for allow actions).
+          example: false
+        ip_categories:
+          type: boolean
+          description: Include IPs in DNS resolver category blocks. By default categories
+            only block on domain names.
+          example: true
+        l4override:
+          type: object
+          description: Send matching traffic to the supplied destination IP address
+            and port.
+          properties:
+            ip:
+              type: string
+              description: IPv4 or IPv6 address.
+              example: 1.1.1.1
+            port:
+              type: integer
+              description: A port number to use for TCP/UDP overrides.
+        override_host:
+          type: string
+          description: Override matching DNS queries with this.
+          example: example.com
+        override_ips:
+          type: array
+          description: Override matching DNS queries with this.
+          example:
+          - 1.1.1.1
+          - 2.2.2.2
+          items:
+            type: string
+            description: IPv4 or IPv6 address.
+            example: 1.1.1.1
+        payload_log:
+          type: object
+          description: Configure DLP payload logging.
+          properties:
+            enabled:
+              type: boolean
+              description: Enable DLP payload logging for this rule.
+              example: true
     CloudflareClientAPI_rules:
       allOf:
       - $ref: '#/components/schemas/rule_properties'
@@ -2332,10 +2487,62 @@ components:
               total_count:
                 example: 1
     CloudflareClientAPI_schedule:
-      type: string
-      description: 'Polling frequency for the WARP client posture check. Default:
-        `5m` (poll every five minutes). Minimum: `1m`.'
-      example: 1h
+      type: object
+      description: Schedule for activating DNS policies. Does not apply to HTTP or
+        network policies.
+      properties:
+        fri:
+          type: string
+          description: The time intervals when the rule will be active on Fridays,
+            in increasing order from 00:00-24:00.  If this parameter is omitted, the
+            rule will be deactivated on Fridays.
+          example: 08:00-12:30,13:30-17:00
+        mon:
+          type: string
+          description: The time intervals when the rule will be active on Mondays,
+            in increasing order from 00:00-24:00. If this parameter is omitted, the
+            rule will be deactivated on Mondays.
+          example: 08:00-12:30,13:30-17:00
+        sat:
+          type: string
+          description: The time intervals when the rule will be active on Saturdays,
+            in increasing order from 00:00-24:00.  If this parameter is omitted, the
+            rule will be deactivated on Saturdays.
+          example: 08:00-12:30,13:30-17:00
+        sun:
+          type: string
+          description: The time intervals when the rule will be active on Sundays,
+            in increasing order from 00:00-24:00. If this parameter is omitted, the
+            rule will be deactivated on Sundays.
+          example: 08:00-12:30,13:30-17:00
+        thu:
+          type: string
+          description: The time intervals when the rule will be active on Thursdays,
+            in increasing order from 00:00-24:00. If this parameter is omitted, the
+            rule will be deactivated on Thursdays.
+          example: 08:00-12:30,13:30-17:00
+        time_zone:
+          type: string
+          description: The time zone the rule will be evaluated against. If a [valid
+            time zone city name](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List)
+            is provided, Gateway will always use the current time at that time zone.
+            If this parameter is omitted, then the time zone inferred from the user's
+            source IP is used to evaluate the rule. If Gateway cannot determine the
+            time zone from the IP, we will fall back to the time zone of the user's
+            connected data center.
+          example: America/New York
+        tue:
+          type: string
+          description: The time intervals when the rule will be active on Tuesdays,
+            in increasing order from 00:00-24:00. If this parameter is omitted, the
+            rule will be deactivated on Tuesdays.
+          example: 08:00-12:30,13:30-17:00
+        wed:
+          type: string
+          description: The time intervals when the rule will be active on Wednesdays,
+            in increasing order from 00:00-24:00. If this parameter is omitted, the
+            rule will be deactivated on Wednesdays.
+          example: 08:00-12:30,13:30-17:00
     CloudflareClientAPI_schemas-bookmark_props:
       type: object
       title: Bookmark Application
@@ -3629,6 +3836,12 @@ components:
           example: http://www.example.com/cat_picture.jpg
     Zone_identifier:
       type: string
+    Zone_schemas-identifier:
+      type: string
+      description: Identifier
+      example: 023e105f4ecef8ad9ca31a8372d0c353
+      readOnly: true
+      maxLength: 32
     access-policy:
       oneOf:
       - $ref: '#/components/schemas/policy_with_permission_groups'
@@ -3637,7 +3850,7 @@ components:
       type: object
       properties:
         action:
-          $ref: '#/components/schemas/CloudflareClientAPI_action'
+          $ref: '#/components/schemas/action'
         allowed:
           $ref: '#/components/schemas/allowed'
         app_domain:
@@ -3855,23 +4068,8 @@ components:
             $ref: '#/components/schemas/CustomNS'
     action:
       type: string
-      description: The action to preform when the associated traffic, identity, and
-        device posture expressions are either absent or evaluate to 'true'.
-      enum:
-      - "on"
-      - "off"
-      - allow
-      - block
-      - scan
-      - noscan
-      - safesearch
-      - ytrestricted
-      - isolate
-      - noisolate
-      - override
-      - l4_override
-      - egress
-      example: allow
+      description: The event that occurred, such as a login attempt.
+      example: login
     action_mode:
       type: string
       description: The default action performed by the rules in the WAF package.
@@ -4817,7 +5015,7 @@ components:
             - id
             properties:
               id:
-                $ref: '#/components/schemas/schemas-identifier'
+                $ref: '#/components/schemas/Zone_schemas-identifier'
       type: object
     api-shield:
       allOf:
@@ -4859,9 +5057,7 @@ components:
       description: The URL of the Access application.
       example: test.example.com/admin
     app_id:
-      type: integer
-      description: The identifier for this application. There is only one application
-        per id.
+      example: 699d98642c564d2e855e9661899b7252
     app_launcher_props:
       allOf:
       - $ref: '#/components/schemas/CloudflareClientAPI_feature_app_props'
@@ -4898,7 +5094,7 @@ components:
         created_at:
           $ref: '#/components/schemas/timestamp'
         id:
-          $ref: '#/components/schemas/app_id'
+          $ref: '#/components/schemas/CloudflareClientAPI_app_id'
         name:
           $ref: '#/components/schemas/app-types_components-schemas-name'
     application_type:
@@ -5770,6 +5966,14 @@ components:
         content type.
       example: <error>This request has been rate-limited.</error>
       maxLength: 10240
+    body-scanning-settings:
+      type: object
+      description: DLP body scanning setting
+      properties:
+        inspection_mode:
+          type: string
+          description: Inspection mode. One of deep or shallow
+          example: deep
     bookmark_props:
       type: object
       title: Bookmark application
@@ -6283,9 +6487,9 @@ components:
         class:
           $ref: '#/components/schemas/class'
         description:
-          $ref: '#/components/schemas/components-schemas-description'
+          $ref: '#/components/schemas/CloudflareClientAPI_components-schemas-description'
         id:
-          $ref: '#/components/schemas/id'
+          $ref: '#/components/schemas/CloudflareClientAPI_id'
         name:
           $ref: '#/components/schemas/categories_components-schemas-name'
         subcategories:
@@ -6870,6 +7074,12 @@ components:
       default: ""
       example: Marketing Videos
       readOnly: true
+    cloudflare-stream-client-api_schemas-identifier:
+      type: string
+      description: Identifier
+      example: 023e105f4ecef8ad9ca31a8372d0c353
+      readOnly: true
+      maxLength: 32
     cloudflare-tunnel_components-schemas-connection:
       properties:
         client_id:
@@ -7354,9 +7564,8 @@ components:
       example: "2020-01-01T08:00:00Z"
     components-schemas-description:
       type: string
-      description: A short summary of domains in the category.
-      example: Sites related to educational content that are not included in other
-        categories like Science, Technology or Educational institutions.
+      description: An optional description forthe IPsec tunnel.
+      example: Tunnel for ISP X
     components-schemas-domain:
       type: string
       description: The domain of the Bookmark application.
@@ -7552,8 +7761,8 @@ components:
           $ref: '#/components/schemas/monitor_components-schemas-type'
     components-schemas-name:
       type: string
-      description: The name of the Rule.
-      example: block bad websites
+      description: The name of the peer.
+      example: my-peer-1
     components-schemas-patch:
       type: object
       description: Update enablement of Smart Tiered Cache
@@ -7673,7 +7882,7 @@ components:
           result:
             type: array
             items:
-              $ref: '#/components/schemas/rules'
+              $ref: '#/components/schemas/acl'
     components-schemas-response_single:
       allOf:
       - $ref: '#/components/schemas/api-response-single'
@@ -7742,7 +7951,7 @@ components:
       - $ref: '#/components/schemas/api-response-single'
       - properties:
           result:
-            $ref: '#/components/schemas/rules'
+            $ref: '#/components/schemas/acl'
     components-schemas-state:
       description: The custom page state.
       enum:
@@ -8845,7 +9054,14 @@ components:
     custom-certificate-settings:
       type: object
       description: Custom certificate settings for BYO-PKI.
+      required:
+      - enabled
       properties:
+        binding_status:
+          type: string
+          description: Certificate status (internal)
+          example: pending_deployment
+          readOnly: true
         enabled:
           type: boolean
           description: Enable use of custom certificate authority for signing Gateway
@@ -8855,6 +9071,10 @@ components:
           type: string
           description: UUID of certificate (ID from MTLS certificate store)
           example: d1b364c5-1311-466e-a194-f0e943e0799f
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
     custom-certificate_components-schemas-identifier:
       type: string
       description: Custom certificate identifier tag.
@@ -9947,8 +10167,8 @@ components:
       example: true
     description:
       type: string
-      description: The description of the List.
-      example: The serial numbers for administrators
+      description: A human-readable description of the health check.
+      example: Health check for www.example.com
     destination_address_identifier:
       type: string
       description: Destination address identifier.
@@ -10123,7 +10343,7 @@ components:
         name:
           $ref: '#/components/schemas/device-managed-networks_components-schemas-name'
         network_id:
-          $ref: '#/components/schemas/CloudflareClientAPI_uuid'
+          $ref: '#/components/schemas/uuid'
         type:
           $ref: '#/components/schemas/components-schemas-type'
     device-managed-networks_components-schemas-identifier:
@@ -10163,7 +10383,7 @@ components:
         config:
           $ref: '#/components/schemas/config_response'
         id:
-          $ref: '#/components/schemas/CloudflareClientAPI_uuid'
+          $ref: '#/components/schemas/uuid'
         interval:
           $ref: '#/components/schemas/CloudflareClientAPI_interval'
         name:
@@ -10218,7 +10438,7 @@ components:
         expiration:
           $ref: '#/components/schemas/expiration'
         id:
-          $ref: '#/components/schemas/CloudflareClientAPI_uuid'
+          $ref: '#/components/schemas/uuid'
         input:
           $ref: '#/components/schemas/input'
         match:
@@ -10226,7 +10446,7 @@ components:
         name:
           $ref: '#/components/schemas/CloudflareClientAPI_name'
         schedule:
-          $ref: '#/components/schemas/CloudflareClientAPI_schedule'
+          $ref: '#/components/schemas/schedule'
         type:
           $ref: '#/components/schemas/CloudflareClientAPI_type'
     device-posture-rules_components-schemas-description:
@@ -10304,7 +10524,7 @@ components:
         default:
           $ref: '#/components/schemas/default'
         description:
-          $ref: '#/components/schemas/CloudflareClientAPI_schemas-description'
+          $ref: '#/components/schemas/schemas-description'
         disable_auto_fallback:
           $ref: '#/components/schemas/disable_auto_fallback'
         enabled:
@@ -10329,9 +10549,9 @@ components:
           example: Allow Developers
           maxLength: 100
         policy_id:
-          $ref: '#/components/schemas/CloudflareClientAPI_schemas-uuid'
+          $ref: '#/components/schemas/schemas-uuid'
         precedence:
-          $ref: '#/components/schemas/CloudflareClientAPI_precedence'
+          $ref: '#/components/schemas/precedence'
         service_mode_v2:
           $ref: '#/components/schemas/service_mode_v2'
         support_url:
@@ -10362,7 +10582,7 @@ components:
         device_type:
           $ref: '#/components/schemas/platform'
         id:
-          $ref: '#/components/schemas/CloudflareClientAPI_schemas-uuid'
+          $ref: '#/components/schemas/schemas-uuid'
         ip:
           $ref: '#/components/schemas/CloudflareClientAPI_ip'
         key:
@@ -11358,10 +11578,19 @@ components:
               example: test@example.com
     empty_response:
       allOf:
-      - $ref: '#/components/schemas/api-response-single'
       - properties:
           result:
-            type: object
+            type: boolean
+            enum:
+            - true
+            - false
+            example: true
+          success:
+            type: boolean
+            enum:
+            - true
+            - false
+            example: true
     enable_binding_cookie:
       type: boolean
       description: Enables the binding cookie, which increases security against compromised
@@ -11379,8 +11608,8 @@ components:
       example: Enabled
     enabled:
       type: boolean
-      description: Set if the rule is enabled.
-      example: true
+      description: Flag that indicates if the job is enabled.
+      example: false
     enabled_download_phase:
       type: boolean
       description: Set to enable antivirus scan on downloads.
@@ -12250,6 +12479,8 @@ components:
               $ref: '#/components/schemas/anti-virus-settings'
             block_page:
               $ref: '#/components/schemas/block-page-settings'
+            body_scanning:
+              $ref: '#/components/schemas/body-scanning-settings'
             browser_isolation:
               $ref: '#/components/schemas/browser-isolation-settings'
             custom_certificate:
@@ -12278,7 +12509,7 @@ components:
       - properties:
           result:
             allOf:
-            - $ref: '#/components/schemas/gateway-account-settings'
+            - $ref: '#/components/schemas/CloudflareClientAPI_gateway-account-settings'
             - properties:
                 created_at:
                   $ref: '#/components/schemas/timestamp'
@@ -12711,7 +12942,7 @@ components:
         created_on:
           $ref: '#/components/schemas/timestamp'
         description:
-          $ref: '#/components/schemas/CloudflareClientAPI_description'
+          $ref: '#/components/schemas/description'
         failure_reason:
           $ref: '#/components/schemas/failure_reason'
         http_config:
@@ -12723,7 +12954,7 @@ components:
         modified_on:
           $ref: '#/components/schemas/timestamp'
         name:
-          $ref: '#/components/schemas/CloudflareClientAPI_name'
+          $ref: '#/components/schemas/name'
         retries:
           $ref: '#/components/schemas/retries'
         status:
@@ -12735,7 +12966,7 @@ components:
         timeout:
           $ref: '#/components/schemas/timeout'
         type:
-          $ref: '#/components/schemas/CloudflareClientAPI_type'
+          $ref: '#/components/schemas/type'
     healthchecks_components-schemas-description:
       type: string
       description: A human-readable description of the health check.
@@ -13156,8 +13387,8 @@ components:
       default: "off"
     id:
       type: integer
-      description: The identifier for this category. There is only one category per
-        id.
+      description: Unique id of the job.
+      minimum: 1
     id_response:
       allOf:
       - $ref: '#/components/schemas/api-response-single'
@@ -13399,7 +13630,7 @@ components:
         checkDisks:
           $ref: '#/components/schemas/checkDisks'
         id:
-          $ref: '#/components/schemas/CloudflareClientAPI_uuid'
+          $ref: '#/components/schemas/uuid'
         requireAll:
           $ref: '#/components/schemas/requireAll'
     input_rtmps:
@@ -13576,9 +13807,12 @@ components:
       readOnly: true
     ip:
       type: string
-      description: IPV6 destination ip assigned to this location. DNS requests sent
-        to this IP will counted as the request under this location. (auto-generated).
-      example: 2001:0db8:85a3:0000:0000:8a2e:0370:7334
+      description: IPv4/IPv6 address of primary or secondary nameserver, depending
+        on what zone this peer is linked to. For primary zones this IP defines the
+        IP of the secondary nameserver Cloudflare will NOTIFY upon zone changes. For
+        secondary zones this IP defines the IP of the primary nameserver Cloudflare
+        will send AXFR/IXFR requests to.
+      example: 192.0.2.53
     ip-list:
       properties:
         description:
@@ -13824,7 +14058,7 @@ components:
         customer_endpoint:
           $ref: '#/components/schemas/customer_ipsec_endpoint'
         description:
-          $ref: '#/components/schemas/CloudflareClientAPI_components-schemas-description'
+          $ref: '#/components/schemas/components-schemas-description'
         id:
           $ref: '#/components/schemas/CloudflareClientAPI_schemas-identifier'
         interface_address:
@@ -14207,7 +14441,7 @@ components:
                 created:
                   $ref: '#/components/schemas/signing_key_created'
                 id:
-                  $ref: '#/components/schemas/schemas-identifier'
+                  $ref: '#/components/schemas/cloudflare-stream-client-api_schemas-identifier'
     key_rotation_interval_days:
       type: number
       description: The number of days between key rotations.
@@ -14313,7 +14547,7 @@ components:
         created:
           $ref: '#/components/schemas/signing_key_created'
         id:
-          $ref: '#/components/schemas/schemas-identifier'
+          $ref: '#/components/schemas/cloudflare-stream-client-api_schemas-identifier'
         jwk:
           $ref: '#/components/schemas/jwk'
         pem:
@@ -14584,13 +14818,13 @@ components:
         created_at:
           $ref: '#/components/schemas/timestamp'
         description:
-          $ref: '#/components/schemas/description'
+          $ref: '#/components/schemas/CloudflareClientAPI_description'
         id:
-          $ref: '#/components/schemas/uuid'
+          $ref: '#/components/schemas/CloudflareClientAPI_uuid'
         name:
-          $ref: '#/components/schemas/name'
+          $ref: '#/components/schemas/CloudflareClientAPI_name'
         type:
-          $ref: '#/components/schemas/type'
+          $ref: '#/components/schemas/CloudflareClientAPI_type'
         updated_at:
           $ref: '#/components/schemas/timestamp'
     lists-async-response:
@@ -15127,11 +15361,11 @@ components:
         ecs_support:
           $ref: '#/components/schemas/ecs-support'
         id:
-          $ref: '#/components/schemas/schemas-uuid'
+          $ref: '#/components/schemas/CloudflareClientAPI_schemas-uuid'
         ip:
-          $ref: '#/components/schemas/ip'
+          $ref: '#/components/schemas/CloudflareClientAPI_ip'
         name:
-          $ref: '#/components/schemas/schemas-name'
+          $ref: '#/components/schemas/CloudflareClientAPI_schemas-name'
         networks:
           $ref: '#/components/schemas/network'
         updated_at:
@@ -15262,13 +15496,13 @@ components:
         destination_conf:
           $ref: '#/components/schemas/destination_conf'
         enabled:
-          $ref: '#/components/schemas/CloudflareClientAPI_enabled'
+          $ref: '#/components/schemas/enabled'
         error_message:
           $ref: '#/components/schemas/error_message'
         frequency:
           $ref: '#/components/schemas/frequency'
         id:
-          $ref: '#/components/schemas/CloudflareClientAPI_id'
+          $ref: '#/components/schemas/id'
         last_complete:
           $ref: '#/components/schemas/last_complete'
         last_error:
@@ -16190,8 +16424,9 @@ components:
                   $ref: '#/components/schemas/route'
     name:
       type: string
-      description: The name of the List.
-      example: Admin Serial Numbers
+      description: A short name to identify the health check. Only alphanumeric characters,
+        hyphens and underscores are allowed.
+      example: server-1
     name_servers:
       type: array
       description: List of name servers.
@@ -17773,11 +18008,11 @@ components:
         id:
           $ref: '#/components/schemas/components-schemas-identifier'
         ip:
-          $ref: '#/components/schemas/CloudflareClientAPI_ip'
+          $ref: '#/components/schemas/ip'
         ixfr_enable:
           $ref: '#/components/schemas/ixfr_enable'
         name:
-          $ref: '#/components/schemas/CloudflareClientAPI_components-schemas-name'
+          $ref: '#/components/schemas/components-schemas-name'
         port:
           $ref: '#/components/schemas/port'
         tsig_id:
@@ -18457,10 +18692,10 @@ components:
       example: center
       readOnly: true
     precedence:
-      type: integer
-      description: Precedence sets the ordering of the rules. Lower values indicate
-        higher precedence. At each processing phase, applicable rules are evaluated
-        in ascending order of this value.
+      type: number
+      description: The precedence of the policy. Lower values indicate higher precedence.
+        Policies will be evaluated in ascending order of this field.
+      example: 100
     predefined_entry:
       type: object
       title: Predefined entry
@@ -18801,7 +19036,7 @@ components:
         created_at:
           $ref: '#/components/schemas/timestamp'
         id:
-          $ref: '#/components/schemas/schemas-uuid'
+          $ref: '#/components/schemas/CloudflareClientAPI_schemas-uuid'
         ips:
           $ref: '#/components/schemas/ips'
         name:
@@ -19067,13 +19302,13 @@ components:
         consecutive_successes:
           $ref: '#/components/schemas/consecutive_successes'
         description:
-          $ref: '#/components/schemas/CloudflareClientAPI_description'
+          $ref: '#/components/schemas/description'
         http_config:
           $ref: '#/components/schemas/http_config'
         interval:
           $ref: '#/components/schemas/interval'
         name:
-          $ref: '#/components/schemas/CloudflareClientAPI_name'
+          $ref: '#/components/schemas/name'
         retries:
           $ref: '#/components/schemas/retries'
         suspended:
@@ -19083,7 +19318,7 @@ components:
         timeout:
           $ref: '#/components/schemas/timeout'
         type:
-          $ref: '#/components/schemas/CloudflareClientAPI_type'
+          $ref: '#/components/schemas/type'
     query_preview:
       type: object
       required:
@@ -19821,7 +20056,7 @@ components:
           result:
             type: array
             items:
-              $ref: '#/components/schemas/lists'
+              $ref: '#/components/schemas/healthchecks'
     response_create:
       allOf:
       - $ref: '#/components/schemas/api-response-single'
@@ -19988,7 +20223,7 @@ components:
       description: A list of device ids to revoke.
       maxLength: 200
       items:
-        $ref: '#/components/schemas/CloudflareClientAPI_schemas-uuid'
+        $ref: '#/components/schemas/schemas-uuid'
     revoked_at:
       type: string
       format: date-time
@@ -20389,6 +20624,20 @@ components:
               type: boolean
               description: Enable DLP payload logging for this rule.
               example: true
+        untrusted_cert:
+          type: object
+          description: Configure behavior when an upstream cert is invalid / an SSL
+            error occurs.
+          properties:
+            enabled:
+              type: string
+              description: The action to perform upon seeing an untrusted certificate.
+                Default action is error with HTTP code 526.
+              enum:
+              - pass_through
+              - block
+              - error
+              example: error
     rule_action:
       type: string
       description: The action to take when the expression matches.
@@ -20597,31 +20846,31 @@ components:
       type: object
       properties:
         action:
-          $ref: '#/components/schemas/action'
+          $ref: '#/components/schemas/CloudflareClientAPI_action'
         created_at:
           $ref: '#/components/schemas/timestamp'
         deleted_at:
           $ref: '#/components/schemas/deleted_at'
         description:
-          $ref: '#/components/schemas/schemas-description'
+          $ref: '#/components/schemas/CloudflareClientAPI_schemas-description'
         device_posture:
           $ref: '#/components/schemas/device_posture'
         enabled:
-          $ref: '#/components/schemas/enabled'
+          $ref: '#/components/schemas/CloudflareClientAPI_enabled'
         filters:
           $ref: '#/components/schemas/filters'
         id:
-          $ref: '#/components/schemas/uuid'
+          $ref: '#/components/schemas/CloudflareClientAPI_uuid'
         identity:
           $ref: '#/components/schemas/identity'
         name:
-          $ref: '#/components/schemas/components-schemas-name'
+          $ref: '#/components/schemas/CloudflareClientAPI_components-schemas-name'
         precedence:
-          $ref: '#/components/schemas/precedence'
+          $ref: '#/components/schemas/CloudflareClientAPI_precedence'
         rule_settings:
           $ref: '#/components/schemas/rule-settings'
         schedule:
-          $ref: '#/components/schemas/schedule'
+          $ref: '#/components/schemas/CloudflareClientAPI_schedule'
         traffic:
           $ref: '#/components/schemas/traffic'
         updated_at:
@@ -20759,9 +21008,9 @@ components:
         precedence:
           $ref: '#/components/schemas/schemas-precedence'
         rule_settings:
-          $ref: '#/components/schemas/rule-settings'
+          $ref: '#/components/schemas/CloudflareClientAPI_rule-settings'
         schedule:
-          $ref: '#/components/schemas/schedule'
+          $ref: '#/components/schemas/CloudflareClientAPI_schedule'
         traffic:
           $ref: '#/components/schemas/traffic'
         updated_at:
@@ -21045,62 +21294,10 @@ components:
       minimum: 0
       maximum: 1
     schedule:
-      type: object
-      description: Schedule for activating DNS policies. Does not apply to HTTP or
-        network policies.
-      properties:
-        fri:
-          type: string
-          description: The time intervals when the rule will be active on Fridays,
-            in increasing order from 00:00-24:00.  If this parameter is omitted, the
-            rule will be deactivated on Fridays.
-          example: 08:00-12:30,13:30-17:00
-        mon:
-          type: string
-          description: The time intervals when the rule will be active on Mondays,
-            in increasing order from 00:00-24:00. If this parameter is omitted, the
-            rule will be deactivated on Mondays.
-          example: 08:00-12:30,13:30-17:00
-        sat:
-          type: string
-          description: The time intervals when the rule will be active on Saturdays,
-            in increasing order from 00:00-24:00.  If this parameter is omitted, the
-            rule will be deactivated on Saturdays.
-          example: 08:00-12:30,13:30-17:00
-        sun:
-          type: string
-          description: The time intervals when the rule will be active on Sundays,
-            in increasing order from 00:00-24:00. If this parameter is omitted, the
-            rule will be deactivated on Sundays.
-          example: 08:00-12:30,13:30-17:00
-        thu:
-          type: string
-          description: The time intervals when the rule will be active on Thursdays,
-            in increasing order from 00:00-24:00. If this parameter is omitted, the
-            rule will be deactivated on Thursdays.
-          example: 08:00-12:30,13:30-17:00
-        time_zone:
-          type: string
-          description: The time zone the rule will be evaluated against. If a [valid
-            time zone city name](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List)
-            is provided, Gateway will always use the current time at that time zone.
-            If this parameter is omitted, then the time zone inferred from the user's
-            source IP is used to evaluate the rule. If Gateway cannot determine the
-            time zone from the IP, we will fall back to the time zone of the user's
-            connected data center.
-          example: America/New York
-        tue:
-          type: string
-          description: The time intervals when the rule will be active on Tuesdays,
-            in increasing order from 00:00-24:00. If this parameter is omitted, the
-            rule will be deactivated on Tuesdays.
-          example: 08:00-12:30,13:30-17:00
-        wed:
-          type: string
-          description: The time intervals when the rule will be active on Wednesdays,
-            in increasing order from 00:00-24:00. If this parameter is omitted, the
-            rule will be deactivated on Wednesdays.
-          example: 08:00-12:30,13:30-17:00
+      type: string
+      description: 'Polling frequency for the WARP client posture check. Default:
+        `5m` (poll every five minutes). Minimum: `1m`.'
+      example: 1h
     schema_response_discovery:
       allOf:
       - $ref: '#/components/schemas/default_response'
@@ -21661,8 +21858,9 @@ components:
       nullable: true
     schemas-description:
       type: string
-      description: The description of the Rule.
-      example: Block the bad websites based on host name
+      description: A description of the policy.
+      example: Policy for test teams.
+      maxLength: 500
     schemas-destination_conf:
       type: string
       format: uri
@@ -22045,13 +22243,12 @@ components:
       - $ref: '#/components/schemas/api-response-single'
       - properties:
           result:
-            nullable: true
+            type: object
+            properties:
+              id:
+                $ref: '#/components/schemas/schemas-identifier'
     schemas-identifier:
-      type: string
-      description: Identifier
-      example: 023e105f4ecef8ad9ca31a8372d0c353
-      readOnly: true
-      maxLength: 32
+      example: 69cd1e104af3e6ed3cb344f263fd0d5a
     schemas-identity-provider:
       type: object
       required:
@@ -22278,8 +22475,8 @@ components:
       default: 1476
     schemas-name:
       type: string
-      description: The name of the Location.
-      example: Austin Office Location
+      description: TSIG key name.
+      example: tsig.customer.cf.
     schemas-namespace:
       type: object
       properties:
@@ -22774,7 +22971,7 @@ components:
           result:
             type: array
             items:
-              $ref: '#/components/schemas/locations'
+              $ref: '#/components/schemas/peer'
     schemas-response_model:
       type: object
       properties:
@@ -23013,7 +23210,7 @@ components:
       - $ref: '#/components/schemas/api-response-single'
       - properties:
           result:
-            $ref: '#/components/schemas/locations'
+            $ref: '#/components/schemas/peer'
     schemas-ssl:
       oneOf:
       - type: object
@@ -23240,7 +23437,7 @@ components:
         customer_endpoint:
           $ref: '#/components/schemas/customer_ipsec_endpoint'
         description:
-          $ref: '#/components/schemas/CloudflareClientAPI_components-schemas-description'
+          $ref: '#/components/schemas/components-schemas-description'
         interface_address:
           $ref: '#/components/schemas/interface_address'
         name:
@@ -23346,7 +23543,10 @@ components:
         type: string
         example: api.mysite.com/some/endpoint*
     schemas-uuid:
-      example: ed35569b41ce4d1facfe683550f54086
+      type: string
+      description: Device ID.
+      example: f174e90a-fafe-4643-bbbc-4a0ed4fc8415
+      maxLength: 36
     schemas-validation_method:
       type: string
       description: Validation method in use for a certificate pack order.
@@ -24278,7 +24478,7 @@ components:
       - $ref: '#/components/schemas/api-response-single'
       - properties:
           result:
-            $ref: '#/components/schemas/lists'
+            $ref: '#/components/schemas/healthchecks'
     single_response_incoming:
       allOf:
       - $ref: '#/components/schemas/api-response-single'
@@ -24332,15 +24532,15 @@ components:
               created_at:
                 $ref: '#/components/schemas/timestamp'
               description:
-                $ref: '#/components/schemas/description'
+                $ref: '#/components/schemas/CloudflareClientAPI_description'
               id:
-                $ref: '#/components/schemas/uuid'
+                $ref: '#/components/schemas/CloudflareClientAPI_uuid'
               items:
                 $ref: '#/components/schemas/items'
               name:
-                $ref: '#/components/schemas/name'
+                $ref: '#/components/schemas/CloudflareClientAPI_name'
               type:
-                $ref: '#/components/schemas/type'
+                $ref: '#/components/schemas/CloudflareClientAPI_type'
               updated_at:
                 $ref: '#/components/schemas/timestamp'
     single_role_response:
@@ -24825,9 +25025,9 @@ components:
         class:
           $ref: '#/components/schemas/class'
         description:
-          $ref: '#/components/schemas/components-schemas-description'
+          $ref: '#/components/schemas/CloudflareClientAPI_components-schemas-description'
         id:
-          $ref: '#/components/schemas/id'
+          $ref: '#/components/schemas/CloudflareClientAPI_id'
         name:
           $ref: '#/components/schemas/categories_components-schemas-name'
     subdomain:
@@ -25658,9 +25858,9 @@ components:
         algo:
           $ref: '#/components/schemas/algo'
         id:
-          $ref: '#/components/schemas/CloudflareClientAPI_schemas-identifier'
+          $ref: '#/components/schemas/schemas-identifier'
         name:
-          $ref: '#/components/schemas/CloudflareClientAPI_schemas-name'
+          $ref: '#/components/schemas/schemas-name'
         secret:
           $ref: '#/components/schemas/secret'
     tsig_components-schemas-identifier:
@@ -25901,14 +26101,10 @@ components:
       readOnly: true
     type:
       type: string
-      description: The type of List.
-      enum:
-      - SERIAL
-      - URL
-      - DOMAIN
-      - EMAIL
-      - IP
-      example: SERIAL
+      description: The protocol to use for the health check. Currently supported protocols
+        are 'HTTP', 'HTTPS' and 'TCP'.
+      default: HTTP
+      example: HTTPS
     ua-rules:
       allOf:
       - $ref: '#/components/schemas/firewalluablock'
@@ -25963,7 +26159,7 @@ components:
       description: A list of device ids to unrevoke.
       maxLength: 200
       items:
-        $ref: '#/components/schemas/CloudflareClientAPI_schemas-uuid'
+        $ref: '#/components/schemas/schemas-uuid'
     until:
       anyOf:
       - type: string
@@ -26335,7 +26531,7 @@ components:
               $ref: '#/components/schemas/CloudflareClientAPI_users'
     uuid:
       type: string
-      description: API Resource UUID tag.
+      description: API uuid tag.
       example: f174e90a-fafe-4643-bbbc-4a0ed4fc8415
       maxLength: 36
     validate_ownership_response:
@@ -33217,7 +33413,7 @@ paths:
                 destination_conf:
                   $ref: '#/components/schemas/destination_conf'
                 enabled:
-                  $ref: '#/components/schemas/CloudflareClientAPI_enabled'
+                  $ref: '#/components/schemas/enabled'
                 frequency:
                   $ref: '#/components/schemas/frequency'
                 logpull_options:
@@ -33257,7 +33453,7 @@ paths:
         in: path
         required: true
         schema:
-          $ref: '#/components/schemas/CloudflareClientAPI_id'
+          $ref: '#/components/schemas/id'
       - name: account_identifier
         in: path
         required: true
@@ -33309,7 +33505,7 @@ paths:
         in: path
         required: true
         schema:
-          $ref: '#/components/schemas/CloudflareClientAPI_id'
+          $ref: '#/components/schemas/id'
       - name: account_identifier
         in: path
         required: true
@@ -33345,7 +33541,7 @@ paths:
         in: path
         required: true
         schema:
-          $ref: '#/components/schemas/CloudflareClientAPI_id'
+          $ref: '#/components/schemas/id'
       - name: account_identifier
         in: path
         required: true
@@ -33360,7 +33556,7 @@ paths:
                 destination_conf:
                   $ref: '#/components/schemas/destination_conf'
                 enabled:
-                  $ref: '#/components/schemas/CloudflareClientAPI_enabled'
+                  $ref: '#/components/schemas/enabled'
                 frequency:
                   $ref: '#/components/schemas/frequency'
                 logpull_options:
@@ -39183,7 +39379,7 @@ paths:
         in: path
         required: true
         schema:
-          $ref: '#/components/schemas/schemas-identifier'
+          $ref: '#/components/schemas/cloudflare-stream-client-api_schemas-identifier'
       responses:
         4xx:
           description: List captions or subtitles response failure
@@ -39223,7 +39419,7 @@ paths:
         in: path
         required: true
         schema:
-          $ref: '#/components/schemas/schemas-identifier'
+          $ref: '#/components/schemas/cloudflare-stream-client-api_schemas-identifier'
       requestBody:
         required: true
         content:
@@ -39272,7 +39468,7 @@ paths:
         in: path
         required: true
         schema:
-          $ref: '#/components/schemas/schemas-identifier'
+          $ref: '#/components/schemas/cloudflare-stream-client-api_schemas-identifier'
       requestBody:
         required: true
         content:
@@ -39313,7 +39509,7 @@ paths:
         in: path
         required: true
         schema:
-          $ref: '#/components/schemas/schemas-identifier'
+          $ref: '#/components/schemas/cloudflare-stream-client-api_schemas-identifier'
       responses:
         4xx:
           description: Delete downloads response failure
@@ -39347,7 +39543,7 @@ paths:
         in: path
         required: true
         schema:
-          $ref: '#/components/schemas/schemas-identifier'
+          $ref: '#/components/schemas/cloudflare-stream-client-api_schemas-identifier'
       responses:
         4xx:
           description: List downloads response failure
@@ -39381,7 +39577,7 @@ paths:
         in: path
         required: true
         schema:
-          $ref: '#/components/schemas/schemas-identifier'
+          $ref: '#/components/schemas/cloudflare-stream-client-api_schemas-identifier'
       requestBody:
         required: true
         content:
@@ -39606,7 +39802,7 @@ paths:
         in: path
         required: true
         schema:
-          $ref: '#/components/schemas/schemas-identifier'
+          $ref: '#/components/schemas/cloudflare-stream-client-api_schemas-identifier'
       responses:
         4xx:
           description: List signing keys response failure
@@ -39637,7 +39833,7 @@ paths:
         in: path
         required: true
         schema:
-          $ref: '#/components/schemas/schemas-identifier'
+          $ref: '#/components/schemas/cloudflare-stream-client-api_schemas-identifier'
       requestBody:
         required: true
         content:
@@ -39672,12 +39868,12 @@ paths:
         in: path
         required: true
         schema:
-          $ref: '#/components/schemas/schemas-identifier'
+          $ref: '#/components/schemas/cloudflare-stream-client-api_schemas-identifier'
       - name: account_identifier
         in: path
         required: true
         schema:
-          $ref: '#/components/schemas/schemas-identifier'
+          $ref: '#/components/schemas/cloudflare-stream-client-api_schemas-identifier'
       requestBody:
         required: true
         content:
@@ -39712,7 +39908,7 @@ paths:
         in: path
         required: true
         schema:
-          $ref: '#/components/schemas/schemas-identifier'
+          $ref: '#/components/schemas/cloudflare-stream-client-api_schemas-identifier'
       responses:
         4xx:
           description: List live inputs response failure
@@ -39742,7 +39938,7 @@ paths:
         in: path
         required: true
         schema:
-          $ref: '#/components/schemas/schemas-identifier'
+          $ref: '#/components/schemas/cloudflare-stream-client-api_schemas-identifier'
       requestBody:
         required: true
         content:
@@ -39784,7 +39980,7 @@ paths:
         in: path
         required: true
         schema:
-          $ref: '#/components/schemas/schemas-identifier'
+          $ref: '#/components/schemas/cloudflare-stream-client-api_schemas-identifier'
       requestBody:
         required: true
         content:
@@ -39818,7 +40014,7 @@ paths:
         in: path
         required: true
         schema:
-          $ref: '#/components/schemas/schemas-identifier'
+          $ref: '#/components/schemas/cloudflare-stream-client-api_schemas-identifier'
       responses:
         4xx:
           description: Retrieve a live input response failure
@@ -39852,7 +40048,7 @@ paths:
         in: path
         required: true
         schema:
-          $ref: '#/components/schemas/schemas-identifier'
+          $ref: '#/components/schemas/cloudflare-stream-client-api_schemas-identifier'
       requestBody:
         required: true
         content:
@@ -39893,7 +40089,7 @@ paths:
         in: path
         required: true
         schema:
-          $ref: '#/components/schemas/schemas-identifier'
+          $ref: '#/components/schemas/cloudflare-stream-client-api_schemas-identifier'
       responses:
         4xx:
           description: List all outputs associated with a specified live input response
@@ -39930,7 +40126,7 @@ paths:
         in: path
         required: true
         schema:
-          $ref: '#/components/schemas/schemas-identifier'
+          $ref: '#/components/schemas/cloudflare-stream-client-api_schemas-identifier'
       requestBody:
         required: true
         content:
@@ -39976,7 +40172,7 @@ paths:
         in: path
         required: true
         schema:
-          $ref: '#/components/schemas/schemas-identifier'
+          $ref: '#/components/schemas/cloudflare-stream-client-api_schemas-identifier'
       requestBody:
         required: true
         content:
@@ -40015,7 +40211,7 @@ paths:
         in: path
         required: true
         schema:
-          $ref: '#/components/schemas/schemas-identifier'
+          $ref: '#/components/schemas/cloudflare-stream-client-api_schemas-identifier'
       requestBody:
         required: true
         content:
@@ -46234,7 +46430,7 @@ paths:
         in: path
         required: true
         schema:
-          $ref: '#/components/schemas/CloudflareClientAPI_uuid'
+          $ref: '#/components/schemas/uuid'
       responses:
         4xx:
           description: Delete DEX test response failure
@@ -46270,7 +46466,7 @@ paths:
         in: path
         required: true
         schema:
-          $ref: '#/components/schemas/CloudflareClientAPI_uuid'
+          $ref: '#/components/schemas/uuid'
       responses:
         4xx:
           description: Device DEX test response failure
@@ -46306,7 +46502,7 @@ paths:
         in: path
         required: true
         schema:
-          $ref: '#/components/schemas/CloudflareClientAPI_uuid'
+          $ref: '#/components/schemas/uuid'
       requestBody:
         required: true
         content:
@@ -48097,7 +48293,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/gateway-account-settings'
+              $ref: '#/components/schemas/CloudflareClientAPI_gateway-account-settings'
       responses:
         4xx:
           description: Update Zero Trust account configuration response failure
@@ -48959,9 +49155,9 @@ paths:
                 precedence:
                   $ref: '#/components/schemas/schemas-precedence'
                 rule_settings:
-                  $ref: '#/components/schemas/rule-settings'
+                  $ref: '#/components/schemas/CloudflareClientAPI_rule-settings'
                 schedule:
-                  $ref: '#/components/schemas/schedule'
+                  $ref: '#/components/schemas/CloudflareClientAPI_schedule'
                 traffic:
                   $ref: '#/components/schemas/traffic'
       responses:
@@ -49103,9 +49299,9 @@ paths:
                 precedence:
                   $ref: '#/components/schemas/schemas-precedence'
                 rule_settings:
-                  $ref: '#/components/schemas/rule-settings'
+                  $ref: '#/components/schemas/CloudflareClientAPI_rule-settings'
                 schedule:
-                  $ref: '#/components/schemas/schedule'
+                  $ref: '#/components/schemas/CloudflareClientAPI_schedule'
                 traffic:
                   $ref: '#/components/schemas/traffic'
       responses:
@@ -85499,7 +85695,7 @@ paths:
                 destination_conf:
                   $ref: '#/components/schemas/destination_conf'
                 enabled:
-                  $ref: '#/components/schemas/CloudflareClientAPI_enabled'
+                  $ref: '#/components/schemas/enabled'
                 frequency:
                   $ref: '#/components/schemas/frequency'
                 logpull_options:
@@ -85539,7 +85735,7 @@ paths:
         in: path
         required: true
         schema:
-          $ref: '#/components/schemas/CloudflareClientAPI_id'
+          $ref: '#/components/schemas/id'
       - name: zone_identifier
         in: path
         required: true
@@ -85591,7 +85787,7 @@ paths:
         in: path
         required: true
         schema:
-          $ref: '#/components/schemas/CloudflareClientAPI_id'
+          $ref: '#/components/schemas/id'
       - name: zone_identifier
         in: path
         required: true
@@ -85627,7 +85823,7 @@ paths:
         in: path
         required: true
         schema:
-          $ref: '#/components/schemas/CloudflareClientAPI_id'
+          $ref: '#/components/schemas/id'
       - name: zone_identifier
         in: path
         required: true
@@ -85642,7 +85838,7 @@ paths:
                 destination_conf:
                   $ref: '#/components/schemas/destination_conf'
                 enabled:
-                  $ref: '#/components/schemas/CloudflareClientAPI_enabled'
+                  $ref: '#/components/schemas/enabled'
                 frequency:
                   $ref: '#/components/schemas/frequency'
                 logpull_options:
