@@ -1,4 +1,3 @@
-const fetch = require('node-fetch');
 const puppeteer = require('puppeteer');
 
 (async () => {
@@ -7,6 +6,11 @@ const puppeteer = require('puppeteer');
     id: process.env.ALGOLIA_CRAWLER_ID,
     userId: process.env.ALGOLIA_CRAWLER_USER_ID,
     apiKey: process.env.ALGOLIA_CRAWLER_API_KEY,
+  }
+
+  if (!crawler.url || !crawler.id || !crawler.userId || !crawler.apiKey) {
+    console.log("Missing required env vars")
+    return
   }
 
   const updateUrls = async (urls) => {
