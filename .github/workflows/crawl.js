@@ -78,4 +78,4 @@ const puppeteer = require('puppeteer');
   console.log(resp)
 
   await browser.close();
-})
+})()
