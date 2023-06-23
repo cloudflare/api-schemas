@@ -76,10 +76,16 @@ const puppeteer = require('puppeteer');
   })
 
   const uniqLinks = [...new Set(filteredLinks)];
-
+  
   console.log(`Got ${uniqLinks.length} links`)
 
-  const resp = await updateUrls(uniqLinks);
+  const linksWithParam = uniqLinks.map(link => {
+    const baseUrl = new URL(link)
+    baseUrl.searchParams.set("schema_url", "https://raw.githubusercontent.com/cloudflare/api-schemas/json/openapi.yaml")
+    return baseUrl.toString()
+  })
+
+  const resp = await updateUrls(linksWithParam);
   console.log(resp)
 
   await browser.close();
