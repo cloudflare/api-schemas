@@ -55,7 +55,7 @@ const puppeteer = require('puppeteer');
   const page = await browser.newPage();
   page.setDefaultNavigationTimeout(0);
 
-  const url = 'https://developers.cloudflare.com/api?_expand=true&schema_url=https://raw.githubusercontent.com/cloudflare/api-schemas/json/openapi.yaml'
+  const url = 'https://developers.cloudflare.com/api?_expand=true&schema_url=https://raw.githubusercontent.com/cloudflare/api-schemas/main/openapi.yaml'
 
   console.log('Navigating to url: ', url)
   await page.goto(url);
