@@ -61,7 +61,7 @@ const puppeteer = require('puppeteer');
   await page.goto(url);
 
   console.log("Waiting for page to render...")
-  await page.waitForSelector('text/Cloudflare API Schema')
+  await page.waitForSelector('text/Cloudflare API')
 
   // Wait for text from an expanded sidebar item
   await page.waitForSelector('text/List Accounts')
