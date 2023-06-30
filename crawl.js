@@ -81,7 +81,7 @@ const puppeteer = require('puppeteer');
 
   const linksWithParam = uniqLinks.map(link => {
     const baseUrl = new URL(link)
-    baseUrl.searchParams.set("schema_url", "https://raw.githubusercontent.com/cloudflare/api-schemas/json/openapi.yaml")
+    baseUrl.searchParams.set("schema_url", "https://raw.githubusercontent.com/cloudflare/api-schemas/main/openapi.yaml")
     return baseUrl.toString()
   })
 
