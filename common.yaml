@@ -12,6 +12,7 @@ components:
       type: string
       maxLength: 36
       example: f174e90a-fafe-4643-bbbc-4a0ed4fc8415
+
     identifier:
       description: Identifier
       type: string
@@ -39,6 +40,7 @@ components:
           description: Total results available without any search parameters
           type: number
           example: 2000
+
     api-response-collection:
       type: object
       allOf:
@@ -65,13 +67,13 @@ components:
             type: string
         uniqueItems: true
       example: []
+
     api-response-common:
       type: object
       required:
         - success
         - errors
         - messages
-        - result
       properties:
         success:
           description: Whether the API call was successful
@@ -83,12 +85,7 @@ components:
           $ref: "#/components/schemas/messages"
         messages:
           $ref: "#/components/schemas/messages"
-        result:
-          anyOf:
-            - type: object
-            - type: array
-              items: {}
-            - type: string
+
     api-response-common-failure:
       type: object
       required:
@@ -120,6 +117,7 @@ components:
           example: null
           type: object
           nullable: true
+
     api-response-single-id:
       type: object
       allOf:
@@ -133,6 +131,7 @@ components:
                 id:
                   $ref: "#/components/schemas/identifier"
               nullable: true
+
     api-response-single:
       type: object
       allOf:
@@ -179,6 +178,7 @@ components:
           format: date-time
           readOnly: true
           example: 2014-03-01T12:21:02.0000Z
+
     scope:
       description: All zones owned by the account will have the rule applied
       type: object
