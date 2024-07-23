@@ -55,6 +55,18 @@ components:
               items: {}
             result_info:
               $ref: "#/components/schemas/result_info"
+    source:
+      type: object
+      properties:
+        pointer:
+          type: string
+          description: JSON Pointer [RFC6901] to the associated entity in the request document
+        parameter:
+          type: string
+          description: string indicating which URI query parameter, if any, caused the error
+        parameter_value_index:
+          type: integer
+          description: indicates position of parameter value, if any, which caused the error
     messages:
       type: array
       items:
@@ -68,6 +80,23 @@ components:
             minimum: 1000
           message:
             type: string
+            description: Error message rendered using accept-language header if provided and supported, otherwise rendered using origin server default locale
+          debug_message:
+            type: string
+            description: Error message rendered using origin server default locale if 'message' is not rendered using origin server default locale, omitted otherwise
+          l10n_key:
+            type: string
+            description: An optional key used to look up client-side locations from a map
+          doc_urls:
+            type: array
+            items:
+              type: string
+            description: Optional list of hyperlinks to documentation about the message
+          source:
+            $ref: "#/components/schemas/source"
+          meta:
+            type: object
+            description: A freeform key/value map. Origin servers will define structure for this field in their own OpenAPI specs.
         uniqueItems: true
       example: []
 
@@ -108,8 +137,17 @@ components:
             - $ref: "#/components/schemas/messages"
           minLength: 1
           example:
-            - code: 7003
-              message: No route for the URI
+            - code: 1234
+              message: Il dominio 'www.example.com' è già in uso
+              debug_message: The domain 'www.example.com' is already in use
+              l10n_key: errors.domain_already_in_use
+              doc_urls:
+                - https://developers.cloudflare.com/api/operations/zones-post
+                - https://developers.cloudflare.com/api/
+              source:
+                pointer: "/domain/hostname"
+              meta:
+                hostname: www.example.com
         messages:
           allOf:
             - $ref: "#/components/schemas/messages"
