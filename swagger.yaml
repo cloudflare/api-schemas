@@ -2171,3 +2171,767 @@ components:
                 type: string
         result:
           type: object
+
+          paths:
+  /zones/{zone_id}/settings/always_use_https:
+    get:
+      summary: Retrieve Always Use HTTPS Setting
+      description: Fetch the current "Always Use HTTPS" setting for a specific zone.
+      parameters:
+        - name: zone_id
+          in: path
+          required: true
+          description: The zone identifier.
+          schema:
+            type: string
+            example: "023e105f4ecef8ad9ca31a8372d0c353"
+      responses:
+        '200':
+          description: Always Use HTTPS setting retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                        message:
+                          type: string
+                    example: []
+                  result:
+                    type: object
+                    properties:
+                      always_use_https:
+                        type: boolean
+                        description: Whether "Always Use HTTPS" is enabled.
+                    example:
+                      always_use_https: true
+        '404':
+          description: Always Use HTTPS setting not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                        message:
+                          type: string
+                    example: [{"code": 1018, "message": "Always Use HTTPS setting not found"}]
+
+  /zones/{zone_id}/settings/always_use_https:
+    patch:
+      summary: Update Always Use HTTPS Setting
+      description: Modify the "Always Use HTTPS" setting for a specific zone.
+      parameters:
+        - name: zone_id
+          in: path
+          required: true
+          description: The zone identifier.
+          schema:
+            type: string
+            example: "023e105f4ecef8ad9ca31a8372d0c353"
+      requestBody:
+        description: Always Use HTTPS setting to be updated.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                always_use_https:
+                  type: boolean
+                  description: Whether to enable or disable "Always Use HTTPS".
+              example:
+                always_use_https: true
+      responses:
+        '200':
+          description: Always Use HTTPS setting updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                        message:
+                          type: string
+                    example: []
+                  result:
+                    type: object
+                    properties:
+                      always_use_https:
+                        type: boolean
+                    example:
+                      always_use_https: true
+        '404':
+          description: Always Use HTTPS setting not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                        message:
+                          type: string
+                    example: [{"code": 1018, "message": "Always Use HTTPS setting not found"}]
+
+  /zones/{zone_id}/settings/min_tls_version:
+    get:
+      summary: Retrieve Minimum TLS Version Setting
+      description: Fetch the current minimum TLS version setting for a specific zone.
+      parameters:
+        - name: zone_id
+          in: path
+          required: true
+          description: The zone identifier.
+          schema:
+            type: string
+            example: "023e105f4ecef8ad9ca31a8372d0c353"
+      responses:
+        '200':
+          description: Minimum TLS version setting retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                        message:
+                          type: string
+                    example: []
+                  result:
+                    type: object
+                    properties:
+                      min_tls_version:
+                        type: string
+                        description: The minimum allowed TLS version (e.g., "TLS 1.1", "TLS 1.2", "TLS 1.3").
+                    example:
+                      min_tls_version: "TLS 1.2"
+        '404':
+          description: Minimum TLS version setting not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                        message:
+                          type: string
+                    example: [{"code": 1019, "message": "Minimum TLS version setting not found"}]
+
+components:
+  schemas:
+    AlwaysUseHttpsSettings:
+      type: object
+      properties:
+        always_use_https:
+          type: boolean
+          description: Whether "Always Use HTTPS" is enabled.
+    MinTlsVersionSettings:
+      type: object
+      properties:
+        min_tls_version:
+          type: string
+          description: The minimum allowed TLS version (e.g., "TLS 1.2", "TLS 1.3").
+    ApiResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              code:
+                type: integer
+              message:
+                type: string
+        result:
+          type: object
+
+paths:
+  /zones/{zone_id}/settings/browser_integrity_check:
+    get:
+      summary: Retrieve Browser Integrity Check Setting
+      description: Fetch the current "Browser Integrity Check" setting for a specific zone. This setting checks requests for common HTTP headers used by bots and bad actors.
+      parameters:
+        - name: zone_id
+          in: path
+          required: true
+          description: The zone identifier.
+          schema:
+            type: string
+            example: "023e105f4ecef8ad9ca31a8372d0c353"
+      responses:
+        '200':
+          description: Browser Integrity Check setting retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                        message:
+                          type: string
+                    example: []
+                  result:
+                    type: object
+                    properties:
+                      browser_integrity_check:
+                        type: boolean
+                        description: Whether Browser Integrity Check is enabled.
+                    example:
+                      browser_integrity_check: true
+        '404':
+          description: Browser Integrity Check setting not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                        message:
+                          type: string
+                    example: [{"code": 1020, "message": "Browser Integrity Check setting not found"}]
+
+  /zones/{zone_id}/settings/browser_integrity_check:
+    patch:
+      summary: Update Browser Integrity Check Setting
+      description: Modify the "Browser Integrity Check" setting for a specific zone.
+      parameters:
+        - name: zone_id
+          in: path
+          required: true
+          description: The zone identifier.
+          schema:
+            type: string
+            example: "023e105f4ecef8ad9ca31a8372d0c353"
+      requestBody:
+        description: Browser Integrity Check setting to be updated.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                browser_integrity_check:
+                  type: boolean
+                  description: Whether to enable or disable Browser Integrity Check.
+              example:
+                browser_integrity_check: true
+      responses:
+        '200':
+          description: Browser Integrity Check setting updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                        message:
+                          type: string
+                    example: []
+                  result:
+                    type: object
+                    properties:
+                      browser_integrity_check:
+                        type: boolean
+                    example:
+                      browser_integrity_check: true
+        '404':
+          description: Browser Integrity Check setting not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                        message:
+                          type: string
+                    example: [{"code": 1020, "message": "Browser Integrity Check setting not found"}]
+
+  /zones/{zone_id}/settings/opportunistic_encryption:
+    get:
+      summary: Retrieve Opportunistic Encryption Setting
+      description: Fetch the current "Opportunistic Encryption" setting for a specific zone, which allows browsers that support HTTP/2 to use encryption even when HTTP is used.
+      parameters:
+        - name: zone_id
+          in: path
+          required: true
+          description: The zone identifier.
+          schema:
+            type: string
+            example: "023e105f4ecef8ad9ca31a8372d0c353"
+      responses:
+        '200':
+          description: Opportunistic Encryption setting retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                        message:
+                          type: string
+                    example: []
+                  result:
+                    type: object
+                    properties:
+                      opportunistic_encryption:
+                        type: boolean
+                        description: Whether Opportunistic Encryption is enabled.
+                    example:
+                      opportunistic_encryption: true
+        '404':
+          description: Opportunistic Encryption setting not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                        message:
+                          type: string
+                    example: [{"code": 1021, "message": "Opportunistic Encryption setting not found"}]
+
+components:
+  schemas:
+    BrowserIntegrityCheckSettings:
+      type: object
+      properties:
+        browser_integrity_check:
+          type: boolean
+          description: Whether Browser Integrity Check is enabled.
+    OpportunisticEncryptionSettings:
+      type: object
+      properties:
+        opportunistic_encryption:
+          type: boolean
+          description: Whether Opportunistic Encryption is enabled.
+    ApiResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              code:
+                type: integer
+              message:
+                type: string
+        result:
+          type: object
+
+paths:
+  /zones/{zone_id}/settings/websockets:
+    get:
+      summary: Retrieve WebSockets Setting
+      description: Fetch the current WebSockets setting for a specific zone. This setting allows WebSocket connections through Cloudflare.
+      parameters:
+        - name: zone_id
+          in: path
+          required: true
+          description: The zone identifier.
+          schema:
+            type: string
+            example: "023e105f4ecef8ad9ca31a8372d0c353"
+      responses:
+        '200':
+          description: WebSockets setting retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                        message:
+                          type: string
+                    example: []
+                  result:
+                    type: object
+                    properties:
+                      websockets:
+                        type: boolean
+                        description: Whether WebSocket connections are enabled.
+                    example:
+                      websockets: true
+        '404':
+          description: WebSockets setting not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                        message:
+                          type: string
+                    example: [{"code": 1022, "message": "WebSockets setting not found"}]
+
+  /zones/{zone_id}/settings/websockets:
+    patch:
+      summary: Update WebSockets Setting
+      description: Modify the WebSockets setting for a specific zone.
+      parameters:
+        - name: zone_id
+          in: path
+          required: true
+          description: The zone identifier.
+          schema:
+            type: string
+            example: "023e105f4ecef8ad9ca31a8372d0c353"
+      requestBody:
+        description: WebSockets setting to be updated.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                websockets:
+                  type: boolean
+                  description: Whether to enable or disable WebSocket connections.
+              example:
+                websockets: true
+      responses:
+        '200':
+          description: WebSockets setting updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                        message:
+                          type: string
+                    example: []
+                  result:
+                    type: object
+                    properties:
+                      websockets:
+                        type: boolean
+                    example:
+                      websockets: true
+        '404':
+          description: WebSockets setting not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                        message:
+                          type: string
+                    example: [{"code": 1022, "message": "WebSockets setting not found"}]
+
+  /zones/{zone_id}/settings/email_obfuscation:
+    get:
+      summary: Retrieve Email Obfuscation Setting
+      description: Fetch the current "Email Obfuscation" setting for a specific zone. This setting protects email addresses from scraping bots.
+      parameters:
+        - name: zone_id
+          in: path
+          required: true
+          description: The zone identifier.
+          schema:
+            type: string
+            example: "023e105f4ecef8ad9ca31a8372d0c353"
+      responses:
+        '200':
+          description: Email Obfuscation setting retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                        message:
+                          type: string
+                    example: []
+                  result:
+                    type: object
+                    properties:
+                      email_obfuscation:
+                        type: boolean
+                        description: Whether Email Obfuscation is enabled.
+                    example:
+                      email_obfuscation: true
+        '404':
+          description: Email Obfuscation setting not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                        message:
+                          type: string
+                    example: [{"code": 1023, "message": "Email Obfuscation setting not found"}]
+
+  /zones/{zone_id}/settings/email_obfuscation:
+    patch:
+      summary: Update Email Obfuscation Setting
+      description: Modify the "Email Obfuscation" setting for a specific zone.
+      parameters:
+        - name: zone_id
+          in: path
+          required: true
+          description: The zone identifier.
+          schema:
+            type: string
+            example: "023e105f4ecef8ad9ca31a8372d0c353"
+      requestBody:
+        description: Email Obfuscation setting to be updated.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email_obfuscation:
+                  type: boolean
+                  description: Whether to enable or disable Email Obfuscation.
+              example:
+                email_obfuscation: true
+      responses:
+        '200':
+          description: Email Obfuscation setting updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                        message:
+                          type: string
+                    example: []
+                  result:
+                    type: object
+                    properties:
+                      email_obfuscation:
+                        type: boolean
+                    example:
+                      email_obfuscation: true
+        '404':
+          description: Email Obfuscation setting not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                        message:
+                          type: string
+                    example: [{"code": 1023, "message": "Email Obfuscation setting not found"}]
+
+components:
+  schemas:
+    WebsocketsSettings:
+      type: object
+      properties:
+        websockets:
+          type: boolean
+          description: Whether WebSockets connections are enabled.
+    EmailObfuscationSettings:
+      type: object
+      properties:
+        email_obfuscation:
+          type: boolean
+          description: Whether Email Obfuscation is enabled.
+    ApiResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              code:
+                type: integer
+              message:
+                type: string
+        result:
+          type: object
