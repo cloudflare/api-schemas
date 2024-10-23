@@ -951,3 +951,436 @@ components:
                 type: string
         result:
           type: object
+
+paths:
+  /zones/{zone_id}/firewall/rules:
+    get:
+      summary: Retrieve Firewall Rules
+      description: Fetch the list of firewall rules configured for a specific zone.
+      parameters:
+        - name: zone_id
+          in: path
+          required: true
+          description: The zone identifier.
+          schema:
+            type: string
+            example: "023e105f4ecef8ad9ca31a8372d0c353"
+      responses:
+        '200':
+          description: Firewall rules retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                        message:
+                          type: string
+                    example: []
+                  result:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        description:
+                          type: string
+                        action:
+                          type: string
+                        filter:
+                          type: string
+                    example:
+                      - id: "firewall_rule_1"
+                        description: "Block access to admin page"
+                        action: "block"
+                        filter: "http.request.uri.path eq '/admin'"
+        '404':
+          description: No firewall rules found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                        message:
+                          type: string
+                    example: [{"code": 1007, "message": "No firewall rules found"}]
+
+  /zones/{zone_id}/firewall/rules:
+    post:
+      summary: Create Firewall Rule
+      description: Add a new firewall rule to a specific zone.
+      parameters:
+        - name: zone_id
+          in: path
+          required: true
+          description: The zone identifier.
+          schema:
+            type: string
+            example: "023e105f4ecef8ad9ca31a8372d0c353"
+      requestBody:
+        description: Firewall rule object to create.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                description:
+                  type: string
+                  description: Description of the firewall rule.
+                action:
+                  type: string
+                  description: The action for the firewall rule (e.g., block, allow).
+                filter:
+                  type: string
+                  description: The filter expression that defines the conditions for the firewall rule.
+              example:
+                description: "Block access to admin page"
+                action: "block"
+                filter: "http.request.uri.path eq '/admin'"
+      responses:
+        '201':
+          description: Firewall rule created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                        message:
+                          type: string
+                    example: []
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      description:
+                        type: string
+                      action:
+                        type: string
+                      filter:
+                        type: string
+                    example:
+                      id: "firewall_rule_1"
+                      description: "Block access to admin page"
+                      action: "block"
+                      filter: "http.request.uri.path eq '/admin'"
+
+  /zones/{zone_id}/firewall/rules/{rule_id}:
+    delete:
+      summary: Delete Firewall Rule
+      description: Delete a specific firewall rule by its ID.
+      parameters:
+        - name: zone_id
+          in: path
+          required: true
+          description: The zone identifier.
+          schema:
+            type: string
+            example: "023e105f4ecef8ad9ca31a8372d0c353"
+        - name: rule_id
+          in: path
+          required: true
+          description: The firewall rule identifier.
+          schema:
+            type: string
+            example: "firewall_rule_1"
+      responses:
+        '204':
+          description: Firewall rule deleted successfully
+        '404':
+          description: Firewall rule not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                        message:
+                          type: string
+                    example: [{"code": 1008, "message": "Firewall rule not found"}]
+
+components:
+  schemas:
+    FirewallRule:
+      type: object
+      properties:
+        id:
+          type: string
+        description:
+          type: string
+        action:
+          type: string
+        filter:
+          type: string
+    ApiResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              code:
+                type: integer
+              message:
+                type: string
+        result:
+          type: object
+
+paths:
+  /zones/{zone_id}/analytics:
+    get:
+      summary: Retrieve Zone Analytics
+      description: Fetch the analytics data for a specific zone, including request counts, cached hits, and bandwidth usage.
+      parameters:
+        - name: zone_id
+          in: path
+          required: true
+          description: The zone identifier.
+          schema:
+            type: string
+            example: "023e105f4ecef8ad9ca31a8372d0c353"
+        - name: since
+          in: query
+          required: false
+          description: The start time of the analytics query (in ISO 8601 format).
+          schema:
+            type: string
+            format: date-time
+          example: "2024-01-01T00:00:00Z"
+        - name: until
+          in: query
+          required: false
+          description: The end time of the analytics query (in ISO 8601 format).
+          schema:
+            type: string
+            format: date-time
+          example: "2024-01-31T23:59:59Z"
+      responses:
+        '200':
+          description: Analytics data retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                        message:
+                          type: string
+                    example: []
+                  result:
+                    type: object
+                    properties:
+                      requests:
+                        type: integer
+                        description: Total number of requests.
+                      cached_hits:
+                        type: integer
+                        description: Total number of cached hits.
+                      bandwidth:
+                        type: object
+                        properties:
+                          total:
+                            type: integer
+                            description: Total bandwidth in bytes.
+                          cached:
+                            type: integer
+                            description: Cached bandwidth in bytes.
+                    example:
+                      requests: 150000
+                      cached_hits: 120000
+                      bandwidth:
+                        total: 500000000
+                        cached: 400000000
+        '404':
+          description: Zone not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                        message:
+                          type: string
+                    example: [{"code": 1009, "message": "Zone not found"}]
+
+  /zones/{zone_id}/settings/ssl:
+    get:
+      summary: Retrieve SSL Settings
+      description: Fetch the SSL settings for a specific zone.
+      parameters:
+        - name: zone_id
+          in: path
+          required: true
+          description: The zone identifier.
+          schema:
+            type: string
+            example: "023e105f4ecef8ad9ca31a8372d0c353"
+      responses:
+        '200':
+          description: SSL settings retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                        message:
+                          type: string
+                    example: []
+                  result:
+                    type: object
+                    properties:
+                      ssl_status:
+                        type: string
+                        description: The current SSL status.
+                      certificate_authority:
+                        type: string
+                        description: The certificate authority for the SSL certificate.
+                      expiration_date:
+                        type: string
+                        format: date-time
+                        description: The expiration date of the SSL certificate.
+                    example:
+                      ssl_status: "active"
+                      certificate_authority: "Let's Encrypt"
+                      expiration_date: "2024-12-31T23:59:59Z"
+        '404':
+          description: SSL settings not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                        message:
+                          type: string
+                    example: [{"code": 1010, "message": "SSL settings not found"}]
+
+components:
+  schemas:
+    Analytics:
+      type: object
+      properties:
+        requests:
+          type: integer
+          description: Total number of requests.
+        cached_hits:
+          type: integer
+          description: Total number of cached hits.
+        bandwidth:
+          type: object
+          properties:
+            total:
+              type: integer
+              description: Total bandwidth in bytes.
+            cached:
+              type: integer
+              description: Cached bandwidth in bytes.
+    SSLSettings:
+      type: object
+      properties:
+        ssl_status:
+          type: string
+          description: The current SSL status (e.g., "active", "expired").
+        certificate_authority:
+          type: string
+          description: The certificate authority issuing the SSL certificate.
+        expiration_date:
+          type: string
+          format: date-time
+          description: The expiration date of the SSL certificate.
+    ApiResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              code:
+                type: integer
+              message:
+                type: string
+        result:
+          type: object
