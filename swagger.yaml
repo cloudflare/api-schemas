@@ -1,0 +1,552 @@
+openapi: 3.0.0
+info:
+  title: Cloudflare API
+  version: "1.0.0"
+  description: |
+    This is the API documentation for the Cloudflare services. The API includes endpoints for account management, cache reserve, user details, and more.
+
+paths:
+  /cache/reserve/clear/{zone_id}/status:
+    get:
+      summary: Retrieve Cache Reserve Clear Status
+      description: Get the current status of Cache Reserve Clear operation.
+      parameters:
+        - name: zone_id
+          in: path
+          required: true
+          description: The zone identifier
+          schema:
+            type: string
+            example: "023e105f4ecef8ad9ca31a8372d0c353"
+      responses:
+        '200':
+          description: Cache reserve clear status retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                        message:
+                          type: string
+                    example: []
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      state:
+                        type: string
+                      start_ts:
+                        type: string
+                      end_ts:
+                        type: string
+                    example:
+                      id: "cache_reserve_clear"
+                      state: "Completed"
+                      start_ts: "2023-10-02T10:00:00.12345Z"
+                      end_ts: "2023-10-02T12:00:00.12345Z"
+        '404':
+          description: Cache reserve clear setting not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                          example: 1142
+                        message:
+                          type: string
+                          example: "Unable to retrieve cache_reserve_clear setting value. The zone setting does not exist."
+
+  /accounts/{account_id}:
+    get:
+      summary: Get Account Details
+      description: Fetch account information by account ID.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: string
+            example: "023e105f4ecef8ad9ca31a8372d0c353"
+      responses:
+        '200':
+          description: Account details retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                        message:
+                          type: string
+                    example: []
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      name:
+                        type: string
+                      created_on:
+                        type: string
+                        format: date-time
+                    example:
+                      id: "023e105f4ecef8ad9ca31a8372d0c353"
+                      name: "Example Account"
+                      created_on: "2021-05-20T12:00:00.123Z"
+
+components:
+  schemas:
+    UUID:
+      type: string
+      description: A universally unique identifier.
+      example: "f174e90a-fafe-4643-bbbc-4a0ed4fc8415"
+    Identifier:
+      type: string
+      description: A unique identifier string.
+      example: "023e105f4ecef8ad9ca31a8372d0c353"
+    Timestamp:
+      type: string
+      format: date-time
+      description: A timestamp formatted string.
+      example: "2021-05-20T12:00:00.123Z"
+    ApiResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              code:
+                type: integer
+              message:
+                type: string
+        result:
+          type: object
+
+paths:
+  /cache/reserve/{zone_id}/settings:
+    get:
+      summary: Retrieve Cache Reserve Settings
+      description: Fetch the current settings of Cache Reserve for a specified zone.
+      parameters:
+        - name: zone_id
+          in: path
+          required: true
+          description: The zone identifier.
+          schema:
+            type: string
+            example: "023e105f4ecef8ad9ca31a8372d0c353"
+      responses:
+        '200':
+          description: Cache Reserve settings retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                        message:
+                          type: string
+                    example: []
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      value:
+                        type: string
+                      editable:
+                        type: boolean
+                    example:
+                      id: "cache_reserve"
+                      value: "on"
+                      editable: true
+        '404':
+          description: Cache Reserve setting not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                          example: 1142
+                        message:
+                          type: string
+                          example: "Unable to retrieve cache_reserve setting value. The zone setting does not exist."
+
+  /users/{user_id}:
+    get:
+      summary: Retrieve User Information
+      description: Fetch user information based on the user ID.
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          description: The user identifier.
+          schema:
+            type: string
+            example: "e174e90a-fafe-4643-bbbc-4a0ed4fc8415"
+      responses:
+        '200':
+          description: User information retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                        message:
+                          type: string
+                    example: []
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      email:
+                        type: string
+                      first_name:
+                        type: string
+                      last_name:
+                        type: string
+                      created_on:
+                        type: string
+                        format: date-time
+                    example:
+                      id: "e174e90a-fafe-4643-bbbc-4a0ed4fc8415"
+                      email: "user@example.com"
+                      first_name: "John"
+                      last_name: "Doe"
+                      created_on: "2023-01-15T10:00:00.123Z"
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                        message:
+                          type: string
+                    example: [{"code": 1001, "message": "User not found"}]
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+        first_name:
+          type: string
+        last_name:
+          type: string
+        created_on:
+          type: string
+          format: date-time
+    CacheReserveSetting:
+      type: object
+      properties:
+        id:
+          type: string
+        value:
+          type: string
+        editable:
+          type: boolean
+    CacheReserveClearStatus:
+      type: object
+      properties:
+        id:
+          type: string
+        state:
+          type: string
+        start_ts:
+          type: string
+        end_ts:
+          type: string
+    ApiResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              code:
+                type: integer
+              message:
+                type: string
+        result:
+          type: object
+
+          paths:
+  /zones/{zone_id}:
+    get:
+      summary: Retrieve Zone Information
+      description: Fetch detailed information about a specific zone.
+      parameters:
+        - name: zone_id
+          in: path
+          required: true
+          description: The zone identifier.
+          schema:
+            type: string
+            example: "023e105f4ecef8ad9ca31a8372d0c353"
+      responses:
+        '200':
+          description: Zone information retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                        message:
+                          type: string
+                    example: []
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      name:
+                        type: string
+                      status:
+                        type: string
+                      original_registrar:
+                        type: string
+                      created_on:
+                        type: string
+                        format: date-time
+                    example:
+                      id: "023e105f4ecef8ad9ca31a8372d0c353"
+                      name: "example.com"
+                      status: "active"
+                      original_registrar: "GoDaddy"
+                      created_on: "2020-01-01T05:20:00.123Z"
+        '404':
+          description: Zone not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                        message:
+                          type: string
+                    example: [{"code": 1001, "message": "Zone not found"}]
+
+  /subscriptions/{account_id}/plans:
+    get:
+      summary: Retrieve Subscription Plans
+      description: Fetch all available subscription plans for a specific account.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          description: The account identifier.
+          schema:
+            type: string
+            example: "023e105f4ecef8ad9ca31a8372d0c353"
+      responses:
+        '200':
+          description: Subscription plans retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                        message:
+                          type: string
+                    example: []
+                  result:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        name:
+                          type: string
+                        price:
+                          type: number
+                          format: float
+                        currency:
+                          type: string
+                        frequency:
+                          type: string
+                    example:
+                      - id: "premium_plan"
+                        name: "Premium"
+                        price: 29.99
+                        currency: "USD"
+                        frequency: "monthly"
+        '404':
+          description: No subscription plans found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                        message:
+                          type: string
+                    example: [{"code": 1002, "message": "No subscription plans found"}]
+
+components:
+  schemas:
+    Zone:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        status:
+          type: string
+        original_registrar:
+          type: string
+        created_on:
+          type: string
+          format: date-time
+    Plan:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        price:
+          type: number
+          format: float
+        currency:
+          type: string
+        frequency:
+          type: string
+    ApiResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              code:
+                type: integer
+              message:
+                type: string
+        result:
+          type: object
+
