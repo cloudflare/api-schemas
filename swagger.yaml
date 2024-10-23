@@ -1740,3 +1740,434 @@ components:
                 type: string
         result:
           type: object
+
+paths:
+  /zones/{zone_id}/worker/routes:
+    get:
+      summary: Retrieve Worker Routes
+      description: Fetch the list of worker routes for a specific zone. Worker routes are used to direct traffic to specific Cloudflare Workers based on the path or domain.
+      parameters:
+        - name: zone_id
+          in: path
+          required: true
+          description: The zone identifier.
+          schema:
+            type: string
+            example: "023e105f4ecef8ad9ca31a8372d0c353"
+      responses:
+        '200':
+          description: Worker routes retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                        message:
+                          type: string
+                    example: []
+                  result:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        pattern:
+                          type: string
+                          description: The URL pattern that triggers the worker.
+                        script:
+                          type: string
+                          description: The name of the worker script.
+                    example:
+                      - id: "worker_route_1"
+                        pattern: "example.com/*"
+                        script: "example-worker"
+        '404':
+          description: Worker routes not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                        message:
+                          type: string
+                    example: [{"code": 1014, "message": "No worker routes found for this zone"}]
+
+  /zones/{zone_id}/worker/routes:
+    post:
+      summary: Create Worker Route
+      description: Add a new worker route for a specific zone.
+      parameters:
+        - name: zone_id
+          in: path
+          required: true
+          description: The zone identifier.
+          schema:
+            type: string
+            example: "023e105f4ecef8ad9ca31a8372d0c353"
+      requestBody:
+        description: Worker route object to be created.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                pattern:
+                  type: string
+                  description: The URL pattern that triggers the worker.
+                script:
+                  type: string
+                  description: The name of the worker script.
+              example:
+                pattern: "example.com/*"
+                script: "example-worker"
+      responses:
+        '201':
+          description: Worker route created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                        message:
+                          type: string
+                    example: []
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      pattern:
+                        type: string
+                      script:
+                        type: string
+                    example:
+                      id: "worker_route_1"
+                      pattern: "example.com/*"
+                      script: "example-worker"
+
+  /zones/{zone_id}/worker/routes/{route_id}:
+    delete:
+      summary: Delete Worker Route
+      description: Delete a specific worker route by its ID.
+      parameters:
+        - name: zone_id
+          in: path
+          required: true
+          description: The zone identifier.
+          schema:
+            type: string
+            example: "023e105f4ecef8ad9ca31a8372d0c353"
+        - name: route_id
+          in: path
+          required: true
+          description: The worker route identifier.
+          schema:
+            type: string
+            example: "worker_route_1"
+      responses:
+        '204':
+          description: Worker route deleted successfully
+        '404':
+          description: Worker route not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                        message:
+                          type: string
+                    example: [{"code": 1015, "message": "Worker route not found"}]
+
+components:
+  schemas:
+    WorkerRoute:
+      type: object
+      properties:
+        id:
+          type: string
+        pattern:
+          type: string
+          description: The URL pattern that triggers the worker.
+        script:
+          type: string
+          description: The name of the worker script.
+    ApiResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              code:
+                type: integer
+              message:
+                type: string
+        result:
+          type: object
+
+paths:
+  /zones/{zone_id}/dns_records:
+    post:
+      summary: Create DNS Record
+      description: Add a new DNS record for a specific zone.
+      parameters:
+        - name: zone_id
+          in: path
+          required: true
+          description: The zone identifier.
+          schema:
+            type: string
+            example: "023e105f4ecef8ad9ca31a8372d0c353"
+      requestBody:
+        description: DNS record object to be created.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                type:
+                  type: string
+                  description: The type of DNS record (e.g., A, AAAA, CNAME, TXT).
+                name:
+                  type: string
+                  description: The name of the DNS record (e.g., "www").
+                content:
+                  type: string
+                  description: The content for the DNS record (e.g., an IP address).
+                ttl:
+                  type: integer
+                  description: Time-to-live in seconds.
+              example:
+                type: "A"
+                name: "www"
+                content: "192.0.2.1"
+                ttl: 3600
+      responses:
+        '201':
+          description: DNS record created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                        message:
+                          type: string
+                    example: []
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      type:
+                        type: string
+                      name:
+                        type: string
+                      content:
+                        type: string
+                      ttl:
+                        type: integer
+                    example:
+                      id: "dns_record_1"
+                      type: "A"
+                      name: "www"
+                      content: "192.0.2.1"
+                      ttl: 3600
+
+  /zones/{zone_id}/dns_records/{record_id}:
+    delete:
+      summary: Delete DNS Record
+      description: Delete a specific DNS record by its ID.
+      parameters:
+        - name: zone_id
+          in: path
+          required: true
+          description: The zone identifier.
+          schema:
+            type: string
+            example: "023e105f4ecef8ad9ca31a8372d0c353"
+        - name: record_id
+          in: path
+          required: true
+          description: The DNS record identifier.
+          schema:
+            type: string
+            example: "dns_record_1"
+      responses:
+        '204':
+          description: DNS record deleted successfully
+        '404':
+          description: DNS record not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                        message:
+                          type: string
+                    example: [{"code": 1016, "message": "DNS record not found"}]
+
+  /zones/{zone_id}/settings/security_level:
+    get:
+      summary: Retrieve Security Level Settings
+      description: Fetch the current security level settings for a specific zone.
+      parameters:
+        - name: zone_id
+          in: path
+          required: true
+          description: The zone identifier.
+          schema:
+            type: string
+            example: "023e105f4ecef8ad9ca31a8372d0c353"
+      responses:
+        '200':
+          description: Security level settings retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                        message:
+                          type: string
+                    example: []
+                  result:
+                    type: object
+                    properties:
+                      security_level:
+                        type: string
+                        description: The security level setting (e.g., "low", "medium", "high").
+                    example:
+                      security_level: "medium"
+        '404':
+          description: Security level settings not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                        message:
+                          type: string
+                    example: [{"code": 1017, "message": "Security level settings not found"}]
+
+components:
+  schemas:
+    DNSRecord:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+        name:
+          type: string
+        content:
+          type: string
+        ttl:
+          type: integer
+    SecurityLevelSettings:
+      type: object
+      properties:
+        security_level:
+          type: string
+          description: The current security level setting for the zone.
+    ApiResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              code:
+                type: integer
+              message:
+                type: string
+        result:
+          type: object
