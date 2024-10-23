@@ -1546,3 +1546,197 @@ components:
                 type: string
         result:
           type: object
+
+paths:
+  /zones/{zone_id}/custom_pages:
+    get:
+      summary: Retrieve Custom Pages for Zone
+      description: Fetch the list of custom error pages configured for a specific zone, such as 404 or 500 error pages.
+      parameters:
+        - name: zone_id
+          in: path
+          required: true
+          description: The zone identifier.
+          schema:
+            type: string
+            example: "023e105f4ecef8ad9ca31a8372d0c353"
+      responses:
+        '200':
+          description: Custom pages retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                        message:
+                          type: string
+                    example: []
+                  result:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        type:
+                          type: string
+                        description:
+                          type: string
+                        url:
+                          type: string
+                    example:
+                      - id: "custom_page_404"
+                        type: "error"
+                        description: "Custom 404 error page"
+                        url: "https://example.com/404"
+        '404':
+          description: Custom pages not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                        message:
+                          type: string
+                    example: [{"code": 1012, "message": "No custom pages found for this zone"}]
+
+  /zones/{zone_id}/custom_pages/{page_id}:
+    patch:
+      summary: Update Custom Page
+      description: Modify the URL or description of a specific custom error page.
+      parameters:
+        - name: zone_id
+          in: path
+          required: true
+          description: The zone identifier.
+          schema:
+            type: string
+            example: "023e105f4ecef8ad9ca31a8372d0c353"
+        - name: page_id
+          in: path
+          required: true
+          description: The custom page identifier.
+          schema:
+            type: string
+            example: "custom_page_404"
+      requestBody:
+        description: Custom page object to be updated.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                description:
+                  type: string
+                  description: Description of the custom page.
+                url:
+                  type: string
+                  description: URL for the custom page.
+              example:
+                description: "Updated 404 error page"
+                url: "https://example.com/new-404"
+      responses:
+        '200':
+          description: Custom page updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                        message:
+                          type: string
+                    example: []
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      description:
+                        type: string
+                      url:
+                        type: string
+                    example:
+                      id: "custom_page_404"
+                      description: "Updated 404 error page"
+                      url: "https://example.com/new-404"
+        '404':
+          description: Custom page not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                        message:
+                          type: string
+                    example: [{"code": 1013, "message": "Custom page not found"}]
+
+components:
+  schemas:
+    CustomPage:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+        description:
+          type: string
+        url:
+          type: string
+    ApiResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              code:
+                type: integer
+              message:
+                type: string
+        result:
+          type: object
