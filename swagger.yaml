@@ -1384,3 +1384,165 @@ components:
                 type: string
         result:
           type: object
+
+paths:
+  /zones/{zone_id}/settings/cache_level:
+    get:
+      summary: Retrieve Cache Level Settings
+      description: Fetch the current cache level settings for a specific zone.
+      parameters:
+        - name: zone_id
+          in: path
+          required: true
+          description: The zone identifier.
+          schema:
+            type: string
+            example: "023e105f4ecef8ad9ca31a8372d0c353"
+      responses:
+        '200':
+          description: Cache level settings retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                        message:
+                          type: string
+                    example: []
+                  result:
+                    type: object
+                    properties:
+                      cache_level:
+                        type: string
+                        description: The cache level setting (e.g., "basic", "simplified", "aggressive").
+                    example:
+                      cache_level: "aggressive"
+        '404':
+          description: Cache level settings not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                        message:
+                          type: string
+                    example: [{"code": 1011, "message": "Cache level settings not found"}]
+
+  /zones/{zone_id}/settings/cache_level:
+    patch:
+      summary: Update Cache Level Settings
+      description: Modify the cache level settings for a specific zone.
+      parameters:
+        - name: zone_id
+          in: path
+          required: true
+          description: The zone identifier.
+          schema:
+            type: string
+            example: "023e105f4ecef8ad9ca31a8372d0c353"
+      requestBody:
+        description: Cache level settings object to be updated.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                cache_level:
+                  type: string
+                  description: The new cache level setting (e.g., "basic", "simplified", "aggressive").
+              example:
+                cache_level: "simplified"
+      responses:
+        '200':
+          description: Cache level settings updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                        message:
+                          type: string
+                    example: []
+                  result:
+                    type: object
+                    properties:
+                      cache_level:
+                        type: string
+                    example:
+                      cache_level: "simplified"
+        '404':
+          description: Cache level settings not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                        message:
+                          type: string
+                    example: [{"code": 1011, "message": "Cache level settings not found"}]
+
+components:
+  schemas:
+    CacheLevelSettings:
+      type: object
+      properties:
+        cache_level:
+          type: string
+          description: The cache level setting (e.g., "basic", "simplified", "aggressive").
+    ApiResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              code:
+                type: integer
+              message:
+                type: string
+        result:
+          type: object
