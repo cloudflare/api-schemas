@@ -550,3 +550,404 @@ components:
         result:
           type: object
 
+paths:
+  /zones/{zone_id}/dns_records:
+    get:
+      summary: Retrieve DNS Records
+      description: Fetch the list of DNS records for a specific zone.
+      parameters:
+        - name: zone_id
+          in: path
+          required: true
+          description: The zone identifier.
+          schema:
+            type: string
+            example: "023e105f4ecef8ad9ca31a8372d0c353"
+      responses:
+        '200':
+          description: DNS records retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                        message:
+                          type: string
+                    example: []
+                  result:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        type:
+                          type: string
+                        name:
+                          type: string
+                        content:
+                          type: string
+                        ttl:
+                          type: integer
+                          description: Time-to-live for DNS record
+                    example:
+                      - id: "e174e90a-fafe-4643-bbbc-4a0ed4fc8415"
+                        type: "A"
+                        name: "example.com"
+                        content: "192.0.2.1"
+                        ttl: 3600
+        '404':
+          description: DNS records not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                        message:
+                          type: string
+                    example: [{"code": 1003, "message": "DNS records not found"}]
+
+  /zones/{zone_id}/settings:
+    patch:
+      summary: Update Zone Settings
+      description: Modify the settings of a specific zone.
+      parameters:
+        - name: zone_id
+          in: path
+          required: true
+          description: The zone identifier.
+          schema:
+            type: string
+            example: "023e105f4ecef8ad9ca31a8372d0c353"
+      requestBody:
+        description: Zone settings object that needs to be updated.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                development_mode:
+                  type: boolean
+                  description: Enable or disable development mode.
+                ssl:
+                  type: string
+                  description: SSL settings for the zone.
+              example:
+                development_mode: true
+                ssl: "flexible"
+      responses:
+        '200':
+          description: Zone settings updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                        message:
+                          type: string
+                    example: []
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      development_mode:
+                        type: boolean
+                      ssl:
+                        type: string
+                    example:
+                      id: "023e105f4ecef8ad9ca31a8372d0c353"
+                      development_mode: true
+                      ssl: "flexible"
+        '404':
+          description: Zone settings not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                        message:
+                          type: string
+                    example: [{"code": 1004, "message": "Zone settings not found"}]
+
+components:
+  schemas:
+    DNSRecord:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+        name:
+          type: string
+        content:
+          type: string
+        ttl:
+          type: integer
+          description: Time-to-live for DNS record
+    ZoneSettings:
+      type: object
+      properties:
+        id:
+          type: string
+        development_mode:
+          type: boolean
+        ssl:
+          type: string
+    ApiResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              code:
+                type: integer
+              message:
+                type: string
+        result:
+          type: object
+
+paths:
+  /zones/{zone_id}/purge_cache:
+    post:
+      summary: Purge Cache for Zone
+      description: Clears the cache for a specific zone. You can choose to purge everything or provide specific URLs.
+      parameters:
+        - name: zone_id
+          in: path
+          required: true
+          description: The zone identifier.
+          schema:
+            type: string
+            example: "023e105f4ecef8ad9ca31a8372d0c353"
+      requestBody:
+        description: Cache purge request.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                purge_everything:
+                  type: boolean
+                  description: Whether to purge all cached content.
+                files:
+                  type: array
+                  description: Specific files or URLs to purge.
+                  items:
+                    type: string
+              example:
+                purge_everything: true
+                files: []
+      responses:
+        '200':
+          description: Cache successfully purged
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                        message:
+                          type: string
+                    example: []
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      state:
+                        type: string
+                    example:
+                      id: "purge_request"
+                      state: "completed"
+        '404':
+          description: Zone not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                        message:
+                          type: string
+                    example: [{"code": 1005, "message": "Zone not found"}]
+
+  /accounts/{account_id}/billing:
+    get:
+      summary: Retrieve Billing Information
+      description: Fetch the billing details for a specific account.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          description: The account identifier.
+          schema:
+            type: string
+            example: "023e105f4ecef8ad9ca31a8372d0c353"
+      responses:
+        '200':
+          description: Billing information retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                        message:
+                          type: string
+                    example: []
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      amount_due:
+                        type: number
+                        format: float
+                      currency:
+                        type: string
+                      due_date:
+                        type: string
+                        format: date-time
+                    example:
+                      id: "billing_001"
+                      amount_due: 100.50
+                      currency: "USD"
+                      due_date: "2024-11-01T12:00:00Z"
+        '404':
+          description: Billing information not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                        message:
+                          type: string
+                    example: [{"code": 1006, "message": "Billing information not found"}]
+
+components:
+  schemas:
+    PurgeCacheRequest:
+      type: object
+      properties:
+        purge_everything:
+          type: boolean
+          description: Whether to purge all cached content.
+        files:
+          type: array
+          items:
+            type: string
+          description: Specific files or URLs to purge.
+    BillingDetails:
+      type: object
+      properties:
+        id:
+          type: string
+        amount_due:
+          type: number
+          format: float
+        currency:
+          type: string
+        due_date:
+          type: string
+          format: date-time
+    ApiResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              code:
+                type: integer
+              message:
+                type: string
+        result:
+          type: object
