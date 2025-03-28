@@ -11,17 +11,20 @@ components:
       type: string
       maxLength: 36
       example: f174e90a-fafe-4643-bbbc-4a0ed4fc8415
+      x-auditable: true
 
     identifier:
       description: Identifier
       type: string
       maxLength: 32
       example: 023e105f4ecef8ad9ca31a8372d0c353
+      x-auditable: true
 
     timestamp:
       type: string
       format: date-time
       example: "2014-01-01T05:20:00.12345Z"
+      x-auditable: true
 
     # API response envelopes
     result_info:
@@ -150,6 +153,7 @@ components:
           type: string
           maxLength: 100
           example: Demo Account
+          x-auditable: true
         settings:
           type: object
           description: Account settings
@@ -160,18 +164,21 @@ components:
                 Indicates whether membership in this account requires that
                 Two-Factor Authentication is enabled
               default: false
+              x-auditable: true
             use_account_custom_ns_by_default:
               type: boolean
               description: |-
                 Indicates whether new zones should use the account-level custom
                 nameservers by default
               default: false
+              x-auditable: true
         created_on:
           description: Timestamp for the creation of the account
           type: string
           format: date-time
           readOnly: true
           example: 2014-03-01T12:21:02.0000Z
+          x-auditable: true
 
     scope:
       description: All zones owned by the account will have the rule applied
@@ -188,6 +195,7 @@ components:
           description: The scope of the rule
           readOnly: true
           example: account
+          x-auditable: true
 
     # Zone
     zone:
@@ -215,6 +223,7 @@ components:
           maxLength: 253
           readOnly: true
           example: example.com
+          x-auditable: true
         development_mode:
           description: |-
             The interval (in seconds) from when development mode expires
@@ -223,6 +232,7 @@ components:
           type: number
           readOnly: true
           example: 7200
+          x-auditable: true
         original_name_servers:
           description: |-
             Original name servers before moving to Cloudflare
@@ -231,6 +241,7 @@ components:
           items:
             type: string
             format: hostname
+            x-auditable: true
           readOnly: true
           example:
             - ns1.originaldnshost.com
@@ -242,6 +253,7 @@ components:
           readOnly: true
           example: GoDaddy
           nullable: true
+          x-auditable: true
         original_dnshost:
           description: DNS host at the time of switching to Cloudflare
           type: string
@@ -249,18 +261,21 @@ components:
           readOnly: true
           example: NameCheap
           nullable: true
+          x-auditable: true
         created_on:
           description: When the zone was created
           type: string
           format: date-time
           readOnly: true
           example: 2014-01-01T05:20:00.12345Z
+          x-auditable: true
         modified_on:
           description: When the zone was last modified
           type: string
           format: date-time
           readOnly: true
           example: 2014-01-01T05:20:00.12345Z
+          x-auditable: true
         activated_on:
           description: |-
             The last time proof of ownership was detected and the zone was made
@@ -270,6 +285,7 @@ components:
           readOnly: true
           example: 2014-01-02T00:01:00.12345Z
           nullable: true
+          x-auditable: true
     vanity_name_servers:
       description: |-
         An array of domains used for custom name servers. This is only
@@ -279,6 +295,7 @@ components:
         type: string
         format: hostname
         maxLength: 253
+        x-auditable: true
       example:
         - ns1.example.com
         - ns2.example.com
@@ -305,6 +322,7 @@ components:
           type: string
           maxLength: 90
           example: user@example.com
+          x-auditable: true
         first_name:
           description: User's first name
           type: string
@@ -324,6 +342,7 @@ components:
           minLength: 3
           maxLength: 90
           example: cfuser12345
+          x-auditable: true
         telephone:
           description: User's telephone number
           type: string
@@ -348,12 +367,14 @@ components:
           type: string
           format: date-time
           example: 2014-01-01T05:20:00Z
+          x-auditable: true
         modified_on:
           description: Last time the user was modified
           readOnly: true
           type: string
           format: date-time
           example: 2014-01-01T05:20:00Z
+          x-auditable: true
 
     # Plan
     plan:
@@ -367,16 +388,19 @@ components:
           maxLength: 80
           readOnly: true
           example: Pro Plan
+          x-auditable: true
         price:
           description: The price of the subscription that will be billed, in US dollars
           type: number
           readOnly: true
           example: 20
+          x-auditable: true
         currency:
           description: The monetary unit in which pricing information is displayed
           type: string
           readOnly: true
           example: USD
+          x-auditable: true
         frequency:
           description: The frequency at which you will be billed for this plan
           type: string
@@ -388,6 +412,7 @@ components:
             - ""
           readOnly: true
           example: monthly
+          x-auditable: true
         legacy_id:
           description: A 'friendly' identifier to indicate to the UI what plan the
             object is
@@ -401,7 +426,9 @@ components:
           description: If the zone is subscribed to this plan
           type: boolean
           example: true
+          x-auditable: true
         can_subscribe:
           description: If the zone is allowed to subscribe to this plan
           type: boolean
           example: true
+          x-auditable: true
