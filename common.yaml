@@ -7,13 +7,13 @@ paths: {}
 components:
   schemas:
     uuid:
-      description: UUID
+      description: UUID.
       type: string
       maxLength: 36
       example: f174e90a-fafe-4643-bbbc-4a0ed4fc8415
 
     identifier:
-      description: Identifier
+      description: Identifier.
       type: string
       maxLength: 32
       example: 023e105f4ecef8ad9ca31a8372d0c353
@@ -28,19 +28,19 @@ components:
       type: object
       properties:
         page:
-          description: Current page within paginated list of results
+          description: Current page within paginated list of results.
           type: number
           example: 1
         per_page:
-          description: Number of results per page of results
+          description: Number of results per page of results.
           type: number
           example: 20
         count:
-          description: Total number of results for the requested service
+          description: Total number of results for the requested service.
           type: number
           example: 1
         total_count:
-          description: Total results available without any search parameters
+          description: Total results available without any search parameters.
           type: number
           example: 2000
 
@@ -64,6 +64,13 @@ components:
             minimum: 1000
           message:
             type: string
+          documentation_url:
+            type: string
+          source:
+            type: object
+            properties:
+              pointer:
+                type: string
         uniqueItems: true
       example: []
 
@@ -75,7 +82,7 @@ components:
         - messages
       properties:
         success:
-          description: Whether the API call was successful
+          description: Whether the API call was successful.
           type: boolean
           enum:
             - true
@@ -94,7 +101,7 @@ components:
         - result
       properties:
         success:
-          description: Whether the API call was successful
+          description: Whether the API call was successful.
           type: boolean
           enum:
             - false
@@ -146,35 +153,35 @@ components:
         id:
           $ref: "#/components/schemas/identifier"
         name:
-          description: Account name
+          description: Account name.
           type: string
           maxLength: 100
           example: Demo Account
         settings:
           type: object
-          description: Account settings
+          description: Account settings.
           properties:
             enforce_twofactor:
               type: boolean
               description: |-
                 Indicates whether membership in this account requires that
-                Two-Factor Authentication is enabled
+                Two-Factor Authentication is enabled.
               default: false
             use_account_custom_ns_by_default:
               type: boolean
               description: |-
                 Indicates whether new zones should use the account-level custom
-                nameservers by default
+                nameservers by default.
               default: false
         created_on:
-          description: Timestamp for the creation of the account
+          description: Timestamp for the creation of the account.
           type: string
           format: date-time
           readOnly: true
           example: 2014-03-01T12:21:02.0000Z
 
     scope:
-      description: All zones owned by the account will have the rule applied
+      description: All zones owned by the account will have the rule applied.
       type: object
       properties:
         id:
@@ -185,7 +192,7 @@ components:
           type: string
           enum:
             - account
-          description: The scope of the rule
+          description: The scope of the rule.
           readOnly: true
           example: account
 
@@ -209,7 +216,7 @@ components:
         id:
           $ref: "#/components/schemas/identifier"
         name:
-          description: The domain name
+          description: The domain name.
           type: string
           pattern: ^([a-zA-Z0-9][\-a-zA-Z0-9]*\.)+[\-a-zA-Z0-9]{2,20}$
           maxLength: 253
@@ -225,8 +232,7 @@ components:
           example: 7200
         original_name_servers:
           description: |-
-            Original name servers before moving to Cloudflare
-            Notes: Is this only available for full zones?
+            Original name servers before moving to Cloudflare.
           type: array
           items:
             type: string
@@ -237,26 +243,26 @@ components:
             - ns2.originaldnshost.com
           nullable: true
         original_registrar:
-          description: Registrar for the domain at the time of switching to Cloudflare
+          description: Registrar for the domain at the time of switching to Cloudflare.
           type: string
           readOnly: true
           example: GoDaddy
           nullable: true
         original_dnshost:
-          description: DNS host at the time of switching to Cloudflare
+          description: DNS host at the time of switching to Cloudflare.
           type: string
           maxLength: 50
           readOnly: true
           example: NameCheap
           nullable: true
         created_on:
-          description: When the zone was created
+          description: When the zone was created.
           type: string
           format: date-time
           readOnly: true
           example: 2014-01-01T05:20:00.12345Z
         modified_on:
-          description: When the zone was last modified
+          description: When the zone was last modified.
           type: string
           format: date-time
           readOnly: true
@@ -264,7 +270,7 @@ components:
         activated_on:
           description: |-
             The last time proof of ownership was detected and the zone was made
-            active
+            active.
           type: string
           format: date-time
           readOnly: true
@@ -301,55 +307,55 @@ components:
         id:
           $ref: "#/components/schemas/identifier"
         email:
-          description: The contact email address of the user.
+          description: The contact email address of the user..
           type: string
           maxLength: 90
           example: user@example.com
         first_name:
-          description: User's first name
+          description: User's first name.
           type: string
           maxLength: 60
           example: John
           nullable: true
         last_name:
-          description: User's last name
+          description: User's last name.
           type: string
           maxLength: 60
           example: Appleseed
           nullable: true
         username:
-          description: A username used to access other cloudflare services, like support
+          description: A username used to access other cloudflare services, like support.
           type: string
           pattern: ^[a-z0-9]+([\-\._]?[a-z0-9]+)+$
           minLength: 3
           maxLength: 90
           example: cfuser12345
         telephone:
-          description: User's telephone number
+          description: User's telephone number.
           type: string
           maxLength: 20
           example: +1 123-123-1234
           nullable: true
         country:
-          description: The country in which the user lives.
+          description: The country in which the user lives..
           type: string
           maxLength: 30
           example: US
           nullable: true
         zipcode:
-          description: The zipcode or postal code where the user lives.
+          description: The zipcode or postal code where the user lives..
           type: string
           maxLength: 20
           example: "12345"
           nullable: true
         created_on:
-          description: When the user signed up.
+          description: When the user signed up..
           readOnly: true
           type: string
           format: date-time
           example: 2014-01-01T05:20:00Z
         modified_on:
-          description: Last time the user was modified
+          description: Last time the user was modified.
           readOnly: true
           type: string
           format: date-time
@@ -362,23 +368,23 @@ components:
         id:
           $ref: "#/components/schemas/identifier"
         name:
-          description: The plan name
+          description: The plan name.
           type: string
           maxLength: 80
           readOnly: true
           example: Pro Plan
         price:
-          description: The price of the subscription that will be billed, in US dollars
+          description: The price of the subscription that will be billed, in US dollars.
           type: number
           readOnly: true
           example: 20
         currency:
-          description: The monetary unit in which pricing information is displayed
+          description: The monetary unit in which pricing information is displayed.
           type: string
           readOnly: true
           example: USD
         frequency:
-          description: The frequency at which you will be billed for this plan
+          description: The frequency at which you will be billed for this plan.
           type: string
           enum:
             - weekly
@@ -389,8 +395,10 @@ components:
           readOnly: true
           example: monthly
         legacy_id:
-          description: A 'friendly' identifier to indicate to the UI what plan the
-            object is
+          description: |-
+            A 'friendly' identifier to indicate to the UI what plan the
+            object is.
+          type: string
           enum:
             - free
             - pro
@@ -398,10 +406,10 @@ components:
             - enterprise
           example: pro
         is_subscribed:
-          description: If the zone is subscribed to this plan
+          description: If the zone is subscribed to this plan.
           type: boolean
           example: true
         can_subscribe:
-          description: If the zone is allowed to subscribe to this plan
+          description: If the zone is allowed to subscribe to this plan.
           type: boolean
           example: true
