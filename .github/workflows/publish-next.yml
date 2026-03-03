@@ -3,10 +3,16 @@ name: Publish Next
 on:
   push:
     branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: publish-next-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   publish:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     permissions:
       contents: read
       id-token: write
@@ -26,5 +32,8 @@ jobs:
           VERSION="${BASE_VERSION}-next.${DATE}.${SHA}"
           npm version "$VERSION" --no-git-tag-version
 
+      - name: Verify package contents
+        run: npm pack --dry-run
+
       - name: Publish to npm
-        run: npm publish --access public --tag next
+        run: npm publish --access public --tag next --provenance
