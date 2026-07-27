@@ -55491,6 +55491,7 @@ paths:
     post:
       operationId: autorag-config-ai-search
       summary: AI Search
+      description: Runs an AI Search query against an AutoRAG.
       parameters:
         - name: id
           in: path
@@ -55747,10 +55748,14 @@ paths:
         enterprise: true
         free: true
         pro: true
+      x-fern-ignore: true
+      x-fern-sdk-group-name: autorag
+      x-fern-sdk-method-name: ai-search
   /accounts/{account_id}/autorag/rags/{id}/files:
     get:
       operationId: autorag-config-files
       summary: Files
+      description: Lists files indexed by an AutoRAG.
       parameters:
         - name: id
           in: path
@@ -55912,10 +55917,14 @@ paths:
         enterprise: true
         free: true
         pro: true
+      x-fern-ignore: true
+      x-fern-sdk-group-name: autorag
+      x-fern-sdk-method-name: files
   /accounts/{account_id}/autorag/rags/{id}/jobs:
     get:
       operationId: autorag-config-list-jobs
       summary: List Jobs
+      description: Lists jobs for an AutoRAG.
       parameters:
         - name: id
           in: path
@@ -56073,10 +56082,14 @@ paths:
         enterprise: true
         free: true
         pro: true
+      x-fern-ignore: true
+      x-fern-sdk-group-name: autorag.jobs
+      x-fern-sdk-method-name: list
   /accounts/{account_id}/autorag/rags/{id}/jobs/{job_id}:
     get:
       operationId: autorag-config-get-job
       summary: Get a Job Details
+      description: Returns details for an AutoRAG job.
       parameters:
         - name: id
           in: path
@@ -56207,10 +56220,14 @@ paths:
         enterprise: true
         free: true
         pro: true
+      x-fern-ignore: true
+      x-fern-sdk-group-name: autorag.jobs
+      x-fern-sdk-method-name: get
   /accounts/{account_id}/autorag/rags/{id}/jobs/{job_id}/logs:
     get:
       operationId: autorag-config-list-job-logs
       summary: List Job Logs
+      description: Lists logs for an AutoRAG job.
       parameters:
         - name: id
           in: path
@@ -56368,10 +56385,14 @@ paths:
         enterprise: true
         free: true
         pro: true
+      x-fern-ignore: true
+      x-fern-sdk-group-name: autorag.jobs
+      x-fern-sdk-method-name: logs
   /accounts/{account_id}/autorag/rags/{id}/search:
     post:
       operationId: autorag-config-search
       summary: Search
+      description: Searches an AutoRAG.
       parameters:
         - name: id
           in: path
@@ -56588,10 +56609,14 @@ paths:
         enterprise: true
         free: true
         pro: true
+      x-fern-ignore: true
+      x-fern-sdk-group-name: autorag
+      x-fern-sdk-method-name: search
   /accounts/{account_id}/autorag/rags/{id}/sync:
     patch:
       operationId: autorag-config-sync
       summary: Sync
+      description: Starts synchronization for an AutoRAG.
       parameters:
         - name: id
           in: path
@@ -56758,6 +56783,9 @@ paths:
         enterprise: true
         free: true
         pro: true
+      x-fern-ignore: true
+      x-fern-sdk-group-name: autorag
+      x-fern-sdk-method-name: sync
   /accounts/{account_id}/billable/usage:
     get:
       operationId: billable-usage-v2-get-account-usage
@@ -89224,6 +89252,25 @@ paths:
             default: 50
             maximum: 50
             minimum: 5
+        - name: order
+          in: query
+          schema:
+            description: The field to sort the returned custom CSRs by.
+            type: string
+            default: created_at
+            enum:
+              - name
+              - account_tag
+              - created_at
+        - name: direction
+          in: query
+          schema:
+            description: The direction to sort by.
+            type: string
+            default: asc
+            enum:
+              - asc
+              - desc
       responses:
         '200':
           description: List Custom CSRs response.
