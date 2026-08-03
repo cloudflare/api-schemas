@@ -119521,54 +119521,6 @@ paths:
       x-api-token-group:
         - Intel Write
         - Intel Read
-  /accounts/{account_id}/intel/attack-surface-report/{issue_id}/dismiss:
-    put:
-      operationId: archive-security-center-insight-deprecated
-      summary: Archives Security Center Insight
-      description: Deprecated endpoint for archiving Security Center insights. Use the newer archive-security-center-insight endpoint instead.
-      parameters:
-        - name: account_id
-          in: path
-          required: true
-          schema:
-            $ref: '#/components/schemas/security-center_identifier'
-        - name: issue_id
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                dismiss:
-                  type: boolean
-                  default: true
-                  x-auditable: true
-      responses:
-        '200':
-          description: The request was successful.
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/security-center_api-response-single'
-        4XX:
-          description: A client error occurred.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/security-center_api-response-common-failure'
-      deprecated: true
-      security:
-        - api_email: []
-          api_key: []
-        - api_token: []
-      tags:
-        - Security Center Insights
   /accounts/{account_id}/intel/attack-surface-report/issue-types:
     get:
       operationId: get-security-center-issue-types
@@ -119610,6 +119562,10 @@ paths:
       x-api-token-group:
         - Intel Write
         - Intel Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: intel.attack-surface-report.issue-types
+      x-fern-sdk-method-name: get
+      x-forge-hidden: true
   /accounts/{account_id}/intel/attack-surface-report/issues:
     get:
       operationId: get-security-center-issues
@@ -119717,6 +119673,65 @@ paths:
       x-api-token-group:
         - Intel Write
         - Intel Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: intel.attack-surface-report.issues
+      x-fern-sdk-method-name: list
+      x-forge-hidden: true
+  /accounts/{account_id}/intel/attack-surface-report/issues/{issue_id}/dismiss:
+    put:
+      operationId: archive-security-center-insight-deprecated
+      summary: Archives Security Center Insight
+      description: Deprecated endpoint for archiving Security Center insights. Use the newer archive-security-center-insight endpoint instead.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/security-center_identifier'
+        - name: issue_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                dismiss:
+                  type: boolean
+                  default: true
+                  x-auditable: true
+      responses:
+        '200':
+          description: The request was successful.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/security-center_api-response-single'
+        4XX:
+          description: A client error occurred.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/security-center_api-response-common-failure'
+      deprecated: true
+      security:
+        - api_email: []
+          api_key: []
+        - api_token: []
+      tags:
+        - Security Center Insights
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: intel.attack-surface-report.issues
+      x-fern-sdk-method-name: dismiss
+      x-forge-hidden: true
+      x-forge-params:
+        dismiss:
+          default: null
   /accounts/{account_id}/intel/attack-surface-report/issues/class:
     get:
       operationId: get-security-center-issue-counts-by-class
@@ -119795,6 +119810,10 @@ paths:
       x-api-token-group:
         - Intel Write
         - Intel Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: intel.attack-surface-report.issues
+      x-fern-sdk-method-name: class
+      x-forge-hidden: true
   /accounts/{account_id}/intel/attack-surface-report/issues/severity:
     get:
       operationId: get-security-center-issue-counts-by-severity
@@ -119873,6 +119892,10 @@ paths:
       x-api-token-group:
         - Intel Write
         - Intel Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: intel.attack-surface-report.issues
+      x-fern-sdk-method-name: severity
+      x-forge-hidden: true
   /accounts/{account_id}/intel/attack-surface-report/issues/type:
     get:
       operationId: get-security-center-issue-counts-by-type
@@ -119951,6 +119974,10 @@ paths:
       x-api-token-group:
         - Intel Write
         - Intel Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: intel.attack-surface-report.issues
+      x-fern-sdk-method-name: type
+      x-forge-hidden: true
   /accounts/{account_id}/intel/dns:
     get:
       operationId: passive-dns-by-ip-get-passive-dns-by-ip
@@ -159212,6 +159239,10 @@ paths:
         - api_token: []
       tags:
         - Security Center Insights
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: security-center.insights
+      x-fern-sdk-method-name: list
+      x-forge-hidden: true
   /accounts/{account_id}/security-center/insights/{issue_id}/audit-log:
     get:
       operationId: get-security-center-issue-audit-log
@@ -159337,6 +159368,10 @@ paths:
         - api_token: []
       tags:
         - Security Center Insights
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: security-center.zone-insights.context
+      x-fern-sdk-method-name: get
+      x-forge-hidden: true
   /accounts/{account_id}/security-center/insights/{issue_id}/dismiss:
     put:
       operationId: archive-security-center-insight
@@ -159384,6 +159419,13 @@ paths:
         - api_token: []
       tags:
         - Security Center Insights
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: security-center.insights
+      x-fern-sdk-method-name: dismiss
+      x-forge-hidden: true
+      x-forge-params:
+        dismiss:
+          default: null
   /accounts/{account_id}/security-center/insights/audit-log:
     get:
       operationId: get-security-center-account-audit-log
@@ -159495,6 +159537,10 @@ paths:
         - api_token: []
       tags:
         - Security Center Insights
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: security-center.insights.class
+      x-fern-sdk-method-name: get
+      x-forge-hidden: true
   /accounts/{account_id}/security-center/insights/scans:
     get:
       operationId: get-security-center-account-scans
@@ -159644,6 +159690,10 @@ paths:
         - api_token: []
       tags:
         - Security Center Insights
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: security-center.insights.severity
+      x-fern-sdk-method-name: get
+      x-forge-hidden: true
   /accounts/{account_id}/security-center/insights/type:
     get:
       operationId: get-security-center-insight-counts-by-type
@@ -159718,6 +159768,10 @@ paths:
         - api_token: []
       tags:
         - Security Center Insights
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: security-center.insights.type
+      x-fern-sdk-method-name: get
+      x-forge-hidden: true
   /accounts/{account_id}/shares:
     get:
       operationId: shares-list
@@ -323233,6 +323287,10 @@ paths:
       x-api-token-group:
         - Zone Settings Write
         - Zone Settings Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: security-center.zone-insights
+      x-fern-sdk-method-name: get
+      x-forge-hidden: true
   /zones/{zone_id}/security-center/insights/{issue_id}/audit-log:
     get:
       operationId: get-zone-security-center-issue-audit-log
@@ -323369,6 +323427,13 @@ paths:
         - Security Center Insights
       x-api-token-group:
         - Zone Settings Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: security-center.zone-insights.dismiss
+      x-fern-sdk-method-name: update
+      x-forge-hidden: true
+      x-forge-params:
+        dismiss:
+          default: null
   /zones/{zone_id}/security-center/insights/audit-log:
     get:
       operationId: get-zone-security-center-audit-log
@@ -323486,6 +323551,10 @@ paths:
       x-api-token-group:
         - Zone Settings Write
         - Zone Settings Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: security-center.zone-insights.class
+      x-fern-sdk-method-name: get
+      x-forge-hidden: true
   /zones/{zone_id}/security-center/insights/scans:
     get:
       operationId: get-security-center-zone-scans
@@ -323643,6 +323712,10 @@ paths:
       x-api-token-group:
         - Zone Settings Write
         - Zone Settings Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: security-center.zone-insights.severity
+      x-fern-sdk-method-name: get
+      x-forge-hidden: true
   /zones/{zone_id}/security-center/insights/type:
     get:
       operationId: get-zone-security-center-insight-counts-by-type
@@ -323720,6 +323793,10 @@ paths:
       x-api-token-group:
         - Zone Settings Write
         - Zone Settings Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: security-center.zone-insights.type
+      x-fern-sdk-method-name: get
+      x-forge-hidden: true
   /zones/{zone_id}/security-center/securitytxt:
     delete:
       operationId: delete-security-txt
@@ -323753,6 +323830,10 @@ paths:
         - security.txt
       x-api-token-group:
         - Zone Settings Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: security-txt
+      x-fern-sdk-method-name: delete
+      x-forge-hidden: true
     get:
       operationId: get-security-txt
       summary: Retrieves security.txt
@@ -323791,6 +323872,10 @@ paths:
       x-api-token-group:
         - Zone Settings Write
         - Zone Settings Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: security-txt
+      x-fern-sdk-method-name: get
+      x-forge-hidden: true
     put:
       operationId: update-security-txt
       summary: Updates security.txt
@@ -323829,6 +323914,10 @@ paths:
         - security.txt
       x-api-token-group:
         - Zone Settings Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: security-txt
+      x-fern-sdk-method-name: update
+      x-forge-hidden: true
   /zones/{zone_id}/settings:
     get:
       operationId: zone-settings-get-all-zone-settings
