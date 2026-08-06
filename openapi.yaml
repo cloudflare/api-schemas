@@ -28269,6 +28269,34 @@ paths:
                               additionalProperties:
                                 nullable: true
                               properties:
+                                discover_options:
+                                  type: object
+                                  additionalProperties:
+                                    nullable: true
+                                  properties:
+                                    depth:
+                                      type: number
+                                      maximum: 100000
+                                      minimum: 1
+                                    include_external_links:
+                                      type: boolean
+                                    include_subdomains:
+                                      type: boolean
+                                    limit:
+                                      description: Maximum number of pages to crawl. New values are capped at 100000; instances configured before that cap may report a higher stored value, which the crawler clamps at run time.
+                                      type: number
+                                      maximum: 100000
+                                      minimum: 1
+                                    max_age:
+                                      type: number
+                                      maximum: 604800
+                                      minimum: 0
+                                    source:
+                                      type: string
+                                      enum:
+                                        - all
+                                        - sitemaps
+                                        - links
                                 parse_options:
                                   type: object
                                   additionalProperties:
@@ -28878,10 +28906,10 @@ paths:
                   nullable: true
                   properties:
                     exclude_items:
-                      description: 'List of path patterns to exclude. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /admin/** matches /admin/users and /admin/settings/advanced)'
+                      description: 'List of path patterns to exclude. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /admin/** matches /admin/users and /admin/settings/advanced). Most accounts are limited to 10 rules; contact support to raise it.'
                       type: array
                       items:
-                        maxLength: 512
+                        maxLength: 500
                         pattern: ^[*/\\]?[\w\-/.\\?*:=&%]+$
                         type: string
                       example:
@@ -28890,10 +28918,10 @@ paths:
                         - '**\temp\**'
                       maxItems: 10
                     include_items:
-                      description: 'List of path patterns to include. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /blog/** matches /blog/post and /blog/2024/post)'
+                      description: 'List of path patterns to include. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /blog/** matches /blog/post and /blog/2024/post). Most accounts are limited to 10 rules; contact support to raise it.'
                       type: array
                       items:
-                        maxLength: 512
+                        maxLength: 500
                         pattern: ^[*/\\]?[\w\-/.\\?*:=&%]+$
                         type: string
                       example:
@@ -28911,6 +28939,50 @@ paths:
                       default:
                         parse_type: sitemap
                       properties:
+                        discover_options:
+                          description: Options for parse_type 'discover', where Browser Run discovers URLs by link following and sitemaps. Ignored for 'sitemap'.
+                          type: object
+                          properties:
+                            depth:
+                              description: Maximum link-follow depth from the seed URL.
+                              type: number
+                              example: 5
+                              default: 5
+                              maximum: 100000
+                              minimum: 1
+                            include_external_links:
+                              description: Follow links that point outside the source domain. Must stay `false` — discover crawls are restricted to the zone you own.
+                              type: boolean
+                              example: false
+                              default: false
+                            include_subdomains:
+                              description: Follow links to subdomains of the source host.
+                              type: boolean
+                              example: false
+                              default: false
+                            limit:
+                              description: Maximum number of pages to crawl (1-100000).
+                              type: number
+                              example: 10000
+                              default: 100000
+                              maximum: 100000
+                              minimum: 1
+                            max_age:
+                              description: Maximum content age in seconds to accept (0–604800).
+                              type: number
+                              example: 86400
+                              default: 86400
+                              maximum: 604800
+                              minimum: 0
+                            source:
+                              description: "Where the crawler looks for URLs: 'sitemaps' reads sitemap XML only, 'links' follows page links only, 'all' does both."
+                              type: string
+                              example: all
+                              default: all
+                              enum:
+                                - all
+                                - sitemaps
+                                - links
                         parse_options:
                           type: object
                           properties:
@@ -28968,7 +29040,9 @@ paths:
                               type: boolean
                               default: true
                         parse_type:
+                          description: How URLs are discovered. 'sitemap' reads XML sitemaps; 'discover' follows links recursively and requires the source to be a Verified zone on this account.
                           type: string
+                          example: sitemap
                           default: sitemap
                           enum:
                             - sitemap
@@ -29441,10 +29515,10 @@ paths:
                         nullable: true
                         properties:
                           exclude_items:
-                            description: 'List of path patterns to exclude. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /admin/** matches /admin/users and /admin/settings/advanced)'
+                            description: 'List of path patterns to exclude. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /admin/** matches /admin/users and /admin/settings/advanced). Most accounts are limited to 10 rules; contact support to raise it.'
                             type: array
                             items:
-                              maxLength: 512
+                              maxLength: 500
                               pattern: ^[*/\\]?[\w\-/.\\?*:=&%]+$
                               type: string
                             example:
@@ -29453,10 +29527,10 @@ paths:
                               - '**\temp\**'
                             maxItems: 10
                           include_items:
-                            description: 'List of path patterns to include. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /blog/** matches /blog/post and /blog/2024/post)'
+                            description: 'List of path patterns to include. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /blog/** matches /blog/post and /blog/2024/post). Most accounts are limited to 10 rules; contact support to raise it.'
                             type: array
                             items:
-                              maxLength: 512
+                              maxLength: 500
                               pattern: ^[*/\\]?[\w\-/.\\?*:=&%]+$
                               type: string
                             example:
@@ -29474,6 +29548,50 @@ paths:
                             default:
                               parse_type: sitemap
                             properties:
+                              discover_options:
+                                description: Options for parse_type 'discover', where Browser Run discovers URLs by link following and sitemaps. Ignored for 'sitemap'.
+                                type: object
+                                properties:
+                                  depth:
+                                    description: Maximum link-follow depth from the seed URL.
+                                    type: number
+                                    example: 5
+                                    default: 5
+                                    maximum: 100000
+                                    minimum: 1
+                                  include_external_links:
+                                    description: Follow links that point outside the source domain. Must stay `false` — discover crawls are restricted to the zone you own.
+                                    type: boolean
+                                    example: false
+                                    default: false
+                                  include_subdomains:
+                                    description: Follow links to subdomains of the source host.
+                                    type: boolean
+                                    example: false
+                                    default: false
+                                  limit:
+                                    description: Maximum number of pages to crawl (1-100000).
+                                    type: number
+                                    example: 10000
+                                    default: 100000
+                                    maximum: 100000
+                                    minimum: 1
+                                  max_age:
+                                    description: Maximum content age in seconds to accept (0–604800).
+                                    type: number
+                                    example: 86400
+                                    default: 86400
+                                    maximum: 604800
+                                    minimum: 0
+                                  source:
+                                    description: "Where the crawler looks for URLs: 'sitemaps' reads sitemap XML only, 'links' follows page links only, 'all' does both."
+                                    type: string
+                                    example: all
+                                    default: all
+                                    enum:
+                                      - all
+                                      - sitemaps
+                                      - links
                               parse_options:
                                 type: object
                                 properties:
@@ -29531,7 +29649,9 @@ paths:
                                     type: boolean
                                     default: true
                               parse_type:
+                                description: How URLs are discovered. 'sitemap' reads XML sitemaps; 'discover' follows links recursively and requires the source to be a Verified zone on this account.
                                 type: string
+                                example: sitemap
                                 default: sitemap
                                 enum:
                                   - sitemap
@@ -30103,10 +30223,10 @@ paths:
                         nullable: true
                         properties:
                           exclude_items:
-                            description: 'List of path patterns to exclude. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /admin/** matches /admin/users and /admin/settings/advanced)'
+                            description: 'List of path patterns to exclude. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /admin/** matches /admin/users and /admin/settings/advanced). Most accounts are limited to 10 rules; contact support to raise it.'
                             type: array
                             items:
-                              maxLength: 512
+                              maxLength: 500
                               pattern: ^[*/\\]?[\w\-/.\\?*:=&%]+$
                               type: string
                             example:
@@ -30115,10 +30235,10 @@ paths:
                               - '**\temp\**'
                             maxItems: 10
                           include_items:
-                            description: 'List of path patterns to include. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /blog/** matches /blog/post and /blog/2024/post)'
+                            description: 'List of path patterns to include. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /blog/** matches /blog/post and /blog/2024/post). Most accounts are limited to 10 rules; contact support to raise it.'
                             type: array
                             items:
-                              maxLength: 512
+                              maxLength: 500
                               pattern: ^[*/\\]?[\w\-/.\\?*:=&%]+$
                               type: string
                             example:
@@ -30136,6 +30256,50 @@ paths:
                             default:
                               parse_type: sitemap
                             properties:
+                              discover_options:
+                                description: Options for parse_type 'discover', where Browser Run discovers URLs by link following and sitemaps. Ignored for 'sitemap'.
+                                type: object
+                                properties:
+                                  depth:
+                                    description: Maximum link-follow depth from the seed URL.
+                                    type: number
+                                    example: 5
+                                    default: 5
+                                    maximum: 100000
+                                    minimum: 1
+                                  include_external_links:
+                                    description: Follow links that point outside the source domain. Must stay `false` — discover crawls are restricted to the zone you own.
+                                    type: boolean
+                                    example: false
+                                    default: false
+                                  include_subdomains:
+                                    description: Follow links to subdomains of the source host.
+                                    type: boolean
+                                    example: false
+                                    default: false
+                                  limit:
+                                    description: Maximum number of pages to crawl (1-100000).
+                                    type: number
+                                    example: 10000
+                                    default: 100000
+                                    maximum: 100000
+                                    minimum: 1
+                                  max_age:
+                                    description: Maximum content age in seconds to accept (0–604800).
+                                    type: number
+                                    example: 86400
+                                    default: 86400
+                                    maximum: 604800
+                                    minimum: 0
+                                  source:
+                                    description: "Where the crawler looks for URLs: 'sitemaps' reads sitemap XML only, 'links' follows page links only, 'all' does both."
+                                    type: string
+                                    example: all
+                                    default: all
+                                    enum:
+                                      - all
+                                      - sitemaps
+                                      - links
                               parse_options:
                                 type: object
                                 properties:
@@ -30193,7 +30357,9 @@ paths:
                                     type: boolean
                                     default: true
                               parse_type:
+                                description: How URLs are discovered. 'sitemap' reads XML sitemaps; 'discover' follows links recursively and requires the source to be a Verified zone on this account.
                                 type: string
+                                example: sitemap
                                 default: sitemap
                                 enum:
                                   - sitemap
@@ -30739,10 +30905,10 @@ paths:
                         nullable: true
                         properties:
                           exclude_items:
-                            description: 'List of path patterns to exclude. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /admin/** matches /admin/users and /admin/settings/advanced)'
+                            description: 'List of path patterns to exclude. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /admin/** matches /admin/users and /admin/settings/advanced). Most accounts are limited to 10 rules; contact support to raise it.'
                             type: array
                             items:
-                              maxLength: 512
+                              maxLength: 500
                               pattern: ^[*/\\]?[\w\-/.\\?*:=&%]+$
                               type: string
                             example:
@@ -30751,10 +30917,10 @@ paths:
                               - '**\temp\**'
                             maxItems: 10
                           include_items:
-                            description: 'List of path patterns to include. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /blog/** matches /blog/post and /blog/2024/post)'
+                            description: 'List of path patterns to include. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /blog/** matches /blog/post and /blog/2024/post). Most accounts are limited to 10 rules; contact support to raise it.'
                             type: array
                             items:
-                              maxLength: 512
+                              maxLength: 500
                               pattern: ^[*/\\]?[\w\-/.\\?*:=&%]+$
                               type: string
                             example:
@@ -30772,6 +30938,50 @@ paths:
                             default:
                               parse_type: sitemap
                             properties:
+                              discover_options:
+                                description: Options for parse_type 'discover', where Browser Run discovers URLs by link following and sitemaps. Ignored for 'sitemap'.
+                                type: object
+                                properties:
+                                  depth:
+                                    description: Maximum link-follow depth from the seed URL.
+                                    type: number
+                                    example: 5
+                                    default: 5
+                                    maximum: 100000
+                                    minimum: 1
+                                  include_external_links:
+                                    description: Follow links that point outside the source domain. Must stay `false` — discover crawls are restricted to the zone you own.
+                                    type: boolean
+                                    example: false
+                                    default: false
+                                  include_subdomains:
+                                    description: Follow links to subdomains of the source host.
+                                    type: boolean
+                                    example: false
+                                    default: false
+                                  limit:
+                                    description: Maximum number of pages to crawl (1-100000).
+                                    type: number
+                                    example: 10000
+                                    default: 100000
+                                    maximum: 100000
+                                    minimum: 1
+                                  max_age:
+                                    description: Maximum content age in seconds to accept (0–604800).
+                                    type: number
+                                    example: 86400
+                                    default: 86400
+                                    maximum: 604800
+                                    minimum: 0
+                                  source:
+                                    description: "Where the crawler looks for URLs: 'sitemaps' reads sitemap XML only, 'links' follows page links only, 'all' does both."
+                                    type: string
+                                    example: all
+                                    default: all
+                                    enum:
+                                      - all
+                                      - sitemaps
+                                      - links
                               parse_options:
                                 type: object
                                 properties:
@@ -30829,7 +31039,9 @@ paths:
                                     type: boolean
                                     default: true
                               parse_type:
+                                description: How URLs are discovered. 'sitemap' reads XML sitemaps; 'discover' follows links recursively and requires the source to be a Verified zone on this account.
                                 type: string
+                                example: sitemap
                                 default: sitemap
                                 enum:
                                   - sitemap
@@ -31321,10 +31533,10 @@ paths:
                   nullable: true
                   properties:
                     exclude_items:
-                      description: 'List of path patterns to exclude. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /admin/** matches /admin/users and /admin/settings/advanced)'
+                      description: 'List of path patterns to exclude. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /admin/** matches /admin/users and /admin/settings/advanced). Most accounts are limited to 10 rules; contact support to raise it.'
                       type: array
                       items:
-                        maxLength: 512
+                        maxLength: 500
                         pattern: ^[*/\\]?[\w\-/.\\?*:=&%]+$
                         type: string
                       example:
@@ -31333,10 +31545,10 @@ paths:
                         - '**\temp\**'
                       maxItems: 10
                     include_items:
-                      description: 'List of path patterns to include. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /blog/** matches /blog/post and /blog/2024/post)'
+                      description: 'List of path patterns to include. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /blog/** matches /blog/post and /blog/2024/post). Most accounts are limited to 10 rules; contact support to raise it.'
                       type: array
                       items:
-                        maxLength: 512
+                        maxLength: 500
                         pattern: ^[*/\\]?[\w\-/.\\?*:=&%]+$
                         type: string
                       example:
@@ -31354,6 +31566,50 @@ paths:
                       default:
                         parse_type: sitemap
                       properties:
+                        discover_options:
+                          description: Options for parse_type 'discover', where Browser Run discovers URLs by link following and sitemaps. Ignored for 'sitemap'.
+                          type: object
+                          properties:
+                            depth:
+                              description: Maximum link-follow depth from the seed URL.
+                              type: number
+                              example: 5
+                              default: 5
+                              maximum: 100000
+                              minimum: 1
+                            include_external_links:
+                              description: Follow links that point outside the source domain. Must stay `false` — discover crawls are restricted to the zone you own.
+                              type: boolean
+                              example: false
+                              default: false
+                            include_subdomains:
+                              description: Follow links to subdomains of the source host.
+                              type: boolean
+                              example: false
+                              default: false
+                            limit:
+                              description: Maximum number of pages to crawl (1-100000).
+                              type: number
+                              example: 10000
+                              default: 100000
+                              maximum: 100000
+                              minimum: 1
+                            max_age:
+                              description: Maximum content age in seconds to accept (0–604800).
+                              type: number
+                              example: 86400
+                              default: 86400
+                              maximum: 604800
+                              minimum: 0
+                            source:
+                              description: "Where the crawler looks for URLs: 'sitemaps' reads sitemap XML only, 'links' follows page links only, 'all' does both."
+                              type: string
+                              example: all
+                              default: all
+                              enum:
+                                - all
+                                - sitemaps
+                                - links
                         parse_options:
                           type: object
                           properties:
@@ -31411,7 +31667,9 @@ paths:
                               type: boolean
                               default: true
                         parse_type:
+                          description: How URLs are discovered. 'sitemap' reads XML sitemaps; 'discover' follows links recursively and requires the source to be a Verified zone on this account.
                           type: string
+                          example: sitemap
                           default: sitemap
                           enum:
                             - sitemap
@@ -31926,10 +32184,10 @@ paths:
                         nullable: true
                         properties:
                           exclude_items:
-                            description: 'List of path patterns to exclude. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /admin/** matches /admin/users and /admin/settings/advanced)'
+                            description: 'List of path patterns to exclude. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /admin/** matches /admin/users and /admin/settings/advanced). Most accounts are limited to 10 rules; contact support to raise it.'
                             type: array
                             items:
-                              maxLength: 512
+                              maxLength: 500
                               pattern: ^[*/\\]?[\w\-/.\\?*:=&%]+$
                               type: string
                             example:
@@ -31938,10 +32196,10 @@ paths:
                               - '**\temp\**'
                             maxItems: 10
                           include_items:
-                            description: 'List of path patterns to include. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /blog/** matches /blog/post and /blog/2024/post)'
+                            description: 'List of path patterns to include. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /blog/** matches /blog/post and /blog/2024/post). Most accounts are limited to 10 rules; contact support to raise it.'
                             type: array
                             items:
-                              maxLength: 512
+                              maxLength: 500
                               pattern: ^[*/\\]?[\w\-/.\\?*:=&%]+$
                               type: string
                             example:
@@ -31959,6 +32217,50 @@ paths:
                             default:
                               parse_type: sitemap
                             properties:
+                              discover_options:
+                                description: Options for parse_type 'discover', where Browser Run discovers URLs by link following and sitemaps. Ignored for 'sitemap'.
+                                type: object
+                                properties:
+                                  depth:
+                                    description: Maximum link-follow depth from the seed URL.
+                                    type: number
+                                    example: 5
+                                    default: 5
+                                    maximum: 100000
+                                    minimum: 1
+                                  include_external_links:
+                                    description: Follow links that point outside the source domain. Must stay `false` — discover crawls are restricted to the zone you own.
+                                    type: boolean
+                                    example: false
+                                    default: false
+                                  include_subdomains:
+                                    description: Follow links to subdomains of the source host.
+                                    type: boolean
+                                    example: false
+                                    default: false
+                                  limit:
+                                    description: Maximum number of pages to crawl (1-100000).
+                                    type: number
+                                    example: 10000
+                                    default: 100000
+                                    maximum: 100000
+                                    minimum: 1
+                                  max_age:
+                                    description: Maximum content age in seconds to accept (0–604800).
+                                    type: number
+                                    example: 86400
+                                    default: 86400
+                                    maximum: 604800
+                                    minimum: 0
+                                  source:
+                                    description: "Where the crawler looks for URLs: 'sitemaps' reads sitemap XML only, 'links' follows page links only, 'all' does both."
+                                    type: string
+                                    example: all
+                                    default: all
+                                    enum:
+                                      - all
+                                      - sitemaps
+                                      - links
                               parse_options:
                                 type: object
                                 properties:
@@ -32016,7 +32318,9 @@ paths:
                                     type: boolean
                                     default: true
                               parse_type:
+                                description: How URLs are discovered. 'sitemap' reads XML sitemaps; 'discover' follows links recursively and requires the source to be a Verified zone on this account.
                                 type: string
+                                example: sitemap
                                 default: sitemap
                                 enum:
                                   - sitemap
@@ -36250,6 +36554,34 @@ paths:
                               additionalProperties:
                                 nullable: true
                               properties:
+                                discover_options:
+                                  type: object
+                                  additionalProperties:
+                                    nullable: true
+                                  properties:
+                                    depth:
+                                      type: number
+                                      maximum: 100000
+                                      minimum: 1
+                                    include_external_links:
+                                      type: boolean
+                                    include_subdomains:
+                                      type: boolean
+                                    limit:
+                                      description: Maximum number of pages to crawl. New values are capped at 100000; instances configured before that cap may report a higher stored value, which the crawler clamps at run time.
+                                      type: number
+                                      maximum: 100000
+                                      minimum: 1
+                                    max_age:
+                                      type: number
+                                      maximum: 604800
+                                      minimum: 0
+                                    source:
+                                      type: string
+                                      enum:
+                                        - all
+                                        - sitemaps
+                                        - links
                                 parse_options:
                                   type: object
                                   additionalProperties:
@@ -36872,10 +37204,10 @@ paths:
                   nullable: true
                   properties:
                     exclude_items:
-                      description: 'List of path patterns to exclude. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /admin/** matches /admin/users and /admin/settings/advanced)'
+                      description: 'List of path patterns to exclude. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /admin/** matches /admin/users and /admin/settings/advanced). Most accounts are limited to 10 rules; contact support to raise it.'
                       type: array
                       items:
-                        maxLength: 512
+                        maxLength: 500
                         pattern: ^[*/\\]?[\w\-/.\\?*:=&%]+$
                         type: string
                       example:
@@ -36884,10 +37216,10 @@ paths:
                         - '**\temp\**'
                       maxItems: 10
                     include_items:
-                      description: 'List of path patterns to include. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /blog/** matches /blog/post and /blog/2024/post)'
+                      description: 'List of path patterns to include. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /blog/** matches /blog/post and /blog/2024/post). Most accounts are limited to 10 rules; contact support to raise it.'
                       type: array
                       items:
-                        maxLength: 512
+                        maxLength: 500
                         pattern: ^[*/\\]?[\w\-/.\\?*:=&%]+$
                         type: string
                       example:
@@ -36905,6 +37237,50 @@ paths:
                       default:
                         parse_type: sitemap
                       properties:
+                        discover_options:
+                          description: Options for parse_type 'discover', where Browser Run discovers URLs by link following and sitemaps. Ignored for 'sitemap'.
+                          type: object
+                          properties:
+                            depth:
+                              description: Maximum link-follow depth from the seed URL.
+                              type: number
+                              example: 5
+                              default: 5
+                              maximum: 100000
+                              minimum: 1
+                            include_external_links:
+                              description: Follow links that point outside the source domain. Must stay `false` — discover crawls are restricted to the zone you own.
+                              type: boolean
+                              example: false
+                              default: false
+                            include_subdomains:
+                              description: Follow links to subdomains of the source host.
+                              type: boolean
+                              example: false
+                              default: false
+                            limit:
+                              description: Maximum number of pages to crawl (1-100000).
+                              type: number
+                              example: 10000
+                              default: 100000
+                              maximum: 100000
+                              minimum: 1
+                            max_age:
+                              description: Maximum content age in seconds to accept (0–604800).
+                              type: number
+                              example: 86400
+                              default: 86400
+                              maximum: 604800
+                              minimum: 0
+                            source:
+                              description: "Where the crawler looks for URLs: 'sitemaps' reads sitemap XML only, 'links' follows page links only, 'all' does both."
+                              type: string
+                              example: all
+                              default: all
+                              enum:
+                                - all
+                                - sitemaps
+                                - links
                         parse_options:
                           type: object
                           properties:
@@ -36962,7 +37338,9 @@ paths:
                               type: boolean
                               default: true
                         parse_type:
+                          description: How URLs are discovered. 'sitemap' reads XML sitemaps; 'discover' follows links recursively and requires the source to be a Verified zone on this account.
                           type: string
+                          example: sitemap
                           default: sitemap
                           enum:
                             - sitemap
@@ -37435,10 +37813,10 @@ paths:
                         nullable: true
                         properties:
                           exclude_items:
-                            description: 'List of path patterns to exclude. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /admin/** matches /admin/users and /admin/settings/advanced)'
+                            description: 'List of path patterns to exclude. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /admin/** matches /admin/users and /admin/settings/advanced). Most accounts are limited to 10 rules; contact support to raise it.'
                             type: array
                             items:
-                              maxLength: 512
+                              maxLength: 500
                               pattern: ^[*/\\]?[\w\-/.\\?*:=&%]+$
                               type: string
                             example:
@@ -37447,10 +37825,10 @@ paths:
                               - '**\temp\**'
                             maxItems: 10
                           include_items:
-                            description: 'List of path patterns to include. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /blog/** matches /blog/post and /blog/2024/post)'
+                            description: 'List of path patterns to include. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /blog/** matches /blog/post and /blog/2024/post). Most accounts are limited to 10 rules; contact support to raise it.'
                             type: array
                             items:
-                              maxLength: 512
+                              maxLength: 500
                               pattern: ^[*/\\]?[\w\-/.\\?*:=&%]+$
                               type: string
                             example:
@@ -37468,6 +37846,50 @@ paths:
                             default:
                               parse_type: sitemap
                             properties:
+                              discover_options:
+                                description: Options for parse_type 'discover', where Browser Run discovers URLs by link following and sitemaps. Ignored for 'sitemap'.
+                                type: object
+                                properties:
+                                  depth:
+                                    description: Maximum link-follow depth from the seed URL.
+                                    type: number
+                                    example: 5
+                                    default: 5
+                                    maximum: 100000
+                                    minimum: 1
+                                  include_external_links:
+                                    description: Follow links that point outside the source domain. Must stay `false` — discover crawls are restricted to the zone you own.
+                                    type: boolean
+                                    example: false
+                                    default: false
+                                  include_subdomains:
+                                    description: Follow links to subdomains of the source host.
+                                    type: boolean
+                                    example: false
+                                    default: false
+                                  limit:
+                                    description: Maximum number of pages to crawl (1-100000).
+                                    type: number
+                                    example: 10000
+                                    default: 100000
+                                    maximum: 100000
+                                    minimum: 1
+                                  max_age:
+                                    description: Maximum content age in seconds to accept (0–604800).
+                                    type: number
+                                    example: 86400
+                                    default: 86400
+                                    maximum: 604800
+                                    minimum: 0
+                                  source:
+                                    description: "Where the crawler looks for URLs: 'sitemaps' reads sitemap XML only, 'links' follows page links only, 'all' does both."
+                                    type: string
+                                    example: all
+                                    default: all
+                                    enum:
+                                      - all
+                                      - sitemaps
+                                      - links
                               parse_options:
                                 type: object
                                 properties:
@@ -37525,7 +37947,9 @@ paths:
                                     type: boolean
                                     default: true
                               parse_type:
+                                description: How URLs are discovered. 'sitemap' reads XML sitemaps; 'discover' follows links recursively and requires the source to be a Verified zone on this account.
                                 type: string
+                                example: sitemap
                                 default: sitemap
                                 enum:
                                   - sitemap
@@ -38117,10 +38541,10 @@ paths:
                         nullable: true
                         properties:
                           exclude_items:
-                            description: 'List of path patterns to exclude. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /admin/** matches /admin/users and /admin/settings/advanced)'
+                            description: 'List of path patterns to exclude. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /admin/** matches /admin/users and /admin/settings/advanced). Most accounts are limited to 10 rules; contact support to raise it.'
                             type: array
                             items:
-                              maxLength: 512
+                              maxLength: 500
                               pattern: ^[*/\\]?[\w\-/.\\?*:=&%]+$
                               type: string
                             example:
@@ -38129,10 +38553,10 @@ paths:
                               - '**\temp\**'
                             maxItems: 10
                           include_items:
-                            description: 'List of path patterns to include. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /blog/** matches /blog/post and /blog/2024/post)'
+                            description: 'List of path patterns to include. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /blog/** matches /blog/post and /blog/2024/post). Most accounts are limited to 10 rules; contact support to raise it.'
                             type: array
                             items:
-                              maxLength: 512
+                              maxLength: 500
                               pattern: ^[*/\\]?[\w\-/.\\?*:=&%]+$
                               type: string
                             example:
@@ -38150,6 +38574,50 @@ paths:
                             default:
                               parse_type: sitemap
                             properties:
+                              discover_options:
+                                description: Options for parse_type 'discover', where Browser Run discovers URLs by link following and sitemaps. Ignored for 'sitemap'.
+                                type: object
+                                properties:
+                                  depth:
+                                    description: Maximum link-follow depth from the seed URL.
+                                    type: number
+                                    example: 5
+                                    default: 5
+                                    maximum: 100000
+                                    minimum: 1
+                                  include_external_links:
+                                    description: Follow links that point outside the source domain. Must stay `false` — discover crawls are restricted to the zone you own.
+                                    type: boolean
+                                    example: false
+                                    default: false
+                                  include_subdomains:
+                                    description: Follow links to subdomains of the source host.
+                                    type: boolean
+                                    example: false
+                                    default: false
+                                  limit:
+                                    description: Maximum number of pages to crawl (1-100000).
+                                    type: number
+                                    example: 10000
+                                    default: 100000
+                                    maximum: 100000
+                                    minimum: 1
+                                  max_age:
+                                    description: Maximum content age in seconds to accept (0–604800).
+                                    type: number
+                                    example: 86400
+                                    default: 86400
+                                    maximum: 604800
+                                    minimum: 0
+                                  source:
+                                    description: "Where the crawler looks for URLs: 'sitemaps' reads sitemap XML only, 'links' follows page links only, 'all' does both."
+                                    type: string
+                                    example: all
+                                    default: all
+                                    enum:
+                                      - all
+                                      - sitemaps
+                                      - links
                               parse_options:
                                 type: object
                                 properties:
@@ -38207,7 +38675,9 @@ paths:
                                     type: boolean
                                     default: true
                               parse_type:
+                                description: How URLs are discovered. 'sitemap' reads XML sitemaps; 'discover' follows links recursively and requires the source to be a Verified zone on this account.
                                 type: string
+                                example: sitemap
                                 default: sitemap
                                 enum:
                                   - sitemap
@@ -38767,10 +39237,10 @@ paths:
                         nullable: true
                         properties:
                           exclude_items:
-                            description: 'List of path patterns to exclude. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /admin/** matches /admin/users and /admin/settings/advanced)'
+                            description: 'List of path patterns to exclude. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /admin/** matches /admin/users and /admin/settings/advanced). Most accounts are limited to 10 rules; contact support to raise it.'
                             type: array
                             items:
-                              maxLength: 512
+                              maxLength: 500
                               pattern: ^[*/\\]?[\w\-/.\\?*:=&%]+$
                               type: string
                             example:
@@ -38779,10 +39249,10 @@ paths:
                               - '**\temp\**'
                             maxItems: 10
                           include_items:
-                            description: 'List of path patterns to include. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /blog/** matches /blog/post and /blog/2024/post)'
+                            description: 'List of path patterns to include. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /blog/** matches /blog/post and /blog/2024/post). Most accounts are limited to 10 rules; contact support to raise it.'
                             type: array
                             items:
-                              maxLength: 512
+                              maxLength: 500
                               pattern: ^[*/\\]?[\w\-/.\\?*:=&%]+$
                               type: string
                             example:
@@ -38800,6 +39270,50 @@ paths:
                             default:
                               parse_type: sitemap
                             properties:
+                              discover_options:
+                                description: Options for parse_type 'discover', where Browser Run discovers URLs by link following and sitemaps. Ignored for 'sitemap'.
+                                type: object
+                                properties:
+                                  depth:
+                                    description: Maximum link-follow depth from the seed URL.
+                                    type: number
+                                    example: 5
+                                    default: 5
+                                    maximum: 100000
+                                    minimum: 1
+                                  include_external_links:
+                                    description: Follow links that point outside the source domain. Must stay `false` — discover crawls are restricted to the zone you own.
+                                    type: boolean
+                                    example: false
+                                    default: false
+                                  include_subdomains:
+                                    description: Follow links to subdomains of the source host.
+                                    type: boolean
+                                    example: false
+                                    default: false
+                                  limit:
+                                    description: Maximum number of pages to crawl (1-100000).
+                                    type: number
+                                    example: 10000
+                                    default: 100000
+                                    maximum: 100000
+                                    minimum: 1
+                                  max_age:
+                                    description: Maximum content age in seconds to accept (0–604800).
+                                    type: number
+                                    example: 86400
+                                    default: 86400
+                                    maximum: 604800
+                                    minimum: 0
+                                  source:
+                                    description: "Where the crawler looks for URLs: 'sitemaps' reads sitemap XML only, 'links' follows page links only, 'all' does both."
+                                    type: string
+                                    example: all
+                                    default: all
+                                    enum:
+                                      - all
+                                      - sitemaps
+                                      - links
                               parse_options:
                                 type: object
                                 properties:
@@ -38857,7 +39371,9 @@ paths:
                                     type: boolean
                                     default: true
                               parse_type:
+                                description: How URLs are discovered. 'sitemap' reads XML sitemaps; 'discover' follows links recursively and requires the source to be a Verified zone on this account.
                                 type: string
+                                example: sitemap
                                 default: sitemap
                                 enum:
                                   - sitemap
@@ -39501,10 +40017,10 @@ paths:
                   nullable: true
                   properties:
                     exclude_items:
-                      description: 'List of path patterns to exclude. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /admin/** matches /admin/users and /admin/settings/advanced)'
+                      description: 'List of path patterns to exclude. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /admin/** matches /admin/users and /admin/settings/advanced). Most accounts are limited to 10 rules; contact support to raise it.'
                       type: array
                       items:
-                        maxLength: 512
+                        maxLength: 500
                         pattern: ^[*/\\]?[\w\-/.\\?*:=&%]+$
                         type: string
                       example:
@@ -39513,10 +40029,10 @@ paths:
                         - '**\temp\**'
                       maxItems: 10
                     include_items:
-                      description: 'List of path patterns to include. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /blog/** matches /blog/post and /blog/2024/post)'
+                      description: 'List of path patterns to include. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /blog/** matches /blog/post and /blog/2024/post). Most accounts are limited to 10 rules; contact support to raise it.'
                       type: array
                       items:
-                        maxLength: 512
+                        maxLength: 500
                         pattern: ^[*/\\]?[\w\-/.\\?*:=&%]+$
                         type: string
                       example:
@@ -39534,6 +40050,50 @@ paths:
                       default:
                         parse_type: sitemap
                       properties:
+                        discover_options:
+                          description: Options for parse_type 'discover', where Browser Run discovers URLs by link following and sitemaps. Ignored for 'sitemap'.
+                          type: object
+                          properties:
+                            depth:
+                              description: Maximum link-follow depth from the seed URL.
+                              type: number
+                              example: 5
+                              default: 5
+                              maximum: 100000
+                              minimum: 1
+                            include_external_links:
+                              description: Follow links that point outside the source domain. Must stay `false` — discover crawls are restricted to the zone you own.
+                              type: boolean
+                              example: false
+                              default: false
+                            include_subdomains:
+                              description: Follow links to subdomains of the source host.
+                              type: boolean
+                              example: false
+                              default: false
+                            limit:
+                              description: Maximum number of pages to crawl (1-100000).
+                              type: number
+                              example: 10000
+                              default: 100000
+                              maximum: 100000
+                              minimum: 1
+                            max_age:
+                              description: Maximum content age in seconds to accept (0–604800).
+                              type: number
+                              example: 86400
+                              default: 86400
+                              maximum: 604800
+                              minimum: 0
+                            source:
+                              description: "Where the crawler looks for URLs: 'sitemaps' reads sitemap XML only, 'links' follows page links only, 'all' does both."
+                              type: string
+                              example: all
+                              default: all
+                              enum:
+                                - all
+                                - sitemaps
+                                - links
                         parse_options:
                           type: object
                           properties:
@@ -39591,7 +40151,9 @@ paths:
                               type: boolean
                               default: true
                         parse_type:
+                          description: How URLs are discovered. 'sitemap' reads XML sitemaps; 'discover' follows links recursively and requires the source to be a Verified zone on this account.
                           type: string
+                          example: sitemap
                           default: sitemap
                           enum:
                             - sitemap
@@ -40106,10 +40668,10 @@ paths:
                         nullable: true
                         properties:
                           exclude_items:
-                            description: 'List of path patterns to exclude. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /admin/** matches /admin/users and /admin/settings/advanced)'
+                            description: 'List of path patterns to exclude. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /admin/** matches /admin/users and /admin/settings/advanced). Most accounts are limited to 10 rules; contact support to raise it.'
                             type: array
                             items:
-                              maxLength: 512
+                              maxLength: 500
                               pattern: ^[*/\\]?[\w\-/.\\?*:=&%]+$
                               type: string
                             example:
@@ -40118,10 +40680,10 @@ paths:
                               - '**\temp\**'
                             maxItems: 10
                           include_items:
-                            description: 'List of path patterns to include. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /blog/** matches /blog/post and /blog/2024/post)'
+                            description: 'List of path patterns to include. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /blog/** matches /blog/post and /blog/2024/post). Most accounts are limited to 10 rules; contact support to raise it.'
                             type: array
                             items:
-                              maxLength: 512
+                              maxLength: 500
                               pattern: ^[*/\\]?[\w\-/.\\?*:=&%]+$
                               type: string
                             example:
@@ -40139,6 +40701,50 @@ paths:
                             default:
                               parse_type: sitemap
                             properties:
+                              discover_options:
+                                description: Options for parse_type 'discover', where Browser Run discovers URLs by link following and sitemaps. Ignored for 'sitemap'.
+                                type: object
+                                properties:
+                                  depth:
+                                    description: Maximum link-follow depth from the seed URL.
+                                    type: number
+                                    example: 5
+                                    default: 5
+                                    maximum: 100000
+                                    minimum: 1
+                                  include_external_links:
+                                    description: Follow links that point outside the source domain. Must stay `false` — discover crawls are restricted to the zone you own.
+                                    type: boolean
+                                    example: false
+                                    default: false
+                                  include_subdomains:
+                                    description: Follow links to subdomains of the source host.
+                                    type: boolean
+                                    example: false
+                                    default: false
+                                  limit:
+                                    description: Maximum number of pages to crawl (1-100000).
+                                    type: number
+                                    example: 10000
+                                    default: 100000
+                                    maximum: 100000
+                                    minimum: 1
+                                  max_age:
+                                    description: Maximum content age in seconds to accept (0–604800).
+                                    type: number
+                                    example: 86400
+                                    default: 86400
+                                    maximum: 604800
+                                    minimum: 0
+                                  source:
+                                    description: "Where the crawler looks for URLs: 'sitemaps' reads sitemap XML only, 'links' follows page links only, 'all' does both."
+                                    type: string
+                                    example: all
+                                    default: all
+                                    enum:
+                                      - all
+                                      - sitemaps
+                                      - links
                               parse_options:
                                 type: object
                                 properties:
@@ -40196,7 +40802,9 @@ paths:
                                     type: boolean
                                     default: true
                               parse_type:
+                                description: How URLs are discovered. 'sitemap' reads XML sitemaps; 'discover' follows links recursively and requires the source to be a Verified zone on this account.
                                 type: string
+                                example: sitemap
                                 default: sitemap
                                 enum:
                                   - sitemap
@@ -59707,14 +60315,38 @@ paths:
       x-fern-sdk-method-name: edit
       x-forge-hidden: true
   /accounts/{account_id}/browser-extension/config:
+    delete:
+      operationId: accounts-browser-extension-config-delete
+      summary: Delete browser extension configuration
+      description: |
+        Deletes the browser extension configuration for an account.
+        The shard mapping is preserved and not deleted.
+      responses:
+        '200':
+          description: Browser extension configuration deleted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/brex_DeleteResponse'
+        '400':
+          $ref: '#/components/responses/brex_BadRequest'
+        '401':
+          $ref: '#/components/responses/brex_Unauthorized'
+        '403':
+          $ref: '#/components/responses/brex_Forbidden'
+        '404':
+          $ref: '#/components/responses/brex_NotFound'
+        '500':
+          $ref: '#/components/responses/brex_InternalServerError'
+      security:
+        - api_token: []
+      tags:
+        - Browser Extension Config
     get:
       operationId: accounts-browser-extension-config-get
       summary: Get browser extension configuration
       description: |
         Returns the browser extension configuration for an account.
-
-        This endpoint is currently backed by the scaffolded service response while
-        the runtime configuration surface is being implemented.
       responses:
         '200':
           description: Browser extension configuration response.
@@ -59736,6 +60368,71 @@ paths:
         - Browser Extension Config
     parameters:
       - $ref: '#/components/parameters/brex_AccountId'
+    post:
+      operationId: accounts-browser-extension-config-post
+      summary: Create browser extension configuration
+      description: |
+        Creates the browser extension configuration for an account.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/brex_CreateConfigRequest'
+      responses:
+        '200':
+          description: Browser extension configuration created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/brex_ConfigResponse'
+        '400':
+          $ref: '#/components/responses/brex_BadRequest'
+        '401':
+          $ref: '#/components/responses/brex_Unauthorized'
+        '403':
+          $ref: '#/components/responses/brex_Forbidden'
+        '409':
+          $ref: '#/components/responses/brex_Conflict'
+        '500':
+          $ref: '#/components/responses/brex_InternalServerError'
+      security:
+        - api_token: []
+      tags:
+        - Browser Extension Config
+    put:
+      operationId: accounts-browser-extension-config-put
+      summary: Update browser extension configuration
+      description: |
+        Replaces the browser extension configuration for an account.
+        The configuration must already exist. The shard mapping is immutable.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/brex_UpdateConfigRequest'
+      responses:
+        '200':
+          description: Browser extension configuration updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/brex_ConfigResponse'
+        '400':
+          $ref: '#/components/responses/brex_BadRequest'
+        '401':
+          $ref: '#/components/responses/brex_Unauthorized'
+        '403':
+          $ref: '#/components/responses/brex_Forbidden'
+        '404':
+          $ref: '#/components/responses/brex_NotFound'
+        '500':
+          $ref: '#/components/responses/brex_InternalServerError'
+      security:
+        - api_token: []
+      tags:
+        - Browser Extension Config
   /accounts/{account_id}/browser-rendering/accessibilityTree:
     post:
       operationId: brapi-post_AccessibilityTree
@@ -61961,6 +62658,7 @@ paths:
                               description: Markdown of the content of the crawled URL.
                               type: string
                             metadata:
+                              description: Absent for urls that never reached a fetch.
                               type: object
                               properties:
                                 status:
@@ -61991,7 +62689,6 @@ paths:
                           required:
                             - url
                             - status
-                            - metadata
                           type: object
                       skipped:
                         description: Total number of URLs that were skipped due to include/exclude/subdomain filters. Skipped URLs are included in records but are not counted toward total/finished.
@@ -156908,11 +157605,12 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/rulesets_AccountId'
+        - $ref: '#/components/parameters/rulesets_DryRun'
       requestBody:
         $ref: '#/components/requestBodies/rulesets_CreateRuleset'
       responses:
         '200':
-          $ref: '#/components/responses/rulesets_Ruleset'
+          $ref: '#/components/responses/rulesets_RulesetOrDryRun'
         4XX:
           $ref: '#/components/responses/rulesets_Failure'
       security:
@@ -156953,6 +157651,7 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/rulesets_AccountId'
+        - $ref: '#/components/parameters/rulesets_DryRun'
       responses:
         '204':
           $ref: '#/components/responses/rulesets_Empty'
@@ -157049,11 +157748,12 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/rulesets_AccountId'
+        - $ref: '#/components/parameters/rulesets_DryRun'
       requestBody:
         $ref: '#/components/requestBodies/rulesets_UpdateRuleset'
       responses:
         '200':
-          $ref: '#/components/responses/rulesets_Ruleset'
+          $ref: '#/components/responses/rulesets_RulesetOrDryRun'
         4XX:
           $ref: '#/components/responses/rulesets_Failure'
       security:
@@ -157094,11 +157794,12 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/rulesets_AccountId'
+        - $ref: '#/components/parameters/rulesets_DryRun'
       requestBody:
         $ref: '#/components/requestBodies/rulesets_Rule'
       responses:
         '200':
-          $ref: '#/components/responses/rulesets_Ruleset'
+          $ref: '#/components/responses/rulesets_RulesetOrDryRun'
         4XX:
           $ref: '#/components/responses/rulesets_Failure'
       security:
@@ -157148,9 +157849,10 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/rulesets_AccountId'
+        - $ref: '#/components/parameters/rulesets_DryRun'
       responses:
         '200':
-          $ref: '#/components/responses/rulesets_Ruleset'
+          $ref: '#/components/responses/rulesets_RulesetOrDryRun'
         4XX:
           $ref: '#/components/responses/rulesets_Failure'
       security:
@@ -157199,11 +157901,12 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/rulesets_AccountId'
+        - $ref: '#/components/parameters/rulesets_DryRun'
       requestBody:
         $ref: '#/components/requestBodies/rulesets_Rule'
       responses:
         '200':
-          $ref: '#/components/responses/rulesets_Ruleset'
+          $ref: '#/components/responses/rulesets_RulesetOrDryRun'
         4XX:
           $ref: '#/components/responses/rulesets_Failure'
       security:
@@ -157304,6 +158007,7 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/rulesets_AccountId'
+        - $ref: '#/components/parameters/rulesets_DryRun'
       responses:
         '204':
           $ref: '#/components/responses/rulesets_Empty'
@@ -157517,11 +158221,12 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/rulesets_AccountId'
+        - $ref: '#/components/parameters/rulesets_DryRun'
       requestBody:
         $ref: '#/components/requestBodies/rulesets_UpdateEntrypointRuleset'
       responses:
         '200':
-          $ref: '#/components/responses/rulesets_Ruleset'
+          $ref: '#/components/responses/rulesets_RulesetOrDryRun'
         4XX:
           $ref: '#/components/responses/rulesets_Failure'
       security:
@@ -324415,11 +325120,12 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/rulesets_ZoneId'
+        - $ref: '#/components/parameters/rulesets_DryRun'
       requestBody:
         $ref: '#/components/requestBodies/rulesets_CreateRuleset'
       responses:
         '200':
-          $ref: '#/components/responses/rulesets_Ruleset'
+          $ref: '#/components/responses/rulesets_RulesetOrDryRun'
         4XX:
           $ref: '#/components/responses/rulesets_Failure'
       security:
@@ -324477,6 +325183,7 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/rulesets_ZoneId'
+        - $ref: '#/components/parameters/rulesets_DryRun'
       responses:
         '204':
           $ref: '#/components/responses/rulesets_Empty'
@@ -324612,11 +325319,12 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/rulesets_ZoneId'
+        - $ref: '#/components/parameters/rulesets_DryRun'
       requestBody:
         $ref: '#/components/requestBodies/rulesets_UpdateRuleset'
       responses:
         '200':
-          $ref: '#/components/responses/rulesets_Ruleset'
+          $ref: '#/components/responses/rulesets_RulesetOrDryRun'
         4XX:
           $ref: '#/components/responses/rulesets_Failure'
       security:
@@ -324674,11 +325382,12 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/rulesets_ZoneId'
+        - $ref: '#/components/parameters/rulesets_DryRun'
       requestBody:
         $ref: '#/components/requestBodies/rulesets_Rule'
       responses:
         '200':
-          $ref: '#/components/responses/rulesets_Ruleset'
+          $ref: '#/components/responses/rulesets_RulesetOrDryRun'
         4XX:
           $ref: '#/components/responses/rulesets_Failure'
       security:
@@ -324741,9 +325450,10 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/rulesets_ZoneId'
+        - $ref: '#/components/parameters/rulesets_DryRun'
       responses:
         '200':
-          $ref: '#/components/responses/rulesets_Ruleset'
+          $ref: '#/components/responses/rulesets_RulesetOrDryRun'
         4XX:
           $ref: '#/components/responses/rulesets_Failure'
       security:
@@ -324805,11 +325515,12 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/rulesets_ZoneId'
+        - $ref: '#/components/parameters/rulesets_DryRun'
       requestBody:
         $ref: '#/components/requestBodies/rulesets_Rule'
       responses:
         '200':
-          $ref: '#/components/responses/rulesets_Ruleset'
+          $ref: '#/components/responses/rulesets_RulesetOrDryRun'
         4XX:
           $ref: '#/components/responses/rulesets_Failure'
       security:
@@ -324945,6 +325656,7 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/rulesets_ZoneId'
+        - $ref: '#/components/parameters/rulesets_DryRun'
       responses:
         '204':
           $ref: '#/components/responses/rulesets_Empty'
@@ -325253,11 +325965,12 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/rulesets_ZoneId'
+        - $ref: '#/components/parameters/rulesets_DryRun'
       requestBody:
         $ref: '#/components/requestBodies/rulesets_UpdateEntrypointRuleset'
       responses:
         '200':
-          $ref: '#/components/responses/rulesets_Ruleset'
+          $ref: '#/components/responses/rulesets_RulesetOrDryRun'
         4XX:
           $ref: '#/components/responses/rulesets_Failure'
       security:
@@ -337055,6 +337768,13 @@ components:
       name: type
       schema:
         $ref: '#/components/schemas/resource-tagging_resource_type'
+    rulesets_DryRun:
+      description: 'Validates the request without persisting changes when set to `true`. Responses that normally return 200 return `result: null`; endpoints that normally return 204 continue to return 204.'
+      in: query
+      name: dry_run
+      schema:
+        type: boolean
+        default: false
     secrets-store_account_id:
       description: Account identifier.
       in: path
@@ -354108,6 +354828,43 @@ components:
           type: integer
         message:
           type: string
+    brex_BrowserExtensionConfig:
+      allOf:
+        - $ref: '#/components/schemas/brex_BrowserExtensionConfigBase'
+        - properties:
+            created_at:
+              description: ISO 8601 timestamp of when the configuration was created.
+              type: string
+              format: date-time
+            updated_at:
+              description: ISO 8601 timestamp of the last configuration update.
+              type: string
+              format: date-time
+          required:
+            - created_at
+            - updated_at
+          type: object
+    brex_BrowserExtensionConfigBase:
+      type: object
+      properties:
+        min_extension_version:
+          description: Minimum required browser extension version.
+          type: string
+        mode:
+          type: string
+          default: proxy
+          enum:
+            - proxy
+        proxy_url:
+          description: PAC script URL for proxy configuration.
+          type: string
+          format: uri
+        team_domain:
+          description: Team domain for the browser extension.
+          type: string
+      required:
+        - proxy_url
+        - team_domain
     brex_ConfigResponse:
       type: object
       properties:
@@ -354121,9 +354878,37 @@ components:
           items:
             $ref: '#/components/schemas/brex_ApiMessage'
         result:
-          description: Browser extension configuration payload.
-          type: string
-          example: Hello World!
+          $ref: '#/components/schemas/brex_BrowserExtensionConfig'
+        success:
+          type: boolean
+          enum:
+            - true
+      required:
+        - result
+        - success
+        - errors
+        - messages
+    brex_CreateConfigRequest:
+      type: object
+      properties:
+        config:
+          $ref: '#/components/schemas/brex_BrowserExtensionConfigBase'
+      required:
+        - config
+    brex_DeleteResponse:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/brex_ApiMessage'
+          maxItems: 0
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/brex_ApiMessage'
+        result:
+          nullable: true
         success:
           type: boolean
           enum:
@@ -354156,6 +354941,13 @@ components:
         - success
         - errors
         - messages
+    brex_UpdateConfigRequest:
+      type: object
+      properties:
+        config:
+          $ref: '#/components/schemas/brex_BrowserExtensionConfigBase'
+      required:
+        - config
     builds_APIResponse:
       type: object
       properties:
@@ -446934,6 +447726,18 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/brand-protection-api_Error'
+    brex_BadRequest:
+      description: Invalid request body or account ID.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/brex_ErrorResponse'
+    brex_Conflict:
+      description: Configuration already exists for this account.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/brex_ErrorResponse'
     brex_Forbidden:
       description: The authenticated user is not authorized to access this account.
       content:
@@ -447754,6 +448558,41 @@ components:
                           - kind
                           - phase
                           - rules
+                  success:
+                    enum:
+                      - true
+    rulesets_RulesetOrDryRun:
+      description: A ruleset response, or a successful dry-run validation response.
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/rulesets_Response'
+              - properties:
+                  errors:
+                    enum:
+                      - []
+                  result:
+                    oneOf:
+                      - allOf:
+                          - $ref: '#/components/schemas/rulesets_Ruleset'
+                          - properties:
+                              kind:
+                                $ref: '#/components/schemas/rulesets_RulesetKind'
+                              phase:
+                                $ref: '#/components/schemas/rulesets_RulesetPhase'
+                              rules:
+                                $ref: '#/components/schemas/rulesets_ResponseRules'
+                            required:
+                              - name
+                              - kind
+                              - phase
+                              - rules
+                      - description: Returned when dry_run is true.
+                        enum:
+                          - null
+                        nullable: true
+                        type: object
                   success:
                     enum:
                       - true
