@@ -385558,6 +385558,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/lex_LogField'
+          x-stainless-terraform-configurability: computed_optional
         filter:
           description: |
             Optional Logpush filter predicate to restrict which events are ingested.
@@ -385566,6 +385567,7 @@ components:
             for syntax and examples.
           type: string
           x-auditable: true
+          x-stainless-terraform-configurability: computed_optional
       required:
         - dataset
     lex_DatasetDetailResponse:
@@ -385599,12 +385601,16 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/lex_LogField'
+              x-stainless-terraform-configurability: computed_optional
             filter:
               description: |
                 The Logpush filter predicate applied to this dataset. Omitted
                 when no filter is set.
               type: string
               x-auditable: true
+              x-stainless-terraform-configurability: computed_optional
+          required:
+            - fields
           type: object
     lex_DatasetSummary:
       description: |
@@ -385616,7 +385622,9 @@ components:
           description: RFC3339 timestamp recording when the API created this dataset.
           type: string
           format: date-time
+          readOnly: true
           x-auditable: true
+          x-stainless-terraform-configurability: computed
         dataset:
           description: Dataset type name (e.g. `http_requests`).
           type: string
@@ -385625,31 +385633,43 @@ components:
           description: Unique dataset ID.
           type: string
           pattern: ^[a-f0-9]{32}$
+          readOnly: true
           x-auditable: true
+          x-stainless-terraform-configurability: computed
         deletion_protection:
           description: Whether deletion is blocked. Set to `false` before deleting the dataset.
           type: boolean
+          default: true
           x-auditable: true
+          x-stainless-terraform-configurability: computed_optional
         enabled:
           description: Whether log ingest is currently active for this dataset.
           type: boolean
+          default: true
           x-auditable: true
+          x-stainless-terraform-configurability: computed_optional
         object_id:
           description: Public ID of the account or zone that owns this dataset.
           type: string
+          readOnly: true
           x-auditable: true
+          x-stainless-terraform-configurability: computed
         object_type:
           description: Whether this dataset belongs to an account or a zone.
           type: string
           enum:
             - account
             - zone
+          readOnly: true
           x-auditable: true
+          x-stainless-terraform-configurability: computed
         updated_at:
           description: RFC3339 timestamp recording when the API last updated this dataset.
           type: string
           format: date-time
+          readOnly: true
           x-auditable: true
+          x-stainless-terraform-configurability: computed
       required:
         - dataset
         - object_type
@@ -385778,10 +385798,12 @@ components:
           description: Set to `false` to allow deletion of this dataset.
           type: boolean
           x-auditable: true
+          x-stainless-terraform-configurability: computed_optional
         enabled:
           description: Whether to enable or disable log ingest for this dataset.
           type: boolean
           x-auditable: true
+          x-stainless-terraform-configurability: computed_optional
         fields:
           description: |
             Controls which fields the API ingests after the update. Defaults
@@ -385789,6 +385811,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/lex_LogField'
+          x-stainless-terraform-configurability: computed_optional
         filter:
           description: |
             Optional Logpush filter predicate to restrict which events are
@@ -385800,6 +385823,7 @@ components:
           type: string
           nullable: true
           x-auditable: true
+          x-stainless-terraform-configurability: computed_optional
       required:
         - enabled
     lex_V4Error:
