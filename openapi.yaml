@@ -339219,6 +339219,7 @@ components:
       schema:
         type: string
         format: uuid
+        x-auditable: true
     supplat-chronos_BookingStatus:
       description: Filter bookings by status.
       in: query
@@ -339234,6 +339235,7 @@ components:
         type: string
         example: America/Los_Angeles
         pattern: ^[A-Za-z_+0-9-]+/[A-Za-z_+0-9-]+(?:/[A-Za-z_+0-9-]+)?$
+        x-auditable: true
     supplat-chronos_InternalAccountId:
       description: Internal identifier of the Cloudflare account.
       in: path
@@ -339241,6 +339243,7 @@ components:
       required: true
       schema:
         type: string
+        x-auditable: true
     supplat-chronos_InternalUserId:
       description: Internal identifier of the user making the request.
       in: path
@@ -339248,6 +339251,7 @@ components:
       required: true
       schema:
         type: string
+        x-auditable: true
     supplat-chronos_PageSize:
       description: Maximum number of results to return.
       in: query
@@ -339257,12 +339261,14 @@ components:
         default: 20
         maximum: 100
         minimum: 1
+        x-auditable: true
     supplat-chronos_PageToken:
       description: Opaque cursor for retrieving the next page of results.
       in: query
       name: page_token
       schema:
         type: string
+        x-auditable: true
     teams-devices_devices_get_device_param_include:
       description: |
         Comma-separated list of additional information that should be included in the device response. Supported values are: "last_seen_registration.policy".
@@ -421294,9 +421300,11 @@ components:
         booking_id:
           type: string
           format: uuid
+          x-auditable: true
         case_id:
           description: Linked Salesforce case id. A booking is never confirmed without a case attached.
           type: string
+          x-auditable: true
         category:
           $ref: '#/components/schemas/supplat-chronos_BookingCategory'
         channel:
@@ -421304,6 +421312,7 @@ components:
         created_at:
           type: string
           format: date-time
+          x-auditable: true
         customer_phone:
           $ref: '#/components/schemas/supplat-chronos_CustomerPhone'
         customer_timezone:
@@ -421311,14 +421320,17 @@ components:
           type: string
           example: America/Los_Angeles
           pattern: ^[A-Za-z_+0-9-]+/[A-Za-z_+0-9-]+(?:/[A-Za-z_+0-9-]+)?$
+          x-auditable: true
         description:
           type: string
         end_time:
           type: string
           format: date-time
+          x-auditable: true
         start_time:
           type: string
           format: date-time
+          x-auditable: true
         status:
           $ref: '#/components/schemas/supplat-chronos_BookingStatus'
         subject:
@@ -421326,6 +421338,7 @@ components:
         updated_at:
           type: string
           format: date-time
+          x-auditable: true
       required:
         - booking_id
         - status
@@ -421341,11 +421354,13 @@ components:
       description: Support category/problem summary. Customers select this from the create-case flow. The server uses the configured eligibility mapping to resolve it to a skill group, determine available engineers, and decide whether to offer scheduling.
       type: string
       minLength: 1
+      x-auditable: true
     supplat-chronos_BookingChannel:
       description: The support channel for the booking. v1 supports voice callbacks only; engineers manually dial customers at the scheduled time.
       type: string
       enum:
         - voice_callback
+      x-auditable: true
     supplat-chronos_BookingListResponse:
       type: object
       properties:
@@ -421356,6 +421371,7 @@ components:
         next_page_token:
           description: Token to retrieve the next page of results, if any.
           type: string
+          x-auditable: true
       required:
         - bookings
     supplat-chronos_BookingResponse:
@@ -421373,6 +421389,7 @@ components:
         - completed
         - no_show
         - cancelled
+      x-auditable: true
     supplat-chronos_CancelBookingRequest:
       description: Payload for cancelling an active booking. v1 supports cancellation only -- automated reschedule is out of scope; customers book a new slot instead.
       type: object
@@ -421393,12 +421410,14 @@ components:
           type: string
           example: America/Los_Angeles
           pattern: ^[A-Za-z_+0-9-]+/[A-Za-z_+0-9-]+(?:/[A-Za-z_+0-9-]+)?$
+          x-auditable: true
         description:
           description: Additional details about the support request.
           type: string
         slot_token:
           description: Token for the specific slot to claim, as GET .../booking/availability returned. The booking fails with 409 if the slot becomes unavailable.
           type: string
+          x-auditable: true
         subject:
           description: Short summary of the support request.
           type: string
@@ -421416,6 +421435,7 @@ components:
           type: string
           example: US
           pattern: ^[A-Z]{2}$
+          x-auditable: true
         phone_number:
           description: Phone number in national format, validated against country_code.
           type: string
@@ -421430,12 +421450,14 @@ components:
         code:
           description: Machine-readable error code.
           type: string
+          x-auditable: true
         message:
           description: Human-readable error message.
           type: string
         request_id:
           description: Identifier correlating this error to server-side logs, when available.
           type: string
+          x-auditable: true
       required:
         - code
         - message
@@ -421447,13 +421469,16 @@ components:
           description: End of the slot (RFC 3339, UTC).
           type: string
           format: date-time
+          x-auditable: true
         slot_token:
           description: Opaque, short-lived token identifying this candidate slot and the engineer holding it. Clients pass this token in CreateBookingRequest to atomically claim the slot. If another booking claims the slot first, the API returns 409 and clients must re-fetch availability.
           type: string
+          x-auditable: true
         start_time:
           description: Start of the slot (RFC 3339, UTC). Render in the timezone supplied on the availability request.
           type: string
           format: date-time
+          x-auditable: true
       required:
         - slot_token
         - start_time
