@@ -407360,7 +407360,7 @@ components:
             - $ref: '#/components/schemas/magic_gre'
             - description: Omitted in responses for version 1.5 interconnects.
         health_check:
-          $ref: '#/components/schemas/magic_health_check_base'
+          $ref: '#/components/schemas/magic_interconnect_health_check'
         id:
           $ref: '#/components/schemas/magic_schemas-identifier'
         interface_address:
@@ -407446,7 +407446,22 @@ components:
       type: string
       example: Tunnel for Interconnect to ORD
     magic_interconnect_health_check:
-      $ref: '#/components/schemas/magic_health_check_base'
+      allOf:
+        - $ref: '#/components/schemas/magic_health_check_base'
+        - properties:
+            direction:
+              description: The direction of the flow of the healthcheck. Either unidirectional, where the probe comes to you via the interconnect and the result comes back to Cloudflare via the open Internet, or bidirectional where both the probe and result come and go via the interconnect.
+              type: string
+              example: bidirectional
+              default: unidirectional
+              enum:
+                - unidirectional
+                - bidirectional
+            source:
+              description: The source IPv4 address used for bidirectional health checks. Supported only for version 1.5 interconnects. It is required when `direction` is `bidirectional` and must be omitted (and is cleared) when `direction` is `unidirectional`. The address must be within RFC1918 space, the approved link-local range 169.254.240.0/20, or the Cloudflare reserved range 198.41.199.224/27.
+              type: string
+              example: 198.41.199.225
+              x-auditable: true
     magic_interconnect_tunnel_update_request:
       type: object
       properties:
@@ -407461,7 +407476,7 @@ components:
             - $ref: '#/components/schemas/magic_gre'
             - description: Not configurable for version 1.5 interconnects; supplying it returns an error.
         health_check:
-          $ref: '#/components/schemas/magic_health_check_base'
+          $ref: '#/components/schemas/magic_interconnect_health_check'
         interface_address:
           $ref: '#/components/schemas/magic_interface_address_interconnect'
         interface_address6:
