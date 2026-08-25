@@ -430461,6 +430461,22 @@ components:
       type: boolean
       example: true
       title: Origin Error Page Passthrough
+    rulesets_SetCacheSettingsOriginRangeRequests:
+      description: Controls whether Cloudflare fetches a large asset from the origin as a series of range requests instead of one whole-body request.
+      type: object
+      properties:
+        mode:
+          description: Whether to use range requests. `default` is the behaviour the zone gets without this rule.
+          type: string
+          example: on
+          enum:
+            - on
+            - off
+            - default
+          title: Mode
+      required:
+        - mode
+      title: Origin Range Requests
     rulesets_SetCacheSettingsReadTimeout:
       description: A timeout value between two successive read operations to use for your origin server. Historically, the timeout value between two read options from Cloudflare to an origin server is 100 seconds. If you are attempting to reduce HTTP 524 errors because of timeouts from an origin server, try increasing this timeout value.
       type: integer
@@ -430499,6 +430515,8 @@ components:
                   $ref: '#/components/schemas/rulesets_SetCacheSettingsOriginCacheControl'
                 origin_error_page_passthru:
                   $ref: '#/components/schemas/rulesets_SetCacheSettingsOriginErrorPagePassthru'
+                origin_range_requests:
+                  $ref: '#/components/schemas/rulesets_SetCacheSettingsOriginRangeRequests'
                 read_timeout:
                   $ref: '#/components/schemas/rulesets_SetCacheSettingsReadTimeout'
                 respect_strong_etags:
