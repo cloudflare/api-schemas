@@ -113433,6 +113433,41 @@ paths:
       x-fern-sdk-method-name: edit
       x-forge-hidden: true
       x-stability: beta
+    put:
+      operationId: email_security_replace_allow_policy
+      summary: Replace an email allow policy
+      description: Replaces an existing allow policy in full. Unlike PATCH, every field is taken from the request body, so optional fields that are omitted are reset rather than left untouched. Use this when managing policies declaratively.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/email-security_CreateAllowPolicy'
+      responses:
+        '200':
+          description: Replaced allow policy.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/email-security_api-response-single'
+                  - properties:
+                      result:
+                        $ref: '#/components/schemas/email-security_AllowPolicy'
+                    type: object
+        4XX:
+          $ref: '#/components/responses/email-security_ClientError'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Email Security Settings
+      x-fern-availability: beta
+      x-fern-sdk-group-name: email-security.settings.allow-policies
+      x-fern-sdk-method-name: update
+      x-forge-hidden: true
+      x-stability: beta
   /accounts/{account_id}/email-security/settings/allow_policies/batch:
     parameters:
       - $ref: '#/components/parameters/email-security_account_id'
@@ -113482,7 +113517,7 @@ paths:
                   type: array
                   items:
                     allOf:
-                      - $ref: '#/components/schemas/email-security_AllowPolicy'
+                      - $ref: '#/components/schemas/email-security_CreateAllowPolicy'
                       - properties:
                           id:
                             allOf:
@@ -113738,6 +113773,41 @@ paths:
       x-fern-sdk-method-name: edit
       x-forge-hidden: true
       x-stability: beta
+    put:
+      operationId: email_security_replace_blocked_sender
+      summary: Replace a blocked email sender
+      description: Replaces an existing blocked sender pattern in full. Unlike PATCH, every field is taken from the request body, so optional fields that are omitted are reset rather than left untouched. Use this when managing blocked senders declaratively.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/email-security_CreateBlockedSender'
+      responses:
+        '200':
+          description: Replaced blocked sender.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/email-security_api-response-single'
+                  - properties:
+                      result:
+                        $ref: '#/components/schemas/email-security_BlockedSender'
+                    type: object
+        4XX:
+          $ref: '#/components/responses/email-security_ClientError'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Email Security Settings
+      x-fern-availability: beta
+      x-fern-sdk-group-name: email-security.settings.block-senders
+      x-fern-sdk-method-name: update
+      x-forge-hidden: true
+      x-stability: beta
   /accounts/{account_id}/email-security/settings/block_senders/batch:
     parameters:
       - $ref: '#/components/parameters/email-security_account_id'
@@ -113787,7 +113857,7 @@ paths:
                   type: array
                   items:
                     allOf:
-                      - $ref: '#/components/schemas/email-security_BlockedSender'
+                      - $ref: '#/components/schemas/email-security_CreateBlockedSender'
                       - properties:
                           id:
                             allOf:
@@ -113890,6 +113960,10 @@ paths:
       x-api-token-group:
         - 'Cloud Email Security: Write'
         - 'Cloud Email Security: Read'
+      x-fern-availability: beta
+      x-fern-sdk-group-name: email-security.settings.content-policies
+      x-fern-sdk-method-name: list
+      x-forge-hidden: true
       x-stability: beta
     parameters:
       - $ref: '#/components/parameters/email-security_account_id'
@@ -113925,6 +113999,10 @@ paths:
         - Email Security Settings
       x-api-token-group:
         - 'Cloud Email Security: Write'
+      x-fern-availability: beta
+      x-fern-sdk-group-name: email-security.settings.content-policies
+      x-fern-sdk-method-name: create
+      x-forge-hidden: true
       x-stability: beta
   /accounts/{account_id}/email-security/settings/content_policies/{policy_id}:
     delete:
@@ -113953,6 +114031,10 @@ paths:
         - Email Security Settings
       x-api-token-group:
         - 'Cloud Email Security: Write'
+      x-fern-availability: beta
+      x-fern-sdk-group-name: email-security.settings.content-policies
+      x-fern-sdk-method-name: delete
+      x-forge-hidden: true
       x-stability: beta
     get:
       operationId: email_security_get_content_policy
@@ -113981,6 +114063,10 @@ paths:
       x-api-token-group:
         - 'Cloud Email Security: Write'
         - 'Cloud Email Security: Read'
+      x-fern-availability: beta
+      x-fern-sdk-group-name: email-security.settings.content-policies
+      x-fern-sdk-method-name: get
+      x-forge-hidden: true
       x-stability: beta
     parameters:
       - $ref: '#/components/parameters/email-security_account_id'
@@ -114021,6 +114107,10 @@ paths:
         - Email Security Settings
       x-api-token-group:
         - 'Cloud Email Security: Write'
+      x-fern-availability: beta
+      x-fern-sdk-group-name: email-security.settings.content-policies
+      x-fern-sdk-method-name: edit
+      x-forge-hidden: true
       x-stability: beta
   /accounts/{account_id}/email-security/settings/content_policies/batch:
     parameters:
@@ -114118,6 +114208,10 @@ paths:
         - Email Security Settings
       x-api-token-group:
         - 'Cloud Email Security: Write'
+      x-fern-availability: beta
+      x-fern-sdk-group-name: email-security.settings.content-policies
+      x-fern-sdk-method-name: batch
+      x-forge-hidden: true
       x-stability: beta
   /accounts/{account_id}/email-security/settings/domains:
     delete:
@@ -114166,7 +114260,7 @@ paths:
       x-fern-availability: deprecated
       x-fern-ignore: true
       x-fern-sdk-group-name: email-security.settings.domains
-      x-fern-sdk-method-name: bulk_delete
+      x-fern-sdk-method-name: bulk-delete
       x-forge-hidden: true
       x-stability: beta
     get:
@@ -115237,6 +115331,41 @@ paths:
       x-fern-sdk-method-name: edit
       x-forge-hidden: true
       x-stability: beta
+    put:
+      operationId: email_security_replace_trusted_domain
+      summary: Replace a trusted email domain
+      description: Replaces an existing trusted domain in full. Unlike PATCH, every field is taken from the request body, so optional fields that are omitted are reset rather than left untouched. Use this when managing trusted domains declaratively.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/email-security_CreateTrustedDomain'
+      responses:
+        '200':
+          description: Replaced trusted domain.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/email-security_api-response-single'
+                  - properties:
+                      result:
+                        $ref: '#/components/schemas/email-security_TrustedDomain'
+                    type: object
+        4XX:
+          $ref: '#/components/responses/email-security_ClientError'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Email Security Settings
+      x-fern-availability: beta
+      x-fern-sdk-group-name: email-security.settings.trusted-domains
+      x-fern-sdk-method-name: update
+      x-forge-hidden: true
+      x-stability: beta
   /accounts/{account_id}/email-security/settings/trusted_domains/batch:
     parameters:
       - $ref: '#/components/parameters/email-security_account_id'
@@ -115286,7 +115415,7 @@ paths:
                   type: array
                   items:
                     allOf:
-                      - $ref: '#/components/schemas/email-security_TrustedDomain'
+                      - $ref: '#/components/schemas/email-security_CreateTrustedDomain'
                       - properties:
                           id:
                             allOf:
@@ -387850,6 +387979,7 @@ components:
         - multiple-dmarc-reports
         - missing-dmarc-rua
         - cname-on-dmarc-record
+        - unauthorized-reporting-domain
     email-auth_DnsRecordInfo:
       description: Summary of a single DNS record
       type: object
@@ -388798,6 +388928,7 @@ components:
             $ref: '#/components/schemas/email-security_DeliveryMode'
           maxItems: 10
           minItems: 1
+          x-stainless-collection-type: set
         domain:
           type: string
           x-auditable: true
@@ -388806,6 +388937,7 @@ components:
           items:
             $ref: '#/components/schemas/email-security_DispositionLabel'
           maxItems: 10
+          x-stainless-collection-type: set
         folder:
           allOf:
             - $ref: '#/components/schemas/email-security_ScannableFolder'
@@ -388824,6 +388956,7 @@ components:
             - 192.0.2.0/24
             - 2001:db8::/32
           maxItems: 100
+          x-stainless-collection-type: set
         lookback_hops:
           type: integer
           maximum: 20
@@ -388837,6 +388970,7 @@ components:
             $ref: '#/components/schemas/email-security_Region'
           maxItems: 10
           minItems: 1
+          x-stainless-collection-type: set
         require_tls_inbound:
           type: boolean
           nullable: true
@@ -389037,6 +389171,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/email-security_DeliveryMode'
+          x-stainless-collection-type: set
         authorization:
           $ref: '#/components/schemas/email-security_DomainAuthorization'
         created_at:
@@ -389053,6 +389188,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/email-security_DispositionLabel'
+          x-stainless-collection-type: set
         emails_processed:
           $ref: '#/components/schemas/email-security_EmailsProcessed'
         folder:
@@ -389079,6 +389215,7 @@ components:
           example:
             - 192.0.2.0/24
             - 2001:db8::/32
+          x-stainless-collection-type: set
         last_modified:
           description: 'Deprecated, use `modified_at` instead. End of life: November 1, 2026.'
           allOf:
@@ -389101,6 +389238,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/email-security_Region'
+          x-stainless-collection-type: set
         require_tls_inbound:
           type: boolean
           nullable: true
@@ -389333,6 +389471,7 @@ components:
         - deferred
         - bounced
         - queued
+        - move_failed
     email-security_MessageDetails:
       type: object
       properties:
@@ -389885,11 +390024,13 @@ components:
             $ref: '#/components/schemas/email-security_DeliveryMode'
           maxItems: 10
           minItems: 1
+          x-stainless-collection-type: set
         drop_dispositions:
           type: array
           items:
             $ref: '#/components/schemas/email-security_DispositionLabel'
           maxItems: 10
+          x-stainless-collection-type: set
         folder:
           allOf:
             - $ref: '#/components/schemas/email-security_ScannableFolder'
@@ -389908,6 +390049,7 @@ components:
             - 192.0.2.0/24
             - 2001:db8::/32
           maxItems: 100
+          x-stainless-collection-type: set
         lookback_hops:
           type: integer
           maximum: 20
@@ -389921,6 +390063,7 @@ components:
             $ref: '#/components/schemas/email-security_Region'
           maxItems: 10
           minItems: 1
+          x-stainless-collection-type: set
         require_tls_inbound:
           type: boolean
           nullable: true
@@ -390193,10 +390336,12 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/email-security_DeliveryMode'
+          x-stainless-collection-type: set
         drop_dispositions:
           type: array
           items:
             $ref: '#/components/schemas/email-security_DispositionLabel'
+          x-stainless-collection-type: set
         folder:
           allOf:
             - $ref: '#/components/schemas/email-security_ScannableFolder'
@@ -390214,6 +390359,7 @@ components:
           example:
             - 192.0.2.0/24
             - 2001:db8::/32
+          x-stainless-collection-type: set
         lookback_hops:
           type: integer
           maximum: 20
@@ -390224,6 +390370,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/email-security_Region'
+          x-stainless-collection-type: set
         require_tls_inbound:
           type: boolean
           x-auditable: true
