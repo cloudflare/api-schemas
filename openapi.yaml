@@ -438901,6 +438901,8 @@ components:
           $ref: '#/components/schemas/stream_live_input_metadata'
         modified:
           $ref: '#/components/schemas/stream_live_input_modified'
+        playback:
+          $ref: '#/components/schemas/stream_live_input_playback'
         preferLowLatency:
           $ref: '#/components/schemas/stream_live_input_prefer_low_latency'
         recording:
@@ -438975,6 +438977,17 @@ components:
           $ref: '#/components/schemas/stream_live_input_modified'
         uid:
           $ref: '#/components/schemas/stream_live_input_identifier'
+    stream_live_input_playback:
+      description: Details for playing a live input's broadcast using the HLS or DASH manifests. URLs reference the live input ID.
+      type: object
+      properties:
+        dash:
+          $ref: '#/components/schemas/stream_playback_dash_url'
+        hls:
+          $ref: '#/components/schemas/stream_playback_hls_url'
+      required:
+        - hls
+        - dash
     stream_live_input_prefer_low_latency:
       description: When enabled, the live stream is delivered using Low-Latency HLS (LL-HLS), reducing glass-to-glass latency for viewers at the cost of reduced player compatibility.
       type: boolean
@@ -439256,6 +439269,16 @@ components:
           type: string
           example: https://customer-m033z5x00ks6nunl.cloudflarestream.com/ea95132c15732412d22c1476fa83f27a/manifest/video.m3u8
           x-auditable: true
+    stream_playback_dash_url:
+      description: The DASH manifest URL used to play live video, referencing the live input ID.
+      type: string
+      example: https://customer-m033z5x00ks6nunl.cloudflarestream.com/66be4bf738797e01e1fca35a7bdecdcd/manifest/video.mpd
+      x-auditable: true
+    stream_playback_hls_url:
+      description: The HLS manifest URL used to play live video, referencing the live input ID.
+      type: string
+      example: https://customer-m033z5x00ks6nunl.cloudflarestream.com/66be4bf738797e01e1fca35a7bdecdcd/manifest/video.m3u8
+      x-auditable: true
     stream_playback_rtmps:
       description: Details for playback from an live input using RTMPS.
       type: object
