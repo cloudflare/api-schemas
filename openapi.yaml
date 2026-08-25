@@ -336153,36 +336153,36 @@ paths:
   /zones/{zone_id}/page_shield:
     get:
       operationId: page-shield-get-settings
-      summary: Get Page Shield settings
-      description: Fetches the Page Shield settings.
+      summary: Get client-side security settings
+      description: Returns the client-side security product enablement status and reporting behaviors.
       parameters:
         - name: zone_id
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/page-shield_id'
+            $ref: '#/components/schemas/client-side-security_id'
       responses:
         '200':
-          description: Get Page Shield settings response
+          description: Get Client-Side Security settings response
           content:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/page-shield_api-get-response-collection'
+                  - $ref: '#/components/schemas/client-side-security_api-get-response-collection'
                   - properties:
                       result:
-                        $ref: '#/components/schemas/page-shield_get-zone-settings-response'
+                        $ref: '#/components/schemas/client-side-security_get-zone-settings-response'
         4XX:
-          description: Get Page Shield settings response failure
+          description: Get Client-Side Security settings response failure
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/page-shield_api-response-common-failure'
+                $ref: '#/components/schemas/client-side-security_api-response-common-failure'
       security:
         - api_email: []
           api_key: []
       tags:
-        - Page Shield
+        - Client-Side Security
       x-api-token-group:
         - Page Shield
         - Domain Page Shield Read
@@ -336201,14 +336201,14 @@ paths:
       x-forge-hidden: true
     put:
       operationId: page-shield-update-settings
-      summary: Update Page Shield settings
-      description: Updates Page Shield settings.
+      summary: Update client-side security settings
+      description: Updates client-side security enablement and reporting behaviors for the zone.
       parameters:
         - name: zone_id
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/page-shield_id'
+            $ref: '#/components/schemas/client-side-security_id'
       requestBody:
         required: true
         content:
@@ -336216,33 +336216,33 @@ paths:
             schema:
               properties:
                 enabled:
-                  $ref: '#/components/schemas/page-shield_enabled'
+                  $ref: '#/components/schemas/client-side-security_enabled'
                 use_cloudflare_reporting_endpoint:
-                  $ref: '#/components/schemas/page-shield_use_cloudflare_reporting_endpoint'
+                  $ref: '#/components/schemas/client-side-security_use_cloudflare_reporting_endpoint'
                 use_connection_url_path:
-                  $ref: '#/components/schemas/page-shield_use_connection_url_path'
+                  $ref: '#/components/schemas/client-side-security_use_connection_url_path'
       responses:
         '200':
-          description: Update Page Shield settings response
+          description: Update Client-Side Security settings response
           content:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/page-shield_zone_settings_response_single'
+                  - $ref: '#/components/schemas/client-side-security_zone_settings_response_single'
                   - properties:
                       result:
-                        $ref: '#/components/schemas/page-shield_update-zone-settings-response'
+                        $ref: '#/components/schemas/client-side-security_update-zone-settings-response'
         4XX:
-          description: Update Page Shield settings response failure
+          description: Update Client-Side Security settings response failure
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/page-shield_api-response-common-failure'
+                $ref: '#/components/schemas/client-side-security_api-response-common-failure'
       security:
         - api_email: []
           api_key: []
       tags:
-        - Page Shield
+        - Client-Side Security
       x-api-token-group:
         - Page Shield
         - Domain Page Shield
@@ -336259,14 +336259,14 @@ paths:
   /zones/{zone_id}/page_shield/connections:
     get:
       operationId: page-shield-list-connections
-      summary: List Page Shield connections
-      description: Lists all connections detected by Page Shield.
+      summary: List detected connections
+      description: Lists outbound connections made by webpages in the zone.
       parameters:
         - name: zone_id
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/page-shield_id'
+            $ref: '#/components/schemas/client-side-security_id'
         - name: exclude_urls
           in: query
           schema:
@@ -336366,22 +336366,22 @@ paths:
               - csv
       responses:
         '200':
-          description: List Page Shield connections response
+          description: List Client-Side Security connections response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/page-shield_list-zone-connections-response'
+                $ref: '#/components/schemas/client-side-security_list-zone-connections-response'
         4XX:
-          description: List Page Shield connections response failure
+          description: List Client-Side Security connections response failure
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/page-shield_api-response-common-failure'
+                $ref: '#/components/schemas/client-side-security_api-response-common-failure'
       security:
         - api_email: []
           api_key: []
       tags:
-        - Page Shield
+        - Client-Side Security
       x-api-token-group:
         - Page Shield
         - Domain Page Shield Read
@@ -336401,37 +336401,37 @@ paths:
   /zones/{zone_id}/page_shield/connections/{connection_id}:
     get:
       operationId: page-shield-get-connection
-      summary: Get a Page Shield connection
-      description: Fetches a connection detected by Page Shield by connection ID.
+      summary: Get a detected connection
+      description: Returns a webpage connection detected on the zone by connection ID.
       parameters:
         - name: zone_id
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/page-shield_id'
+            $ref: '#/components/schemas/client-side-security_id'
         - name: connection_id
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/page-shield_id'
+            $ref: '#/components/schemas/client-side-security_id'
       responses:
         '200':
-          description: Get a Page Shield connection response
+          description: Get a Client-Side Security connection response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/page-shield_get-zone-connection-response'
+                $ref: '#/components/schemas/client-side-security_get-zone-connection-response'
         4XX:
-          description: Get a Page Shield connection response failure
+          description: Get a Client-Side Security connection response failure
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/page-shield_api-response-common-failure'
+                $ref: '#/components/schemas/client-side-security_api-response-common-failure'
       security:
         - api_email: []
           api_key: []
       tags:
-        - Page Shield
+        - Client-Side Security
       x-api-token-group:
         - Page Shield
         - Domain Page Shield Read
@@ -336451,14 +336451,14 @@ paths:
   /zones/{zone_id}/page_shield/cookies:
     get:
       operationId: page-shield-list-cookies
-      summary: List Page Shield Cookies
-      description: Lists all cookies collected by Page Shield.
+      summary: List detected cookies
+      description: Lists cookies detected on the zone.
       parameters:
         - name: zone_id
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/page-shield_id'
+            $ref: '#/components/schemas/client-side-security_id'
         - name: hosts
           in: query
           schema:
@@ -336581,22 +336581,22 @@ paths:
             maxLength: 1024
       responses:
         '200':
-          description: List Page Shield cookies response
+          description: List Client-Side Security cookies response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/page-shield_list-zone-cookies-response'
+                $ref: '#/components/schemas/client-side-security_list-zone-cookies-response'
         4XX:
-          description: List Page Shield cookies response failure
+          description: List Client-Side Security cookies response failure
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/page-shield_api-response-common-failure'
+                $ref: '#/components/schemas/client-side-security_api-response-common-failure'
       security:
         - api_email: []
           api_key: []
       tags:
-        - Page Shield
+        - Client-Side Security
       x-api-token-group:
         - Page Shield
         - Domain Page Shield Read
@@ -336616,37 +336616,37 @@ paths:
   /zones/{zone_id}/page_shield/cookies/{cookie_id}:
     get:
       operationId: page-shield-get-cookie
-      summary: Get a Page Shield cookie
-      description: Fetches a cookie collected by Page Shield by cookie ID.
+      summary: Get a detected cookie
+      description: Returns a cookie detected on the zone by cookie ID.
       parameters:
         - name: zone_id
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/page-shield_id'
+            $ref: '#/components/schemas/client-side-security_id'
         - name: cookie_id
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/page-shield_id'
+            $ref: '#/components/schemas/client-side-security_id'
       responses:
         '200':
-          description: Get a Page Shield cookie response
+          description: Get a Client-Side Security cookie response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/page-shield_get-zone-cookie-response'
+                $ref: '#/components/schemas/client-side-security_get-zone-cookie-response'
         4XX:
-          description: Get a Page Shield cookie response failure
+          description: Get a Client-Side Security cookie response failure
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/page-shield_api-response-common-failure'
+                $ref: '#/components/schemas/client-side-security_api-response-common-failure'
       security:
         - api_email: []
           api_key: []
       tags:
-        - Page Shield
+        - Client-Side Security
       x-api-token-group:
         - Page Shield
         - Domain Page Shield Read
@@ -336666,32 +336666,32 @@ paths:
   /zones/{zone_id}/page_shield/policies:
     get:
       operationId: page-shield-list-policies
-      summary: List Page Shield policies
-      description: Lists all Page Shield policies.
+      summary: List content security rules
+      description: Lists content security rules configured for the zone.
       parameters:
         - name: zone_id
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/page-shield_id'
+            $ref: '#/components/schemas/client-side-security_id'
       responses:
         '200':
-          description: List Page Shield policies response
+          description: List Client-Side Security policies response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/page-shield_list-zone-policies-response'
+                $ref: '#/components/schemas/client-side-security_list-zone-policies-response'
         4XX:
-          description: List Page Shield policies response failure
+          description: List Client-Side Security policies response failure
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/page-shield_api-response-common-failure'
+                $ref: '#/components/schemas/client-side-security_api-response-common-failure'
       security:
         - api_email: []
           api_key: []
       tags:
-        - Page Shield
+        - Client-Side Security
       x-api-token-group:
         - Page Shield
         - Domain Page Shield Read
@@ -336710,38 +336710,38 @@ paths:
       x-forge-hidden: true
     post:
       operationId: page-shield-create-policy
-      summary: Create a Page Shield policy
-      description: Create a Page Shield policy.
+      summary: Create a content security rule
+      description: Creates a rule that applies a client-side security action when its filter expression matches.
       parameters:
         - name: zone_id
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/page-shield_id'
+            $ref: '#/components/schemas/client-side-security_id'
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/page-shield_policy'
+              $ref: '#/components/schemas/client-side-security_policy'
       responses:
         '200':
-          description: Create a Page Shield policy response
+          description: Create a Client-Side Security policy response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/page-shield_get-zone-policy-response'
+                $ref: '#/components/schemas/client-side-security_get-zone-policy-response'
         4XX:
-          description: Create a Page Shield policy response failure
+          description: Create a Client-Side Security policy response failure
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/page-shield_api-response-common-failure'
+                $ref: '#/components/schemas/client-side-security_api-response-common-failure'
       security:
         - api_email: []
           api_key: []
       tags:
-        - Page Shield
+        - Client-Side Security
       x-api-token-group:
         - Page Shield
         - Domain Page Shield
@@ -336758,33 +336758,33 @@ paths:
   /zones/{zone_id}/page_shield/policies/{policy_id}:
     delete:
       operationId: page-shield-delete-policy
-      summary: Delete a Page Shield policy
-      description: Delete a Page Shield policy by ID.
+      summary: Delete a content security rule
+      description: Permanently deletes a content security rule by ID.
       parameters:
         - name: zone_id
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/page-shield_id'
+            $ref: '#/components/schemas/client-side-security_id'
         - name: policy_id
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/page-shield_id'
+            $ref: '#/components/schemas/client-side-security_id'
       responses:
         '204':
-          description: Delete a Page Shield policy response
+          description: Delete a Client-Side Security policy response
         4XX:
-          description: Delete a Page Shield policy response failure
+          description: Delete a Client-Side Security policy response failure
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/page-shield_api-response-common-failure'
+                $ref: '#/components/schemas/client-side-security_api-response-common-failure'
       security:
         - api_email: []
           api_key: []
       tags:
-        - Page Shield
+        - Client-Side Security
       x-api-token-group:
         - Page Shield
         - Domain Page Shield
@@ -336801,37 +336801,37 @@ paths:
       x-forge-require-confirmation: This operation permanently deletes the content security rule from the zone.
     get:
       operationId: page-shield-get-policy
-      summary: Get a Page Shield policy
-      description: Fetches a Page Shield policy by ID.
+      summary: Get a content security rule
+      description: Returns a content security rule by ID.
       parameters:
         - name: zone_id
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/page-shield_id'
+            $ref: '#/components/schemas/client-side-security_id'
         - name: policy_id
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/page-shield_id'
+            $ref: '#/components/schemas/client-side-security_id'
       responses:
         '200':
-          description: Get a Page Shield policy response
+          description: Get a Client-Side Security policy response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/page-shield_get-zone-policy-response'
+                $ref: '#/components/schemas/client-side-security_get-zone-policy-response'
         4XX:
-          description: Get a Page Shield policy response failure
+          description: Get a Client-Side Security policy response failure
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/page-shield_api-response-common-failure'
+                $ref: '#/components/schemas/client-side-security_api-response-common-failure'
       security:
         - api_email: []
           api_key: []
       tags:
-        - Page Shield
+        - Client-Side Security
       x-api-token-group:
         - Page Shield
         - Domain Page Shield Read
@@ -336850,19 +336850,19 @@ paths:
       x-forge-hidden: true
     put:
       operationId: page-shield-update-policy
-      summary: Update a Page Shield policy
-      description: Update a Page Shield policy by ID.
+      summary: Update a content security rule
+      description: Updates the description, action, expression, enabled state, and policy value for a content security rule.
       parameters:
         - name: zone_id
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/page-shield_id'
+            $ref: '#/components/schemas/client-side-security_id'
         - name: policy_id
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/page-shield_id'
+            $ref: '#/components/schemas/client-side-security_id'
       requestBody:
         required: true
         content:
@@ -336870,33 +336870,33 @@ paths:
             schema:
               properties:
                 action:
-                  $ref: '#/components/schemas/page-shield_policy-action'
+                  $ref: '#/components/schemas/client-side-security_policy-action'
                 description:
-                  $ref: '#/components/schemas/page-shield_policy-description'
+                  $ref: '#/components/schemas/client-side-security_policy-description'
                 enabled:
-                  $ref: '#/components/schemas/page-shield_policy-enabled'
+                  $ref: '#/components/schemas/client-side-security_policy-enabled'
                 expression:
-                  $ref: '#/components/schemas/page-shield_policy-expression'
+                  $ref: '#/components/schemas/client-side-security_policy-expression'
                 value:
-                  $ref: '#/components/schemas/page-shield_policy-value'
+                  $ref: '#/components/schemas/client-side-security_policy-value'
       responses:
         '200':
-          description: Update a Page Shield policy response
+          description: Update a Client-Side Security policy response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/page-shield_get-zone-policy-response'
+                $ref: '#/components/schemas/client-side-security_get-zone-policy-response'
         4XX:
-          description: Update a Page Shield policy response failure
+          description: Update a Client-Side Security policy response failure
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/page-shield_api-response-common-failure'
+                $ref: '#/components/schemas/client-side-security_api-response-common-failure'
       security:
         - api_email: []
           api_key: []
       tags:
-        - Page Shield
+        - Client-Side Security
       x-api-token-group:
         - Page Shield
         - Domain Page Shield
@@ -336913,14 +336913,14 @@ paths:
   /zones/{zone_id}/page_shield/scripts:
     get:
       operationId: page-shield-list-scripts
-      summary: List Page Shield scripts
-      description: Lists all scripts detected by Page Shield.
+      summary: List detected scripts
+      description: Lists scripts detected on webpages in the zone, with filtering and pagination.
       parameters:
         - name: zone_id
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/page-shield_id'
+            $ref: '#/components/schemas/client-side-security_id'
         - name: exclude_urls
           in: query
           schema:
@@ -337031,22 +337031,22 @@ paths:
               - csv
       responses:
         '200':
-          description: List Page Shield scripts response
+          description: List Client-Side Security scripts response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/page-shield_list-zone-scripts-response'
+                $ref: '#/components/schemas/client-side-security_list-zone-scripts-response'
         4XX:
-          description: List Page Shield scripts response failure
+          description: List Client-Side Security scripts response failure
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/page-shield_api-response-common-failure'
+                $ref: '#/components/schemas/client-side-security_api-response-common-failure'
       security:
         - api_email: []
           api_key: []
       tags:
-        - Page Shield
+        - Client-Side Security
       x-api-token-group:
         - Page Shield
         - Domain Page Shield Read
@@ -337066,38 +337066,38 @@ paths:
   /zones/{zone_id}/page_shield/scripts/{script_id}:
     get:
       operationId: page-shield-get-script
-      summary: Get a Page Shield script
-      description: Fetches a script detected by Page Shield by script ID.
+      summary: Get a detected script
+      description: Returns a script detected on the zone by script ID.
       parameters:
         - name: zone_id
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/page-shield_id'
+            $ref: '#/components/schemas/client-side-security_id'
         - name: script_id
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/page-shield_id'
+            $ref: '#/components/schemas/client-side-security_id'
       responses:
         '200':
-          description: Get a Page Shield script response
+          description: Get a Client-Side Security script response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/page-shield_get-zone-script-response'
+                $ref: '#/components/schemas/client-side-security_get-zone-script-response'
         4XX:
-          description: Get a Page Shield script response failure
+          description: Get a Client-Side Security script response failure
           content:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/page-shield_api-response-common-failure'
+                  - $ref: '#/components/schemas/client-side-security_api-response-common-failure'
       security:
         - api_email: []
           api_key: []
       tags:
-        - Page Shield
+        - Client-Side Security
       x-api-token-group:
         - Page Shield
         - Domain Page Shield Read
@@ -374510,6 +374510,603 @@ components:
       required:
         - url
         - token
+    client-side-security_api-get-response-collection:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/client-side-security_api-response-common'
+        - properties:
+            result:
+              type: object
+              nullable: true
+    client-side-security_api-list-response-collection:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/client-side-security_api-response-common'
+        - properties:
+            result_info:
+              $ref: '#/components/schemas/client-side-security_result_info'
+          required:
+            - result_info
+    client-side-security_api-response-common:
+      type: object
+      properties:
+        errors:
+          $ref: '#/components/schemas/client-side-security_messages'
+        messages:
+          $ref: '#/components/schemas/client-side-security_messages'
+        success:
+          description: Whether the API call was successful
+          type: boolean
+          example: true
+          enum:
+            - true
+      required:
+        - success
+    client-side-security_api-response-common-failure:
+      type: object
+      properties:
+        errors:
+          $ref: '#/components/schemas/client-side-security_messages'
+        messages:
+          $ref: '#/components/schemas/client-side-security_messages'
+        result:
+          type: object
+          enum:
+            - null
+          nullable: true
+        success:
+          description: Whether the API call was successful
+          type: boolean
+          example: false
+          enum:
+            - false
+      required:
+        - success
+        - errors
+    client-side-security_api-response-single:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/client-side-security_api-response-common'
+        - properties:
+            result:
+              anyOf:
+                - type: object
+                - items: {}
+                  type: array
+                - type: string
+    client-side-security_connection:
+      properties:
+        added_at:
+          type: string
+          format: date-time
+          example: 2021-08-18T10:51:10.09615Z
+        domain_reported_malicious:
+          type: boolean
+          example: false
+        first_page_url:
+          type: string
+          example: blog.cloudflare.com/page
+        first_seen_at:
+          type: string
+          format: date-time
+          example: 2021-08-18T10:51:08Z
+        host:
+          type: string
+          example: blog.cloudflare.com
+        id:
+          $ref: '#/components/schemas/client-side-security_id'
+        last_seen_at:
+          type: string
+          format: date-time
+          example: 2021-09-02T09:57:54Z
+        malicious_domain_categories:
+          type: array
+          items:
+            type: string
+          example:
+            - Malware
+        malicious_url_categories:
+          type: array
+          items:
+            type: string
+          example:
+            - Malware
+        page_urls:
+          type: array
+          items:
+            type: string
+          example:
+            - blog.cloudflare.com/page1
+            - blog.cloudflare.com/page2
+        url:
+          type: string
+          example: https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.min.js
+        url_contains_cdn_cgi_path:
+          type: boolean
+          example: false
+        url_reported_malicious:
+          type: boolean
+          example: false
+      required:
+        - id
+        - url
+        - added_at
+        - first_seen_at
+        - last_seen_at
+        - host
+        - url_contains_cdn_cgi_path
+    client-side-security_cookie:
+      properties:
+        domain_attribute:
+          type: string
+          example: cloudflare.com
+        expires_attribute:
+          type: string
+          format: date-time
+          example: 2021-10-02T09:57:54Z
+        first_seen_at:
+          type: string
+          format: date-time
+          example: 2021-08-18T10:51:08Z
+        host:
+          type: string
+          example: blog.cloudflare.com
+        http_only_attribute:
+          type: boolean
+          example: true
+        id:
+          $ref: '#/components/schemas/client-side-security_id'
+        last_seen_at:
+          type: string
+          format: date-time
+          example: 2021-09-02T09:57:54Z
+        max_age_attribute:
+          type: integer
+          example: 3600
+        name:
+          type: string
+          example: session_id
+        page_urls:
+          type: array
+          items:
+            type: string
+          example:
+            - blog.cloudflare.com/page1
+            - blog.cloudflare.com/page2
+        path_attribute:
+          type: string
+          example: /
+        same_site_attribute:
+          type: string
+          example: strict
+          enum:
+            - lax
+            - strict
+            - none
+        secure_attribute:
+          type: boolean
+          example: true
+        type:
+          type: string
+          example: first_party
+          enum:
+            - first_party
+            - unknown
+      required:
+        - id
+        - type
+        - name
+        - host
+        - first_seen_at
+        - last_seen_at
+    client-side-security_cryptomining_score:
+      description: The cryptomining score of the JavaScript content.
+      type: integer
+      maximum: 99
+      minimum: 1
+      nullable: true
+    client-side-security_dataflow_score:
+      description: The dataflow score of the JavaScript content. This field has been deprecated in favour of js_integrity_score.
+      type: integer
+      maximum: 99
+      minimum: 1
+      nullable: true
+    client-side-security_enabled:
+      description: When true, indicates that Client-Side Security is enabled.
+      type: boolean
+      example: true
+      x-auditable: true
+    client-side-security_fetched_at:
+      description: The timestamp of when the script was last fetched.
+      type: string
+      nullable: true
+    client-side-security_get-zone-connection-response:
+      allOf:
+        - $ref: '#/components/schemas/client-side-security_api-get-response-collection'
+        - properties:
+            result:
+              $ref: '#/components/schemas/client-side-security_connection'
+          required:
+            - result
+    client-side-security_get-zone-cookie-response:
+      allOf:
+        - $ref: '#/components/schemas/client-side-security_api-get-response-collection'
+        - properties:
+            result:
+              $ref: '#/components/schemas/client-side-security_cookie'
+          required:
+            - result
+    client-side-security_get-zone-policy-response:
+      allOf:
+        - $ref: '#/components/schemas/client-side-security_api-get-response-collection'
+        - properties:
+            result:
+              $ref: '#/components/schemas/client-side-security_policy-with-id'
+          required:
+            - result
+    client-side-security_get-zone-script-response:
+      allOf:
+        - $ref: '#/components/schemas/client-side-security_api-get-response-collection'
+        - properties:
+            result:
+              allOf:
+                - $ref: '#/components/schemas/client-side-security_script'
+                - properties:
+                    versions:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/client-side-security_version'
+                      example:
+                        - cryptomining_score: 20
+                          fetched_at: 2021-08-18T10:51:08Z
+                          hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b423
+                          js_integrity_score: 2
+                          magecart_score: 10
+                          malware_score: 5
+                      nullable: true
+          required:
+            - result
+    client-side-security_get-zone-settings-response:
+      properties:
+        enabled:
+          $ref: '#/components/schemas/client-side-security_enabled'
+        updated_at:
+          $ref: '#/components/schemas/client-side-security_updated_at'
+        use_cloudflare_reporting_endpoint:
+          $ref: '#/components/schemas/client-side-security_use_cloudflare_reporting_endpoint'
+        use_connection_url_path:
+          $ref: '#/components/schemas/client-side-security_use_connection_url_path'
+      required:
+        - enabled
+        - updated_at
+        - use_cloudflare_reporting_endpoint
+        - use_connection_url_path
+    client-side-security_hash:
+      description: The computed hash of the analyzed script.
+      type: string
+      maxLength: 64
+      minLength: 64
+      nullable: true
+    client-side-security_id:
+      description: Identifier
+      type: string
+      example: 023e105f4ecef8ad9ca31a8372d0c353
+      maxLength: 32
+      readOnly: true
+      x-auditable: true
+    client-side-security_js_integrity_score:
+      description: The integrity score of the JavaScript content.
+      type: integer
+      maximum: 99
+      minimum: 1
+      nullable: true
+    client-side-security_list-zone-connections-response:
+      allOf:
+        - $ref: '#/components/schemas/client-side-security_api-list-response-collection'
+        - properties:
+            result:
+              type: array
+              items:
+                $ref: '#/components/schemas/client-side-security_connection'
+          type: object
+    client-side-security_list-zone-cookies-response:
+      allOf:
+        - $ref: '#/components/schemas/client-side-security_api-list-response-collection'
+        - properties:
+            result:
+              type: array
+              items:
+                $ref: '#/components/schemas/client-side-security_cookie'
+          required:
+            - result
+          type: object
+    client-side-security_list-zone-policies-response:
+      allOf:
+        - $ref: '#/components/schemas/client-side-security_api-list-response-collection'
+        - properties:
+            result:
+              type: array
+              items:
+                $ref: '#/components/schemas/client-side-security_policy-with-id'
+          required:
+            - result
+          type: object
+    client-side-security_list-zone-scripts-response:
+      allOf:
+        - $ref: '#/components/schemas/client-side-security_api-list-response-collection'
+        - properties:
+            result:
+              type: array
+              items:
+                $ref: '#/components/schemas/client-side-security_script'
+          required:
+            - result
+          type: object
+    client-side-security_magecart_score:
+      description: The magecart score of the JavaScript content.
+      type: integer
+      maximum: 99
+      minimum: 1
+      nullable: true
+    client-side-security_malware_score:
+      description: The malware score of the JavaScript content.
+      type: integer
+      maximum: 99
+      minimum: 1
+      nullable: true
+    client-side-security_messages:
+      type: array
+      items:
+        properties:
+          code:
+            type: integer
+            minimum: 1000
+          message:
+            type: string
+        required:
+          - code
+          - message
+        type: object
+        uniqueItems: true
+      example: []
+    client-side-security_obfuscation_score:
+      description: The obfuscation score of the JavaScript content. This field has been deprecated in favour of js_integrity_score.
+      type: integer
+      maximum: 99
+      minimum: 1
+      nullable: true
+    client-side-security_policy:
+      properties:
+        action:
+          $ref: '#/components/schemas/client-side-security_policy-action'
+        description:
+          $ref: '#/components/schemas/client-side-security_policy-description'
+        enabled:
+          $ref: '#/components/schemas/client-side-security_policy-enabled'
+        expression:
+          $ref: '#/components/schemas/client-side-security_policy-expression'
+        value:
+          $ref: '#/components/schemas/client-side-security_policy-value'
+      required:
+        - description
+        - action
+        - expression
+        - enabled
+        - value
+    client-side-security_policy-action:
+      description: The action to take if the expression matches
+      type: string
+      example: allow
+      enum:
+        - allow
+        - log
+        - add_reporting_directives
+      x-auditable: true
+    client-side-security_policy-description:
+      description: A description for the policy
+      type: string
+      example: Checkout page CSP policy
+      x-auditable: true
+    client-side-security_policy-enabled:
+      description: Whether the policy is enabled
+      type: boolean
+      example: true
+      x-auditable: true
+    client-side-security_policy-expression:
+      description: The expression which must match for the policy to be applied, using the Cloudflare Firewall rule expression syntax
+      type: string
+      example: ends_with(http.request.uri.path, "/checkout")
+      x-auditable: true
+    client-side-security_policy-value:
+      description: The policy which will be applied
+      type: string
+      example: script-src 'none';
+      x-auditable: true
+    client-side-security_policy-with-id:
+      allOf:
+        - $ref: '#/components/schemas/client-side-security_policy'
+        - properties:
+            id:
+              $ref: '#/components/schemas/client-side-security_id'
+          required:
+            - id
+      required:
+        - id
+        - description
+        - action
+        - expression
+        - enabled
+        - value
+    client-side-security_result_info:
+      type: object
+      properties:
+        count:
+          description: Total number of results for the requested service
+          type: number
+          example: 1
+        page:
+          description: Current page within paginated list of results
+          type: number
+          example: 1
+        per_page:
+          description: Number of results per page of results
+          type: number
+          example: 20
+        total_count:
+          description: Total results available without any search parameters
+          type: number
+          example: 2000
+        total_pages:
+          description: Total number of pages
+          type: number
+          example: 100
+      required:
+        - page
+        - per_page
+        - count
+        - total_count
+        - total_pages
+    client-side-security_script:
+      properties:
+        added_at:
+          type: string
+          format: date-time
+          example: 2021-08-18T10:51:10.09615Z
+        cryptomining_score:
+          $ref: '#/components/schemas/client-side-security_cryptomining_score'
+        dataflow_score:
+          allOf:
+            - $ref: '#/components/schemas/client-side-security_dataflow_score'
+          deprecated: true
+        domain_reported_malicious:
+          type: boolean
+          example: false
+        fetched_at:
+          $ref: '#/components/schemas/client-side-security_fetched_at'
+        first_page_url:
+          type: string
+          example: blog.cloudflare.com/page
+        first_seen_at:
+          type: string
+          format: date-time
+          example: 2021-08-18T10:51:08Z
+        hash:
+          $ref: '#/components/schemas/client-side-security_hash'
+        host:
+          type: string
+          example: blog.cloudflare.com
+        id:
+          $ref: '#/components/schemas/client-side-security_id'
+        js_integrity_score:
+          $ref: '#/components/schemas/client-side-security_js_integrity_score'
+        last_seen_at:
+          type: string
+          format: date-time
+          example: 2021-09-02T09:57:54Z
+        magecart_score:
+          $ref: '#/components/schemas/client-side-security_magecart_score'
+        malicious_domain_categories:
+          type: array
+          items:
+            type: string
+          example:
+            - Malware
+        malicious_url_categories:
+          type: array
+          items:
+            type: string
+          example:
+            - Malware
+        malware_score:
+          $ref: '#/components/schemas/client-side-security_malware_score'
+        obfuscation_score:
+          allOf:
+            - $ref: '#/components/schemas/client-side-security_obfuscation_score'
+          deprecated: true
+        page_urls:
+          type: array
+          items:
+            type: string
+          example:
+            - blog.cloudflare.com/page1
+            - blog.cloudflare.com/page2
+        url:
+          type: string
+          example: https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.min.js
+        url_contains_cdn_cgi_path:
+          type: boolean
+          example: false
+        url_reported_malicious:
+          type: boolean
+          example: false
+      required:
+        - id
+        - url
+        - added_at
+        - first_seen_at
+        - last_seen_at
+        - host
+        - url_contains_cdn_cgi_path
+    client-side-security_update-zone-settings-response:
+      properties:
+        enabled:
+          $ref: '#/components/schemas/client-side-security_enabled'
+        updated_at:
+          $ref: '#/components/schemas/client-side-security_updated_at'
+        use_cloudflare_reporting_endpoint:
+          $ref: '#/components/schemas/client-side-security_use_cloudflare_reporting_endpoint'
+        use_connection_url_path:
+          $ref: '#/components/schemas/client-side-security_use_connection_url_path'
+      required:
+        - enabled
+        - updated_at
+        - use_cloudflare_reporting_endpoint
+        - use_connection_url_path
+    client-side-security_updated_at:
+      description: The timestamp of when Client-Side Security was last updated.
+      type: string
+      example: 2022-10-12T17:56:52.083582+01:00
+      x-auditable: true
+    client-side-security_use_cloudflare_reporting_endpoint:
+      description: When true, CSP reports will be sent to https://csp-reporting.cloudflare.com/cdn-cgi/script_monitor/report
+      type: boolean
+      example: true
+      x-auditable: true
+    client-side-security_use_connection_url_path:
+      description: When true, the paths associated with connections URLs will also be analyzed.
+      type: boolean
+      example: true
+      x-auditable: true
+    client-side-security_version:
+      description: The version of the analyzed script.
+      type: object
+      properties:
+        cryptomining_score:
+          $ref: '#/components/schemas/client-side-security_cryptomining_score'
+        dataflow_score:
+          allOf:
+            - $ref: '#/components/schemas/client-side-security_dataflow_score'
+          deprecated: true
+        fetched_at:
+          $ref: '#/components/schemas/client-side-security_fetched_at'
+        hash:
+          $ref: '#/components/schemas/client-side-security_hash'
+        js_integrity_score:
+          $ref: '#/components/schemas/client-side-security_js_integrity_score'
+        magecart_score:
+          $ref: '#/components/schemas/client-side-security_magecart_score'
+        malware_score:
+          $ref: '#/components/schemas/client-side-security_malware_score'
+        obfuscation_score:
+          allOf:
+            - $ref: '#/components/schemas/client-side-security_obfuscation_score'
+          deprecated: true
+    client-side-security_zone_settings_response_single:
+      allOf:
+        - $ref: '#/components/schemas/client-side-security_api-response-single'
+        - properties:
+            result:
+              type: object
     cloud-connector_api-response-common:
       type: object
       properties:
@@ -415824,603 +416421,6 @@ components:
       required:
         - code
         - message
-    page-shield_api-get-response-collection:
-      type: object
-      allOf:
-        - $ref: '#/components/schemas/page-shield_api-response-common'
-        - properties:
-            result:
-              type: object
-              nullable: true
-    page-shield_api-list-response-collection:
-      type: object
-      allOf:
-        - $ref: '#/components/schemas/page-shield_api-response-common'
-        - properties:
-            result_info:
-              $ref: '#/components/schemas/page-shield_result_info'
-          required:
-            - result_info
-    page-shield_api-response-common:
-      type: object
-      properties:
-        errors:
-          $ref: '#/components/schemas/page-shield_messages'
-        messages:
-          $ref: '#/components/schemas/page-shield_messages'
-        success:
-          description: Whether the API call was successful
-          type: boolean
-          example: true
-          enum:
-            - true
-      required:
-        - success
-    page-shield_api-response-common-failure:
-      type: object
-      properties:
-        errors:
-          $ref: '#/components/schemas/page-shield_messages'
-        messages:
-          $ref: '#/components/schemas/page-shield_messages'
-        result:
-          type: object
-          enum:
-            - null
-          nullable: true
-        success:
-          description: Whether the API call was successful
-          type: boolean
-          example: false
-          enum:
-            - false
-      required:
-        - success
-        - errors
-    page-shield_api-response-single:
-      type: object
-      allOf:
-        - $ref: '#/components/schemas/page-shield_api-response-common'
-        - properties:
-            result:
-              anyOf:
-                - type: object
-                - items: {}
-                  type: array
-                - type: string
-    page-shield_connection:
-      properties:
-        added_at:
-          type: string
-          format: date-time
-          example: 2021-08-18T10:51:10.09615Z
-        domain_reported_malicious:
-          type: boolean
-          example: false
-        first_page_url:
-          type: string
-          example: blog.cloudflare.com/page
-        first_seen_at:
-          type: string
-          format: date-time
-          example: 2021-08-18T10:51:08Z
-        host:
-          type: string
-          example: blog.cloudflare.com
-        id:
-          $ref: '#/components/schemas/page-shield_id'
-        last_seen_at:
-          type: string
-          format: date-time
-          example: 2021-09-02T09:57:54Z
-        malicious_domain_categories:
-          type: array
-          items:
-            type: string
-          example:
-            - Malware
-        malicious_url_categories:
-          type: array
-          items:
-            type: string
-          example:
-            - Malware
-        page_urls:
-          type: array
-          items:
-            type: string
-          example:
-            - blog.cloudflare.com/page1
-            - blog.cloudflare.com/page2
-        url:
-          type: string
-          example: https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.min.js
-        url_contains_cdn_cgi_path:
-          type: boolean
-          example: false
-        url_reported_malicious:
-          type: boolean
-          example: false
-      required:
-        - id
-        - url
-        - added_at
-        - first_seen_at
-        - last_seen_at
-        - host
-        - url_contains_cdn_cgi_path
-    page-shield_cookie:
-      properties:
-        domain_attribute:
-          type: string
-          example: cloudflare.com
-        expires_attribute:
-          type: string
-          format: date-time
-          example: 2021-10-02T09:57:54Z
-        first_seen_at:
-          type: string
-          format: date-time
-          example: 2021-08-18T10:51:08Z
-        host:
-          type: string
-          example: blog.cloudflare.com
-        http_only_attribute:
-          type: boolean
-          example: true
-        id:
-          $ref: '#/components/schemas/page-shield_id'
-        last_seen_at:
-          type: string
-          format: date-time
-          example: 2021-09-02T09:57:54Z
-        max_age_attribute:
-          type: integer
-          example: 3600
-        name:
-          type: string
-          example: session_id
-        page_urls:
-          type: array
-          items:
-            type: string
-          example:
-            - blog.cloudflare.com/page1
-            - blog.cloudflare.com/page2
-        path_attribute:
-          type: string
-          example: /
-        same_site_attribute:
-          type: string
-          example: strict
-          enum:
-            - lax
-            - strict
-            - none
-        secure_attribute:
-          type: boolean
-          example: true
-        type:
-          type: string
-          example: first_party
-          enum:
-            - first_party
-            - unknown
-      required:
-        - id
-        - type
-        - name
-        - host
-        - first_seen_at
-        - last_seen_at
-    page-shield_cryptomining_score:
-      description: The cryptomining score of the JavaScript content.
-      type: integer
-      maximum: 99
-      minimum: 1
-      nullable: true
-    page-shield_dataflow_score:
-      description: The dataflow score of the JavaScript content. This field has been deprecated in favour of js_integrity_score.
-      type: integer
-      maximum: 99
-      minimum: 1
-      nullable: true
-    page-shield_enabled:
-      description: When true, indicates that Page Shield is enabled.
-      type: boolean
-      example: true
-      x-auditable: true
-    page-shield_fetched_at:
-      description: The timestamp of when the script was last fetched.
-      type: string
-      nullable: true
-    page-shield_get-zone-connection-response:
-      allOf:
-        - $ref: '#/components/schemas/page-shield_api-get-response-collection'
-        - properties:
-            result:
-              $ref: '#/components/schemas/page-shield_connection'
-          required:
-            - result
-    page-shield_get-zone-cookie-response:
-      allOf:
-        - $ref: '#/components/schemas/page-shield_api-get-response-collection'
-        - properties:
-            result:
-              $ref: '#/components/schemas/page-shield_cookie'
-          required:
-            - result
-    page-shield_get-zone-policy-response:
-      allOf:
-        - $ref: '#/components/schemas/page-shield_api-get-response-collection'
-        - properties:
-            result:
-              $ref: '#/components/schemas/page-shield_policy-with-id'
-          required:
-            - result
-    page-shield_get-zone-script-response:
-      allOf:
-        - $ref: '#/components/schemas/page-shield_api-get-response-collection'
-        - properties:
-            result:
-              allOf:
-                - $ref: '#/components/schemas/page-shield_script'
-                - properties:
-                    versions:
-                      type: array
-                      items:
-                        $ref: '#/components/schemas/page-shield_version'
-                      example:
-                        - cryptomining_score: 20
-                          fetched_at: 2021-08-18T10:51:08Z
-                          hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b423
-                          js_integrity_score: 2
-                          magecart_score: 10
-                          malware_score: 5
-                      nullable: true
-          required:
-            - result
-    page-shield_get-zone-settings-response:
-      properties:
-        enabled:
-          $ref: '#/components/schemas/page-shield_enabled'
-        updated_at:
-          $ref: '#/components/schemas/page-shield_updated_at'
-        use_cloudflare_reporting_endpoint:
-          $ref: '#/components/schemas/page-shield_use_cloudflare_reporting_endpoint'
-        use_connection_url_path:
-          $ref: '#/components/schemas/page-shield_use_connection_url_path'
-      required:
-        - enabled
-        - updated_at
-        - use_cloudflare_reporting_endpoint
-        - use_connection_url_path
-    page-shield_hash:
-      description: The computed hash of the analyzed script.
-      type: string
-      maxLength: 64
-      minLength: 64
-      nullable: true
-    page-shield_id:
-      description: Identifier
-      type: string
-      example: 023e105f4ecef8ad9ca31a8372d0c353
-      maxLength: 32
-      readOnly: true
-      x-auditable: true
-    page-shield_js_integrity_score:
-      description: The integrity score of the JavaScript content.
-      type: integer
-      maximum: 99
-      minimum: 1
-      nullable: true
-    page-shield_list-zone-connections-response:
-      allOf:
-        - $ref: '#/components/schemas/page-shield_api-list-response-collection'
-        - properties:
-            result:
-              type: array
-              items:
-                $ref: '#/components/schemas/page-shield_connection'
-          type: object
-    page-shield_list-zone-cookies-response:
-      allOf:
-        - $ref: '#/components/schemas/page-shield_api-list-response-collection'
-        - properties:
-            result:
-              type: array
-              items:
-                $ref: '#/components/schemas/page-shield_cookie'
-          required:
-            - result
-          type: object
-    page-shield_list-zone-policies-response:
-      allOf:
-        - $ref: '#/components/schemas/page-shield_api-list-response-collection'
-        - properties:
-            result:
-              type: array
-              items:
-                $ref: '#/components/schemas/page-shield_policy-with-id'
-          required:
-            - result
-          type: object
-    page-shield_list-zone-scripts-response:
-      allOf:
-        - $ref: '#/components/schemas/page-shield_api-list-response-collection'
-        - properties:
-            result:
-              type: array
-              items:
-                $ref: '#/components/schemas/page-shield_script'
-          required:
-            - result
-          type: object
-    page-shield_magecart_score:
-      description: The magecart score of the JavaScript content.
-      type: integer
-      maximum: 99
-      minimum: 1
-      nullable: true
-    page-shield_malware_score:
-      description: The malware score of the JavaScript content.
-      type: integer
-      maximum: 99
-      minimum: 1
-      nullable: true
-    page-shield_messages:
-      type: array
-      items:
-        properties:
-          code:
-            type: integer
-            minimum: 1000
-          message:
-            type: string
-        required:
-          - code
-          - message
-        type: object
-        uniqueItems: true
-      example: []
-    page-shield_obfuscation_score:
-      description: The obfuscation score of the JavaScript content. This field has been deprecated in favour of js_integrity_score.
-      type: integer
-      maximum: 99
-      minimum: 1
-      nullable: true
-    page-shield_policy:
-      properties:
-        action:
-          $ref: '#/components/schemas/page-shield_policy-action'
-        description:
-          $ref: '#/components/schemas/page-shield_policy-description'
-        enabled:
-          $ref: '#/components/schemas/page-shield_policy-enabled'
-        expression:
-          $ref: '#/components/schemas/page-shield_policy-expression'
-        value:
-          $ref: '#/components/schemas/page-shield_policy-value'
-      required:
-        - description
-        - action
-        - expression
-        - enabled
-        - value
-    page-shield_policy-action:
-      description: The action to take if the expression matches
-      type: string
-      example: allow
-      enum:
-        - allow
-        - log
-        - add_reporting_directives
-      x-auditable: true
-    page-shield_policy-description:
-      description: A description for the policy
-      type: string
-      example: Checkout page CSP policy
-      x-auditable: true
-    page-shield_policy-enabled:
-      description: Whether the policy is enabled
-      type: boolean
-      example: true
-      x-auditable: true
-    page-shield_policy-expression:
-      description: The expression which must match for the policy to be applied, using the Cloudflare Firewall rule expression syntax
-      type: string
-      example: ends_with(http.request.uri.path, "/checkout")
-      x-auditable: true
-    page-shield_policy-value:
-      description: The policy which will be applied
-      type: string
-      example: script-src 'none';
-      x-auditable: true
-    page-shield_policy-with-id:
-      allOf:
-        - $ref: '#/components/schemas/page-shield_policy'
-        - properties:
-            id:
-              $ref: '#/components/schemas/page-shield_id'
-          required:
-            - id
-      required:
-        - id
-        - description
-        - action
-        - expression
-        - enabled
-        - value
-    page-shield_result_info:
-      type: object
-      properties:
-        count:
-          description: Total number of results for the requested service
-          type: number
-          example: 1
-        page:
-          description: Current page within paginated list of results
-          type: number
-          example: 1
-        per_page:
-          description: Number of results per page of results
-          type: number
-          example: 20
-        total_count:
-          description: Total results available without any search parameters
-          type: number
-          example: 2000
-        total_pages:
-          description: Total number of pages
-          type: number
-          example: 100
-      required:
-        - page
-        - per_page
-        - count
-        - total_count
-        - total_pages
-    page-shield_script:
-      properties:
-        added_at:
-          type: string
-          format: date-time
-          example: 2021-08-18T10:51:10.09615Z
-        cryptomining_score:
-          $ref: '#/components/schemas/page-shield_cryptomining_score'
-        dataflow_score:
-          allOf:
-            - $ref: '#/components/schemas/page-shield_dataflow_score'
-          deprecated: true
-        domain_reported_malicious:
-          type: boolean
-          example: false
-        fetched_at:
-          $ref: '#/components/schemas/page-shield_fetched_at'
-        first_page_url:
-          type: string
-          example: blog.cloudflare.com/page
-        first_seen_at:
-          type: string
-          format: date-time
-          example: 2021-08-18T10:51:08Z
-        hash:
-          $ref: '#/components/schemas/page-shield_hash'
-        host:
-          type: string
-          example: blog.cloudflare.com
-        id:
-          $ref: '#/components/schemas/page-shield_id'
-        js_integrity_score:
-          $ref: '#/components/schemas/page-shield_js_integrity_score'
-        last_seen_at:
-          type: string
-          format: date-time
-          example: 2021-09-02T09:57:54Z
-        magecart_score:
-          $ref: '#/components/schemas/page-shield_magecart_score'
-        malicious_domain_categories:
-          type: array
-          items:
-            type: string
-          example:
-            - Malware
-        malicious_url_categories:
-          type: array
-          items:
-            type: string
-          example:
-            - Malware
-        malware_score:
-          $ref: '#/components/schemas/page-shield_malware_score'
-        obfuscation_score:
-          allOf:
-            - $ref: '#/components/schemas/page-shield_obfuscation_score'
-          deprecated: true
-        page_urls:
-          type: array
-          items:
-            type: string
-          example:
-            - blog.cloudflare.com/page1
-            - blog.cloudflare.com/page2
-        url:
-          type: string
-          example: https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.min.js
-        url_contains_cdn_cgi_path:
-          type: boolean
-          example: false
-        url_reported_malicious:
-          type: boolean
-          example: false
-      required:
-        - id
-        - url
-        - added_at
-        - first_seen_at
-        - last_seen_at
-        - host
-        - url_contains_cdn_cgi_path
-    page-shield_update-zone-settings-response:
-      properties:
-        enabled:
-          $ref: '#/components/schemas/page-shield_enabled'
-        updated_at:
-          $ref: '#/components/schemas/page-shield_updated_at'
-        use_cloudflare_reporting_endpoint:
-          $ref: '#/components/schemas/page-shield_use_cloudflare_reporting_endpoint'
-        use_connection_url_path:
-          $ref: '#/components/schemas/page-shield_use_connection_url_path'
-      required:
-        - enabled
-        - updated_at
-        - use_cloudflare_reporting_endpoint
-        - use_connection_url_path
-    page-shield_updated_at:
-      description: The timestamp of when Page Shield was last updated.
-      type: string
-      example: 2022-10-12T17:56:52.083582+01:00
-      x-auditable: true
-    page-shield_use_cloudflare_reporting_endpoint:
-      description: When true, CSP reports will be sent to https://csp-reporting.cloudflare.com/cdn-cgi/script_monitor/report
-      type: boolean
-      example: true
-      x-auditable: true
-    page-shield_use_connection_url_path:
-      description: When true, the paths associated with connections URLs will also be analyzed.
-      type: boolean
-      example: true
-      x-auditable: true
-    page-shield_version:
-      description: The version of the analyzed script.
-      type: object
-      properties:
-        cryptomining_score:
-          $ref: '#/components/schemas/page-shield_cryptomining_score'
-        dataflow_score:
-          allOf:
-            - $ref: '#/components/schemas/page-shield_dataflow_score'
-          deprecated: true
-        fetched_at:
-          $ref: '#/components/schemas/page-shield_fetched_at'
-        hash:
-          $ref: '#/components/schemas/page-shield_hash'
-        js_integrity_score:
-          $ref: '#/components/schemas/page-shield_js_integrity_score'
-        magecart_score:
-          $ref: '#/components/schemas/page-shield_magecart_score'
-        malware_score:
-          $ref: '#/components/schemas/page-shield_malware_score'
-        obfuscation_score:
-          allOf:
-            - $ref: '#/components/schemas/page-shield_obfuscation_score'
-          deprecated: true
-    page-shield_zone_settings_response_single:
-      allOf:
-        - $ref: '#/components/schemas/page-shield_api-response-single'
-        - properties:
-            result:
-              type: object
     pages_api-response-collection:
       type: object
       allOf:
