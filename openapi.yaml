@@ -336584,6 +336584,10 @@ paths:
           api_key: []
       tags:
         - Precursor
+      x-cfPermissionsRequired:
+        enum:
+          - com.cloudflare.api.account.zone.precursor.update
+          - com.cloudflare.api.account.zone.precursor.read
       x-cfPlanAvailability:
         business: true
         enterprise: true
@@ -336612,6 +336616,8 @@ paths:
         - Rule `id` is read-only (assigned by Cloudflare) and ignored on input.
         - Rule `mode` must be `min-friction` or `max-security` (`off` is not a
           valid rule mode; use `default_mode` to disable enforcement).
+        - Rule `expression` is limited to 4000 characters. The limit applies to
+          each rule individually, not to the combined size of all rules.
       parameters:
         - name: zone_id
           in: path
@@ -336671,6 +336677,9 @@ paths:
           api_key: []
       tags:
         - Precursor
+      x-cfPermissionsRequired:
+        enum:
+          - com.cloudflare.api.account.zone.precursor.update
       x-cfPlanAvailability:
         business: true
         enterprise: true
@@ -419524,6 +419533,7 @@ components:
           description: The filter expression that determines which requests the rule matches.
           type: string
           example: http.request.uri.path eq "/login"
+          maxLength: 4000
           x-auditable: true
         id:
           description: The read-only identifier that Cloudflare assigns to the rule.
