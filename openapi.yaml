@@ -96124,7 +96124,7 @@ paths:
                   - $ref: '#/components/schemas/cc_V4BaseResponse'
                   - properties:
                       result:
-                        $ref: '#/components/schemas/cc_ListApplications'
+                        $ref: '#/components/schemas/cc_ContainersListApplications'
                     required:
                       - result
                     type: object
@@ -96171,7 +96171,7 @@ paths:
                   - $ref: '#/components/schemas/cc_V4BaseResponse'
                   - properties:
                       result:
-                        $ref: '#/components/schemas/cc_Application'
+                        $ref: '#/components/schemas/cc_ContainersApplicationResponse'
                     required:
                       - result
                     type: object
@@ -96283,7 +96283,7 @@ paths:
                   - $ref: '#/components/schemas/cc_V4BaseResponse'
                   - properties:
                       result:
-                        $ref: '#/components/schemas/cc_Application'
+                        $ref: '#/components/schemas/cc_ContainersApplicationResponse'
                     required:
                       - result
                     type: object
@@ -96347,7 +96347,7 @@ paths:
                   - $ref: '#/components/schemas/cc_V4BaseResponse'
                   - properties:
                       result:
-                        $ref: '#/components/schemas/cc_Application'
+                        $ref: '#/components/schemas/cc_ContainersApplicationResponse'
                     required:
                       - result
                     type: object
@@ -96739,6 +96739,8 @@ paths:
           api_key: []
       tags:
         - Container Images
+      x-fern-sdk-group-name: containers.images
+      x-fern-sdk-method-name: prepare
   /accounts/{account_id}/containers/instance-groups:
     get:
       operationId: listContainerInstanceGroups
@@ -96776,6 +96778,8 @@ paths:
           api_key: []
       tags:
         - Container Instance Groups
+      x-fern-sdk-group-name: containers.instance-groups
+      x-fern-sdk-method-name: list
     parameters:
       - $ref: '#/components/parameters/cc_AccountId'
   /accounts/{account_id}/containers/instance-groups/{namespace_id}:
@@ -96821,6 +96825,8 @@ paths:
           api_key: []
       tags:
         - Container Instance Groups
+      x-fern-sdk-group-name: containers.instance-groups
+      x-fern-sdk-method-name: delete
     get:
       operationId: getContainerInstanceGroup
       summary: Get a Container Instance Group
@@ -96869,6 +96875,8 @@ paths:
           api_key: []
       tags:
         - Container Instance Groups
+      x-fern-sdk-group-name: containers.instance-groups
+      x-fern-sdk-method-name: get
     parameters:
       - $ref: '#/components/parameters/cc_AccountId'
     put:
@@ -96937,6 +96945,8 @@ paths:
           api_key: []
       tags:
         - Container Instance Groups
+      x-fern-sdk-group-name: containers.instance-groups
+      x-fern-sdk-method-name: update
   /accounts/{account_id}/containers/instances/{instance_id}/ssh:
     get:
       operationId: containerWranglerSsh
@@ -373237,6 +373247,11 @@ components:
         - registry_host
         - username
         - password
+    cc_ContainersApplicationResponse:
+      description: The public Containers API returns an application.
+      oneOf:
+        - $ref: '#/components/schemas/cc_ScheduledApplication'
+        - $ref: '#/components/schemas/cc_DurableObjectApplication'
     cc_ContainersContainerInstanceBase:
       description: The last-reported state of a logical container instance.
       type: object
@@ -373306,7 +373321,25 @@ components:
       description: Create a new Containers application.
       oneOf:
         - $ref: '#/components/schemas/cc_ContainersCreateScheduledApplicationRequest'
-        - $ref: '#/components/schemas/cc_ContainersCreateInstanceApplicationRequest'
+        - $ref: '#/components/schemas/cc_ContainersCreateDurableObjectApplicationRequest'
+    cc_ContainersCreateDurableObjectApplicationRequest:
+      description: Create a namespace-backed Containers application whose Durable Objects own its instances.
+      type: object
+      properties:
+        durable_objects:
+          description: The customer-owned Durable Object namespace that owns this application and its instances.
+          allOf:
+            - $ref: '#/components/schemas/cc_DurableObjectsConfiguration'
+        name:
+          description: The name for this application
+          type: string
+        scheduling_policy:
+          $ref: '#/components/schemas/cc_DurableObjectApplicationSchedulingPolicy'
+      additionalProperties: false
+      required:
+        - name
+        - scheduling_policy
+        - durable_objects
     cc_ContainersCreateImageRegistryRequestBody:
       description: |
         Configuration for connecting Containers to a supported private external image
@@ -373340,38 +373373,6 @@ components:
         - domain
         - auth
         - kind
-    cc_ContainersCreateInstanceApplicationRequest:
-      description: Create a namespace-backed Containers application whose instances are owned by Durable Objects.
-      type: object
-      properties:
-        configuration:
-          description: |
-            Instance applications choose their image and runtime configuration when each Durable Object starts a container.
-            Set image to an empty string and omit every other configuration field.
-          allOf:
-            - $ref: '#/components/schemas/cc_UserDeploymentConfiguration'
-        durable_objects:
-          description: The customer-owned Durable Object namespace that owns this application and its instances.
-          allOf:
-            - $ref: '#/components/schemas/cc_DurableObjectsConfiguration'
-        instances:
-          description: Instance applications do not pre-create deployments.
-          type: integer
-          enum:
-            - 0
-        name:
-          description: The name for this application
-          type: string
-        scheduling_policy:
-          type: string
-          enum:
-            - instance
-      required:
-        - name
-        - scheduling_policy
-        - instances
-        - configuration
-        - durable_objects
     cc_ContainersCreateScheduledApplicationRequest:
       description: Create a new scheduler-backed Containers application.
       type: object
@@ -373408,6 +373409,7 @@ components:
           $ref: '#/components/schemas/cc_ApplicationRolloutActiveGracePeriod'
         scheduling_policy:
           $ref: '#/components/schemas/cc_ScheduledApplicationSchedulingPolicy'
+      additionalProperties: false
       required:
         - name
         - scheduling_policy
@@ -373453,6 +373455,11 @@ components:
       required:
         - public_credential
         - private_credential
+    cc_ContainersListApplications:
+      description: The public Containers API returns a list of applications.
+      type: array
+      items:
+        $ref: '#/components/schemas/cc_ContainersApplicationResponse'
     cc_ContainersListContainerInstances:
       description: Container instances belonging to an application.
       type: object
@@ -373617,6 +373624,37 @@ components:
       description: A string representation of a domain name. See RFC-1034 (https://www.ietf.org/rfc/rfc1034.txt). Consider that the limit of a domain name is min 3 and max 253 ASCII characters.
       type: string
       example: docker.io
+    cc_DurableObjectApplication:
+      description: Durable Objects own and configure this namespace-backed application's instances.
+      type: object
+      properties:
+        account_id:
+          $ref: '#/components/schemas/cc_AccountID'
+        created_at:
+          $ref: '#/components/schemas/cc_ISO8601Timestamp'
+        durable_objects:
+          $ref: '#/components/schemas/cc_DurableObjectsConfigurationNamespaceId'
+        id:
+          $ref: '#/components/schemas/cc_ApplicationID'
+        name:
+          $ref: '#/components/schemas/cc_ApplicationName'
+        scheduling_policy:
+          $ref: '#/components/schemas/cc_DurableObjectApplicationSchedulingPolicy'
+        updated_at:
+          $ref: '#/components/schemas/cc_ISO8601Timestamp'
+      required:
+        - id
+        - created_at
+        - updated_at
+        - account_id
+        - name
+        - scheduling_policy
+        - durable_objects
+    cc_DurableObjectApplicationSchedulingPolicy:
+      description: Selects Durable Objects to own and schedule application instances.
+      type: string
+      enum:
+        - durable_object
     cc_DurableObjectsConfiguration:
       description: Set of properties to configure a Durable Object-backed application.
       oneOf:
@@ -373742,20 +373780,18 @@ components:
       description: Image url.
       type: string
     cc_ImageRegistryCredentialsConfiguration:
-      description: Specifies the configuration for the image registry credential to create.
+      description: Specifies the configuration for the image registry credential to create. Cloudflare requires both fields for managed registries. For external registries, Cloudflare ignores both fields, and the registry provider determines the returned credentials' permissions and lifetime.
       type: object
       properties:
         expiration_minutes:
-          description: The minimum number of minutes the token stays valid. Must remain positive. We make a best effort to respect this value, but some registry providers do not let us configure the token lifetime, so the token might stay valid for longer.
+          description: The number of minutes Cloudflare managed registry credentials stay valid. Required for managed registries and must remain positive. Cloudflare ignores this value for external registries.
           type: integer
           minimum: 1
         permissions:
+          description: The permissions for Cloudflare managed registry credentials. Required for managed registries. Cloudflare ignores this value for external registries.
           type: array
           items:
             $ref: '#/components/schemas/cc_ImageRegistryPermissions'
-      required:
-        - permissions
-        - expiration_minutes
     cc_ImageRegistryPermissions:
       description: Specifies what permissions the credentials carry.
       type: string
@@ -373788,11 +373824,6 @@ components:
             - standard-3
             - standard-4
           type: string
-    cc_ListApplications:
-      description: A list of application objects.
-      type: array
-      items:
-        $ref: '#/components/schemas/cc_Application'
     cc_ListContainerInstanceGroups:
       description: Lists active Container Instance Groups for the account.
       type: array
@@ -373980,6 +374011,16 @@ components:
     cc_SSHPublicKey:
       description: An SSH public key.
       type: string
+    cc_ScheduledApplication:
+      description: The Cloudchamber scheduler manages this application's instances.
+      allOf:
+        - $ref: '#/components/schemas/cc_Application'
+        - properties:
+            scheduling_policy:
+              $ref: '#/components/schemas/cc_ScheduledApplicationSchedulingPolicy'
+          required:
+            - scheduling_policy
+          type: object
     cc_ScheduledApplicationSchedulingPolicy:
       description: The scheduling policy to use for a scheduler-backed application.
       type: string
@@ -373990,7 +374031,7 @@ components:
       type: string
       enum:
         - default
-        - instance
+        - durable_object
     cc_SecretsStoreRef:
       description: |
         Identifies an existing secret in [Secrets Store](https://developers.cloudflare.com/secrets-store/).
