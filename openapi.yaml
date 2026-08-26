@@ -88637,7 +88637,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/cloudforce-one_RulesListResponse'
+                $ref: '#/components/schemas/cloudforce-one_RulesPreviewListResponse'
         '401':
           description: Unauthorized.
           content:
@@ -88786,7 +88786,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/cloudforce-one_Rule'
+                $ref: '#/components/schemas/cloudforce-one_RulePreview'
         '401':
           description: Unauthorized.
           content:
@@ -88834,7 +88834,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/cloudforce-one_Rule'
+                $ref: '#/components/schemas/cloudforce-one_RulePreview'
         '202':
           description: Update pending approval (internal accounts and customer email rules).
           content:
@@ -88889,6 +88889,7 @@ paths:
                   - pending
                   - approved
                   - rejected
+                  - cancelled
                   - all
                 example: pending
                 type: string
@@ -88897,10 +88898,11 @@ paths:
                     - pending
                     - approved
                     - rejected
+                    - cancelled
                     - all
                   example: pending
                   type: string
-                maxItems: 3
+                maxItems: 4
                 minItems: 1
                 type: array
         - name: latest_only
@@ -88952,6 +88954,13 @@ paths:
               - create
               - update
               - delete
+        - name: rule_id
+          in: query
+          description: Filter approvals by rule ID.
+          schema:
+            description: Filter approvals by rule ID.
+            type: string
+            format: uuid
       responses:
         '200':
           description: List of approvals
@@ -89029,6 +89038,56 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: cloudforce-one.rules.approvals
       x-fern-sdk-method-name: get
+  /accounts/{account_id}/cloudforce-one/rules/approvals/{id}/cancel:
+    post:
+      operationId: cloudforce-one-cancel-rule-approval
+      summary: Cancel a pending approval
+      description: Cancel a pending rule approval. Only its original requester may cancel it.
+      parameters:
+        - $ref: '#/components/parameters/cloudforce-one_account_id'
+        - name: id
+          in: path
+          description: The unique identifier for the approval.
+          required: true
+          schema:
+            description: The unique identifier for the approval.
+            type: string
+            example: '1'
+      responses:
+        '200':
+          description: Approval cancelled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cloudforce-one_SuccessResponse'
+        '403':
+          description: Not authorized to cancel this approval
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cloudforce-one_ErrorResponse'
+        '404':
+          description: Approval not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cloudforce-one_ErrorResponse'
+        '409':
+          description: Approval is no longer pending
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cloudforce-one_ErrorResponse'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Approvals
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: cloudforce-one.rules.approvals
+      x-fern-sdk-method-name: cancel
+      x-forge-hidden: true
   /accounts/{account_id}/cloudforce-one/rules/approvals/{id}/resubmit:
     post:
       operationId: cloudforce-one-resubmit-rule-approval
@@ -89086,6 +89145,9 @@ paths:
           api_key: []
       tags:
         - Approvals
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: cloudforce-one.rules.approvals
+      x-fern-sdk-method-name: resubmit
   /accounts/{account_id}/cloudforce-one/rules/exemptions:
     delete:
       operationId: cloudforce-one-remove-account-exemptions
@@ -89525,7 +89587,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/cloudforce-one_RulesListResponse'
+                $ref: '#/components/schemas/cloudforce-one_EmailRulesListResponse'
         '400':
           description: Validation error.
           content:
@@ -89620,7 +89682,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/cloudforce-one_Rule'
+                $ref: '#/components/schemas/cloudforce-one_RulePreview'
         '202':
           description: Rule pending approval (internal accounts and customer email rules).
           content:
@@ -89731,7 +89793,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/cloudforce-one_Rule'
+                $ref: '#/components/schemas/cloudforce-one_RulePreview'
         '400':
           description: Validation error.
           content:
@@ -89836,7 +89898,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/cloudforce-one_Rule'
+                $ref: '#/components/schemas/cloudforce-one_RulePreview'
         '202':
           description: Update pending approval (internal accounts and customer email rules).
           content:
@@ -89944,6 +90006,138 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: cloudforce-one.rules.email
       x-fern-sdk-method-name: test
+  /accounts/{account_id}/cloudforce-one/rules/structured/approvals/{id}:
+    put:
+      operationId: cloudforce-one-update-pending-email-rule-approval
+      summary: Update a pending structured email rule approval
+      description: Validate, compile, and replace the proposed structured email rule on a pending approval. Only the original requester may update it.
+      parameters:
+        - $ref: '#/components/parameters/cloudforce-one_account_id'
+        - name: id
+          in: path
+          description: The unique identifier for the approval.
+          required: true
+          schema:
+            description: The unique identifier for the approval.
+            type: string
+            example: '1'
+        - name: module
+          in: query
+          description: Structured rule module.
+          schema:
+            description: Structured rule module.
+            type: string
+            example: eml
+            default: eml
+            enum:
+              - eml
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                condition:
+                  nullable: true
+                description:
+                  type: string
+                  maxLength: 1000
+                enabled:
+                  type: boolean
+                  default: true
+                meta:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/cloudforce-one_MetaInputEntry'
+                  maxItems: 50
+                name:
+                  type: string
+                  maxLength: 255
+                  minLength: 1
+                strings:
+                  type: array
+                  items:
+                    properties:
+                      identifier:
+                        type: string
+                        maxLength: 128
+                        minLength: 1
+                        pattern: ^[a-zA-Z_][a-zA-Z0-9_]*$
+                      match_type:
+                        type: string
+                        default: text
+                        enum:
+                          - text
+                          - hex
+                          - regex
+                      modifiers:
+                        type: array
+                        items:
+                          enum:
+                            - nocase
+                            - wide
+                            - ascii
+                            - fullword
+                          type: string
+                        default: []
+                      type:
+                        type: string
+                        enum:
+                          - string_match
+                      value:
+                        type: string
+                        maxLength: 10000
+                        minLength: 1
+                    required:
+                      - type
+                      - identifier
+                      - value
+                    type: object
+                  default: []
+                  maxItems: 50
+              required:
+                - name
+      responses:
+        '200':
+          description: Pending approval updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cloudforce-one_EditApprovalResponse'
+        '400':
+          description: Structured rule validation or compilation failed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cloudforce-one_ErrorResponse'
+        '403':
+          description: Not authorized to update this approval.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cloudforce-one_ErrorResponse'
+        '404':
+          description: Approval not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cloudforce-one_ErrorResponse'
+        '409':
+          description: Approval is not pending or is not a structured EML rule.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cloudforce-one_ErrorResponse'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Rules
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: cloudforce-one.rules.email
+      x-fern-sdk-method-name: updatePendingApproval
+      x-forge-hidden: true
   /accounts/{account_id}/cloudforce-one/rules/structured/approvals/{id}/resubmit:
     post:
       operationId: cloudforce-one-resubmit-email-rule-approval
@@ -90073,6 +90267,9 @@ paths:
           api_key: []
       tags:
         - Rules
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: cloudforce-one.rules.email.approvals
+      x-fern-sdk-method-name: resubmit
       x-forge-hidden: true
   /accounts/{account_id}/cloudforce-one/rules/structured/schema:
     get:
@@ -90088,8 +90285,149 @@ paths:
             application/json:
               schema:
                 type: object
-                additionalProperties:
-                  nullable: true
+                properties:
+                  arrays:
+                    type: array
+                    items:
+                      properties:
+                        counter:
+                          type: string
+                        fields:
+                          type: array
+                          items:
+                            properties:
+                              name:
+                                type: string
+                              type:
+                                type: string
+                                enum:
+                                  - string
+                                  - integer
+                                  - float
+                                  - boolean
+                            required:
+                              - name
+                              - type
+                            type: object
+                        path:
+                          type: string
+                      required:
+                        - path
+                        - counter
+                        - fields
+                      type: object
+                  headers:
+                    type: object
+                    properties:
+                      fields:
+                        type: array
+                        items:
+                          properties:
+                            name:
+                              type: string
+                            type:
+                              type: string
+                              enum:
+                                - string
+                                - integer
+                                - float
+                                - boolean
+                          required:
+                            - name
+                            - type
+                          type: object
+                      path:
+                        type: string
+                    required:
+                      - path
+                      - fields
+                  operators:
+                    type: object
+                    properties:
+                      boolean:
+                        type: array
+                        items:
+                          type: string
+                      float:
+                        type: array
+                        items:
+                          type: string
+                      integer:
+                        type: array
+                        items:
+                          type: string
+                      string:
+                        type: array
+                        items:
+                          type: string
+                    required:
+                      - string
+                      - integer
+                      - float
+                      - boolean
+                  scalars:
+                    type: array
+                    items:
+                      properties:
+                        path:
+                          type: string
+                        type:
+                          type: string
+                          enum:
+                            - string
+                            - integer
+                            - float
+                            - boolean
+                      required:
+                        - path
+                        - type
+                      type: object
+                  string_arrays:
+                    type: array
+                    items:
+                      properties:
+                        counter:
+                          type: string
+                        path:
+                          type: string
+                      required:
+                        - path
+                        - counter
+                      type: object
+                  structs:
+                    type: array
+                    items:
+                      properties:
+                        fields:
+                          type: array
+                          items:
+                            properties:
+                              name:
+                                type: string
+                              type:
+                                type: string
+                                enum:
+                                  - string
+                                  - integer
+                                  - float
+                                  - boolean
+                            required:
+                              - name
+                              - type
+                            type: object
+                        path:
+                          type: string
+                      required:
+                        - path
+                        - fields
+                      type: object
+                required:
+                  - scalars
+                  - structs
+                  - arrays
+                  - string_arrays
+                  - headers
+                  - operators
         '400':
           description: Validation error.
           content:
@@ -90102,6 +90440,9 @@ paths:
           api_key: []
       tags:
         - Rules
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: cloudforce-one.rules.email.schema
+      x-fern-sdk-method-name: get
       x-forge-hidden: true
   /accounts/{account_id}/cloudforce-one/rules/structured/validate:
     post:
@@ -90124,6 +90465,11 @@ paths:
                 enabled:
                   type: boolean
                   default: true
+                existing_rule_id:
+                  description: Existing rule ID to exclude from duplicate-name checks when validating an update.
+                  type: string
+                  format: uuid
+                  example: 550e8400-e29b-41d4-a716-446655440000
                 meta:
                   type: array
                   items:
@@ -376479,7 +376825,6 @@ components:
             - path
             - description
             - namespaces
-            - content
             - is_public
             - enabled
             - created_by
@@ -376536,6 +376881,70 @@ components:
             - name
           type: object
         - nullable: true
+    cloudforce-one_CompilerWarning:
+      type: object
+      properties:
+        code:
+          type: string
+        column:
+          type: integer
+        footers:
+          type: array
+          items:
+            properties:
+              level:
+                type: string
+              text:
+                type: string
+            required:
+              - level
+              - text
+            type: object
+          default: []
+        labels:
+          type: array
+          items:
+            properties:
+              code_origin:
+                type: string
+                nullable: true
+              column:
+                type: integer
+              level:
+                type: string
+              line:
+                type: integer
+              span:
+                type: object
+                properties:
+                  end:
+                    type: integer
+                  start:
+                    type: integer
+                required:
+                  - start
+                  - end
+              text:
+                type: string
+            required:
+              - level
+              - code_origin
+              - line
+              - column
+              - span
+              - text
+            type: object
+          default: []
+        line:
+          type: integer
+        text:
+          type: string
+        title:
+          type: string
+      required:
+        - code
+        - title
+        - text
     cloudforce-one_CreateRule:
       type: object
       properties:
@@ -376615,6 +377024,20 @@ components:
           type: string
           example: Rule superseded by yara/workers/tighter-panel.yar.
           maxLength: 1000
+    cloudforce-one_EditApprovalResponse:
+      type: object
+      properties:
+        approval:
+          allOf:
+            - $ref: '#/components/schemas/cloudforce-one_PendingApproval'
+            - properties:
+                current_rule:
+                  anyOf:
+                    - $ref: '#/components/schemas/cloudforce-one_RulePreview'
+                    - nullable: true
+              type: object
+      required:
+        - approval
     cloudforce-one_EmailRuleArrayCondition:
       type: object
       properties:
@@ -376786,6 +377209,19 @@ components:
           type: boolean
       required:
         - valid
+    cloudforce-one_EmailRulesListResponse:
+      type: object
+      properties:
+        rules:
+          type: array
+          items:
+            $ref: '#/components/schemas/cloudforce-one_RulePreview'
+        total:
+          type: number
+          example: 100
+      required:
+        - rules
+        - total
     cloudforce-one_ErrorResponse:
       type: object
       properties:
@@ -376848,6 +377284,167 @@ components:
             minLength: 1
             type: string
       additionalProperties: false
+    cloudforce-one_PendingApproval:
+      type: object
+      properties:
+        audit_log_id:
+          type: number
+          example: 1
+        can_review:
+          description: Whether the authenticated user may approve or reject this pending change.
+          type: boolean
+          example: true
+        cancelled_at:
+          description: Time at which the requester cancelled the approval.
+          type: number
+          example: 1679529600000
+          nullable: true
+          x-auditable: true
+        cancelled_by:
+          description: Requester who cancelled the pending approval.
+          type: string
+          example: requester@example.com
+          nullable: true
+          x-auditable: true
+        change_description:
+          type: string
+          example: Updated rule content
+        change_type:
+          type: string
+          example: create
+          enum:
+            - create
+            - update
+            - delete
+            - unresolved
+        commit_message:
+          description: Human-readable justification supplied by the requester when the change was submitted. Required for internal-account mutations; optional for customer accounts and sync-originated changes.
+          type: string
+          example: Tighten regex to reduce false positives on legit CI workers.
+          nullable: true
+        id:
+          type: number
+          example: 12345
+          x-auditable: true
+        proposed_changes:
+          $ref: '#/components/schemas/cloudforce-one_ApprovalProposedChanges'
+        rejection_reason:
+          description: Optional reason supplied by the reviewer when rejecting the change.
+          type: string
+          example: Narrow the hostname match to avoid false positives.
+          nullable: true
+          x-auditable: true
+        requested_at:
+          type: number
+          example: 1679529600000
+          x-auditable: true
+        requested_by:
+          type: string
+          example: user@example.com
+          x-auditable: true
+        reviewed_at:
+          type: number
+          example: 1679529600000
+          nullable: true
+          x-auditable: true
+        reviewed_by:
+          type: string
+          example: approver@example.com
+          nullable: true
+          x-auditable: true
+        reviewer_scope:
+          description: 'Review policy: general Nomos approvers for default; general approvers or Phishguard for email.'
+          type: string
+          example: email
+          enum:
+            - default
+            - email
+            - unresolved
+        revision_number:
+          description: Revision number within this approval request chain.
+          type: integer
+          example: 2
+          exclusiveMinimum: true
+          minimum: 0
+        rule_id:
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+          x-auditable: true
+        rule_name:
+          type: string
+          example: suspicious_email.yar
+        source_account_id:
+          description: Customer account that owns this approval when returned by the aggregated email queue.
+          type: integer
+          example: 12345678
+          exclusiveMinimum: true
+          minimum: 0
+        status:
+          type: string
+          example: pending
+          enum:
+            - pending
+            - approved
+            - rejected
+            - cancelled
+        superseded_by_approval_id:
+          description: Newer approval revision that replaced this approval.
+          type: number
+          example: 12346
+          nullable: true
+        supersedes_approval_id:
+          description: Previous approval revision replaced by this approval.
+          type: number
+          example: 12344
+          nullable: true
+      required:
+        - id
+        - rule_id
+        - rule_name
+        - audit_log_id
+        - requested_by
+        - requested_at
+        - change_description
+        - change_type
+        - proposed_changes
+        - status
+        - reviewed_by
+        - reviewed_at
+        - rejection_reason
+        - cancelled_by
+        - cancelled_at
+        - supersedes_approval_id
+        - superseded_by_approval_id
+        - revision_number
+        - commit_message
+        - reviewer_scope
+        - can_review
+    cloudforce-one_PendingRuleChange:
+      description: Proposed update or deletion awaiting approval. The other rule fields describe the currently applied version.
+      type: object
+      properties:
+        approval_id:
+          type: number
+          example: 12345
+        requested_at:
+          type: number
+          example: 1679529600000
+        requested_by:
+          type: string
+          example: user@example.com
+        type:
+          type: string
+          example: update
+          enum:
+            - update
+            - delete
+      nullable: true
+      required:
+        - approval_id
+        - type
+        - requested_at
+        - requested_by
     cloudforce-one_ResubmitApprovalRequest:
       type: object
       properties:
@@ -376949,6 +377546,8 @@ components:
           description: ID of an open approval workflow targeting this rule, or null if none is pending.
           type: number
           nullable: true
+        pending_change:
+          $ref: '#/components/schemas/cloudforce-one_PendingRuleChange'
         structured_source:
           description: Original JSON payload for rules created via the structured rules API. Null for hand-written rules.
           type: string
@@ -376975,6 +377574,7 @@ components:
         - created_by
         - updated_by
         - pending_approval_id
+        - pending_change
     cloudforce-one_RuleAction:
       type: object
       properties:
@@ -377023,6 +377623,18 @@ components:
               description: Whether the authenticated user may approve or reject this pending change.
               type: boolean
               example: true
+            cancelled_at:
+              description: Time at which the requester cancelled the approval.
+              type: number
+              example: 1679529600000
+              nullable: true
+              x-auditable: true
+            cancelled_by:
+              description: Requester who cancelled the pending approval.
+              type: string
+              example: requester@example.com
+              nullable: true
+              x-auditable: true
             change_description:
               type: string
               example: Updated rule content
@@ -377039,9 +377651,13 @@ components:
               type: string
               example: Tighten regex to reduce false positives on legit CI workers.
               nullable: true
+            compiler_warnings:
+              type: array
+              items:
+                $ref: '#/components/schemas/cloudforce-one_CompilerWarning'
             current_rule:
               anyOf:
-                - $ref: '#/components/schemas/cloudforce-one_Rule'
+                - $ref: '#/components/schemas/cloudforce-one_RulePreview'
                 - nullable: true
             id:
               type: number
@@ -377097,6 +377713,7 @@ components:
                 - pending
                 - approved
                 - rejected
+                - cancelled
             superseded_by_approval_id:
               description: Newer approval revision that replaced this approval.
               type: number
@@ -377120,6 +377737,8 @@ components:
             - status
             - reviewed_at
             - rejection_reason
+            - cancelled_by
+            - cancelled_at
             - supersedes_approval_id
             - superseded_by_approval_id
             - revision_number
@@ -377143,6 +377762,18 @@ components:
                 description: Whether the authenticated user may approve or reject this pending change.
                 type: boolean
                 example: true
+              cancelled_at:
+                description: Time at which the requester cancelled the approval.
+                type: number
+                example: 1679529600000
+                nullable: true
+                x-auditable: true
+              cancelled_by:
+                description: Requester who cancelled the pending approval.
+                type: string
+                example: requester@example.com
+                nullable: true
+                x-auditable: true
               change_description:
                 type: string
                 example: Updated rule content
@@ -377213,6 +377844,7 @@ components:
                   - pending
                   - approved
                   - rejected
+                  - cancelled
               superseded_by_approval_id:
                 description: Newer approval revision that replaced this approval.
                 type: number
@@ -377236,6 +377868,8 @@ components:
               - status
               - reviewed_at
               - rejection_reason
+              - cancelled_by
+              - cancelled_at
               - supersedes_approval_id
               - superseded_by_approval_id
               - revision_number
@@ -377269,9 +377903,92 @@ components:
         - key
         - value
         - type
+    cloudforce-one_RulePreview:
+      type: object
+      properties:
+        content:
+          example: 'rule example { condition: true }'
+          type: string
+        created_at:
+          type: number
+          example: 1679529600000
+          x-auditable: true
+        created_by:
+          type: string
+          example: user@example.com
+          x-auditable: true
+        description:
+          type: string
+          example: Detects malicious proxy workers
+        enabled:
+          description: Whether this rule is active for dice consumers.
+          type: boolean
+          example: true
+        id:
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+          x-auditable: true
+        is_public:
+          description: Whether this rule is visible to other internal accounts.
+          type: boolean
+          example: false
+          x-auditable: true
+        meta:
+          description: Structured meta entries for the rule (parsed from content plus any request-supplied meta). Returned in source order.
+          type: array
+          items:
+            $ref: '#/components/schemas/cloudforce-one_RuleMetaEntry'
+        name:
+          type: string
+          example: block-malicious-workers
+          x-auditable: true
+        namespaces:
+          type: array
+          items:
+            type: string
+          example:
+            - yara/workers
+          x-auditable: true
+        path:
+          type: string
+          example: yara/workers
+          x-auditable: true
+        pending_approval_id:
+          description: ID of an open approval workflow targeting this rule, or null if none is pending.
+          type: number
+          nullable: true
+        pending_change:
+          $ref: '#/components/schemas/cloudforce-one_PendingRuleChange'
+        structured_source:
+          description: Original JSON payload for rules created via the structured rules API. Null for hand-written rules.
+          type: string
+          nullable: true
+        updated_at:
+          type: number
+          example: 1679529600000
+          x-auditable: true
+        updated_by:
+          type: string
+          example: user@example.com
+          x-auditable: true
+      required:
+        - id
+        - name
+        - path
+        - description
+        - namespaces
+        - is_public
+        - enabled
+        - created_at
+        - updated_at
+        - created_by
+        - updated_by
+        - pending_approval_id
+        - pending_change
     cloudforce-one_RuleSearchResult:
       allOf:
-        - $ref: '#/components/schemas/cloudforce-one_Rule'
+        - $ref: '#/components/schemas/cloudforce-one_RulePreview'
         - properties:
             score:
               description: Relevance score in [0,1]. Present only when AI Search powers the query.
@@ -377296,13 +378013,13 @@ components:
                 vector_score:
                   type: number
           type: object
-    cloudforce-one_RulesListResponse:
+    cloudforce-one_RulesPreviewListResponse:
       type: object
       properties:
         rules:
           type: array
           items:
-            $ref: '#/components/schemas/cloudforce-one_Rule'
+            $ref: '#/components/schemas/cloudforce-one_RulePreview'
         total:
           type: number
           example: 100
