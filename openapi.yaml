@@ -179406,6 +179406,8 @@ paths:
         free: true
         pro: true
       x-fern-ignore: true
+      x-fern-sdk-group-name: workflows.triggers
+      x-fern-sdk-method-name: delete
     get:
       operationId: wor-get-script-triggers
       summary: Get script triggers
@@ -179625,6 +179627,8 @@ paths:
         free: true
         pro: true
       x-fern-ignore: true
+      x-fern-sdk-group-name: workflows.triggers
+      x-fern-sdk-method-name: get
     patch:
       operationId: wor-add-script-triggers
       summary: Add script triggers
@@ -179892,6 +179896,8 @@ paths:
         free: true
         pro: true
       x-fern-ignore: true
+      x-fern-sdk-group-name: workflows.triggers
+      x-fern-sdk-method-name: add
     put:
       operationId: wor-replace-script-triggers
       summary: Replace script triggers
@@ -180159,6 +180165,8 @@ paths:
         free: true
         pro: true
       x-fern-ignore: true
+      x-fern-sdk-group-name: workflows.triggers
+      x-fern-sdk-method-name: replace
   /accounts/{account_id}/tunnels:
     get:
       operationId: cloudflare-tunnel-list-all-tunnels
@@ -202560,6 +202568,8 @@ paths:
         free: true
         pro: true
       x-fern-ignore: true
+      x-fern-sdk-group-name: workflows
+      x-fern-sdk-method-name: update
   /accounts/{account_id}/workflows/{workflow_name}/instances:
     get:
       operationId: wor-list-workflow-instances
@@ -202741,7 +202751,7 @@ paths:
                       per_page:
                         type: number
                       total_count:
-                        description: 'Deprecated: total count is not reliable with cursor-based pagination.'
+                        description: 'Deprecated: cursor-based pagination can produce an inaccurate total count.'
                         type: number
                         deprecated: true
                       total_pages:
@@ -202885,7 +202895,7 @@ paths:
               type: object
               properties:
                 instance_id:
-                  description: An id of exactly `cf_` followed by 64 lowercase hex characters is reserved for system-generated instances.
+                  description: The system reserves IDs that consist of the `cf_` prefix and exactly 64 lowercase hexadecimal characters.
                   type: string
                   maximum: 100
                   minimum: 1
@@ -202925,6 +202935,8 @@ paths:
                     - enam
                     - eeur
                     - apac
+                    - apac-ne
+                    - apac-se
                     - oc
                     - sam
                     - afr
@@ -203494,7 +203506,7 @@ paths:
                                             - linear
                                             - exponential
                                         delay:
-                                          description: Specifies the delay duration. '[dynamic]' indicates the delay is computed by a user-supplied function.
+                                          description: Specifies the delay duration. The value '[dynamic]' means that a user-supplied function computes the delay.
                                           anyOf:
                                             - type: string
                                             - type: number
@@ -204294,6 +204306,8 @@ paths:
         enterprise: true
         free: true
         pro: true
+      x-fern-sdk-group-name: workflows.instances.status
+      x-fern-sdk-method-name: edit
       x-forge-aliases:
         - x-fern-availability: generally-available
           x-fern-sdk-group-name: workflows.instances
@@ -204440,7 +204454,7 @@ paths:
                         description: The event type the step is waiting on, as supplied to step.waitForEvent. Only present when type='waitForEvent'.
                         type: string
                       output:
-                        description: Full step output or waitForEvent payload without truncation. Sensitive outputs are returned as '[REDACTED]'. Populated when status='complete'. May be a ReadableStream when the step returned one from step.do; stream outputs are served as application/octet-stream rather than JSON.
+                        description: Contains the full step output or waitForEvent payload without truncation. Uses '[REDACTED]' for sensitive outputs. Contains a value when status='complete'. May contain a ReadableStream when step.do returns one; the response serves stream outputs as application/octet-stream rather than JSON.
                         type: object
                       status:
                         type: string
@@ -204664,7 +204678,7 @@ paths:
     get:
       operationId: wor-subscribe-workflow-instance-events
       summary: Subscribe to workflow instance events
-      description: Upgrades the request to a WebSocket that streams workflow instance events.
+      description: Opens a WebSocket that streams workflow instance events.
       parameters:
         - name: workflow_name
           in: path
@@ -204795,6 +204809,8 @@ paths:
         free: true
         pro: true
       x-fern-ignore: true
+      x-fern-sdk-group-name: workflows.instances
+      x-fern-sdk-method-name: subscribe
   /accounts/{account_id}/workflows/{workflow_name}/instances/batch:
     post:
       operationId: wor-batch-create-workflow-instance
@@ -204822,7 +204838,7 @@ paths:
               items:
                 properties:
                   instance_id:
-                    description: An id of exactly `cf_` followed by 64 lowercase hex characters is reserved for system-generated instances.
+                    description: The system reserves IDs that consist of the `cf_` prefix and exactly 64 lowercase hexadecimal characters.
                     type: string
                     maximum: 100
                     minimum: 1
@@ -204862,6 +204878,8 @@ paths:
                       - enam
                       - eeur
                       - apac
+                      - apac-ne
+                      - apac-se
                       - oc
                       - sam
                       - afr
@@ -205095,7 +205113,7 @@ paths:
                 instances:
                   type: array
                   items:
-                    description: Instance identifier. Accepts user-created ids (`^[a-zA-Z0-9_][a-zA-Z0-9-_]*$`, max 100 characters) and the system-generated ids returned by instance creation, which are `cf_` or `-` followed by exactly 64 lowercase hex characters.
+                    description: Instance identifier. Accepts user-created IDs (`^[a-zA-Z0-9_][a-zA-Z0-9-_]*$`, maximum 100 characters) and system-generated IDs that consist of a `cf_` or `-` prefix and exactly 64 lowercase hexadecimal characters.
                     maxLength: 100
                     minLength: 1
                     pattern: ^(-[0-9a-f]{64}|[a-zA-Z0-9_][a-zA-Z0-9-_]*)$
@@ -205286,11 +205304,13 @@ paths:
         free: true
         pro: true
       x-fern-ignore: true
+      x-fern-sdk-group-name: workflows.instances.batch
+      x-fern-sdk-method-name: delete
   /accounts/{account_id}/workflows/{workflow_name}/instances/batch/terminate:
     post:
       operationId: wor-batch-terminate-workflow-instances
       summary: Batch terminate instances of a workflow
-      description: Terminates multiple workflow instances in a single batch operation.
+      description: Performs a batch termination of multiple workflow instances.
       parameters:
         - name: workflow_name
           in: path
@@ -205482,6 +205502,8 @@ paths:
         free: true
         pro: true
       x-fern-ignore: true
+      x-fern-sdk-group-name: workflows.instances.batch
+      x-fern-sdk-method-name: terminate
   /accounts/{account_id}/workflows/{workflow_name}/instances/terminate:
     get:
       operationId: wor-status-terminate-workflow-instances
@@ -205665,6 +205687,8 @@ paths:
         free: true
         pro: true
       x-fern-ignore: true
+      x-fern-sdk-group-name: workflows.instances.batch
+      x-fern-sdk-method-name: terminationStatus
   /accounts/{account_id}/workflows/{workflow_name}/versions:
     get:
       operationId: wor-list-workflow-versions
@@ -205753,7 +205777,7 @@ paths:
                           type: string
                           format: uuid
                         language:
-                          description: The programming language of the workflow implementation
+                          description: The programming language of the workflow implementation.
                           type: string
                           enum:
                             - javascript
@@ -205946,7 +205970,7 @@ paths:
                         type: string
                         format: uuid
                       language:
-                        description: The programming language of the workflow implementation
+                        description: The programming language of the workflow implementation.
                         type: string
                         enum:
                           - javascript
@@ -206264,6 +206288,8 @@ paths:
         free: true
         pro: true
       x-fern-ignore: true
+      x-fern-sdk-group-name: workflows.versions
+      x-fern-sdk-method-name: dag
   /accounts/{account_id}/workflows/{workflow_name}/versions/{version_id}/graph:
     get:
       operationId: wor-describe-workflow-versions-graph
@@ -207070,7 +207096,7 @@ paths:
     patch:
       operationId: wor-update-workflow-settings
       summary: Update account settings
-      description: Partially updates account-level Workflows settings; only the fields present in the body are changed.
+      description: Updates only the account-level Workflows settings fields present in the request body.
       parameters:
         - name: account_id
           in: path
