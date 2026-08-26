@@ -88610,14 +88610,14 @@ paths:
     get:
       operationId: cloudforce-one-list-rules
       summary: List rules
-      description: List all rules for an account with optional filtering.
+      description: Returns all rules for an account with optional filtering.
       parameters:
         - $ref: '#/components/parameters/cloudforce-one_account_id'
         - name: namespace
           in: query
-          description: Filter by namespace. Repeat the parameter to filter by multiple namespaces (e.g. namespace=foo&namespace=bar).
+          description: Selects namespaces. Repeat the parameter to select multiple namespaces (for example, namespace=foo&namespace=bar).
           schema:
-            description: Filter by namespace. Repeat the parameter to filter by multiple namespaces (e.g. namespace=foo&namespace=bar).
+            description: Selects namespaces. Repeat the parameter to select multiple namespaces (for example, namespace=foo&namespace=bar).
             example:
               - yara/workers
               - yara/dns_record
@@ -88629,9 +88629,9 @@ paths:
                 type: array
         - name: path
           in: query
-          description: 'Filter by path using exact-match semantics (no descendant matching). Omit the parameter to return rules from all paths. Pass an empty string (path=) to return only rules with an empty/uncategorized path. Pass a non-empty value (e.g. path=yara) for an exact match against that path. Repeat the parameter (e.g. path=yara&path=expr) to OR-match across multiple paths (SQL `IN (...)` semantics). Note: the `recursive` flag does NOT affect path filtering — it only affects namespace filtering for customer accounts.'
+          description: Selects paths with exact-match semantics. Omit the parameter to return rules from all paths. Pass an empty string (path=) to return only rules with an empty or uncategorized path. Pass a value (for example, path=yara) to match that exact path. Repeat the parameter (for example, path=yara&path=expr) to OR-match multiple paths with SQL `IN (...)` semantics. The `recursive` flag affects only customer-account namespace selection.
           schema:
-            description: 'Filter by path using exact-match semantics (no descendant matching). Omit the parameter to return rules from all paths. Pass an empty string (path=) to return only rules with an empty/uncategorized path. Pass a non-empty value (e.g. path=yara) for an exact match against that path. Repeat the parameter (e.g. path=yara&path=expr) to OR-match across multiple paths (SQL `IN (...)` semantics). Note: the `recursive` flag does NOT affect path filtering — it only affects namespace filtering for customer accounts.'
+            description: Selects paths with exact-match semantics. Omit the parameter to return rules from all paths. Pass an empty string (path=) to return only rules with an empty or uncategorized path. Pass a value (for example, path=yara) to match that exact path. Repeat the parameter (for example, path=yara&path=expr) to OR-match multiple paths with SQL `IN (...)` semantics. The `recursive` flag affects only customer-account namespace selection.
             example:
               - yara/workers
             anyOf:
@@ -88642,9 +88642,9 @@ paths:
                 type: array
         - name: recursive
           in: query
-          description: 'Customer accounts only: when true, namespace filtering matches descendants. Does NOT affect path filtering (paths are always exact-match).'
+          description: For customer accounts, true enables descendant matching for namespaces. Paths always use exact matching.
           schema:
-            description: 'Customer accounts only: when true, namespace filtering matches descendants. Does NOT affect path filtering (paths are always exact-match).'
+            description: For customer accounts, true enables descendant matching for namespaces. Paths always use exact matching.
             type: string
             example: 'true'
             enum:
@@ -88657,9 +88657,9 @@ paths:
             example: malicious
         - name: is_public
           in: query
-          description: Filter by public visibility.
+          description: Limits rules to the specified public visibility.
           schema:
-            description: Filter by public visibility.
+            description: Limits rules to the specified public visibility.
             type: string
             example: 'true'
             enum:
@@ -88861,7 +88861,7 @@ paths:
     put:
       operationId: cloudforce-one-update-rule
       summary: Update a rule
-      description: Update an existing rule.
+      description: Updates an existing rule.
       parameters:
         - $ref: '#/components/parameters/cloudforce-one_account_id'
         - name: id
@@ -88922,14 +88922,14 @@ paths:
     get:
       operationId: cloudforce-one-list-rule-approvals
       summary: List rule approvals
-      description: List rule approvals with optional status, revision, reviewer-scope, and mutation-type filtering.
+      description: Returns rule approvals with optional status, revision, reviewer-scope, and mutation-type filtering.
       parameters:
         - $ref: '#/components/parameters/cloudforce-one_account_id'
         - name: status
           in: query
-          description: Filter by status. Repeat the parameter to OR-match statuses (for example, status=pending&status=rejected). Use status=all alone to disable status filtering.
+          description: Selects approval statuses. Repeat the parameter to OR-match statuses (for example, status=pending&status=rejected). Use status=all alone to disable status filtering.
           schema:
-            description: Filter by status. Repeat the parameter to OR-match statuses (for example, status=pending&status=rejected). Use status=all alone to disable status filtering.
+            description: Selects approval statuses. Repeat the parameter to OR-match statuses (for example, status=pending&status=rejected). Use status=all alone to disable status filtering.
             example:
               - pending
               - rejected
@@ -88957,9 +88957,9 @@ paths:
                 type: array
         - name: latest_only
           in: query
-          description: When true, return only the latest revision in each approval chain (rows not superseded by another approval).
+          description: When true, returns the newest revision in each approval chain.
           schema:
-            description: When true, return only the latest revision in each approval chain (rows not superseded by another approval).
+            description: When true, returns the newest revision in each approval chain.
             type: string
             example: 'true'
             default: 'false'
@@ -88984,9 +88984,9 @@ paths:
             nullable: true
         - name: reviewer_scope
           in: query
-          description: Filter approvals by reviewer scope.
+          description: Limits approvals to the specified reviewer scope.
           schema:
-            description: Filter approvals by reviewer scope.
+            description: Limits approvals to the specified reviewer scope.
             type: string
             example: email
             enum:
@@ -88995,9 +88995,9 @@ paths:
               - unresolved
         - name: change_type
           in: query
-          description: Filter approvals by proposed mutation type.
+          description: Limits approvals to the specified mutation type.
           schema:
-            description: Filter approvals by proposed mutation type.
+            description: Limits approvals to the specified mutation type.
             type: string
             example: create
             enum:
@@ -89013,19 +89013,19 @@ paths:
             format: uuid
       responses:
         '200':
-          description: List of approvals
+          description: List of approvals.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/cloudforce-one_RuleApprovalsListResponse'
         '400':
-          description: Invalid approval filter
+          description: Invalid approval filter.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/cloudforce-one_ErrorResponse'
         '403':
-          description: Cross-account approval access is restricted
+          description: Cross-account approval access is restricted.
           content:
             application/json:
               schema:
@@ -89043,7 +89043,7 @@ paths:
     get:
       operationId: cloudforce-one-get-rule-approval
       summary: Get rule approval details
-      description: Get a single rule approval with current rule data
+      description: Get a single rule approval with current rule data.
       parameters:
         - $ref: '#/components/parameters/cloudforce-one_account_id'
         - name: id
@@ -89056,25 +89056,25 @@ paths:
             example: '1'
       responses:
         '200':
-          description: Approval details
+          description: Approval details.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/cloudforce-one_RuleApprovalDetailResponse'
         '400':
-          description: Invalid approval detail request
+          description: Invalid approval detail request.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/cloudforce-one_ErrorResponse'
         '403':
-          description: Cross-account approval access is restricted
+          description: Cross-account approval access is restricted.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/cloudforce-one_ErrorResponse'
         '404':
-          description: Approval not found
+          description: Approval not found.
           content:
             application/json:
               schema:
@@ -89160,31 +89160,31 @@ paths:
               $ref: '#/components/schemas/cloudforce-one_ResubmitApprovalRequest'
       responses:
         '202':
-          description: New approval revision submitted
+          description: New approval revision submitted.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/cloudforce-one_ResubmitApprovalResponse'
         '400':
-          description: Validation error
+          description: Validation error.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/cloudforce-one_ErrorResponse'
         '403':
-          description: Not authorized to resubmit this approval
+          description: Not authorized to resubmit this approval.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/cloudforce-one_ErrorResponse'
         '404':
-          description: Approval or underlying rule not found
+          description: Approval or underlying rule not found.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/cloudforce-one_ErrorResponse'
         '409':
-          description: Approval is not rejected or has already been superseded
+          description: Resubmission requires a rejected, unsuperseded approval.
           content:
             application/json:
               schema:
@@ -89450,9 +89450,9 @@ paths:
         - $ref: '#/components/parameters/cloudforce-one_account_id'
         - name: namespace
           in: query
-          description: Filter by namespace. Repeat the parameter to filter by multiple namespaces (e.g. namespace=foo&namespace=bar).
+          description: Selects namespaces. Repeat the parameter to select multiple namespaces (for example, namespace=foo&namespace=bar).
           schema:
-            description: Filter by namespace. Repeat the parameter to filter by multiple namespaces (e.g. namespace=foo&namespace=bar).
+            description: Selects namespaces. Repeat the parameter to select multiple namespaces (for example, namespace=foo&namespace=bar).
             example:
               - yara/workers
               - yara/dns_record
@@ -89464,9 +89464,9 @@ paths:
                 type: array
         - name: path
           in: query
-          description: 'Filter by path using exact-match semantics (no descendant matching). Omit the parameter to return rules from all paths. Pass an empty string (path=) to return only rules with an empty/uncategorized path. Pass a non-empty value (e.g. path=yara) for an exact match against that path. Repeat the parameter (e.g. path=yara&path=expr) to OR-match across multiple paths (SQL `IN (...)` semantics). Note: the `recursive` flag does NOT affect path filtering — it only affects namespace filtering for customer accounts.'
+          description: Selects paths with exact-match semantics. Omit the parameter to return rules from all paths. Pass an empty string (path=) to return only rules with an empty or uncategorized path. Pass a value (for example, path=yara) to match that exact path. Repeat the parameter (for example, path=yara&path=expr) to OR-match multiple paths with SQL `IN (...)` semantics. The `recursive` flag affects only customer-account namespace selection.
           schema:
-            description: 'Filter by path using exact-match semantics (no descendant matching). Omit the parameter to return rules from all paths. Pass an empty string (path=) to return only rules with an empty/uncategorized path. Pass a non-empty value (e.g. path=yara) for an exact match against that path. Repeat the parameter (e.g. path=yara&path=expr) to OR-match across multiple paths (SQL `IN (...)` semantics). Note: the `recursive` flag does NOT affect path filtering — it only affects namespace filtering for customer accounts.'
+            description: Selects paths with exact-match semantics. Omit the parameter to return rules from all paths. Pass an empty string (path=) to return only rules with an empty or uncategorized path. Pass a value (for example, path=yara) to match that exact path. Repeat the parameter (for example, path=yara&path=expr) to OR-match multiple paths with SQL `IN (...)` semantics. The `recursive` flag affects only customer-account namespace selection.
             example:
               - yara/workers
             anyOf:
@@ -89477,9 +89477,9 @@ paths:
                 type: array
         - name: recursive
           in: query
-          description: 'Customer accounts only: when true, namespace filtering matches descendants. Does NOT affect path filtering (paths are always exact-match).'
+          description: For customer accounts, true enables descendant matching for namespaces. Paths always use exact matching.
           schema:
-            description: 'Customer accounts only: when true, namespace filtering matches descendants. Does NOT affect path filtering (paths are always exact-match).'
+            description: For customer accounts, true enables descendant matching for namespaces. Paths always use exact matching.
             type: string
             example: 'true'
             enum:
@@ -89492,9 +89492,9 @@ paths:
             example: malicious
         - name: is_public
           in: query
-          description: Filter by public visibility.
+          description: Limits rules to the specified public visibility.
           schema:
-            description: Filter by public visibility.
+            description: Limits rules to the specified public visibility.
             type: string
             example: 'true'
             enum:
@@ -89541,9 +89541,9 @@ paths:
               - keyword
         - name: language
           in: query
-          description: Filter results by rule language.
+          description: Limits results to the specified rule language.
           schema:
-            description: Filter results by rule language.
+            description: Limits results to the specified rule language.
             type: string
             example: yara
             enum:
@@ -89551,19 +89551,19 @@ paths:
               - js
       responses:
         '200':
-          description: Hybrid/semantic rule search results
+          description: Hybrid and semantic rule search results.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/cloudforce-one_RulesSearchResponse'
         '401':
-          description: Unauthorized
+          description: Unauthorized.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/cloudforce-one_ErrorResponse'
         '503':
-          description: AI Search unavailable
+          description: AI Search unavailable.
           content:
             application/json:
               schema:
@@ -89610,7 +89610,7 @@ paths:
     get:
       operationId: cloudforce-one-list-email-rules
       summary: List email rules
-      description: List structured email rules.
+      description: Returns structured email rules.
       parameters:
         - $ref: '#/components/parameters/cloudforce-one_account_id'
         - name: limit
@@ -89868,7 +89868,7 @@ paths:
     put:
       operationId: cloudforce-one-update-email-rule
       summary: Update an email rule
-      description: Update an existing structured email rule.
+      description: Updates an existing structured email rule.
       parameters:
         - $ref: '#/components/parameters/cloudforce-one_account_id'
         - name: id
@@ -90192,7 +90192,7 @@ paths:
     post:
       operationId: cloudforce-one-resubmit-email-rule-approval
       summary: Revise and resubmit a rejected structured email rule approval
-      description: Validate and compile a complete structured email rule, then create an immutable pending revision of its rejected approval.
+      description: Validates and compiles a complete structured email rule, then creates an immutable pending revision of its rejected approval.
       parameters:
         - $ref: '#/components/parameters/cloudforce-one_account_id'
         - name: id
@@ -90498,7 +90498,7 @@ paths:
     post:
       operationId: cloudforce-one-validate-email-rule
       summary: Validate an email rule
-      description: Validate structured email rule syntax and metadata.
+      description: Validates structured email rule syntax and metadata.
       parameters:
         - $ref: '#/components/parameters/cloudforce-one_account_id'
       requestBody:
@@ -90628,7 +90628,7 @@ paths:
     post:
       operationId: cloudforce-one-validate-rule
       summary: Validate rule with context
-      description: Validate rule syntax, name uniqueness, namespace, and meta checks.
+      description: Validates rule syntax, name uniqueness, namespace, and metadata.
       parameters:
         - $ref: '#/components/parameters/cloudforce-one_account_id'
       requestBody:
@@ -376891,7 +376891,8 @@ components:
         - approval_id
         - message
     cloudforce-one_ApprovalProposedChanges:
-      description: Structured proposed rule changes, or null when persisted data cannot be resolved.
+      description: Contains structured proposed rule changes, or null for unresolved persisted data.
+      nullable: true
       oneOf:
         - properties:
             content:
@@ -376990,7 +376991,6 @@ components:
             - id
             - name
           type: object
-        - nullable: true
     cloudforce-one_CompilerWarning:
       type: object
       properties:
@@ -377088,7 +377088,7 @@ components:
           default: false
           x-auditable: true
         meta:
-          description: Additional YARA meta entries appended to the rule's meta block (and stored in rule_meta alongside meta parsed from the content). Keys must be valid YARA identifiers and must not be 'name', 'enabled', or 'description'. Duplicate keys are allowed.
+          description: Adds YARA meta entries to the rule's meta block and stores them in rule_meta alongside content metadata. Use valid YARA identifiers for keys; exclude 'name', 'enabled', and 'description'. You may repeat keys.
           type: array
           items:
             $ref: '#/components/schemas/cloudforce-one_MetaInputEntry'
@@ -377144,7 +377144,7 @@ components:
                 current_rule:
                   anyOf:
                     - $ref: '#/components/schemas/cloudforce-one_RulePreview'
-                    - nullable: true
+                  nullable: true
               type: object
       required:
         - approval
@@ -377355,7 +377355,7 @@ components:
         - old_pattern
         - new_pattern
     cloudforce-one_MetaInputEntry:
-      description: "A YARA meta entry. Value type is resolved server-side. Constrained keys: 'detection' must be one of MALICIOUS, SUSPICIOUS, SPAM, SPOOF."
+      description: A YARA meta entry. The server resolves its value type. The 'detection' key accepts MALICIOUS, SUSPICIOUS, SPAM, or SPOOF.
       type: object
       properties:
         key:
@@ -377428,7 +377428,7 @@ components:
             - delete
             - unresolved
         commit_message:
-          description: Human-readable justification supplied by the requester when the change was submitted. Required for internal-account mutations; optional for customer accounts and sync-originated changes.
+          description: The requester supplies this human-readable justification with the change. Internal-account mutations require it; customer accounts and sync-originated changes may omit it.
           type: string
           example: Tighten regex to reduce false positives on legit CI workers.
           nullable: true
@@ -377439,7 +377439,7 @@ components:
         proposed_changes:
           $ref: '#/components/schemas/cloudforce-one_ApprovalProposedChanges'
         rejection_reason:
-          description: Optional reason supplied by the reviewer when rejecting the change.
+          description: The reviewer may supply a reason when rejecting the change.
           type: string
           example: Narrow the hostname match to avoid false positives.
           nullable: true
@@ -377504,7 +377504,7 @@ components:
           example: 12346
           nullable: true
         supersedes_approval_id:
-          description: Previous approval revision replaced by this approval.
+          description: This approval replaces the referenced approval revision.
           type: number
           example: 12344
           nullable: true
@@ -377757,7 +377757,7 @@ components:
                 - delete
                 - unresolved
             commit_message:
-              description: Human-readable justification supplied by the requester when the change was submitted. Required for internal-account mutations; optional for customer accounts and sync-originated changes.
+              description: The requester supplies this human-readable justification with the change. Internal-account mutations require it; customer accounts and sync-originated changes may omit it.
               type: string
               example: Tighten regex to reduce false positives on legit CI workers.
               nullable: true
@@ -377768,7 +377768,7 @@ components:
             current_rule:
               anyOf:
                 - $ref: '#/components/schemas/cloudforce-one_RulePreview'
-                - nullable: true
+              nullable: true
             id:
               type: number
               example: 12345
@@ -377776,7 +377776,7 @@ components:
             proposed_changes:
               $ref: '#/components/schemas/cloudforce-one_ApprovalProposedChanges'
             rejection_reason:
-              description: Optional reason supplied by the reviewer when rejecting the change.
+              description: The reviewer may supply a reason when rejecting the change.
               type: string
               example: Narrow the hostname match to avoid false positives.
               nullable: true
@@ -377830,7 +377830,7 @@ components:
               example: 12346
               nullable: true
             supersedes_approval_id:
-              description: Previous approval revision replaced by this approval.
+              description: This approval replaces the referenced approval revision.
               type: number
               example: 12344
               nullable: true
@@ -377896,7 +377896,7 @@ components:
                   - delete
                   - unresolved
               commit_message:
-                description: Human-readable justification supplied by the requester when the change was submitted. Required for internal-account mutations; optional for customer accounts and sync-originated changes.
+                description: The requester supplies this human-readable justification with the change. Internal-account mutations require it; customer accounts and sync-originated changes may omit it.
                 type: string
                 example: Tighten regex to reduce false positives on legit CI workers.
                 nullable: true
@@ -377907,7 +377907,7 @@ components:
               proposed_changes:
                 $ref: '#/components/schemas/cloudforce-one_ApprovalProposedChanges'
               rejection_reason:
-                description: Optional reason supplied by the reviewer when rejecting the change.
+                description: The reviewer may supply a reason when rejecting the change.
                 type: string
                 example: Narrow the hostname match to avoid false positives.
                 nullable: true
@@ -377961,7 +377961,7 @@ components:
                 example: 12346
                 nullable: true
               supersedes_approval_id:
-                description: Previous approval revision replaced by this approval.
+                description: This approval replaces the referenced approval revision.
                 type: number
                 example: 12344
                 nullable: true
@@ -378107,7 +378107,7 @@ components:
               maximum: 1
               minimum: 0
             scoring_details:
-              description: Per-component scoring breakdown returned by AI Search hybrid retrieval.
+              description: AI Search hybrid retrieval returns this per-component scoring breakdown.
               type: object
               properties:
                 fusion_method:
@@ -378274,7 +378274,7 @@ components:
           example: false
           x-auditable: true
         meta:
-          description: Additional YARA meta entries appended to the rule's meta block (and stored in rule_meta alongside meta parsed from the content). Keys must be valid YARA identifiers and must not be 'name', 'enabled', or 'description'. Duplicate keys are allowed.
+          description: Adds YARA meta entries to the rule's meta block and stores them in rule_meta alongside content metadata. Use valid YARA identifiers for keys; exclude 'name', 'enabled', and 'description'. You may repeat keys.
           type: array
           items:
             $ref: '#/components/schemas/cloudforce-one_MetaInputEntry'
