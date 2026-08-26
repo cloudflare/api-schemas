@@ -404583,12 +404583,14 @@ components:
         - $ref: '#/components/schemas/logpush_api-response-single'
         - properties:
             result:
-              description: The transformed log record, or null if the query filtered it out.
-              type: object
+              description: An array of transformed log records. Queries that produce multiple rows from a single input (e.g. via UNNEST) return one object per output row. Null if the query filtered out the input record.
+              type: array
+              items:
+                additionalProperties: true
+                type: object
               example:
-                ClientIP: 198.51.100.1
-                RayID: abcdef1234567890
-              additionalProperties: true
+                - ClientIP: 198.51.100.1
+                  RayID: abcdef1234567890
               nullable: true
           type: object
     logpush_transformer_response_collection:
