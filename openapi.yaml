@@ -62407,6 +62407,16 @@ paths:
                     bestAttempt:
                       description: Attempt to proceed when 'awaited' events fail or timeout.
                       type: boolean
+                    contentUse:
+                      description: "Intended content use level to respect the `use` Content-Signal directive in robots.txt. Levels (least to most permissive): 'reference', 'full'. A URL is disallowed when the publisher's declared `use` level is lower than this intent. Learn more: https://contentsignals.org/. Default: 'full'."
+                      default: full
+                      anyOf:
+                        - enum:
+                            - reference
+                          type: string
+                        - enum:
+                            - full
+                          type: string
                     cookies:
                       description: Check [options](https://pptr.dev/api/puppeteer.page.setcookie).
                       type: array
@@ -62783,6 +62793,16 @@ paths:
                   type: object
                 - additionalProperties: false
                   properties:
+                    contentUse:
+                      description: "Intended content use level to respect the `use` Content-Signal directive in robots.txt. Levels (least to most permissive): 'reference', 'full'. A URL is disallowed when the publisher's declared `use` level is lower than this intent. Learn more: https://contentsignals.org/. Default: 'full'."
+                      default: full
+                      anyOf:
+                        - enum:
+                            - reference
+                          type: string
+                        - enum:
+                            - full
+                          type: string
                     crawlPurposes:
                       description: "List of crawl purposes to respect Content-Signal directives in robots.txt. Allowed values: 'search', 'ai-input', 'ai-train'. Learn more: https://contentsignals.org/. Default: ['search', 'ai-input', 'ai-train']."
                       type: array
@@ -172484,7 +172504,7 @@ paths:
         free: false
         pro: false
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: resource-sharing.excluded_recipients
+      x-fern-sdk-group-name: resource-sharing.excluded-recipients
       x-fern-sdk-method-name: list
     post:
       operationId: share-excluded-recipient-create
@@ -172540,7 +172560,7 @@ paths:
         free: false
         pro: false
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: resource-sharing.excluded_recipients
+      x-fern-sdk-group-name: resource-sharing.excluded-recipients
       x-fern-sdk-method-name: create
     put:
       operationId: share-excluded-recipients-update
@@ -172591,7 +172611,7 @@ paths:
         free: false
         pro: false
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: resource-sharing.excluded_recipients
+      x-fern-sdk-group-name: resource-sharing.excluded-recipients
       x-fern-sdk-method-name: update
   /accounts/{account_id}/shares/{share_id}/excluded-recipients/{excluded_recipient_id}:
     delete:
@@ -172647,7 +172667,7 @@ paths:
         free: false
         pro: false
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: resource-sharing.excluded_recipients
+      x-fern-sdk-group-name: resource-sharing.excluded-recipients
       x-fern-sdk-method-name: delete
     get:
       operationId: share-excluded-recipients-get-by-id
@@ -172702,7 +172722,7 @@ paths:
         free: false
         pro: false
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: resource-sharing.excluded_recipients
+      x-fern-sdk-group-name: resource-sharing.excluded-recipients
       x-fern-sdk-method-name: get
   /accounts/{account_id}/shares/{share_id}/recipients:
     get:
@@ -430668,6 +430688,7 @@ components:
         - gateway-block-page-settings
         - gateway-extended-email-matching
         - idp-federation-grant
+        - trust-grant
       x-auditable: true
     resource-sharing_resource_version:
       description: Resource Version.
