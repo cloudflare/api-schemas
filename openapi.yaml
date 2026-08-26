@@ -1131,6 +1131,14 @@ paths:
             type: string
             default: utc
             pattern: ^(utc|Z|\+(?:(?:0\d|1[0-3]):[0-5]\d|14:00)|-(?:(?:0\d|1[01]):[0-5]\d|12:00))$
+        - name: days
+          in: query
+          description: Daily trailing-window size; defaults to 7 and is ignored for monthly
+          schema:
+            description: Daily trailing-window size; defaults to 7 and is ignored for monthly
+            type: integer
+            maximum: 179
+            minimum: 1
       responses:
         '200':
           description: Per-day tool/call counts across all servers in a portal over the selected window
@@ -1268,6 +1276,14 @@ paths:
             type: string
             default: utc
             pattern: ^(utc|Z|\+(?:(?:0\d|1[0-3]):[0-5]\d|14:00)|-(?:(?:0\d|1[01]):[0-5]\d|12:00))$
+        - name: days
+          in: query
+          description: Daily trailing-window size; defaults to 7 and is ignored for monthly
+          schema:
+            description: Daily trailing-window size; defaults to 7 and is ignored for monthly
+            type: integer
+            maximum: 179
+            minimum: 1
       responses:
         '200':
           description: Per-day tool/call counts for a single server over the selected window
@@ -1400,6 +1416,14 @@ paths:
             type: string
             default: utc
             pattern: ^(utc|Z|\+(?:(?:0\d|1[0-3]):[0-5]\d|14:00)|-(?:(?:0\d|1[01]):[0-5]\d|12:00))$
+        - name: days
+          in: query
+          description: Daily trailing-window size; defaults to 7 and is ignored for monthly
+          schema:
+            description: Daily trailing-window size; defaults to 7 and is ignored for monthly
+            type: integer
+            maximum: 179
+            minimum: 1
       responses:
         '200':
           description: Per-day tool/call counts across the whole account over the selected window
@@ -1735,7 +1759,8 @@ paths:
                               prompts:
                                 type: array
                                 items:
-                                  additionalProperties: {}
+                                  additionalProperties: true
+                                  description: 'Prompt definition synced from the upstream MCP server. It follows the MCP Prompt shape: name plus optional title, description, and arguments, with unknown fields passed through unchanged.'
                                   type: object
                                 readOnly: true
                               secure_web_gateway:
@@ -1764,7 +1789,8 @@ paths:
                               tools:
                                 type: array
                                 items:
-                                  additionalProperties: {}
+                                  additionalProperties: true
+                                  description: 'Tool definition synced from the upstream MCP server. It follows the MCP Tool shape: name plus optional title, description, inputSchema, outputSchema, and annotations, with unknown fields passed through unchanged.'
                                   type: object
                                 readOnly: true
                               updated_prompts:
@@ -2217,7 +2243,8 @@ paths:
                             prompts:
                               type: array
                               items:
-                                additionalProperties: {}
+                                additionalProperties: true
+                                description: 'Prompt definition synced from the upstream MCP server. It follows the MCP Prompt shape: name plus optional title, description, and arguments, with unknown fields passed through unchanged.'
                                 type: object
                               readOnly: true
                             secure_web_gateway:
@@ -2246,7 +2273,8 @@ paths:
                             tools:
                               type: array
                               items:
-                                additionalProperties: {}
+                                additionalProperties: true
+                                description: 'Tool definition synced from the upstream MCP server. It follows the MCP Tool shape: name plus optional title, description, inputSchema, outputSchema, and annotations, with unknown fields passed through unchanged.'
                                 type: object
                               readOnly: true
                             updated_prompts:
@@ -2742,7 +2770,8 @@ paths:
                             prompts:
                               type: array
                               items:
-                                additionalProperties: {}
+                                additionalProperties: true
+                                description: 'Prompt definition synced from the upstream MCP server. It follows the MCP Prompt shape: name plus optional title, description, and arguments, with unknown fields passed through unchanged.'
                                 type: object
                               readOnly: true
                             secure_web_gateway:
@@ -2771,7 +2800,8 @@ paths:
                             tools:
                               type: array
                               items:
-                                additionalProperties: {}
+                                additionalProperties: true
+                                description: 'Tool definition synced from the upstream MCP server. It follows the MCP Tool shape: name plus optional title, description, inputSchema, outputSchema, and annotations, with unknown fields passed through unchanged.'
                                 type: object
                               readOnly: true
                             updated_prompts:
@@ -3225,7 +3255,8 @@ paths:
                             prompts:
                               type: array
                               items:
-                                additionalProperties: {}
+                                additionalProperties: true
+                                description: 'Prompt definition synced from the upstream MCP server. It follows the MCP Prompt shape: name plus optional title, description, and arguments, with unknown fields passed through unchanged.'
                                 type: object
                               readOnly: true
                             secure_web_gateway:
@@ -3254,7 +3285,8 @@ paths:
                             tools:
                               type: array
                               items:
-                                additionalProperties: {}
+                                additionalProperties: true
+                                description: 'Tool definition synced from the upstream MCP server. It follows the MCP Tool shape: name plus optional title, description, inputSchema, outputSchema, and annotations, with unknown fields passed through unchanged.'
                                 type: object
                               readOnly: true
                             updated_prompts:
@@ -3692,7 +3724,8 @@ paths:
                         prompts:
                           type: array
                           items:
-                            additionalProperties: {}
+                            additionalProperties: true
+                            description: 'Prompt definition synced from the upstream MCP server. It follows the MCP Prompt shape: name plus optional title, description, and arguments, with unknown fields passed through unchanged.'
                             type: object
                           readOnly: true
                         secure_web_gateway:
@@ -3714,7 +3747,8 @@ paths:
                         tools:
                           type: array
                           items:
-                            additionalProperties: {}
+                            additionalProperties: true
+                            description: 'Tool definition synced from the upstream MCP server. It follows the MCP Tool shape: name plus optional title, description, inputSchema, outputSchema, and annotations, with unknown fields passed through unchanged.'
                             type: object
                           readOnly: true
                         updated_prompts:
@@ -4083,7 +4117,8 @@ paths:
                       prompts:
                         type: array
                         items:
-                          additionalProperties: {}
+                          additionalProperties: true
+                          description: 'Prompt definition synced from the upstream MCP server. It follows the MCP Prompt shape: name plus optional title, description, and arguments, with unknown fields passed through unchanged.'
                           type: object
                         readOnly: true
                       secure_web_gateway:
@@ -4105,7 +4140,8 @@ paths:
                       tools:
                         type: array
                         items:
-                          additionalProperties: {}
+                          additionalProperties: true
+                          description: 'Tool definition synced from the upstream MCP server. It follows the MCP Tool shape: name plus optional title, description, inputSchema, outputSchema, and annotations, with unknown fields passed through unchanged.'
                           type: object
                         readOnly: true
                       updated_prompts:
@@ -4385,7 +4421,8 @@ paths:
                       prompts:
                         type: array
                         items:
-                          additionalProperties: {}
+                          additionalProperties: true
+                          description: 'Prompt definition synced from the upstream MCP server. It follows the MCP Prompt shape: name plus optional title, description, and arguments, with unknown fields passed through unchanged.'
                           type: object
                         readOnly: true
                       secure_web_gateway:
@@ -4407,7 +4444,8 @@ paths:
                       tools:
                         type: array
                         items:
-                          additionalProperties: {}
+                          additionalProperties: true
+                          description: 'Tool definition synced from the upstream MCP server. It follows the MCP Tool shape: name plus optional title, description, inputSchema, outputSchema, and annotations, with unknown fields passed through unchanged.'
                           type: object
                         readOnly: true
                       updated_prompts:
@@ -4681,7 +4719,8 @@ paths:
                       prompts:
                         type: array
                         items:
-                          additionalProperties: {}
+                          additionalProperties: true
+                          description: 'Prompt definition synced from the upstream MCP server. It follows the MCP Prompt shape: name plus optional title, description, and arguments, with unknown fields passed through unchanged.'
                           type: object
                         readOnly: true
                       secure_web_gateway:
@@ -4703,7 +4742,8 @@ paths:
                       tools:
                         type: array
                         items:
-                          additionalProperties: {}
+                          additionalProperties: true
+                          description: 'Tool definition synced from the upstream MCP server. It follows the MCP Tool shape: name plus optional title, description, inputSchema, outputSchema, and annotations, with unknown fields passed through unchanged.'
                           type: object
                         readOnly: true
                       updated_prompts:
@@ -5059,7 +5099,8 @@ paths:
                       prompts:
                         type: array
                         items:
-                          additionalProperties: {}
+                          additionalProperties: true
+                          description: 'Prompt definition synced from the upstream MCP server. It follows the MCP Prompt shape: name plus optional title, description, and arguments, with unknown fields passed through unchanged.'
                           type: object
                         readOnly: true
                       secure_web_gateway:
@@ -5081,7 +5122,8 @@ paths:
                       tools:
                         type: array
                         items:
-                          additionalProperties: {}
+                          additionalProperties: true
+                          description: 'Tool definition synced from the upstream MCP server. It follows the MCP Tool shape: name plus optional title, description, inputSchema, outputSchema, and annotations, with unknown fields passed through unchanged.'
                           type: object
                         readOnly: true
                       updated_prompts:
@@ -99256,6 +99298,7 @@ paths:
         - $ref: '#/components/parameters/posture-api_Page'
         - $ref: '#/components/parameters/posture-api_PerPage'
         - $ref: '#/components/parameters/posture-api_FindingTypeVendors'
+        - $ref: '#/components/parameters/posture-api_FindingTypeSearch'
       responses:
         '200':
           description: 'OK: Successful HTTP request'
@@ -351573,6 +351616,12 @@ components:
       schema:
         type: string
         format: uuid
+    posture-api_FindingTypeSearch:
+      description: Filter finding types by name or ID (case-insensitive substring match).
+      in: query
+      name: search
+      schema:
+        type: string
     posture-api_FindingTypeVendors:
       description: Filter finding types by vendor. Supports multiple comma-separated values.
       explode: false
