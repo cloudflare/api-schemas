@@ -10614,14 +10614,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/addressing_components-schemas-response_collection'
+                $ref: '#/components/schemas/addressing_response_collection-3'
         4XX:
           description: List Address Maps response failure
           content:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/addressing_components-schemas-response_collection'
+                  - $ref: '#/components/schemas/addressing_response_collection-3'
                   - $ref: '#/components/schemas/addressing_api-response-common-failure'
       security:
         - api_email: []
@@ -10652,7 +10652,7 @@ paths:
             schema:
               properties:
                 description:
-                  $ref: '#/components/schemas/addressing_schemas-description'
+                  $ref: '#/components/schemas/addressing_description-2'
                 enabled:
                   $ref: '#/components/schemas/addressing_enabled'
                 ips:
@@ -10801,7 +10801,7 @@ paths:
                 default_sni:
                   $ref: '#/components/schemas/addressing_default_sni'
                 description:
-                  $ref: '#/components/schemas/addressing_schemas-description'
+                  $ref: '#/components/schemas/addressing_description-2'
                 enabled:
                   $ref: '#/components/schemas/addressing_enabled'
       responses:
@@ -10810,14 +10810,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/addressing_components-schemas-single_response'
+                $ref: '#/components/schemas/addressing_single_response-3'
         4XX:
           description: Update Address Map response failure
           content:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/addressing_components-schemas-single_response'
+                  - $ref: '#/components/schemas/addressing_single_response-3'
                   - $ref: '#/components/schemas/addressing_api-response-common-failure'
       security:
         - api_email: []
@@ -10826,6 +10826,10 @@ paths:
         - IP Address Management Address Maps
       x-api-token-group:
         - Address Maps Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: addressing.address-maps
+      x-fern-sdk-method-name: edit
+      x-forge-hidden: true
   /accounts/{account_id}/addressing/address_maps/{address_map_id}/accounts/{account_id}:
     delete:
       operationId: ip-address-management-address-maps-remove-an-account-membership-from-an-address-map
@@ -11063,6 +11067,10 @@ paths:
         - IP Address Management Address Maps
       x-api-token-group:
         - Address Maps Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: addressing.address-maps.zones
+      x-fern-sdk-method-name: delete
+      x-forge-hidden: true
     put:
       operationId: ip-address-management-address-maps-add-a-zone-membership-to-an-address-map
       summary: Add a zone membership to an Address Map
@@ -11121,21 +11129,21 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/addressing_schemas-account_identifier'
+            $ref: '#/components/schemas/addressing_account_identifier-2'
       responses:
         '200':
           description: List Leases response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/addressing_leases_components-schemas-response_collection'
+                $ref: '#/components/schemas/addressing_response_collection-4'
         4XX:
           description: List Leases response failure
           content:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/addressing_leases_components-schemas-response_collection'
+                  - $ref: '#/components/schemas/addressing_response_collection-4'
                   - $ref: '#/components/schemas/addressing_api-response-common-failure'
       security:
         - api_email: []
@@ -11279,6 +11287,10 @@ paths:
         - 'IP Prefixes: Read'
         - 'IP Prefixes: BGP On Demand Write'
         - 'IP Prefixes: BGP On Demand Read'
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: addressing.prefixes
+      x-fern-sdk-method-name: list
+      x-forge-hidden: true
     post:
       operationId: ip-address-management-prefixes-add-prefix
       summary: Add Prefix
@@ -11329,6 +11341,10 @@ paths:
       tags:
         - IP Address Management Prefixes
       x-api-token-group: null
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: addressing.prefixes
+      x-fern-sdk-method-name: create
+      x-forge-hidden: true
   /accounts/{account_id}/addressing/prefixes/{prefix_id}:
     delete:
       operationId: ip-address-management-prefixes-delete-prefix
@@ -11791,7 +11807,7 @@ paths:
             schema:
               properties:
                 advertised:
-                  $ref: '#/components/schemas/addressing_components-schemas-advertised'
+                  $ref: '#/components/schemas/addressing_advertised-3'
               required:
                 - advertised
       responses:
@@ -12038,14 +12054,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/addressing_schemas-response_collection'
+                $ref: '#/components/schemas/addressing_response_collection-2'
         4XX:
           description: List Prefix Delegations response failure
           content:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/addressing_schemas-response_collection'
+                  - $ref: '#/components/schemas/addressing_response_collection-2'
                   - $ref: '#/components/schemas/addressing_api-response-common-failure'
       security:
         - api_email: []
@@ -12090,14 +12106,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/addressing_schemas-single_response'
+                $ref: '#/components/schemas/addressing_single_response-2'
         4XX:
           description: Create Prefix Delegation response failure
           content:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/addressing_schemas-single_response'
+                  - $ref: '#/components/schemas/addressing_single_response-2'
                   - $ref: '#/components/schemas/addressing_api-response-common-failure'
       security:
         - api_email: []
@@ -362356,6 +362372,11 @@ components:
       example: 258def64c72dae45f3e4c8516e2111f2
       maxLength: 32
       x-auditable: true
+    addressing_account_identifier-2:
+      description: Identifier of a Cloudflare account.
+      type: string
+      example: 258def64c72dae45f3e4c8516e2111f2
+      maxLength: 32
     addressing_address-maps:
       type: object
       properties:
@@ -362368,7 +362389,7 @@ components:
         default_sni:
           $ref: '#/components/schemas/addressing_default_sni'
         description:
-          $ref: '#/components/schemas/addressing_schemas-description'
+          $ref: '#/components/schemas/addressing_description-2'
         enabled:
           $ref: '#/components/schemas/addressing_enabled'
         id:
@@ -362386,7 +362407,7 @@ components:
       type: object
       properties:
         can_delete:
-          $ref: '#/components/schemas/addressing_schemas-can_delete'
+          $ref: '#/components/schemas/addressing_can_delete-2'
         created_at:
           $ref: '#/components/schemas/addressing_timestamp'
         identifier:
@@ -362414,6 +362435,19 @@ components:
       nullable: true
       x-auditable: true
       x-stainless-deprecation-message: Prefer the [BGP Prefixes API](https://developers.cloudflare.com/api/resources/addressing/subresources/prefixes/subresources/bgp_prefixes/) instead, which allows for advertising multiple BGP routes within a single IP Prefix.
+    addressing_advertised-2:
+      description: Prefix advertisement status to the Internet. This field is only not 'null' if on demand is enabled.
+      type: boolean
+      example: true
+      nullable: true
+      x-auditable: true
+    addressing_advertised-3:
+      description: |
+        Advertisement status of the prefix. If `true`, the BGP route for the prefix is advertised to the Internet. If 
+        `false`, the BGP route is withdrawn.
+      type: boolean
+      example: true
+      x-auditable: true
     addressing_advertised_modified_at_nullable:
       description: Last time the advertisement status was changed. This field is only not 'null' if on demand is enabled.
       type: string
@@ -362431,7 +362465,7 @@ components:
               type: object
               properties:
                 advertised:
-                  $ref: '#/components/schemas/addressing_components-schemas-advertised'
+                  $ref: '#/components/schemas/addressing_advertised-3'
                 advertised_modified_at:
                   $ref: '#/components/schemas/addressing_modified_at_nullable'
     addressing_api-response-collection:
@@ -362524,6 +362558,12 @@ components:
       type: integer
       example: 13335
       x-auditable: true
+    addressing_asn-2:
+      description: Autonomous System Number (ASN) the prefix will be advertised under.
+      type: integer
+      example: 13335
+      nullable: true
+      x-auditable: true
     addressing_asn_prepend_count:
       description: Number of times to prepend the Cloudflare ASN to the BGP AS-Path attribute
       type: integer
@@ -362547,13 +362587,13 @@ components:
       type: object
       properties:
         advertised:
-          $ref: '#/components/schemas/addressing_schemas-advertised'
+          $ref: '#/components/schemas/addressing_advertised-2'
         advertised_modified_at:
           $ref: '#/components/schemas/addressing_modified_at_nullable'
         on_demand_enabled:
-          $ref: '#/components/schemas/addressing_schemas-on_demand_enabled'
+          $ref: '#/components/schemas/addressing_on_demand_enabled-2'
         on_demand_locked:
-          $ref: '#/components/schemas/addressing_schemas-on_demand_locked'
+          $ref: '#/components/schemas/addressing_on_demand_locked-2'
     addressing_bgp_prefix_create:
       type: object
       properties:
@@ -362604,6 +362644,12 @@ components:
       example: true
       readOnly: true
       x-auditable: true
+    addressing_can_delete-2:
+      description: Controls whether the membership can be deleted via the API or not.
+      type: boolean
+      example: true
+      readOnly: true
+      x-auditable: true
     addressing_can_modify_ips:
       description: If set to false, then the IPs on the Address Map cannot be modified via the API. This is true for Cloudflare-managed maps.
       type: boolean
@@ -362615,27 +362661,10 @@ components:
       type: string
       example: 192.0.2.0/24
       x-auditable: true
-    addressing_components-schemas-advertised:
-      description: |
-        Advertisement status of the prefix. If `true`, the BGP route for the prefix is advertised to the Internet. If 
-        `false`, the BGP route is withdrawn.
-      type: boolean
-      example: true
-      x-auditable: true
-    addressing_components-schemas-response_collection:
-      allOf:
-        - $ref: '#/components/schemas/addressing_api-response-collection'
-        - properties:
-            result:
-              type: array
-              items:
-                $ref: '#/components/schemas/addressing_address-maps'
-    addressing_components-schemas-single_response:
-      allOf:
-        - $ref: '#/components/schemas/addressing_api-response-single'
-        - properties:
-            result:
-              $ref: '#/components/schemas/addressing_address-maps'
+    addressing_cidr-2:
+      description: IP Prefix in Classless Inter-Domain Routing format.
+      type: string
+      example: 192.0.2.0/24
     addressing_create_binding_request:
       type: object
       properties:
@@ -362680,6 +362709,12 @@ components:
       type: string
       example: Internal test prefix
       maxLength: 1000
+      x-auditable: true
+    addressing_description-2:
+      description: An optional description field which may be used to describe the types of IPs or zones on the map.
+      type: string
+      example: My Ecommerce zones
+      nullable: true
       x-auditable: true
     addressing_enabled:
       description: Whether the Address Map is enabled or not. Cloudflare's DNS will not respond with IP addresses on an Address Map until the map is enabled.
@@ -362736,7 +362771,7 @@ components:
       type: object
       properties:
         asn:
-          $ref: '#/components/schemas/addressing_schemas-asn'
+          $ref: '#/components/schemas/addressing_asn-2'
         asn_prepend_count:
           $ref: '#/components/schemas/addressing_asn_prepend_count'
         auto_advertise_withdraw:
@@ -362833,7 +362868,7 @@ components:
           description: CIDRs attached to the lease
           type: array
           items:
-            $ref: '#/components/schemas/addressing_schemas-cidr'
+            $ref: '#/components/schemas/addressing_cidr-2'
           example:
             - 192.0.2.100/32
             - 192.0.2.101/32
@@ -362857,14 +362892,6 @@ components:
       description: Cloudflare account ID of the account owning the lease.
       type: string
       example: 3a7d3de1d0682240cf046c7f50866cc5
-    addressing_leases_components-schemas-response_collection:
-      allOf:
-        - $ref: '#/components/schemas/addressing_api-response-collection'
-        - properties:
-            result:
-              type: array
-              items:
-                $ref: '#/components/schemas/addressing_lease'
     addressing_loa_document_identifier:
       description: Identifier for the uploaded LOA document.
       type: string
@@ -362948,6 +362975,11 @@ components:
       deprecated: true
       x-auditable: true
       x-stainless-deprecation-message: Prefer the [BGP Prefixes API](https://developers.cloudflare.com/api/resources/addressing/subresources/prefixes/subresources/bgp_prefixes/) instead, which allows for advertising multiple BGP routes within a single IP Prefix.
+    addressing_on_demand_enabled-2:
+      description: Whether advertisement of the prefix to the Internet may be dynamically enabled or disabled.
+      type: boolean
+      example: true
+      x-auditable: true
     addressing_on_demand_locked:
       description: Whether advertisement status of the prefix is locked, meaning it cannot be changed.
       type: boolean
@@ -362955,6 +362987,11 @@ components:
       deprecated: true
       x-auditable: true
       x-stainless-deprecation-message: Prefer the [BGP Prefixes API](https://developers.cloudflare.com/api/resources/addressing/subresources/prefixes/subresources/bgp_prefixes/) instead, which allows for advertising multiple BGP routes within a single IP Prefix.
+    addressing_on_demand_locked-2:
+      description: Whether the advertisement status of the prefix is locked, meaning it cannot be changed.
+      type: boolean
+      example: false
+      x-auditable: true
     addressing_ownership_validation_token:
       description: Token provided to demonstrate ownership of the prefix.
       type: string
@@ -362987,6 +363024,30 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/addressing_ipam-prefixes'
+    addressing_response_collection-2:
+      allOf:
+        - $ref: '#/components/schemas/addressing_api-response-collection'
+        - properties:
+            result:
+              type: array
+              items:
+                $ref: '#/components/schemas/addressing_ipam-delegations'
+    addressing_response_collection-3:
+      allOf:
+        - $ref: '#/components/schemas/addressing_api-response-collection'
+        - properties:
+            result:
+              type: array
+              items:
+                $ref: '#/components/schemas/addressing_address-maps'
+    addressing_response_collection-4:
+      allOf:
+        - $ref: '#/components/schemas/addressing_api-response-collection'
+        - properties:
+            result:
+              type: array
+              items:
+                $ref: '#/components/schemas/addressing_lease'
     addressing_response_collection_bgp:
       allOf:
         - $ref: '#/components/schemas/addressing_api-response-single'
@@ -362995,63 +363056,6 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/addressing_ipam-bgp-prefixes'
-    addressing_schemas-account_identifier:
-      description: Identifier of a Cloudflare account.
-      type: string
-      example: 258def64c72dae45f3e4c8516e2111f2
-      maxLength: 32
-    addressing_schemas-advertised:
-      description: Prefix advertisement status to the Internet. This field is only not 'null' if on demand is enabled.
-      type: boolean
-      example: true
-      nullable: true
-      x-auditable: true
-    addressing_schemas-asn:
-      description: Autonomous System Number (ASN) the prefix will be advertised under.
-      type: integer
-      example: 13335
-      nullable: true
-      x-auditable: true
-    addressing_schemas-can_delete:
-      description: Controls whether the membership can be deleted via the API or not.
-      type: boolean
-      example: true
-      readOnly: true
-      x-auditable: true
-    addressing_schemas-cidr:
-      description: IP Prefix in Classless Inter-Domain Routing format.
-      type: string
-      example: 192.0.2.0/24
-    addressing_schemas-description:
-      description: An optional description field which may be used to describe the types of IPs or zones on the map.
-      type: string
-      example: My Ecommerce zones
-      nullable: true
-      x-auditable: true
-    addressing_schemas-on_demand_enabled:
-      description: Whether advertisement of the prefix to the Internet may be dynamically enabled or disabled.
-      type: boolean
-      example: true
-      x-auditable: true
-    addressing_schemas-on_demand_locked:
-      description: Whether the advertisement status of the prefix is locked, meaning it cannot be changed.
-      type: boolean
-      example: false
-      x-auditable: true
-    addressing_schemas-response_collection:
-      allOf:
-        - $ref: '#/components/schemas/addressing_api-response-collection'
-        - properties:
-            result:
-              type: array
-              items:
-                $ref: '#/components/schemas/addressing_ipam-delegations'
-    addressing_schemas-single_response:
-      allOf:
-        - $ref: '#/components/schemas/addressing_api-response-single'
-        - properties:
-            result:
-              $ref: '#/components/schemas/addressing_ipam-delegations'
     addressing_service_binding:
       type: object
       properties:
@@ -363090,6 +363094,18 @@ components:
         - properties:
             result:
               $ref: '#/components/schemas/addressing_ipam-prefixes'
+    addressing_single_response-2:
+      allOf:
+        - $ref: '#/components/schemas/addressing_api-response-single'
+        - properties:
+            result:
+              $ref: '#/components/schemas/addressing_ipam-delegations'
+    addressing_single_response-3:
+      allOf:
+        - $ref: '#/components/schemas/addressing_api-response-single'
+        - properties:
+            result:
+              $ref: '#/components/schemas/addressing_address-maps'
     addressing_single_response_bgp:
       allOf:
         - $ref: '#/components/schemas/addressing_api-response-single'
