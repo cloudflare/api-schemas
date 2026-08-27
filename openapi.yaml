@@ -50497,7 +50497,140 @@ paths:
           description: Namespaces.
           content:
             application/json:
-              schema: {}
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          type: integer
+                          maximum: 9007199254740991
+                          minimum: -9007199254740991
+                        documentation_url:
+                          type: string
+                          format: uri
+                        message:
+                          type: string
+                        source:
+                          type: object
+                          properties:
+                            pointer:
+                              type: string
+                      required:
+                        - code
+                        - message
+                      type: object
+                  messages:
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          type: integer
+                          maximum: 9007199254740991
+                          minimum: -9007199254740991
+                        documentation_url:
+                          type: string
+                          format: uri
+                        message:
+                          type: string
+                        source:
+                          type: object
+                          properties:
+                            pointer:
+                              type: string
+                      required:
+                        - code
+                        - message
+                      type: object
+                  result:
+                    type: array
+                    items:
+                      properties:
+                        created_at:
+                          type: string
+                          format: date-time
+                          pattern: ^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$
+                        jurisdiction:
+                          type: string
+                          enum:
+                            - unrestricted
+                            - us
+                            - eu
+                            - fedramp
+                        namespace:
+                          type: string
+                        repo_count:
+                          type: integer
+                          maximum: 9007199254740991
+                          minimum: -9007199254740991
+                        updated_at:
+                          type: string
+                          format: date-time
+                          pattern: ^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$
+                      required:
+                        - namespace
+                        - jurisdiction
+                        - repo_count
+                        - created_at
+                        - updated_at
+                      type: object
+                  result_info:
+                    anyOf:
+                      - properties:
+                          count:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                          cursor:
+                            type: string
+                          per_page:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                        required:
+                          - cursor
+                          - per_page
+                          - count
+                        type: object
+                      - properties:
+                          count:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                          page:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                          per_page:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                          total_count:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                          total_pages:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                        required:
+                          - page
+                          - per_page
+                          - total_pages
+                          - count
+                          - total_count
+                        type: object
+                  success:
+                    type: boolean
+                    enum:
+                      - true
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
         '400':
           description: Bad request.
           content:
@@ -50764,6 +50897,7 @@ paths:
       x-fern-sdk-group-name: artifacts.namespaces
       x-fern-sdk-method-name: get
       x-forge-hidden: true
+      x-stability: beta
     parameters:
       - name: account_id
         in: path
@@ -50789,7 +50923,138 @@ paths:
           description: Namespace.
           content:
             application/json:
-              schema: {}
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          type: integer
+                          maximum: 9007199254740991
+                          minimum: -9007199254740991
+                        documentation_url:
+                          type: string
+                          format: uri
+                        message:
+                          type: string
+                        source:
+                          type: object
+                          properties:
+                            pointer:
+                              type: string
+                      required:
+                        - code
+                        - message
+                      type: object
+                  messages:
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          type: integer
+                          maximum: 9007199254740991
+                          minimum: -9007199254740991
+                        documentation_url:
+                          type: string
+                          format: uri
+                        message:
+                          type: string
+                        source:
+                          type: object
+                          properties:
+                            pointer:
+                              type: string
+                      required:
+                        - code
+                        - message
+                      type: object
+                  result:
+                    type: object
+                    properties:
+                      created_at:
+                        type: string
+                        format: date-time
+                        pattern: ^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$
+                      jurisdiction:
+                        type: string
+                        enum:
+                          - unrestricted
+                          - us
+                          - eu
+                          - fedramp
+                      namespace:
+                        type: string
+                      repo_count:
+                        type: integer
+                        maximum: 9007199254740991
+                        minimum: -9007199254740991
+                      updated_at:
+                        type: string
+                        format: date-time
+                        pattern: ^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$
+                    required:
+                      - namespace
+                      - jurisdiction
+                      - repo_count
+                      - created_at
+                      - updated_at
+                  result_info:
+                    anyOf:
+                      - properties:
+                          count:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                          cursor:
+                            type: string
+                          per_page:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                        required:
+                          - cursor
+                          - per_page
+                          - count
+                        type: object
+                      - properties:
+                          count:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                          page:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                          per_page:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                          total_count:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                          total_pages:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                        required:
+                          - page
+                          - per_page
+                          - total_pages
+                          - count
+                          - total_count
+                        type: object
+                  success:
+                    type: boolean
+                    enum:
+                      - true
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
         '400':
           description: Bad request.
           content:
@@ -51120,6 +51385,7 @@ paths:
       x-fern-sdk-group-name: artifacts.namespaces
       x-fern-sdk-method-name: get
       x-forge-hidden: true
+      x-stability: beta
     parameters:
       - name: account_id
         in: path
@@ -51178,7 +51444,154 @@ paths:
           description: Repositories.
           content:
             application/json:
-              schema: {}
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          type: integer
+                          maximum: 9007199254740991
+                          minimum: -9007199254740991
+                        documentation_url:
+                          type: string
+                          format: uri
+                        message:
+                          type: string
+                        source:
+                          type: object
+                          properties:
+                            pointer:
+                              type: string
+                      required:
+                        - code
+                        - message
+                      type: object
+                  messages:
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          type: integer
+                          maximum: 9007199254740991
+                          minimum: -9007199254740991
+                        documentation_url:
+                          type: string
+                          format: uri
+                        message:
+                          type: string
+                        source:
+                          type: object
+                          properties:
+                            pointer:
+                              type: string
+                      required:
+                        - code
+                        - message
+                      type: object
+                  result:
+                    type: array
+                    items:
+                      properties:
+                        created_at:
+                          type: string
+                          format: date-time
+                          pattern: ^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$
+                        default_branch:
+                          description: Default branch name. Must not contain '..' and must not end with '/' or '.'.
+                          type: string
+                        description:
+                          type: string
+                          nullable: true
+                        id:
+                          type: string
+                        last_push_at:
+                          type: string
+                          format: date-time
+                          nullable: true
+                          pattern: ^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$
+                        name:
+                          type: string
+                        read_only:
+                          type: boolean
+                        remote:
+                          type: string
+                        source:
+                          type: string
+                          nullable: true
+                        updated_at:
+                          type: string
+                          format: date-time
+                          pattern: ^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$
+                      required:
+                        - id
+                        - name
+                        - description
+                        - default_branch
+                        - created_at
+                        - updated_at
+                        - last_push_at
+                        - source
+                        - read_only
+                        - remote
+                      type: object
+                  result_info:
+                    anyOf:
+                      - properties:
+                          count:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                          cursor:
+                            type: string
+                          per_page:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                        required:
+                          - cursor
+                          - per_page
+                          - count
+                        type: object
+                      - properties:
+                          count:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                          page:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                          per_page:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                          total_count:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                          total_pages:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                        required:
+                          - page
+                          - per_page
+                          - total_pages
+                          - count
+                          - total_count
+                        type: object
+                  success:
+                    type: boolean
+                    enum:
+                      - true
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
         '400':
           description: Bad request.
           content:
@@ -51445,6 +51858,7 @@ paths:
       x-fern-sdk-group-name: artifacts.namespaces
       x-fern-sdk-method-name: get
       x-forge-hidden: true
+      x-stability: beta
     parameters:
       - name: account_id
         in: path
@@ -51468,13 +51882,155 @@ paths:
         required: true
         content:
           application/json:
-            schema: {}
+            schema:
+              type: object
+              properties:
+                default_branch:
+                  description: Git branch name. Must match /^[a-zA-Z0-9][a-zA-Z0-9._/-]*$/, must not contain '..', and must not end with '/' or '.'.
+                  type: string
+                  maxLength: 256
+                  minLength: 1
+                  pattern: ^[a-zA-Z0-9][a-zA-Z0-9._/-]*$
+                description:
+                  type: string
+                  maxLength: 1024
+                name:
+                  type: string
+                  pattern: ^[a-zA-Z0-9][a-zA-Z0-9._-]*$
+                read_only:
+                  type: boolean
+              required:
+                - name
       responses:
         '201':
           description: Repository created.
           content:
             application/json:
-              schema: {}
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          type: integer
+                          maximum: 9007199254740991
+                          minimum: -9007199254740991
+                        documentation_url:
+                          type: string
+                          format: uri
+                        message:
+                          type: string
+                        source:
+                          type: object
+                          properties:
+                            pointer:
+                              type: string
+                      required:
+                        - code
+                        - message
+                      type: object
+                  messages:
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          type: integer
+                          maximum: 9007199254740991
+                          minimum: -9007199254740991
+                        documentation_url:
+                          type: string
+                          format: uri
+                        message:
+                          type: string
+                        source:
+                          type: object
+                          properties:
+                            pointer:
+                              type: string
+                      required:
+                        - code
+                        - message
+                      type: object
+                  result:
+                    type: object
+                    properties:
+                      default_branch:
+                        type: string
+                      description:
+                        type: string
+                        nullable: true
+                      id:
+                        type: string
+                      name:
+                        type: string
+                      remote:
+                        type: string
+                      token:
+                        type: string
+                    required:
+                      - id
+                      - name
+                      - description
+                      - default_branch
+                      - remote
+                      - token
+                  result_info:
+                    anyOf:
+                      - properties:
+                          count:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                          cursor:
+                            type: string
+                          per_page:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                        required:
+                          - cursor
+                          - per_page
+                          - count
+                        type: object
+                      - properties:
+                          count:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                          page:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                          per_page:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                          total_count:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                          total_pages:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                        required:
+                          - page
+                          - per_page
+                          - total_pages
+                          - count
+                          - total_count
+                        type: object
+                  success:
+                    type: boolean
+                    enum:
+                      - true
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
         '400':
           description: Bad request.
           content:
@@ -51805,6 +52361,7 @@ paths:
       x-fern-sdk-group-name: artifacts.namespaces
       x-fern-sdk-method-name: create
       x-forge-hidden: true
+      x-stability: beta
   /accounts/{account_id}/artifacts/namespaces/{namespace}/repos/{name}:
     delete:
       operationId: artifacts_repos_delete
@@ -51830,7 +52387,115 @@ paths:
           description: Delete accepted.
           content:
             application/json:
-              schema: {}
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          type: integer
+                          maximum: 9007199254740991
+                          minimum: -9007199254740991
+                        documentation_url:
+                          type: string
+                          format: uri
+                        message:
+                          type: string
+                        source:
+                          type: object
+                          properties:
+                            pointer:
+                              type: string
+                      required:
+                        - code
+                        - message
+                      type: object
+                  messages:
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          type: integer
+                          maximum: 9007199254740991
+                          minimum: -9007199254740991
+                        documentation_url:
+                          type: string
+                          format: uri
+                        message:
+                          type: string
+                        source:
+                          type: object
+                          properties:
+                            pointer:
+                              type: string
+                      required:
+                        - code
+                        - message
+                      type: object
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                    required:
+                      - id
+                  result_info:
+                    anyOf:
+                      - properties:
+                          count:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                          cursor:
+                            type: string
+                          per_page:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                        required:
+                          - cursor
+                          - per_page
+                          - count
+                        type: object
+                      - properties:
+                          count:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                          page:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                          per_page:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                          total_count:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                          total_pages:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                        required:
+                          - page
+                          - per_page
+                          - total_pages
+                          - count
+                          - total_count
+                        type: object
+                  success:
+                    type: boolean
+                    enum:
+                      - true
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
         '400':
           description: Bad request.
           content:
@@ -52161,6 +52826,7 @@ paths:
       x-fern-sdk-group-name: artifacts.namespaces
       x-fern-sdk-method-name: delete
       x-forge-hidden: true
+      x-stability: beta
     get:
       operationId: artifacts_repos_get
       summary: Get a repository
@@ -52185,7 +52851,152 @@ paths:
           description: Repository.
           content:
             application/json:
-              schema: {}
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          type: integer
+                          maximum: 9007199254740991
+                          minimum: -9007199254740991
+                        documentation_url:
+                          type: string
+                          format: uri
+                        message:
+                          type: string
+                        source:
+                          type: object
+                          properties:
+                            pointer:
+                              type: string
+                      required:
+                        - code
+                        - message
+                      type: object
+                  messages:
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          type: integer
+                          maximum: 9007199254740991
+                          minimum: -9007199254740991
+                        documentation_url:
+                          type: string
+                          format: uri
+                        message:
+                          type: string
+                        source:
+                          type: object
+                          properties:
+                            pointer:
+                              type: string
+                      required:
+                        - code
+                        - message
+                      type: object
+                  result:
+                    type: object
+                    properties:
+                      created_at:
+                        type: string
+                        format: date-time
+                        pattern: ^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$
+                      default_branch:
+                        description: Default branch name. Must not contain '..' and must not end with '/' or '.'.
+                        type: string
+                      description:
+                        type: string
+                        nullable: true
+                      id:
+                        type: string
+                      last_push_at:
+                        type: string
+                        format: date-time
+                        nullable: true
+                        pattern: ^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$
+                      name:
+                        type: string
+                      read_only:
+                        type: boolean
+                      remote:
+                        type: string
+                      source:
+                        type: string
+                        nullable: true
+                      updated_at:
+                        type: string
+                        format: date-time
+                        pattern: ^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$
+                    required:
+                      - id
+                      - name
+                      - description
+                      - default_branch
+                      - created_at
+                      - updated_at
+                      - last_push_at
+                      - source
+                      - read_only
+                      - remote
+                  result_info:
+                    anyOf:
+                      - properties:
+                          count:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                          cursor:
+                            type: string
+                          per_page:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                        required:
+                          - cursor
+                          - per_page
+                          - count
+                        type: object
+                      - properties:
+                          count:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                          page:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                          per_page:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                          total_count:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                          total_pages:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                        required:
+                          - page
+                          - per_page
+                          - total_pages
+                          - count
+                          - total_count
+                        type: object
+                  success:
+                    type: boolean
+                    enum:
+                      - true
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
         '400':
           description: Bad request.
           content:
@@ -52580,6 +53391,7 @@ paths:
       x-fern-sdk-group-name: artifacts.namespaces
       x-fern-sdk-method-name: get
       x-forge-hidden: true
+      x-stability: beta
     parameters:
       - name: account_id
         in: path
@@ -53025,6 +53837,7 @@ paths:
       x-fern-sdk-group-name: artifacts.namespaces
       x-fern-sdk-method-name: get
       x-forge-hidden: true
+      x-stability: beta
     parameters:
       - name: account_id
         in: path
@@ -53068,7 +53881,161 @@ paths:
                 type: string
           content:
             application/json:
-              schema: {}
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          type: integer
+                          maximum: 9007199254740991
+                          minimum: -9007199254740991
+                        documentation_url:
+                          type: string
+                          format: uri
+                        message:
+                          type: string
+                        source:
+                          type: object
+                          properties:
+                            pointer:
+                              type: string
+                      required:
+                        - code
+                        - message
+                      type: object
+                  messages:
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          type: integer
+                          maximum: 9007199254740991
+                          minimum: -9007199254740991
+                        documentation_url:
+                          type: string
+                          format: uri
+                        message:
+                          type: string
+                        source:
+                          type: object
+                          properties:
+                            pointer:
+                              type: string
+                      required:
+                        - code
+                        - message
+                      type: object
+                  result:
+                    type: object
+                    properties:
+                      author:
+                        type: object
+                        properties:
+                          email:
+                            type: string
+                          name:
+                            type: string
+                        required:
+                          - name
+                          - email
+                      authoredAt:
+                        type: integer
+                        maximum: 9007199254740991
+                        minimum: -9007199254740991
+                      committedAt:
+                        type: integer
+                        maximum: 9007199254740991
+                        minimum: -9007199254740991
+                      committer:
+                        type: object
+                        properties:
+                          email:
+                            type: string
+                          name:
+                            type: string
+                        required:
+                          - name
+                          - email
+                      hash:
+                        type: string
+                        pattern: ^[0-9a-f]{40}$
+                      message:
+                        type: string
+                      parents:
+                        type: array
+                        items:
+                          pattern: ^[0-9a-f]{40}$
+                          type: string
+                      treeHash:
+                        type: string
+                        pattern: ^[0-9a-f]{40}$
+                    required:
+                      - hash
+                      - treeHash
+                      - message
+                      - author
+                      - committer
+                      - parents
+                      - authoredAt
+                      - committedAt
+                  result_info:
+                    anyOf:
+                      - properties:
+                          count:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                          cursor:
+                            type: string
+                          per_page:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                        required:
+                          - cursor
+                          - per_page
+                          - count
+                        type: object
+                      - properties:
+                          count:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                          page:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                          per_page:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                          total_count:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                          total_pages:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                        required:
+                          - page
+                          - per_page
+                          - total_pages
+                          - count
+                          - total_count
+                        type: object
+                  success:
+                    type: boolean
+                    enum:
+                      - true
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
         '400':
           description: Bad request.
           content:
@@ -53399,6 +54366,7 @@ paths:
       x-fern-sdk-group-name: artifacts.namespaces
       x-fern-sdk-method-name: get
       x-forge-hidden: true
+      x-stability: beta
     parameters:
       - name: account_id
         in: path
@@ -53847,6 +54815,7 @@ paths:
       x-fern-sdk-group-name: artifacts.namespaces
       x-fern-sdk-method-name: get
       x-forge-hidden: true
+      x-stability: beta
     parameters:
       - name: account_id
         in: path
@@ -53885,13 +54854,156 @@ paths:
         required: true
         content:
           application/json:
-            schema: {}
+            schema:
+              type: object
+              properties:
+                default_branch_only:
+                  type: boolean
+                description:
+                  type: string
+                  maxLength: 1024
+                name:
+                  type: string
+                  pattern: ^[a-zA-Z0-9][a-zA-Z0-9._-]*$
+                read_only:
+                  type: boolean
+              required:
+                - name
       responses:
         '201':
           description: Repository forked.
           content:
             application/json:
-              schema: {}
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          type: integer
+                          maximum: 9007199254740991
+                          minimum: -9007199254740991
+                        documentation_url:
+                          type: string
+                          format: uri
+                        message:
+                          type: string
+                        source:
+                          type: object
+                          properties:
+                            pointer:
+                              type: string
+                      required:
+                        - code
+                        - message
+                      type: object
+                  messages:
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          type: integer
+                          maximum: 9007199254740991
+                          minimum: -9007199254740991
+                        documentation_url:
+                          type: string
+                          format: uri
+                        message:
+                          type: string
+                        source:
+                          type: object
+                          properties:
+                            pointer:
+                              type: string
+                      required:
+                        - code
+                        - message
+                      type: object
+                  result:
+                    type: object
+                    properties:
+                      default_branch:
+                        type: string
+                      description:
+                        type: string
+                        nullable: true
+                      id:
+                        type: string
+                      name:
+                        type: string
+                      objects:
+                        type: integer
+                        maximum: 9007199254740991
+                        minimum: -9007199254740991
+                      remote:
+                        type: string
+                      token:
+                        type: string
+                    required:
+                      - id
+                      - name
+                      - description
+                      - default_branch
+                      - remote
+                      - token
+                      - objects
+                  result_info:
+                    anyOf:
+                      - properties:
+                          count:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                          cursor:
+                            type: string
+                          per_page:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                        required:
+                          - cursor
+                          - per_page
+                          - count
+                        type: object
+                      - properties:
+                          count:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                          page:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                          per_page:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                          total_count:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                          total_pages:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                        required:
+                          - page
+                          - per_page
+                          - total_pages
+                          - count
+                          - total_count
+                        type: object
+                  success:
+                    type: boolean
+                    enum:
+                      - true
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
         '400':
           description: Bad request.
           content:
@@ -54350,6 +55462,7 @@ paths:
       x-fern-sdk-group-name: artifacts.namespaces
       x-fern-sdk-method-name: create
       x-forge-hidden: true
+      x-stability: beta
   /accounts/{account_id}/artifacts/namespaces/{namespace}/repos/{name}/import:
     parameters:
       - name: account_id
@@ -54381,13 +55494,156 @@ paths:
         required: true
         content:
           application/json:
-            schema: {}
+            schema:
+              type: object
+              properties:
+                branch:
+                  description: Git branch name. Must match /^[a-zA-Z0-9][a-zA-Z0-9._/-]*$/, must not contain '..', and must not end with '/' or '.'.
+                  type: string
+                  maxLength: 256
+                  minLength: 1
+                  pattern: ^[a-zA-Z0-9][a-zA-Z0-9._/-]*$
+                depth:
+                  type: integer
+                  maximum: 9007199254740991
+                  minimum: 1
+                read_only:
+                  type: boolean
+                url:
+                  type: string
+                  format: uri
+              required:
+                - url
       responses:
         '201':
           description: Repository import started.
           content:
             application/json:
-              schema: {}
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          type: integer
+                          maximum: 9007199254740991
+                          minimum: -9007199254740991
+                        documentation_url:
+                          type: string
+                          format: uri
+                        message:
+                          type: string
+                        source:
+                          type: object
+                          properties:
+                            pointer:
+                              type: string
+                      required:
+                        - code
+                        - message
+                      type: object
+                  messages:
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          type: integer
+                          maximum: 9007199254740991
+                          minimum: -9007199254740991
+                        documentation_url:
+                          type: string
+                          format: uri
+                        message:
+                          type: string
+                        source:
+                          type: object
+                          properties:
+                            pointer:
+                              type: string
+                      required:
+                        - code
+                        - message
+                      type: object
+                  result:
+                    type: object
+                    properties:
+                      default_branch:
+                        type: string
+                      description:
+                        type: string
+                        nullable: true
+                      id:
+                        type: string
+                      name:
+                        type: string
+                      remote:
+                        type: string
+                      token:
+                        type: string
+                    required:
+                      - id
+                      - name
+                      - description
+                      - default_branch
+                      - remote
+                      - token
+                  result_info:
+                    anyOf:
+                      - properties:
+                          count:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                          cursor:
+                            type: string
+                          per_page:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                        required:
+                          - cursor
+                          - per_page
+                          - count
+                        type: object
+                      - properties:
+                          count:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                          page:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                          per_page:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                          total_count:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                          total_pages:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                        required:
+                          - page
+                          - per_page
+                          - total_pages
+                          - count
+                          - total_count
+                        type: object
+                  success:
+                    type: boolean
+                    enum:
+                      - true
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
         '400':
           description: Bad request.
           content:
@@ -55102,6 +56358,7 @@ paths:
       x-fern-sdk-group-name: artifacts.namespaces
       x-fern-sdk-method-name: create
       x-forge-hidden: true
+      x-stability: beta
   /accounts/{account_id}/artifacts/namespaces/{namespace}/repos/{name}/log:
     get:
       operationId: artifacts_repos_log_get
@@ -55144,7 +56401,163 @@ paths:
           description: Commits.
           content:
             application/json:
-              schema: {}
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          type: integer
+                          maximum: 9007199254740991
+                          minimum: -9007199254740991
+                        documentation_url:
+                          type: string
+                          format: uri
+                        message:
+                          type: string
+                        source:
+                          type: object
+                          properties:
+                            pointer:
+                              type: string
+                      required:
+                        - code
+                        - message
+                      type: object
+                  messages:
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          type: integer
+                          maximum: 9007199254740991
+                          minimum: -9007199254740991
+                        documentation_url:
+                          type: string
+                          format: uri
+                        message:
+                          type: string
+                        source:
+                          type: object
+                          properties:
+                            pointer:
+                              type: string
+                      required:
+                        - code
+                        - message
+                      type: object
+                  result:
+                    type: array
+                    items:
+                      properties:
+                        author:
+                          type: object
+                          properties:
+                            email:
+                              type: string
+                            name:
+                              type: string
+                          required:
+                            - name
+                            - email
+                        authoredAt:
+                          type: integer
+                          maximum: 9007199254740991
+                          minimum: -9007199254740991
+                        committedAt:
+                          type: integer
+                          maximum: 9007199254740991
+                          minimum: -9007199254740991
+                        committer:
+                          type: object
+                          properties:
+                            email:
+                              type: string
+                            name:
+                              type: string
+                          required:
+                            - name
+                            - email
+                        hash:
+                          type: string
+                          pattern: ^[0-9a-f]{40}$
+                        message:
+                          type: string
+                        parents:
+                          type: array
+                          items:
+                            pattern: ^[0-9a-f]{40}$
+                            type: string
+                        treeHash:
+                          type: string
+                          pattern: ^[0-9a-f]{40}$
+                      required:
+                        - hash
+                        - treeHash
+                        - message
+                        - author
+                        - committer
+                        - parents
+                        - authoredAt
+                        - committedAt
+                      type: object
+                  result_info:
+                    anyOf:
+                      - properties:
+                          count:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                          cursor:
+                            type: string
+                          per_page:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                        required:
+                          - cursor
+                          - per_page
+                          - count
+                        type: object
+                      - properties:
+                          count:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                          page:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                          per_page:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                          total_count:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                          total_pages:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                        required:
+                          - page
+                          - per_page
+                          - total_pages
+                          - count
+                          - total_count
+                        type: object
+                  success:
+                    type: boolean
+                    enum:
+                      - true
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
         '400':
           description: Bad request.
           content:
@@ -55475,6 +56888,7 @@ paths:
       x-fern-sdk-group-name: artifacts.namespaces
       x-fern-sdk-method-name: get
       x-forge-hidden: true
+      x-stability: beta
     parameters:
       - name: account_id
         in: path
@@ -55529,7 +56943,8 @@ paths:
                 type: string
           content:
             application/json:
-              schema: {}
+              schema:
+                type: string
             application/octet-stream:
               schema:
                 type: string
@@ -55934,6 +57349,7 @@ paths:
       x-fern-sdk-group-name: artifacts.namespaces
       x-fern-sdk-method-name: get
       x-forge-hidden: true
+      x-stability: beta
     parameters:
       - name: account_id
         in: path
@@ -55989,7 +57405,140 @@ paths:
           description: Tokens.
           content:
             application/json:
-              schema: {}
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          type: integer
+                          maximum: 9007199254740991
+                          minimum: -9007199254740991
+                        documentation_url:
+                          type: string
+                          format: uri
+                        message:
+                          type: string
+                        source:
+                          type: object
+                          properties:
+                            pointer:
+                              type: string
+                      required:
+                        - code
+                        - message
+                      type: object
+                  messages:
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          type: integer
+                          maximum: 9007199254740991
+                          minimum: -9007199254740991
+                        documentation_url:
+                          type: string
+                          format: uri
+                        message:
+                          type: string
+                        source:
+                          type: object
+                          properties:
+                            pointer:
+                              type: string
+                      required:
+                        - code
+                        - message
+                      type: object
+                  result:
+                    type: array
+                    items:
+                      properties:
+                        created_at:
+                          type: string
+                          format: date-time
+                          pattern: ^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$
+                        expires_at:
+                          type: string
+                          format: date-time
+                          pattern: ^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$
+                        id:
+                          type: string
+                        scope:
+                          type: string
+                          enum:
+                            - read
+                            - write
+                        state:
+                          type: string
+                          enum:
+                            - active
+                            - expired
+                            - revoked
+                      required:
+                        - id
+                        - scope
+                        - state
+                        - created_at
+                        - expires_at
+                      type: object
+                  result_info:
+                    anyOf:
+                      - properties:
+                          count:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                          cursor:
+                            type: string
+                          per_page:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                        required:
+                          - cursor
+                          - per_page
+                          - count
+                        type: object
+                      - properties:
+                          count:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                          page:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                          per_page:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                          total_count:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                          total_pages:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                        required:
+                          - page
+                          - per_page
+                          - total_pages
+                          - count
+                          - total_count
+                        type: object
+                  success:
+                    type: boolean
+                    enum:
+                      - true
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
         '400':
           description: Bad request.
           content:
@@ -56384,6 +57933,7 @@ paths:
       x-fern-sdk-group-name: artifacts.namespaces
       x-fern-sdk-method-name: get
       x-forge-hidden: true
+      x-stability: beta
     parameters:
       - name: account_id
         in: path
@@ -56427,7 +57977,133 @@ paths:
                 type: string
           content:
             application/json:
-              schema: {}
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          type: integer
+                          maximum: 9007199254740991
+                          minimum: -9007199254740991
+                        documentation_url:
+                          type: string
+                          format: uri
+                        message:
+                          type: string
+                        source:
+                          type: object
+                          properties:
+                            pointer:
+                              type: string
+                      required:
+                        - code
+                        - message
+                      type: object
+                  messages:
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          type: integer
+                          maximum: 9007199254740991
+                          minimum: -9007199254740991
+                        documentation_url:
+                          type: string
+                          format: uri
+                        message:
+                          type: string
+                        source:
+                          type: object
+                          properties:
+                            pointer:
+                              type: string
+                      required:
+                        - code
+                        - message
+                      type: object
+                  result:
+                    type: array
+                    items:
+                      properties:
+                        hash:
+                          type: string
+                          pattern: ^[0-9a-f]{40}$
+                        mode:
+                          type: string
+                        name:
+                          type: string
+                        type:
+                          type: string
+                          enum:
+                            - tree
+                            - blob
+                            - symlink
+                            - gitlink
+                            - exec
+                      required:
+                        - name
+                        - mode
+                        - hash
+                        - type
+                      type: object
+                  result_info:
+                    anyOf:
+                      - properties:
+                          count:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                          cursor:
+                            type: string
+                          per_page:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                        required:
+                          - cursor
+                          - per_page
+                          - count
+                        type: object
+                      - properties:
+                          count:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                          page:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                          per_page:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                          total_count:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                          total_pages:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                        required:
+                          - page
+                          - per_page
+                          - total_pages
+                          - count
+                          - total_count
+                        type: object
+                  success:
+                    type: boolean
+                    enum:
+                      - true
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
         '400':
           description: Bad request.
           content:
@@ -56758,6 +58434,7 @@ paths:
       x-fern-sdk-group-name: artifacts.namespaces
       x-fern-sdk-method-name: get
       x-forge-hidden: true
+      x-stability: beta
     parameters:
       - name: account_id
         in: path
@@ -56789,13 +58466,151 @@ paths:
         required: true
         content:
           application/json:
-            schema: {}
+            schema:
+              type: object
+              properties:
+                repo:
+                  type: string
+                  pattern: ^[a-zA-Z0-9][a-zA-Z0-9._-]*$
+                scope:
+                  type: string
+                  enum:
+                    - read
+                    - write
+                ttl:
+                  type: integer
+                  maximum: 31536000
+                  minimum: 60
+              required:
+                - repo
       responses:
         '201':
           description: Token created.
           content:
             application/json:
-              schema: {}
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          type: integer
+                          maximum: 9007199254740991
+                          minimum: -9007199254740991
+                        documentation_url:
+                          type: string
+                          format: uri
+                        message:
+                          type: string
+                        source:
+                          type: object
+                          properties:
+                            pointer:
+                              type: string
+                      required:
+                        - code
+                        - message
+                      type: object
+                  messages:
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          type: integer
+                          maximum: 9007199254740991
+                          minimum: -9007199254740991
+                        documentation_url:
+                          type: string
+                          format: uri
+                        message:
+                          type: string
+                        source:
+                          type: object
+                          properties:
+                            pointer:
+                              type: string
+                      required:
+                        - code
+                        - message
+                      type: object
+                  result:
+                    type: object
+                    properties:
+                      expires_at:
+                        type: string
+                        format: date-time
+                        pattern: ^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$
+                      id:
+                        type: string
+                      plaintext:
+                        type: string
+                      scope:
+                        type: string
+                        enum:
+                          - read
+                          - write
+                    required:
+                      - id
+                      - plaintext
+                      - scope
+                      - expires_at
+                  result_info:
+                    anyOf:
+                      - properties:
+                          count:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                          cursor:
+                            type: string
+                          per_page:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                        required:
+                          - cursor
+                          - per_page
+                          - count
+                        type: object
+                      - properties:
+                          count:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                          page:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                          per_page:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                          total_count:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                          total_pages:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                        required:
+                          - page
+                          - per_page
+                          - total_pages
+                          - count
+                          - total_count
+                        type: object
+                  success:
+                    type: boolean
+                    enum:
+                      - true
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
         '400':
           description: Bad request.
           content:
@@ -57190,6 +59005,7 @@ paths:
       x-fern-sdk-group-name: artifacts.namespaces
       x-fern-sdk-method-name: create
       x-forge-hidden: true
+      x-stability: beta
   /accounts/{account_id}/artifacts/namespaces/{namespace}/tokens/{id}:
     delete:
       operationId: artifacts_tokens_revoke
@@ -57215,7 +59031,115 @@ paths:
           description: Token revoked.
           content:
             application/json:
-              schema: {}
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          type: integer
+                          maximum: 9007199254740991
+                          minimum: -9007199254740991
+                        documentation_url:
+                          type: string
+                          format: uri
+                        message:
+                          type: string
+                        source:
+                          type: object
+                          properties:
+                            pointer:
+                              type: string
+                      required:
+                        - code
+                        - message
+                      type: object
+                  messages:
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          type: integer
+                          maximum: 9007199254740991
+                          minimum: -9007199254740991
+                        documentation_url:
+                          type: string
+                          format: uri
+                        message:
+                          type: string
+                        source:
+                          type: object
+                          properties:
+                            pointer:
+                              type: string
+                      required:
+                        - code
+                        - message
+                      type: object
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                    required:
+                      - id
+                  result_info:
+                    anyOf:
+                      - properties:
+                          count:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                          cursor:
+                            type: string
+                          per_page:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                        required:
+                          - cursor
+                          - per_page
+                          - count
+                        type: object
+                      - properties:
+                          count:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                          page:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                          per_page:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                          total_count:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                          total_pages:
+                            type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
+                        required:
+                          - page
+                          - per_page
+                          - total_pages
+                          - count
+                          - total_count
+                        type: object
+                  success:
+                    type: boolean
+                    enum:
+                      - true
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
         '401':
           description: Authentication required.
           content:
@@ -57482,6 +59406,7 @@ paths:
       x-fern-sdk-group-name: artifacts.namespaces
       x-fern-sdk-method-name: delete
       x-forge-hidden: true
+      x-stability: beta
     parameters:
       - name: account_id
         in: path
@@ -99645,6 +101570,396 @@ paths:
       x-fern-sdk-group-name: data-security.posture
       x-fern-sdk-method-name: create
       x-forge-hidden: true
+  /accounts/{account_id}/data-security/posture/policies:
+    get:
+      operationId: ListPolicies
+      summary: List policy configurations
+      description: |
+        Returns a list of integration-scoped policy configurations for the given account. This endpoint supports cursor based pagination. By default, results are returned in sorted order based on created_at.
+      parameters:
+        - $ref: '#/components/parameters/posture-api_AccountTag'
+        - name: cursor
+          in: query
+          description: Cursor for pagination. Obtained from the `result_info.cursor` field of a previous response.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 'OK: Policies retrieved successfully'
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                  - $ref: '#/components/schemas/posture-api_api-response-collection'
+                  - properties:
+                      result:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/posture-api_PolicyResponse'
+                    type: object
+        '400':
+          description: 'Bad Request: Invalid request parameters'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+        '401':
+          description: 'Unauthorized: Authentication required'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+        '403':
+          description: 'Forbidden: Insufficient permissions'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+      security:
+        - api_token: []
+      tags:
+        - policies
+      x-api-token-group:
+        - Zero Trust Read
+        - Zero Trust Write
+      x-fern-sdk-group-name: data-security.posture
+      x-fern-sdk-method-name: list
+    post:
+      operationId: CreatePolicy
+      summary: Create a new policy configuration
+      description: |
+        Creates a new policy configuration that defines automated actions to be executed 
+        when security findings are detected. A policy can include multiple remediation 
+        and/or webhook actions that will be triggered automatically.
+      parameters:
+        - $ref: '#/components/parameters/posture-api_AccountTag'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/posture-api_CreatePolicyRequest'
+      responses:
+        '200':
+          description: 'OK: Policy created successfully'
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                  - $ref: '#/components/schemas/posture-api_api-response-common'
+                  - properties:
+                      result:
+                        $ref: '#/components/schemas/posture-api_PolicyResponse'
+                    type: object
+        '400':
+          description: 'Bad Request: Invalid request parameters'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+        '401':
+          description: 'Unauthorized: Authentication required'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+        '403':
+          description: 'Forbidden: Insufficient permissions'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+        '404':
+          description: 'Not Found: Integration, remediation type, or webhook config not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+      security:
+        - api_token: []
+      tags:
+        - policies
+      x-api-token-group:
+        - Zero Trust Write
+      x-fern-sdk-group-name: data-security.posture
+      x-fern-sdk-method-name: create
+  /accounts/{account_id}/data-security/posture/policies/{policy_id}:
+    delete:
+      operationId: DeletePolicy
+      summary: Delete a policy configuration
+      description: |
+        Deletes a policy configuration.
+      parameters:
+        - $ref: '#/components/parameters/posture-api_AccountTag'
+        - $ref: '#/components/parameters/posture-api_PolicyId'
+      responses:
+        '200':
+          description: 'OK: Policy deleted successfully'
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                  - $ref: '#/components/schemas/posture-api_api-response-common'
+                  - properties:
+                      result:
+                        $ref: '#/components/schemas/posture-api_DeletePolicyResponse'
+                    type: object
+        '400':
+          description: 'Bad Request: Invalid request parameters'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+        '401':
+          description: 'Unauthorized: Authentication required'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+        '403':
+          description: 'Forbidden: Insufficient permissions'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+        '404':
+          description: 'Not Found: Policy not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+      security:
+        - api_token: []
+      tags:
+        - policies
+      x-api-token-group:
+        - Zero Trust Write
+      x-fern-sdk-group-name: data-security.posture
+      x-fern-sdk-method-name: delete
+    get:
+      operationId: GetPolicyByID
+      summary: Get a policy configuration by ID
+      description: |
+        Retrieves the details of a specific policy configuration, including its
+        associated remediation and webhook actions.
+      parameters:
+        - $ref: '#/components/parameters/posture-api_AccountTag'
+        - name: policy_id
+          in: path
+          description: The UUID of the policy configuration to retrieve.
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+      responses:
+        '200':
+          description: 'OK: Policy retrieved successfully'
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                  - $ref: '#/components/schemas/posture-api_api-response-common'
+                  - properties:
+                      result:
+                        $ref: '#/components/schemas/posture-api_PolicyResponse'
+                    type: object
+        '400':
+          description: 'Bad Request: Invalid request parameters'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+        '401':
+          description: 'Unauthorized: Authentication required'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+        '403':
+          description: 'Forbidden: Insufficient permissions'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+        '404':
+          description: 'Not Found: Policy config not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+      security:
+        - api_token: []
+      tags:
+        - policies
+      x-api-token-group:
+        - Zero Trust Read
+        - Zero Trust Write
+      x-fern-sdk-group-name: data-security.posture
+      x-fern-sdk-method-name: get
+    put:
+      operationId: UpdatePolicy
+      summary: Update a policy configuration
+      description: |
+        Updates an existing policy configuration and replaces its actions.
+      parameters:
+        - $ref: '#/components/parameters/posture-api_AccountTag'
+        - name: policy_id
+          in: path
+          description: Policy configuration ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/posture-api_UpdatePolicyRequest'
+      responses:
+        '200':
+          description: 'OK: Policy updated successfully'
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                  - $ref: '#/components/schemas/posture-api_api-response-common'
+                  - properties:
+                      result:
+                        $ref: '#/components/schemas/posture-api_PolicyResponse'
+                    type: object
+        '400':
+          description: 'Bad Request: Invalid request parameters'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+        '401':
+          description: 'Unauthorized: Authentication required'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+        '403':
+          description: 'Forbidden: Insufficient permissions'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+        '404':
+          description: 'Not Found: Policy, integration, remediation type, or webhook config not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+      security:
+        - api_token: []
+      tags:
+        - policies
+      x-api-token-group:
+        - Zero Trust Write
+      x-fern-sdk-group-name: data-security.posture
+      x-fern-sdk-method-name: update
+  /accounts/{account_id}/data-security/posture/policies/logs:
+    get:
+      operationId: ListPolicyLogs
+      summary: List policy invocation logs
+      description: |
+        Returns a list of policy invocation logs for the given account, sourced from ClickHouse via Ready Analytics. Each entry represents one execution of a policy against a finding instance, including the actions (remediation jobs and webhooks) it dispatched.
+
+        Results are scoped to the requesting account's CASB integrations. The `integration_id` query parameter, when supplied, is intersected against the account's integration allowlist; values outside the allowlist are silently dropped.
+
+        Pagination is offset-based. The response does not include a total row count; clients should treat a result with fewer than `per_page` entries as the end of the list.
+      parameters:
+        - $ref: '#/components/parameters/posture-api_AccountTag'
+        - name: since
+          in: query
+          description: Lower bound on the log entry timestamp. Accepts ISO 8601 / RFC3339 or epoch seconds. Defaults to 7 days before `until`. The window between `since` and `until` cannot exceed 180 days.
+          schema:
+            type: string
+            format: date-time
+          example: 2026-04-01T00:00:00Z
+        - name: until
+          in: query
+          description: Upper bound on the log entry timestamp. Accepts ISO 8601 / RFC3339 or epoch seconds. Defaults to the current time. Must be greater than or equal to `since`.
+          schema:
+            type: string
+            format: date-time
+          example: 2026-04-08T00:00:00Z
+        - name: integration_id
+          in: query
+          description: Comma-separated list of CASB integration IDs to filter by. At most 100 values, each at most 128 characters. Values outside the account's tenancy allowlist are silently ignored. When omitted, results are scoped to the full allowlist.
+          schema:
+            type: string
+          example: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+        - name: policy_name
+          in: query
+          description: Comma-separated list of policy display names to filter by. At most 100 values, each at most 255 characters.
+          schema:
+            type: string
+          example: Auto-remediate publicly shared files
+        - $ref: '#/components/parameters/posture-api_Page'
+        - $ref: '#/components/parameters/posture-api_PerPage'
+      responses:
+        '200':
+          description: 'OK: Policy logs retrieved successfully'
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                  - $ref: '#/components/schemas/posture-api_api-response-collection'
+                  - properties:
+                      result:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/posture-api_PolicyLogResponse'
+                    type: object
+        '400':
+          description: 'Bad Request: Invalid query parameters'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+        '401':
+          description: 'Unauthorized: Authentication required'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+        '403':
+          description: 'Forbidden: Insufficient permissions'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+        '502':
+          description: 'Bad Gateway: Policy logs backend (ClickHouse) is unavailable'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+        '504':
+          description: 'Gateway Timeout: Policy logs query timed out'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+      security:
+        - api_token: []
+      tags:
+        - policies
+      x-api-token-group:
+        - Zero Trust Read
+        - Zero Trust Write
+      x-fern-sdk-group-name: data-security.posture
+      x-fern-sdk-method-name: list
   /accounts/{account_id}/data-security/posture/remediations/jobs:
     get:
       operationId: ListRemediationJobs
@@ -351673,6 +353988,14 @@ components:
       name: per_page
       schema:
         type: integer
+    posture-api_PolicyId:
+      description: A UUID identifying the policy.
+      in: path
+      name: policy_id
+      required: true
+      schema:
+        type: string
+        format: uuid
     posture-api_Product:
       description: Filter by product category of the finding
       in: query
@@ -418949,6 +421272,49 @@ components:
           required:
             - name
           type: object
+    posture-api_CreatePolicyRequest:
+      description: Request body for creating a new policy configuration.
+      type: object
+      properties:
+        actions:
+          $ref: '#/components/schemas/posture-api_PolicyActionsInput'
+        applies_to_all_integrations:
+          description: When true, the policy applies to all integrations for the account. When false, integration_ids must be provided.
+          type: boolean
+          example: false
+        description:
+          description: Optional description of what this policy does.
+          type: string
+          example: Automatically remove public access from files when detected
+          maxLength: 1000
+        display_name:
+          description: Display name for the policy configuration.
+          type: string
+          example: Auto-remediate public files
+          maxLength: 255
+        enabled:
+          description: Boolean specifying if the policy is enabled or disabled.
+          type: boolean
+          example: true
+        finding_type_id:
+          description: The finding type this policy is associated with. All remediation actions must match this finding type.
+          type: string
+          format: uuid
+          example: 5a7d9e2f-1b3c-4d5e-8f6a-7b8c9d0e1f2a
+        integration_ids:
+          description: The integrations this policy applies to. Required when applies_to_all_integrations is false.
+          type: array
+          items:
+            format: uuid
+            type: string
+          example:
+            - 497f6eca-6276-4993-bfeb-53cbbbba6f08
+      required:
+        - display_name
+        - enabled
+        - applies_to_all_integrations
+        - finding_type_id
+        - actions
     posture-api_CreateRemediationJobResponse:
       description: Response for remediation job creation requests.
       type: object
@@ -419134,6 +421500,17 @@ components:
         - id
         - name
         - profile_id
+    posture-api_DeletePolicyResponse:
+      description: Response from DeletePolicy operation.
+      type: object
+      properties:
+        id:
+          description: ID of the policy deleted.
+          type: string
+          format: uuid
+          example: 3f7b8c9d-6e5a-4f3b-9c2d-1e0a8b7c6d5e
+      required:
+        - id
     posture-api_DirectionEnum:
       description: Sort direction.
       type: string
@@ -419923,6 +422300,311 @@ components:
               items:
                 $ref: '#/components/schemas/posture-api_RemediationType'
           type: object
+    posture-api_PolicyActionsInput:
+      description: |-
+        Actions to execute when this policy is triggered, grouped by action type.
+        A policy must contain at least one action across all groups and may include
+        at most one remediation.
+      type: object
+      properties:
+        remediation_types:
+          description: Remediation actions to execute (at most one).
+          type: array
+          items:
+            $ref: '#/components/schemas/posture-api_PolicyRemediationActionInput'
+          maxItems: 1
+        webhook_configs:
+          description: Webhook actions to execute.
+          type: array
+          items:
+            $ref: '#/components/schemas/posture-api_PolicyWebhookActionInput'
+      minProperties: 1
+    posture-api_PolicyActionsResponse:
+      description: The actions configured for this policy.
+      type: object
+      properties:
+        remediation_types:
+          description: List of remediation types that will be executed.
+          type: array
+          items:
+            $ref: '#/components/schemas/posture-api_PolicyRemediationTypeResponse'
+        webhook_configs:
+          description: List of webhook configurations that will be triggered.
+          type: array
+          items:
+            $ref: '#/components/schemas/posture-api_PolicyWebhookConfigResponse'
+      required:
+        - remediation_types
+        - webhook_configs
+    posture-api_PolicyLogActionsResponse:
+      description: Actions dispatched by the policy consumer for this invocation. Both arrays are always present and may be empty.
+      type: object
+      properties:
+        remediations:
+          description: Remediation jobs spawned by this policy invocation.
+          type: array
+          items:
+            $ref: '#/components/schemas/posture-api_PolicyLogRemediationResponse'
+        webhooks:
+          description: Webhook jobs dispatched by this policy invocation.
+          type: array
+          items:
+            $ref: '#/components/schemas/posture-api_PolicyLogWebhookResponse'
+      required:
+        - remediations
+        - webhooks
+    posture-api_PolicyLogPolicyResponse:
+      description: The policy configuration that fired.
+      type: object
+      properties:
+        name:
+          description: Display name of the policy at the time it ran.
+          type: string
+          example: Auto-remediate publicly shared files
+        url:
+          description: URL to the policy configuration in the dashboard. Currently always an empty string; populated in a future revision once the upstream view exposes the policy configuration ID.
+          type: string
+          example: ''
+      required:
+        - name
+        - url
+    posture-api_PolicyLogRemediationResponse:
+      description: A remediation job dispatched during a policy invocation.
+      type: object
+      properties:
+        id:
+          description: Identifier of the remediation job, suitable for cross-referencing with the remediations API.
+          type: string
+          example: rj_001
+        type:
+          description: Display name of the remediation type that ran.
+          type: string
+          example: Revoke External Sharing
+        url:
+          description: Path to the remediation job in the dashboard.
+          type: string
+          example: /one/casb/remediations/rj_001
+      required:
+        - type
+        - id
+        - url
+    posture-api_PolicyLogResponse:
+      description: A single policy invocation log entry. Each entry represents one execution of a policy against a finding instance.
+      type: object
+      properties:
+        actions:
+          $ref: '#/components/schemas/posture-api_PolicyLogActionsResponse'
+        policy:
+          $ref: '#/components/schemas/posture-api_PolicyLogPolicyResponse'
+        timestamp:
+          description: When the policy invocation was recorded by ClickHouse, in ClickHouse DateTime format (UTC).
+          type: string
+          example: 2026-04-07T13:00:00Z
+        trigger:
+          $ref: '#/components/schemas/posture-api_PolicyLogTriggerResponse'
+      required:
+        - timestamp
+        - policy
+        - trigger
+        - actions
+    posture-api_PolicyLogTriggerResponse:
+      description: The finding instance that caused the policy to fire.
+      type: object
+      properties:
+        date_detected:
+          description: When the finding was first detected, in ISO 8601 / RFC3339 format.
+          type: string
+          example: 2026-04-07T13:00:00Z
+        fields_of_interest:
+          description: Free-form JSON object containing finding-type-specific context fields (e.g. file owner, sharing scope). Schema varies per finding type; consumers should treat unknown keys defensively. Null when the upstream row had no fields_of_interest.
+          type: object
+          example:
+            owner: alice@company.com
+            sharing: public
+          additionalProperties: true
+          nullable: true
+        finding_type_name:
+          description: Display name of the finding type that triggered the policy.
+          type: string
+          example: 'GW: File publicly accessible'
+        instance_asset:
+          description: Name of the specific resource (file, drive item, etc.) the finding was raised against.
+          type: string
+          example: Q4_Financials.pdf
+        integration_name:
+          description: Display name of the CASB integration that produced the finding.
+          type: string
+          example: Finance GW
+        integration_url:
+          description: Path to the integration in the dashboard.
+          type: string
+          example: /one/casb/integrations/int_001
+      required:
+        - finding_type_name
+        - instance_asset
+        - date_detected
+        - integration_name
+        - integration_url
+        - fields_of_interest
+    posture-api_PolicyLogWebhookResponse:
+      description: A webhook job dispatched during a policy invocation.
+      type: object
+      properties:
+        nickname:
+          description: User-set nickname of the webhook configuration that fired.
+          type: string
+          example: SOC alerting
+        url:
+          description: Path to the webhook configuration in the dashboard.
+          type: string
+          example: /one/casb/webhooks/wh_001
+      required:
+        - nickname
+        - url
+    posture-api_PolicyRemediationActionInput:
+      description: A remediation action to be executed.
+      type: object
+      properties:
+        remediation_type_id:
+          description: The ID of the remediation type to execute.
+          type: string
+          format: uuid
+          example: 5a7d9e2f-1b3c-4d5e-8f6a-7b8c9d0e1f2a
+      required:
+        - remediation_type_id
+    posture-api_PolicyRemediationTypeResponse:
+      description: A remediation type configured for the policy.
+      type: object
+      properties:
+        display_name:
+          description: Display name/label of the remediation type.
+          type: string
+          example: Remove Public Access
+          readOnly: true
+        remediation_type:
+          description: The system name of the remediation type.
+          type: string
+          example: remove_public_access
+          readOnly: true
+        remediation_type_id:
+          description: Unique identifier for the remediation type.
+          type: string
+          format: uuid
+          example: 5a7d9e2f-1b3c-4d5e-8f6a-7b8c9d0e1f2a
+      required:
+        - remediation_type_id
+        - remediation_type
+        - display_name
+    posture-api_PolicyResponse:
+      description: Response body for a policy configuration.
+      type: object
+      properties:
+        actions:
+          $ref: '#/components/schemas/posture-api_PolicyActionsResponse'
+        applies_to_all_integrations:
+          description: When true, the policy applies to all integrations for the account. When false, it applies only to the specified integration_ids.
+          type: boolean
+          example: false
+        created_at:
+          description: Timestamp when the policy was created.
+          type: string
+          format: date-time
+          example: 2025-03-18T17:25:38.700541Z
+          readOnly: true
+        description:
+          description: User-set description of what this policy does. Limited to 1000 characters.
+          type: string
+          example: Automatically remove public access from files when detected
+        disabled_at:
+          description: |-
+            Timestamp when the policy was disabled. Omitted from the response when the policy
+            is enabled.
+          type: string
+          format: date-time
+          example: 2025-03-18T17:25:38.700541Z
+          readOnly: true
+        display_name:
+          description: Display name for the policy configuration. Limited to 255 characters.
+          type: string
+          example: Auto-remediate public files
+        enabled:
+          description: Whether the policy is enabled. Derived from disabled_at (enabled when disabled_at is unset).
+          type: boolean
+          example: true
+        finding_type_id:
+          description: The finding type this policy is associated with. Immutable after creation; changing it replaces the policy.
+          type: string
+          format: uuid
+          example: 5a7d9e2f-1b3c-4d5e-8f6a-7b8c9d0e1f2a
+        id:
+          description: Unique identifier for the policy configuration.
+          type: string
+          format: uuid
+          example: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+          readOnly: true
+        integration_ids:
+          description: The integrations this policy applies to.
+          type: array
+          items:
+            format: uuid
+            type: string
+          example:
+            - 497f6eca-6276-4993-bfeb-53cbbbba6f08
+        last_triggered_at:
+          description: |-
+            Timestamp of the most recent successful policy invocation. Omitted
+            from the response when the policy has never been successfully
+            triggered. Only populated on GET responses; absent on responses from
+            create/update endpoints.
+          type: string
+          format: date-time
+          example: 2025-03-18T17:25:38.700541Z
+          readOnly: true
+        updated_at:
+          description: Timestamp when the policy was last updated.
+          type: string
+          format: date-time
+          example: 2025-03-18T17:25:38.700541Z
+          readOnly: true
+      required:
+        - id
+        - created_at
+        - updated_at
+        - integration_ids
+        - applies_to_all_integrations
+        - finding_type_id
+        - display_name
+        - description
+        - enabled
+        - actions
+    posture-api_PolicyWebhookActionInput:
+      description: A webhook action to be executed.
+      type: object
+      properties:
+        webhook_config_id:
+          description: The ID of the webhook configuration to use.
+          type: string
+          format: uuid
+          example: 3f7b8c9d-6e5a-4f3b-9c2d-1e0a8b7c6d5e
+      required:
+        - webhook_config_id
+    posture-api_PolicyWebhookConfigResponse:
+      description: A webhook configuration associated with the policy.
+      type: object
+      properties:
+        display_name:
+          description: Display name/label of the webhook configuration.
+          type: string
+          example: Send to Slack
+          readOnly: true
+        webhook_config_id:
+          description: Unique identifier for the webhook configuration.
+          type: string
+          format: uuid
+          example: 3f7b8c9d-6e5a-4f3b-9c2d-1e0a8b7c6d5e
+      required:
+        - webhook_config_id
+        - display_name
     posture-api_ProductEnum:
       description: The product category.
       type: string
@@ -420307,6 +422989,43 @@ components:
             - 4
       required:
         - new_severity
+    posture-api_UpdatePolicyRequest:
+      description: Request body for updating an existing policy configuration.
+      type: object
+      properties:
+        actions:
+          $ref: '#/components/schemas/posture-api_PolicyActionsInput'
+        applies_to_all_integrations:
+          description: When true, the policy applies to all integrations for the account. When false, integration_ids must be provided.
+          type: boolean
+          example: false
+        description:
+          description: Optional description of what this policy does.
+          type: string
+          example: Automatically remove public access from files when detected
+          maxLength: 1000
+        display_name:
+          description: Display name for the policy configuration.
+          type: string
+          example: Auto-remediate public files
+          maxLength: 255
+        enabled:
+          description: Boolean specifying if the policy is enabled or disabled.
+          type: boolean
+          example: true
+        integration_ids:
+          description: The integrations this policy applies to. Required when applies_to_all_integrations is false.
+          type: array
+          items:
+            format: uuid
+            type: string
+          example:
+            - 497f6eca-6276-4993-bfeb-53cbbbba6f08
+      required:
+        - display_name
+        - enabled
+        - applies_to_all_integrations
+        - actions
     posture-api_UpdateWebhookRequest:
       description: Request body for updating an existing webhook configuration.
       type: object
