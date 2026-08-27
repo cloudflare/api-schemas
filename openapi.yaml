@@ -174700,7 +174700,7 @@ paths:
         - Workers KV Storage Write
         - Workers KV Storage Read
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: namespaces
+      x-fern-sdk-group-name: kv.namespaces
       x-fern-sdk-method-name: list
       x-forge-hidden: true
     post:
@@ -174746,7 +174746,7 @@ paths:
       x-api-token-group:
         - Workers KV Storage Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: namespaces
+      x-fern-sdk-group-name: kv.namespaces
       x-fern-sdk-method-name: create
       x-forge-hidden: true
   /accounts/{account_id}/storage/kv/namespaces/{namespace_id}:
@@ -174791,7 +174791,7 @@ paths:
       x-api-token-group:
         - Workers KV Storage Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: namespaces
+      x-fern-sdk-group-name: kv.namespaces
       x-fern-sdk-method-name: delete
       x-forge-hidden: true
     get:
@@ -174837,7 +174837,7 @@ paths:
         - Workers KV Storage Write
         - Workers KV Storage Read
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: namespaces
+      x-fern-sdk-group-name: kv.namespaces
       x-fern-sdk-method-name: get
       x-forge-hidden: true
     put:
@@ -174890,7 +174890,7 @@ paths:
       x-api-token-group:
         - Workers KV Storage Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: namespaces
+      x-fern-sdk-group-name: kv.namespaces
       x-fern-sdk-method-name: update
       x-forge-hidden: true
   /accounts/{account_id}/storage/kv/namespaces/{namespace_id}/bulk:
@@ -174947,10 +174947,12 @@ paths:
         - Workers KV Namespace
       x-api-token-group:
         - Workers KV Storage Write
-      x-fern-availability: generally-available
-      x-fern-sdk-group-name: bulk-deprecated
+      x-fern-availability: deprecated
+      x-fern-sdk-group-name: kv.bulk-deprecated
       x-fern-sdk-method-name: delete
       x-forge-hidden: true
+      x-forge-sunset:
+        date: 2030-01-01T00:00:00Z
     put:
       operationId: workers-kv-namespace-write-multiple-key-value-pairs
       summary: Write multiple key-value pairs
@@ -175004,7 +175006,7 @@ paths:
       x-api-token-group:
         - Workers KV Storage Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: bulk
+      x-fern-sdk-group-name: kv.bulk
       x-fern-sdk-method-name: update
       x-forge-hidden: true
   /accounts/{account_id}/storage/kv/namespaces/{namespace_id}/bulk/delete:
@@ -175061,9 +175063,10 @@ paths:
       x-api-token-group:
         - Workers KV Storage Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: bulk
+      x-fern-sdk-group-name: kv.bulk
       x-fern-sdk-method-name: delete
       x-forge-hidden: true
+      x-forge-require-confirmation: This operation deletes the specified keys from the namespace.
   /accounts/{account_id}/storage/kv/namespaces/{namespace_id}/bulk/get:
     post:
       operationId: workers-kv-namespace-get-multiple-key-value-pairs
@@ -175136,7 +175139,7 @@ paths:
         - Workers KV Storage Write
         - Workers KV Storage Read
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: bulk
+      x-fern-sdk-group-name: kv.bulk
       x-fern-sdk-method-name: get
       x-forge-hidden: true
   /accounts/{account_id}/storage/kv/namespaces/{namespace_id}/keys:
@@ -175211,7 +175214,7 @@ paths:
         - Workers KV Storage Write
         - Workers KV Storage Read
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: keys
+      x-fern-sdk-group-name: kv.keys
       x-fern-sdk-method-name: list
       x-forge-hidden: true
   /accounts/{account_id}/storage/kv/namespaces/{namespace_id}/metadata/{key_name}:
@@ -175263,7 +175266,7 @@ paths:
         - Workers KV Storage Write
         - Workers KV Storage Read
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: metadata
+      x-fern-sdk-group-name: kv.metadata
       x-fern-sdk-method-name: get
       x-forge-hidden: true
   /accounts/{account_id}/storage/kv/namespaces/{namespace_id}/values/{key_name}:
@@ -175313,7 +175316,7 @@ paths:
       x-api-token-group:
         - Workers KV Storage Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: keys
+      x-fern-sdk-group-name: kv.keys
       x-fern-sdk-method-name: delete
       x-forge-hidden: true
     get:
@@ -175359,7 +175362,7 @@ paths:
         - Workers KV Storage Write
         - Workers KV Storage Read
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: keys
+      x-fern-sdk-group-name: kv.keys
       x-fern-sdk-method-name: get
       x-forge-hidden: true
     put:
@@ -175433,7 +175436,7 @@ paths:
       x-api-token-group:
         - Workers KV Storage Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: keys
+      x-fern-sdk-group-name: kv.keys
       x-fern-sdk-method-name: update
       x-forge-hidden: true
   /accounts/{account_id}/stream:
@@ -453103,6 +453106,7 @@ components:
       type: array
       items:
         $ref: '#/components/schemas/workers-kv_key_name_bulk'
+      maxItems: 10000
     workers-kv_bulk_write:
       type: array
       items:
@@ -453128,6 +453132,7 @@ components:
           - key
           - value
         type: object
+      maxItems: 10000
     workers-kv_create_namespace_body:
       type: object
       properties:
