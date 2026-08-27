@@ -343781,6 +343781,10 @@ paths:
         enterprise: true
         free: true
         pro: true
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: ssl.auto-origin-tls-kex
+      x-fern-sdk-method-name: get
+      x-forge-hidden: true
     patch:
       operationId: ssl-detector-auto-origin-tls-kex-patch-enrollment
       summary: Patch Auto-Origin TLS KEX enrollment status for the given zone
@@ -343829,6 +343833,10 @@ paths:
         enterprise: true
         free: true
         pro: true
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: ssl.auto-origin-tls-kex
+      x-fern-sdk-method-name: edit
+      x-forge-hidden: true
   /zones/{zone_id}/settings/automatic_platform_optimization:
     get:
       operationId: zone-settings-get-automatic-platform-optimization-setting
@@ -348639,6 +348647,55 @@ paths:
       x-fern-sdk-group-name: ssl.certificate-packs.quota
       x-fern-sdk-method-name: get
       x-forge-hidden: true
+  /zones/{zone_id}/ssl/recommendation:
+    get:
+      operationId: ssl/-tls-mode-recommendation-ssl/-tls-recommendation
+      summary: SSL/TLS Recommendation
+      description: Retrieve the SSL/TLS Recommender's recommendation for a zone.
+      parameters:
+        - name: zone_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/cache_identifier'
+      responses:
+        '200':
+          description: SSL/TLS Recommendation response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cache_api-response-single-id'
+        4XX:
+          description: SSL/TLS Recommendation response failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cache_api-response-common-failure'
+      deprecated: true
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - SSL/TLS Mode Recommendation
+      x-api-token-group:
+        - Zone Settings Write
+        - Zone Settings Read
+        - SSL and Certificates Write
+        - SSL and Certificates Read
+      x-cfPermissionsRequired:
+        enum:
+          - '#ssl:read'
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: true
+        pro: true
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: ssl.recommendations
+      x-fern-sdk-method-name: get
+      x-forge-hidden: true
+      x-stainless-deprecation-message: SSL/TLS Recommender has been decommissioned in favor of Automatic SSL/TLS
   /zones/{zone_id}/ssl/universal/settings:
     get:
       operationId: universal-ssl-settings-for-a-zone-universal-ssl-settings-details
@@ -473341,6 +473398,13 @@ x-forge-commands:
         description: Tested pages with their performance history, trends, and individual test results
       schedule:
         description: Scheduled recurring speed tests that automatically run at regular intervals
+  ssl:
+    description: SSL/TLS certificate management — certificate packs, Universal SSL, verification, and TLS mode recommendations
+    groups:
+      automatic-upgrader:
+        description: SSL automatic mode enrollment — get or update automatic SSL/TLS upgrader settings
+      recommendations:
+        description: Get the recommended SSL/TLS encryption mode based on your origin server's certificate configuration
   stream:
     description: Video encoding, storage, and delivery — upload, live-stream, clip, caption, and embed video at scale
     groups:
