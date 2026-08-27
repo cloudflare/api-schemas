@@ -331672,6 +331672,10 @@ paths:
         - Analytics Read
         - 'Access: Apps and Policies Write'
         - 'Access: Apps and Policies Read'
+      x-fern-ignore: true
+      x-fern-sdk-group-name: zones.holds
+      x-fern-sdk-method-name: getByName
+      x-forge-hidden: true
   /zones/{zone_id}/hostnames/settings/{setting_id}:
     get:
       operationId: per-hostname-tls-settings-list
@@ -443774,7 +443778,7 @@ components:
       description: When the Global WARP override state was updated.
       type: string
       format: date-time
-      example: 1970-01-01T00:00:00.000Z
+      example: 1970-01-01T00:00:00Z
       x-auditable: true
     teams-devices_tls_config_request:
       type: object
@@ -463385,33 +463389,6 @@ components:
         editable:
           description: Whether or not this setting can be modified for this zone (based on your Cloudflare plan level).
           type: boolean
-          default: true
-          enum:
-            - true
-            - false
-          readOnly: true
-        id:
-          description: Identifier of the zone setting.
-          type: string
-          example: development_mode
-        modified_on:
-          description: last time this setting was modified.
-          type: string
-          format: date-time
-          example: 2014-01-01T05:20:00.12345Z
-          nullable: true
-          readOnly: true
-        value:
-          description: Current value of the zone setting.
-          example: on
-      required:
-        - id
-        - value
-    zones_base-2:
-      properties:
-        editable:
-          description: Whether or not this setting can be modified for this zone (based on your Cloudflare plan level).
-          type: boolean
           enum:
             - true
             - false
@@ -464825,6 +464802,8 @@ components:
           - $ref: '#/components/schemas/zones_tls_client_auth'
           - $ref: '#/components/schemas/zones_true_client_ip_header-2'
           - $ref: '#/components/schemas/zones_waf-2'
+          - $ref: '#/components/schemas/zones_webmcp_enabled'
+          - $ref: '#/components/schemas/zones_webmcp_packs'
           - $ref: '#/components/schemas/zones_webp'
           - $ref: '#/components/schemas/zones_websockets'
     zones_name:
@@ -465141,7 +465120,7 @@ components:
         Value of the zone setting.
         Notes: Value must be between 1 and 6000
       type: number
-      default: 100
+      default: 125
     zones_pseudo_ipv4:
       description: The value set for the Pseudo IPv4 setting.
       allOf:
@@ -465367,7 +465346,7 @@ components:
     zones_schemas-automatic_platform_optimization:
       description: "[Automatic Platform Optimization for WordPress](https://developers.cloudflare.com/automatic-platform-optimization/) serves your WordPress site from Cloudflare's edge network and caches third-party fonts."
       allOf:
-        - $ref: '#/components/schemas/zones_base-2'
+        - $ref: '#/components/schemas/zones_base'
         - properties:
             id:
               description: ID of the zone setting.
@@ -465580,6 +465559,8 @@ components:
         - $ref: '#/components/schemas/zones_transformations_allowed_origins'
         - $ref: '#/components/schemas/zones_true_client_ip_header-2'
         - $ref: '#/components/schemas/zones_waf-2'
+        - $ref: '#/components/schemas/zones_webmcp_enabled'
+        - $ref: '#/components/schemas/zones_webmcp_packs'
         - $ref: '#/components/schemas/zones_webp'
         - $ref: '#/components/schemas/zones_websockets'
     zones_setting_name:
@@ -465656,6 +465637,8 @@ components:
         - $ref: '#/components/schemas/zones_tls_client_auth_value'
         - $ref: '#/components/schemas/zones_true_client_ip_header_value'
         - $ref: '#/components/schemas/zones_waf_value'
+        - $ref: '#/components/schemas/zones_webmcp_enabled_value'
+        - $ref: '#/components/schemas/zones_webmcp_packs_value'
         - $ref: '#/components/schemas/zones_webp_value'
         - $ref: '#/components/schemas/zones_websockets_value'
     zones_setting_writable:
@@ -466255,6 +466238,59 @@ components:
       enum:
         - on
         - off
+    zones_webmcp_enabled:
+      description: |-
+        When enabled, Cloudflare injects the WebMCP bridge (bridge.js) into HTML
+        responses for this zone, exposing DOM and Content Credentials tools to an
+        in-browser AI agent via navigator.modelContext. No origin-side code
+        changes are required. This setting is currently in beta and its behavior
+        may change.
+      allOf:
+        - $ref: '#/components/schemas/zones_base'
+        - properties:
+            id:
+              description: ID of the zone setting.
+              example: webmcp_enabled
+              enum:
+                - webmcp_enabled
+            value:
+              $ref: '#/components/schemas/zones_webmcp_enabled_value'
+      title: WebMCP Enabled
+    zones_webmcp_enabled_value:
+      description: Value of the zone setting.
+      type: string
+      default: off
+      enum:
+        - off
+        - on
+    zones_webmcp_packs:
+      description: |-
+        Optional per-zone override of which bundled WebMCP tool packs the
+        injected bridge.js activates. Only takes effect when webmcp_enabled is
+        on. Leave empty to use the bridge's default pack set. Unknown pack names
+        are ignored by the bridge. This setting is currently in beta and its
+        behavior may change.
+      allOf:
+        - $ref: '#/components/schemas/zones_base'
+        - properties:
+            id:
+              description: ID of the zone setting.
+              example: webmcp_packs
+              enum:
+                - webmcp_packs
+            value:
+              $ref: '#/components/schemas/zones_webmcp_packs_value'
+      title: WebMCP Tool Packs
+    zones_webmcp_packs_value:
+      description: |-
+        Comma-separated list of WebMCP tool-pack names to activate for this
+        zone (for example, "c2pa,mcp-server-client"), surfaced to the injected
+        bridge as the data-packs attribute. An empty value clears the override
+        so the bridge uses its built-in default pack set.
+      type: string
+      default: ''
+      maxLength: 256
+      pattern: ^([a-z0-9]+(-[a-z0-9]+)*(,[a-z0-9]+(-[a-z0-9]+)*)*)?$
     zones_webp:
       description: When the client requesting the image supports the WebP image codec, and WebP offers a performance advantage over the original image format, Cloudflare will serve a WebP version of the original image.
       allOf:
@@ -466303,7 +466339,11 @@ components:
           type: object
           properties:
             id:
-              $ref: '#/components/schemas/zones_identifier'
+              description: Identifier
+              type: string
+              example: 023e105f4ecef8ad9ca31a8372d0c353
+              maxLength: 32
+              x-auditable: true
             name:
               description: The name of the account.
               type: string
@@ -466338,7 +466378,11 @@ components:
           example: 7200
           readOnly: true
         id:
-          $ref: '#/components/schemas/zones_identifier'
+          description: Identifier
+          type: string
+          example: 023e105f4ecef8ad9ca31a8372d0c353
+          maxLength: 32
+          x-auditable: true
         meta:
           description: Metadata about the zone.
           type: object
@@ -466613,6 +466657,8 @@ components:
                   - $ref: '#/components/schemas/zones_transformations_allowed_origins'
                   - $ref: '#/components/schemas/zones_true_client_ip_header-2'
                   - $ref: '#/components/schemas/zones_waf-2'
+                  - $ref: '#/components/schemas/zones_webmcp_enabled'
+                  - $ref: '#/components/schemas/zones_webmcp_packs'
                   - $ref: '#/components/schemas/zones_webp'
                   - $ref: '#/components/schemas/zones_websockets'
     zones_zone_settings_single_request:
