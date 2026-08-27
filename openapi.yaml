@@ -321982,6 +321982,61 @@ paths:
       x-fern-sdk-method-name: delete
       x-forge-hidden: true
       x-forge-require-confirmation: This operation deletes a Content Scanning custom expression.
+    patch:
+      operationId: waf-content-scanning-update-custom-scan-expression
+      summary: Update a Content Scanning custom expression for a zone.
+      description: Update the Content Scanning custom expression with the given identifier and return the updated list of expressions.
+      parameters:
+        - name: zone_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/waf-product-api-bundle_identifier'
+        - name: expression_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/waf-product-api-bundle_custom-scan-id'
+      requestBody:
+        description: Content Scanning custom expression to update.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                payload:
+                  $ref: '#/components/schemas/waf-product-api-bundle_custom-scan-payload'
+              required:
+                - payload
+      responses:
+        '200':
+          description: Update Content Scanning custom expression response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/waf-product-api-bundle_response-custom-scan-collection'
+        4XX:
+          description: Update Content Scanning custom expression failure response.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/waf-product-api-bundle_response-custom-scan-collection'
+                  - $ref: '#/components/schemas/waf-product-api-bundle_api-response-common-failure-2'
+      security:
+        - api_email: []
+          api_key: []
+          api_token: []
+      tags:
+        - Content Scanning
+      x-api-token-group:
+        - Zone WAF Write
+        - Account WAF Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: content-scan.expressions
+      x-fern-sdk-method-name: update
+      x-forge-hidden: true
   /zones/{zone_id}/content-upload-scan/settings:
     get:
       operationId: waf-content-scanning-get-status
