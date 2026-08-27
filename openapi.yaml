@@ -65563,8 +65563,8 @@ paths:
                 items:
                   properties:
                     closeReason:
-                      description: Reason for session closure.
-                      type: string
+                      description: Reason code for session closure.
+                      type: number
                     closeReasonText:
                       description: Human-readable close reason.
                       type: string
@@ -65653,8 +65653,8 @@ paths:
                 type: object
                 properties:
                   closeReason:
-                    description: Reason for session closure.
-                    type: string
+                    description: Reason code for session closure.
+                    type: number
                   closeReasonText:
                     description: Human-readable close reason.
                     type: string
@@ -96226,7 +96226,18 @@ paths:
     post:
       operationId: createApplication
       summary: Create a new application
-      description: Create a new application. An Application represents an intent to run one or more containers, with the same image, dynamically scheduled based on constraints.
+      description: |
+        Create a Containers application.
+
+        Use `scheduling_policy: "default"` for a scheduler-backed application. The
+        Containers scheduler maintains the requested instance count and manages
+        deployment configuration, placement, scaling, versions, and rollouts.
+
+        Use `scheduling_policy: "durable_object"` for a Durable Object-managed
+        application. Each Durable Object creates and manages the lifecycle of its
+        container instance. This request accepts only `name`, `scheduling_policy`,
+        and `durable_objects`. Application-level configuration, scaling, constraints,
+        versions, and rollouts do not apply.
       requestBody:
         required: true
         content:
@@ -96615,7 +96626,11 @@ paths:
     post:
       operationId: createApplicationRollout
       summary: Create a new rollout for an application
-      description: Creates a rollout to update the application's configuration across instances with minimal downtime.
+      description: |
+        Creates a rollout to update the application's configuration across instances
+        with minimal downtime. Rollouts apply only to scheduler-backed applications
+        with `scheduling_policy: "default"`. Versions and rollouts do not apply to
+        applications with `scheduling_policy: "durable_object"`.
       parameters:
         - name: application_id
           in: path
@@ -96627,7 +96642,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/cc_CreateApplicationRolloutRequest'
+              $ref: '#/components/schemas/cc_ContainersCreateApplicationRolloutRequest'
       responses:
         '201':
           description: Application rollout created successfully.
@@ -96685,7 +96700,10 @@ paths:
     get:
       operationId: listApplicationVersions
       summary: List all application versions
-      description: Returns all versions for this application.
+      description: |
+        Returns all versions for a scheduler-backed application with
+        `scheduling_policy: "default"`. Versions and rollouts do not apply to
+        applications with `scheduling_policy: "durable_object"`.
       parameters:
         - name: application_id
           in: path
@@ -96813,282 +96831,6 @@ paths:
         - Container Images
       x-fern-sdk-group-name: containers.images
       x-fern-sdk-method-name: prepare
-  /accounts/{account_id}/containers/instance-groups:
-    get:
-      operationId: listContainerInstanceGroups
-      summary: List Container Instance Groups
-      description: Lists active namespace-backed Container Instance Groups owned by the account.
-      responses:
-        '200':
-          description: Active namespace-backed Container Instance Groups.
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/cc_V4BaseResponse'
-                  - properties:
-                      result:
-                        $ref: '#/components/schemas/cc_ListContainerInstanceGroups'
-                    required:
-                      - result
-                    type: object
-        '401':
-          description: Unauthorized.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/cc_V4BaseErrorResponse'
-        '500':
-          description: An internal error has occurred.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/cc_V4BaseErrorResponse'
-      security:
-        - api_token: []
-        - api_email: []
-          api_key: []
-      tags:
-        - Container Instance Groups
-      x-fern-sdk-group-name: containers.instance-groups
-      x-fern-sdk-method-name: list
-    parameters:
-      - $ref: '#/components/parameters/cc_AccountId'
-  /accounts/{account_id}/containers/instance-groups/{namespace_id}:
-    delete:
-      operationId: deleteContainerInstanceGroup
-      summary: Delete a Container Instance Group
-      description: Delete namespace configuration and remove its runtime metadata projection.
-      parameters:
-        - name: namespace_id
-          in: path
-          required: true
-          schema:
-            $ref: '#/components/schemas/cc_ContainerInstanceGroupNamespaceID'
-      responses:
-        '200':
-          description: The Container Instance Group was deleted or was already absent.
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/cc_V4BaseResponse'
-                  - properties:
-                      result:
-                        $ref: '#/components/schemas/cc_EmptyResponse'
-                    required:
-                      - result
-                    type: object
-        '401':
-          description: Unauthorized.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/cc_V4BaseErrorResponse'
-        '500':
-          description: An internal error has occurred.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/cc_V4BaseErrorResponse'
-      security:
-        - api_token: []
-        - api_email: []
-          api_key: []
-      tags:
-        - Container Instance Groups
-      x-fern-sdk-group-name: containers.instance-groups
-      x-fern-sdk-method-name: delete
-    get:
-      operationId: getContainerInstanceGroup
-      summary: Get a Container Instance Group
-      description: Returns the active Container Instance Group configured for a Durable Object namespace.
-      parameters:
-        - name: namespace_id
-          in: path
-          required: true
-          schema:
-            $ref: '#/components/schemas/cc_ContainerInstanceGroupNamespaceID'
-      responses:
-        '200':
-          description: A namespace-backed Container Instance Group.
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/cc_V4BaseResponse'
-                  - properties:
-                      result:
-                        $ref: '#/components/schemas/cc_ContainerInstanceGroup'
-                    required:
-                      - result
-                    type: object
-        '401':
-          description: Unauthorized.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/cc_V4BaseErrorResponse'
-        '404':
-          description: The namespace does not have an active Container Instance Group.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/cc_V4BaseErrorResponse'
-        '500':
-          description: An internal error has occurred.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/cc_V4BaseErrorResponse'
-      security:
-        - api_token: []
-        - api_email: []
-          api_key: []
-      tags:
-        - Container Instance Groups
-      x-fern-sdk-group-name: containers.instance-groups
-      x-fern-sdk-method-name: get
-    parameters:
-      - $ref: '#/components/parameters/cc_AccountId'
-    put:
-      operationId: putContainerInstanceGroup
-      summary: Create or replace a Container Instance Group
-      description: Creates or replaces the mutable policy for one Container-enabled Durable Object namespace.
-      parameters:
-        - name: namespace_id
-          in: path
-          required: true
-          schema:
-            $ref: '#/components/schemas/cc_ContainerInstanceGroupNamespaceID'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/cc_PutContainerInstanceGroupRequestBody'
-      responses:
-        '200':
-          description: The created or replaced Container Instance Group.
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/cc_V4BaseResponse'
-                  - properties:
-                      result:
-                        $ref: '#/components/schemas/cc_ContainerInstanceGroup'
-                    required:
-                      - result
-                    type: object
-        '400':
-          description: The Container Instance Group could not be created or replaced because of input or account limits.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/cc_V4BaseErrorResponse'
-        '401':
-          description: Unauthorized.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/cc_V4BaseErrorResponse'
-        '403':
-          description: The account does not have the required capability for this operation.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/cc_V4BaseErrorResponse'
-        '404':
-          description: The namespace does not have an active Container Instance Group.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/cc_V4BaseErrorResponse'
-        '500':
-          description: An internal error has occurred.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/cc_V4BaseErrorResponse'
-      security:
-        - api_token: []
-        - api_email: []
-          api_key: []
-      tags:
-        - Container Instance Groups
-      x-fern-sdk-group-name: containers.instance-groups
-      x-fern-sdk-method-name: update
-  /accounts/{account_id}/containers/instances/{instance_id}/ssh:
-    get:
-      operationId: containerWranglerSsh
-      summary: Get credentials to SSH into a Container
-      description: Get a JWT to hit the SSH port on a given container.
-      parameters:
-        - name: instance_id
-          in: path
-          description: The ID of the container instance. This is the same ID listed in Wrangler and the Cloudflare Dash.
-          required: true
-          schema:
-            $ref: '#/components/schemas/cc_InstanceID'
-      responses:
-        '200':
-          description: Credentials to SSH into a Container.
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/cc_V4BaseResponse'
-                  - properties:
-                      result:
-                        $ref: '#/components/schemas/cc_WranglerSSHResponse'
-                    required:
-                      - result
-                    type: object
-        '400':
-          description: Unknown account.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/cc_V4BaseErrorResponse'
-        '401':
-          description: Unauthorized.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/cc_V4BaseErrorResponse'
-        '404':
-          description: Deployment not found.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/cc_V4BaseErrorResponse'
-        '500':
-          description: An internal error has occurred.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/cc_V4BaseErrorResponse'
-        '503':
-          description: Instance exists but is not yet ready to use.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/cc_V4BaseErrorResponse'
-      security:
-        - api_token: []
-        - api_email: []
-          api_key: []
-      tags:
-        - Deployments
-      x-api-token-group:
-        - Workers Containers Write
-        - Workers Containers Read
-      x-fern-availability: generally-available
-      x-fern-sdk-group-name: containers.instances
-      x-fern-sdk-method-name: ssh
-    parameters:
-      - $ref: '#/components/parameters/cc_AccountId'
   /accounts/{account_id}/containers/registries:
     get:
       operationId: listImageRegistries
@@ -122758,6 +122500,10 @@ paths:
       x-api-token-group:
         - Zero Trust Read
         - Zero Trust Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.gateway.categories
+      x-fern-sdk-method-name: list
+      x-forge-hidden: true
   /accounts/{account_id}/gateway/certificates:
     get:
       operationId: zero-trust-certificates-list-zero-trust-certificates
@@ -122877,6 +122623,10 @@ paths:
           api_token: []
       tags:
         - Zero Trust certificates
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.gateway.certificates
+      x-fern-sdk-method-name: delete
+      x-forge-hidden: true
     get:
       operationId: zero-trust-certificates-zero-trust-certificate-details
       summary: Get Zero Trust certificate details
@@ -122914,6 +122664,10 @@ paths:
           api_token: []
       tags:
         - Zero Trust certificates
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.gateway.certificates
+      x-fern-sdk-method-name: get
+      x-forge-hidden: true
   /accounts/{account_id}/gateway/certificates/{certificate_id}/activate:
     post:
       operationId: zero-trust-certificates-activate-zero-trust-certificate
@@ -122955,6 +122709,10 @@ paths:
           api_token: []
       tags:
         - Zero Trust certificates
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.gateway.certificates
+      x-fern-sdk-method-name: activate
+      x-forge-hidden: true
   /accounts/{account_id}/gateway/certificates/{certificate_id}/deactivate:
     post:
       operationId: zero-trust-certificates-deactivate-zero-trust-certificate
@@ -123193,6 +122951,10 @@ paths:
         - Cloudflare Zero Trust Secure DNS Locations Write
         - Zero Trust Read
         - Zero Trust Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.gateway.dns-destination-ips
+      x-fern-sdk-method-name: list
+      x-forge-hidden: true
   /accounts/{account_id}/gateway/egress_cidr_pairs:
     get:
       operationId: zero-trust-accounts-get-egress-cidr-pairs
@@ -123228,6 +122990,10 @@ paths:
       x-api-token-group:
         - Zero Trust Read
         - Zero Trust Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.gateway.egress-cidr-pairs
+      x-fern-sdk-method-name: list
+      x-forge-hidden: true
   /accounts/{account_id}/gateway/lists:
     get:
       operationId: zero-trust-lists-list-zero-trust-lists
@@ -123320,6 +123086,10 @@ paths:
           api_token: []
       tags:
         - Zero Trust lists
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.gateway.lists
+      x-fern-sdk-method-name: create
+      x-forge-hidden: true
   /accounts/{account_id}/gateway/lists/{list_id}:
     delete:
       operationId: zero-trust-lists-delete-zero-trust-list
@@ -123403,6 +123173,10 @@ paths:
           api_token: []
       tags:
         - Zero Trust lists
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.gateway.lists
+      x-fern-sdk-method-name: get
+      x-forge-hidden: true
     patch:
       operationId: zero-trust-lists-patch-zero-trust-list
       summary: Patch Zero Trust list.
@@ -123552,6 +123326,10 @@ paths:
           api_token: []
       tags:
         - Zero Trust lists
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.gateway.lists.items
+      x-fern-sdk-method-name: list
+      x-forge-hidden: true
   /accounts/{account_id}/gateway/lists/upload:
     post:
       operationId: zero-trust-lists-create-zero-trust-list-from-csv
@@ -123598,6 +123376,10 @@ paths:
           api_token: []
       tags:
         - Zero Trust lists
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.gateway.lists
+      x-fern-sdk-method-name: upload
+      x-forge-hidden: true
   /accounts/{account_id}/gateway/locations:
     get:
       operationId: zero-trust-gateway-locations-list-zero-trust-gateway-locations
@@ -123635,6 +123417,10 @@ paths:
         - Cloudflare Zero Trust Secure DNS Locations Write
         - Zero Trust Read
         - Zero Trust Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.gateway.locations
+      x-fern-sdk-method-name: list
+      x-forge-hidden: true
     post:
       operationId: zero-trust-gateway-locations-create-zero-trust-gateway-location
       summary: Create a Zero Trust Gateway location
@@ -123787,6 +123573,10 @@ paths:
         - Cloudflare Zero Trust Secure DNS Locations Write
         - Zero Trust Read
         - Zero Trust Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.gateway.locations
+      x-fern-sdk-method-name: get
+      x-forge-hidden: true
     put:
       operationId: zero-trust-gateway-locations-update-zero-trust-gateway-location
       summary: Update a Zero Trust Gateway location
@@ -123967,6 +123757,10 @@ paths:
       x-api-token-group:
         - Zero Trust Read
         - Zero Trust Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.gateway.operations
+      x-fern-sdk-method-name: list
+      x-forge-hidden: true
   /accounts/{account_id}/gateway/operations/{operation_id}:
     get:
       operationId: zero-trust-gateway-operations-zero-trust-gateway-operation-details
@@ -124008,6 +123802,10 @@ paths:
       x-api-token-group:
         - Zero Trust Read
         - Zero Trust Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.gateway.operations
+      x-fern-sdk-method-name: get
+      x-forge-hidden: true
   /accounts/{account_id}/gateway/pacfiles:
     get:
       operationId: zero-trust-gateway-pacfiles-list
@@ -124392,6 +124190,10 @@ paths:
           api_token: []
       tags:
         - Zero Trust Gateway proxy endpoints
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.gateway.proxy-endpoints
+      x-fern-sdk-method-name: delete
+      x-forge-hidden: true
     get:
       operationId: zero-trust-gateway-proxy-endpoints-proxy-endpoint-details
       summary: Get a proxy endpoint
@@ -124482,6 +124284,10 @@ paths:
           api_token: []
       tags:
         - Zero Trust Gateway proxy endpoints
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.gateway.proxy-endpoints
+      x-fern-sdk-method-name: edit
+      x-forge-hidden: true
   /accounts/{account_id}/gateway/rules:
     get:
       operationId: zero-trust-gateway-rules-list-zero-trust-gateway-rules
@@ -124573,6 +124379,10 @@ paths:
           api_token: []
       tags:
         - Zero Trust Gateway rules
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.gateway.rules
+      x-fern-sdk-method-name: bulk-edit
+      x-forge-hidden: true
     post:
       operationId: zero-trust-gateway-rules-create-zero-trust-gateway-rule
       summary: Create a Zero Trust Gateway rule
@@ -124783,6 +124593,10 @@ paths:
           api_token: []
       tags:
         - Zero Trust Gateway rules
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.gateway.rules
+      x-fern-sdk-method-name: edit
+      x-forge-hidden: true
     put:
       operationId: zero-trust-gateway-rules-update-zero-trust-gateway-rule
       summary: Update a Zero Trust Gateway rule
@@ -124854,6 +124668,10 @@ paths:
           api_token: []
       tags:
         - Zero Trust Gateway rules
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.gateway.rules
+      x-fern-sdk-method-name: update
+      x-forge-hidden: true
   /accounts/{account_id}/gateway/rules/{rule_id}/reset_expiration:
     post:
       operationId: zero-trust-gateway-rules-reset-expiration-zero-trust-gateway-rule
@@ -124892,6 +124710,10 @@ paths:
           api_token: []
       tags:
         - Zero Trust Gateway rules
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.gateway.rules
+      x-fern-sdk-method-name: reset-expiration
+      x-forge-hidden: true
   /accounts/{account_id}/gateway/rules/tenant:
     get:
       operationId: zero-trust-gateway-rules-list-zero-trust-gateway-rules-tenant
@@ -178371,6 +178193,12 @@ paths:
             maxItems: 50
           explode: true
           style: form
+        - name: case_insensitive
+          in: query
+          description: 'Match `tag` keys and values case-insensitively. Stored casing is unchanged. Example: ?tag=environment=production&case_insensitive=true'
+          schema:
+            type: boolean
+            default: false
         - $ref: '#/components/parameters/resource-tagging_tag'
         - $ref: '#/components/parameters/resource-tagging_cursor'
       responses:
@@ -322159,7 +321987,7 @@ paths:
       operationId: ct-alerting-get-subscription
       summary: Get CT Alerting Subscription
       description: |
-        Retrieve the Certificate Transparency alerting subscription settings for a zone. Returns whether CT monitoring is enabled and, for Business and Enterprise zones, the list of email addresses that receive alerts.
+        Retrieve the Certificate Transparency alerting subscription settings for a zone. Returns whether CT monitoring is enabled and the list of email addresses that receive alerts, if any have been configured.
       parameters:
         - name: zone_id
           in: path
@@ -322204,8 +322032,9 @@ paths:
       summary: Update CT Alerting Subscription
       description: |
         Create or update the Certificate Transparency alerting subscription for a zone. Enables or disables email notifications when certificates are issued for the zone's domains.
-        For Free and Pro zones, the subscription is toggled on or off using the enabled field. Notification emails are sent to all users with SSL permissions on the zone.
-        For Business and Enterprise zones, the emails field is required and controls which addresses receive alerts. Setting emails to an empty list disables the subscription regardless of the enabled field. A maximum of 10 email addresses may be configured.
+        The `enabled` field is required on every request and controls whether the subscription is active. The `emails` field is optional and, when provided, replaces the stored recipient list for the zone. When `emails` is omitted, the stored recipient list is preserved and only the enabled state is toggled. A maximum of 100 email addresses may be configured per zone.
+        Requests that omit `enabled` are rejected with error code 1008.
+        Subscribe and unsubscribe notification emails are only sent for recipients whose effective subscription state changes. Idempotent requests (no state change) send no notification email.
       parameters:
         - name: zone_id
           in: path
@@ -373164,20 +372993,6 @@ components:
       properties:
         logs:
           $ref: '#/components/schemas/cc_ObservabilityLogs'
-        target_instance_count:
-          description: |
-            Fixed number of instances that should receive the application-level observability overlay.
-            Mutually exclusive with `target_instance_percentage`.
-          type: integer
-          minimum: 1
-        target_instance_percentage:
-          description: |
-            Percentage of instances that should receive the application-level observability overlay.
-            This rounds up so at least this percentage of instances is targeted.
-            Mutually exclusive with `target_instance_count`.
-          type: integer
-          maximum: 99
-          minimum: 1
     cc_ApplicationRollout:
       description: |
         Represents the status and metadata of a rollout process for an application.
@@ -373398,45 +373213,6 @@ components:
             - application_id
             - image
           type: object
-    cc_ContainerInstanceGroup:
-      description: Namespace-backed Container Instance Group configuration.
-      type: object
-      properties:
-        class_name:
-          type: string
-        generation:
-          type: integer
-          minimum: 1
-        name:
-          type: string
-        namespace_id:
-          $ref: '#/components/schemas/cc_ContainerInstanceGroupNamespaceID'
-        ssh:
-          $ref: '#/components/schemas/cc_ContainerInstanceGroupSSHConfiguration'
-      required:
-        - namespace_id
-        - class_name
-        - name
-        - generation
-    cc_ContainerInstanceGroupNamespaceID:
-      description: The Durable Object namespace ID that identifies a Container Instance Group.
-      type: string
-      example: 14758f1afd44c09b7992073ccf00b43d
-      maxLength: 32
-      minLength: 32
-      pattern: ^[a-f0-9]{32}$
-    cc_ContainerInstanceGroupSSHConfiguration:
-      description: SSH policy applied to instances in a namespace.
-      type: object
-      properties:
-        authorized_keys:
-          type: array
-          items:
-            $ref: '#/components/schemas/cc_UserSSHPublicKey'
-        enabled:
-          type: boolean
-          default: true
-      additionalProperties: false
     cc_ContainerInstanceID:
       description: A container instance ID (64-character hex Durable Object actor ID).
       type: string
@@ -373534,12 +373310,84 @@ components:
         - inactive
         - unknown
     cc_ContainersCreateApplicationRequest:
-      description: Create a new Containers application.
+      description: |
+        Create a Containers application. Set `scheduling_policy` to `default` for a
+        scheduler-backed application with deployment configuration, instance counts,
+        constraints, versions, and rollouts. Set it to `durable_object` for a
+        Durable Object-managed application where each Durable Object creates and manages
+        the lifecycle of its container instance. For `durable_object` requests, supply
+        only `name`, `scheduling_policy`, and `durable_objects`.
       oneOf:
         - $ref: '#/components/schemas/cc_ContainersCreateScheduledApplicationRequest'
         - $ref: '#/components/schemas/cc_ContainersCreateDurableObjectApplicationRequest'
+    cc_ContainersCreateApplicationRolloutRequest:
+      description: Request body to create a new rollout for a scheduler-backed application.
+      type: object
+      properties:
+        description:
+          description: Description of the rollout process.
+          type: string
+        kind:
+          description: |
+            Kind of the rollout process. Defaults to "full_auto".
+             - "full_auto": For rolling rollouts, starts progressing steps upon rollout creation. For new_instances rollouts, advances percentage targets automatically after target-version health is observed.
+             - "full_manual": Requires manually progressing each step in the rollout using the UpdateRollout's action parameter.
+          type: string
+          default: full_auto
+          enum:
+            - full_auto
+            - full_manual
+        percentage:
+          description: |
+            Initial target version percentage (0-100). Version sync actively replaces instances to match.
+            Required when strategy is "new_instances" and kind is "full_manual". When strategy is "new_instances" and kind is "full_auto", omitted percentage starts at 10% or the smallest percentage that targets at least one instance. Unused for "rolling".
+          type: integer
+          maximum: 100
+          minimum: 0
+        step_percentage:
+          description: |
+            Percentage of rollout to increase in each step when "steps" is absent. Applicable values: 5, 10, 20, 25, 50, 100.
+            These create rollouts with 20, 10, 5, 4, 2, 1 steps respectively.
+            Only valid for "rolling" strategy.
+          type: integer
+          enum:
+            - 5
+            - 10
+            - 20
+            - 25
+            - 50
+            - 100
+        steps:
+          description: |
+            Steps defining the rollout process, used when "step_percentage" is absent.
+            Specify only one of "step_percentage" or "steps" when creating a rollout.
+            "steps" allow granular control over each step.
+            Only valid for "rolling" strategy.
+          type: array
+          items:
+            $ref: '#/components/schemas/cc_RolloutStepRequest'
+        strategy:
+          description: |
+            Strategy used for the rollout.
+            - "rolling": Step-based rollout with health gates. Actively replaces instances to reach each step's target percentage.
+            - "new_instances": Percentage control over version distribution. Version sync actively replaces instances to match the configured percentage. The "full_auto" kind advances through fixed percentage targets after target-version health is observed.
+          type: string
+          enum:
+            - rolling
+            - new_instances
+        target_configuration:
+          $ref: '#/components/schemas/cc_ModifyUserDeploymentConfiguration'
+      required:
+        - target_configuration
+        - strategy
+        - description
     cc_ContainersCreateDurableObjectApplicationRequest:
-      description: Create a namespace-backed Containers application whose Durable Objects own its instances.
+      description: |
+        Create a Durable Object-managed Containers application. Each Durable Object
+        creates and manages the lifecycle of its container instance. Supply only `name`,
+        `scheduling_policy`, and `durable_objects`. Application-level deployment
+        configuration, instance counts, scaling, constraints, versions, and rollouts do
+        not apply.
       type: object
       properties:
         durable_objects:
@@ -373547,7 +373395,7 @@ components:
           allOf:
             - $ref: '#/components/schemas/cc_DurableObjectsConfiguration'
         name:
-          description: The name for this application
+          description: The name for this application.
           type: string
         scheduling_policy:
           $ref: '#/components/schemas/cc_DurableObjectApplicationSchedulingPolicy'
@@ -373590,30 +373438,33 @@ components:
         - auth
         - kind
     cc_ContainersCreateScheduledApplicationRequest:
-      description: Create a new scheduler-backed Containers application.
+      description: |
+        Create a scheduler-backed Containers application. The Containers scheduler
+        maintains the requested instance count and applies deployment configuration,
+        placement, scaling, versions, and rollouts.
       type: object
       properties:
         configuration:
           description: |
-            The deployment configuration of all deployments created by this application.
+            Defines the deployment configuration for every deployment in this application.
           allOf:
             - $ref: '#/components/schemas/cc_UserDeploymentConfiguration'
         constraints:
           $ref: '#/components/schemas/cc_ApplicationConstraints'
         durable_objects:
-          description: If set, it will make the container application back a durable object namespace.
+          description: Optionally associates this scheduler-backed application with a Durable Object namespace.
           allOf:
             - $ref: '#/components/schemas/cc_DurableObjectsConfiguration'
         instances:
-          description: Number of deployments to create
+          description: The initial number of deployments to create.
           type: integer
           minimum: 0
         max_instances:
-          description: Maximum number of instances that the application will allow.
+          description: Sets the maximum number of instances that the application can run.
           type: integer
           minimum: 0
         name:
-          description: The name for this application
+          description: The name for this application.
           type: string
         observability:
           description: |
@@ -373694,12 +373545,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/cc_UserSSHPublicKey'
-        trusted_user_ca_keys:
-          type: array
-          items:
-            $ref: '#/components/schemas/cc_UserSSHPublicKey'
-        wrangler_ssh:
-          $ref: '#/components/schemas/cc_WranglerSSHConfig'
     cc_ContainersModifyApplicationRequestBody:
       description: |
         Request body for modifying a Containers application without replacing its instances.
@@ -373722,67 +373567,6 @@ components:
             - $ref: '#/components/schemas/cc_ApplicationObservability'
         rollout_active_grace_period:
           $ref: '#/components/schemas/cc_ApplicationRolloutActiveGracePeriod'
-    cc_CreateApplicationRolloutRequest:
-      description: Request body to create a new rollout for an application.
-      type: object
-      properties:
-        description:
-          description: Description of the rollout process.
-          type: string
-        kind:
-          description: |
-            Kind of the rollout process.
-             - "full_auto": For rolling rollouts, starts progressing steps upon rollout creation. For new_instances rollouts, advances percentage targets automatically after target-version health is observed.
-             - "full_manual": Requires manually progressing each step in the rollout using the UpdateRollout's action paramater.
-            For "new_instances" strategy, omit "kind" to preserve manual percentage behavior, or set "full_auto" to start an automatic 10% health-gated ramp.
-          type: string
-          enum:
-            - full_auto
-            - full_manual
-        percentage:
-          description: |
-            Initial target version percentage (0-100). Version sync actively replaces instances to match.
-            Required when strategy is "new_instances" and kind is "full_manual". When strategy is "new_instances" and kind is "full_auto", omitted percentage starts at 10% or the smallest percentage that targets at least one instance. Unused for "rolling".
-          type: integer
-          maximum: 100
-          minimum: 0
-        step_percentage:
-          description: |
-            Percentage of rollout to increase in each step when "steps" is absent. Applicable values: 5, 10, 20, 25, 50, 100.
-            These create rollouts with 20, 10, 5, 4, 2, 1 steps respectively.
-            Only valid for "rolling" strategy.
-          type: integer
-          enum:
-            - 5
-            - 10
-            - 20
-            - 25
-            - 50
-            - 100
-        steps:
-          description: |
-            Steps defining the rollout process, used when "step_percentage" is absent.
-            Specify only one of "step_percentage" or "steps" when creating a rollout.
-            "steps" allow granular control over each step.
-            Only valid for "rolling" strategy.
-          type: array
-          items:
-            $ref: '#/components/schemas/cc_RolloutStepRequest'
-        strategy:
-          description: |
-            Strategy used for the rollout.
-            - "rolling": Step-based rollout with health gates. Actively replaces instances to reach each step's target percentage.
-            - "new_instances": Percentage control over version distribution. Version sync actively replaces instances to match the configured percentage. The "full_auto" kind advances through fixed percentage targets after target-version health is observed.
-          type: string
-          enum:
-            - rolling
-            - new_instances
-        target_configuration:
-          $ref: '#/components/schemas/cc_ModifyUserDeploymentConfiguration'
-      required:
-        - target_configuration
-        - strategy
-        - description
     cc_CustomerImageRegistry:
       description: An image registry added in a customer account.
       type: object
@@ -373805,27 +373589,6 @@ components:
       required:
         - domain
         - created_at
-    cc_DNSConfiguration:
-      description: |
-        Represents the /etc/resolv.conf that appears in the deployment.
-        Setting the 'dns' property, even to an empty object, overrides the default resolv.conf of the container.
-        The default resolv.conf of a container is 'servers = ["1.1.1.1", "9.9.9.9", "2606:4700:4700::1111"]', only if an IPv4 is assigned.
-        The default for a non IPv4 deployment is 'servers = ["2606:4700:4700::1111", "2620:fe::fe"]'.
-      type: object
-      properties:
-        searches:
-          description: |
-            The container resolver appends these domains to every resolve query. For example, if you have 'google.com',
-            and your deployment queries 'web', it appends 'google.com' to 'web' in the search query before trying 'web'.
-            Limited to 6 domains.
-          type: array
-          items:
-            $ref: '#/components/schemas/cc_Domain'
-        servers:
-          description: List of DNS servers the deployment uses to resolve domain names. You can only specify a maximum of 3.
-          type: array
-          items:
-            $ref: '#/components/schemas/cc_IP'
     cc_DefaultImageRegistryKind:
       type: string
       enum:
@@ -373841,7 +373604,7 @@ components:
       type: string
       example: docker.io
     cc_DurableObjectApplication:
-      description: Durable Objects own and configure this namespace-backed application's instances.
+      description: Each Durable Object creates and manages the lifecycle of its container instance.
       type: object
       properties:
         account_id:
@@ -373867,7 +373630,11 @@ components:
         - scheduling_policy
         - durable_objects
     cc_DurableObjectApplicationSchedulingPolicy:
-      description: Selects Durable Objects to own and schedule application instances.
+      description: |
+        Selects a Durable Object-managed application. Each Durable Object creates and
+        manages the lifecycle of its container instance. Application-level deployment
+        configuration, scaling, placement constraints, versions, and rollouts do not
+        apply.
       type: string
       enum:
         - durable_object
@@ -373899,9 +373666,6 @@ components:
       required:
         - script_name
         - class_name
-    cc_EmptyResponse:
-      description: An empty response body.
-      type: object
     cc_Entrypoint:
       description: |
         The entry point for the container, specifying the executable to run when the container starts.
@@ -373984,10 +373748,6 @@ components:
         - ECR
         - DockerHub
         - GAR
-    cc_IP:
-      description: A string representation of an IP, either v6 or v4.
-      type: string
-      example: 192.1.1.1
     cc_ISO8601Timestamp:
       description: UTC timestamp string in ISO 8601 format.
       type: string
@@ -374040,11 +373800,6 @@ components:
             - standard-3
             - standard-4
           type: string
-    cc_ListContainerInstanceGroups:
-      description: Lists active Container Instance Groups for the account.
-      type: array
-      items:
-        $ref: '#/components/schemas/cc_ContainerInstanceGroup'
     cc_LocationID:
       description: Unique location code used to identify locations on a logical level.
       type: string
@@ -374080,8 +373835,6 @@ components:
             $ref: '#/components/schemas/cc_UserSSHPublicKey'
         command:
           $ref: '#/components/schemas/cc_Command'
-        dns:
-          $ref: '#/components/schemas/cc_DNSConfiguration'
         entrypoint:
           $ref: '#/components/schemas/cc_Entrypoint'
         environment_variables:
@@ -374095,12 +373848,6 @@ components:
           $ref: '#/components/schemas/cc_InstanceType'
         observability:
           $ref: '#/components/schemas/cc_DeploymentObservability'
-        trusted_user_ca_keys:
-          type: array
-          items:
-            $ref: '#/components/schemas/cc_UserSSHPublicKey'
-        wrangler_ssh:
-          $ref: '#/components/schemas/cc_WranglerSSHConfig'
     cc_ObservabilityLogs:
       description: Observability logging settings.
       type: object
@@ -374145,20 +373892,6 @@ components:
       additionalProperties: false
       required:
         - image
-    cc_PutContainerInstanceGroupRequestBody:
-      description: Complete mutable configuration for one namespace-backed Container Instance Group.
-      type: object
-      properties:
-        class_name:
-          type: string
-        name:
-          type: string
-        ssh:
-          $ref: '#/components/schemas/cc_ContainerInstanceGroupSSHConfiguration'
-      additionalProperties: false
-      required:
-        - class_name
-        - name
     cc_Region:
       description: |
         Represents a group of datacenters. Choose one of "AFR", "APAC", "EEUR", "ENAM", "WNAM", "ME", "OC", "SAM", or "WEUR".
@@ -374228,7 +373961,7 @@ components:
       description: An SSH public key.
       type: string
     cc_ScheduledApplication:
-      description: The Cloudchamber scheduler manages this application's instances.
+      description: The Containers scheduler manages this application's instances, configuration, versions, and rollouts.
       allOf:
         - $ref: '#/components/schemas/cc_Application'
         - properties:
@@ -374238,7 +373971,10 @@ components:
             - scheduling_policy
           type: object
     cc_ScheduledApplicationSchedulingPolicy:
-      description: The scheduling policy to use for a scheduler-backed application.
+      description: |
+        Selects a scheduler-backed application. Use `default` when the Containers
+        scheduler should maintain the requested number of instances and manage deployment
+        configuration, placement, scaling, versions, and rollouts.
       type: string
       enum:
         - default
@@ -374281,8 +374017,6 @@ components:
             $ref: '#/components/schemas/cc_UserSSHPublicKey'
         command:
           $ref: '#/components/schemas/cc_Command'
-        dns:
-          $ref: '#/components/schemas/cc_DNSConfiguration'
         entrypoint:
           $ref: '#/components/schemas/cc_Entrypoint'
         environment_variables:
@@ -374296,12 +374030,6 @@ components:
           $ref: '#/components/schemas/cc_InstanceType'
         observability:
           $ref: '#/components/schemas/cc_DeploymentObservability'
-        trusted_user_ca_keys:
-          type: array
-          items:
-            $ref: '#/components/schemas/cc_UserSSHPublicKey'
-        wrangler_ssh:
-          $ref: '#/components/schemas/cc_WranglerSSHConfig'
       required:
         - image
     cc_UserSSHPublicKey:
@@ -374377,28 +374105,6 @@ components:
         - success
         - errors
         - messages
-    cc_WranglerSSHConfig:
-      description: Configuration properties for connecting with SSH to a container using Wrangler.
-      type: object
-      properties:
-        enabled:
-          type: boolean
-          default: true
-        port:
-          type: integer
-          default: 22
-          maximum: 65535
-          minimum: 1
-    cc_WranglerSSHResponse:
-      type: object
-      properties:
-        token:
-          type: string
-        url:
-          type: string
-      required:
-        - url
-        - token
     client-side-security_api-get-response-collection:
       type: object
       allOf:
@@ -416857,6 +416563,7 @@ components:
       example: a7b9c3d2e8f4g1h5i6j0k9l2m3n7o4p8
       pattern: ^[a-f0-9]{32}$
       title: Organization ID
+      x-auditable: true
     organizations-api_PageTokenResultInfo:
       type: object
       properties:
@@ -445148,7 +444855,7 @@ components:
       x-auditable: true
     tls-certificates-and-hostnames_ct_alerting_emails:
       description: |
-        Email addresses that receive CT alert notifications. Only present and configurable for Business and Enterprise zones. Maximum of 10 addresses. For Free and Pro zones, notifications are sent to all users with SSL permissions on the zone.
+        Email addresses that receive CT alert notifications for the zone. A maximum of 100 addresses may be configured. Each address must be a valid RFC 5322 email address and must not contain a comma.
       type: array
       items:
         format: email
@@ -445156,7 +444863,7 @@ components:
       example:
         - security@example.com
         - admin@example.com
-      maxItems: 10
+      maxItems: 100
     tls-certificates-and-hostnames_ct_alerting_enabled:
       description: Whether CT alerting is enabled for the zone.
       type: boolean
@@ -445658,7 +445365,10 @@ components:
             - example:
                 - code: 7003
                   message: No route for the URI
+              items:
+                type: object
               minItems: 1
+              type: array
         messages:
           $ref: '#/components/schemas/tls-certificates-and-hostnames_custom_hostname_response_messages'
         result:
@@ -470419,11 +470129,9 @@ x-forge-commands:
       applications.instances:
         description: Inspect Containers instances belonging to applications
       applications.rollouts:
-        description: Manage application rollouts
+        description: Manage rollouts for scheduler-backed applications
       applications.versions:
-        description: Inspect application versions
-      instances:
-        description: Inspect Containers instances
+        description: Inspect versions of scheduler-backed applications
       registries:
         description: Manage Containers image registries
       registries.credentials:
@@ -470500,7 +470208,7 @@ x-forge-commands:
       ua-rules:
         description: Block or challenge requests based on the User-Agent header string
       waf:
-        description: Legacy WAF package management (deprecated)
+        description: Legacy WAF managed rule packages, rule groups, individual rules, and override configurations
       zone-access-rules:
         description: Zone-scoped IP access rules for blocking or allowing traffic
   google-tag-gateway:
