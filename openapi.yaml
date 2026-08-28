@@ -18330,7 +18330,7 @@ paths:
                                     default: true
                                   id:
                                     type: string
-                                    default: 8d3c0eee
+                                    default: efd8ff90
                                     minLength: 1
                                     pattern: ^[a-zA-Z0-9_-]+$
                                   limit:
@@ -18991,7 +18991,7 @@ paths:
                                   default: true
                                 id:
                                   type: string
-                                  default: b9d5798a
+                                  default: c8fec1b5
                                   minLength: 1
                                   pattern: ^[a-zA-Z0-9_-]+$
                                 limit:
@@ -27436,7 +27436,7 @@ paths:
                                   default: true
                                 id:
                                   type: string
-                                  default: c513138f
+                                  default: 501dd3d7
                                   minLength: 1
                                   pattern: ^[a-zA-Z0-9_-]+$
                                 limit:
@@ -27996,7 +27996,7 @@ paths:
                                   default: true
                                 id:
                                   type: string
-                                  default: 41b869f1
+                                  default: 2e1efbae
                                   minLength: 1
                                   pattern: ^[a-zA-Z0-9_-]+$
                                 limit:
@@ -28535,7 +28535,7 @@ paths:
                             default: true
                           id:
                             type: string
-                            default: b6f43add
+                            default: cfe8b81b
                             minLength: 1
                             pattern: ^[a-zA-Z0-9_-]+$
                           limit:
@@ -29019,7 +29019,7 @@ paths:
                                   default: true
                                 id:
                                   type: string
-                                  default: 8e4f81ea
+                                  default: 390cf51b
                                   minLength: 1
                                   pattern: ^[a-zA-Z0-9_-]+$
                                 limit:
@@ -29226,6 +29226,232 @@ paths:
       x-fern-sdk-group-name: ai-gateway.gateways
       x-fern-sdk-method-name: update
       x-forge-hidden: true
+  /accounts/{account_id}/ai-gateway/logging-state:
+    get:
+      operationId: aig-config-get-logging-state
+      summary: Get AI Gateway logging state
+      description: Returns the canonical logging platform and migration availability for an account.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns the account logging state
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      migrated_at:
+                        type: integer
+                        minimum: 0
+                        nullable: true
+                      migration_available:
+                        type: boolean
+                      platform:
+                        type: string
+                        enum:
+                          - legacy
+                          - workers_observability
+                    required:
+                      - platform
+                      - migrated_at
+                      - migration_available
+                  success:
+                    type: boolean
+                required:
+                  - success
+                  - result
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                      required:
+                        - message
+                      type: object
+                  result:
+                    type: object
+                  success:
+                    type: boolean
+                    example: false
+                required:
+                  - result
+                  - success
+                  - errors
+        '503':
+          description: Logging state is temporarily unavailable
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                      required:
+                        - code
+                        - message
+                      type: object
+                  result:
+                    type: object
+                  success:
+                    type: boolean
+                required:
+                  - success
+                  - result
+                  - errors
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Account
+      x-api-token-group:
+        - AI Gateway Write
+        - AI Gateway Read
+      x-cfPermissionsRequired:
+        enum:
+          - com.cloudflare.api.account.aig
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: true
+        pro: true
+      x-fern-sdk-group-name: ai-gateway.logging-state
+      x-fern-sdk-method-name: get
+    patch:
+      operationId: aig-config-patch-logging-state
+      summary: Migrate AI Gateway logging to Workers Observability
+      description: Irreversibly migrates an eligible account to Workers Observability logging.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns the migrated account logging state
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      migrated_at:
+                        type: integer
+                        minimum: 0
+                        nullable: true
+                      migration_available:
+                        type: boolean
+                      platform:
+                        type: string
+                        enum:
+                          - legacy
+                          - workers_observability
+                    required:
+                      - platform
+                      - migrated_at
+                      - migration_available
+                  success:
+                    type: boolean
+                required:
+                  - success
+                  - result
+        '409':
+          description: Migration is not available for this account
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                      required:
+                        - code
+                        - message
+                      type: object
+                  result:
+                    type: object
+                  success:
+                    type: boolean
+                required:
+                  - success
+                  - result
+                  - errors
+        '503':
+          description: Logging state is temporarily unavailable
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                      required:
+                        - code
+                        - message
+                      type: object
+                  result:
+                    type: object
+                  success:
+                    type: boolean
+                required:
+                  - success
+                  - result
+                  - errors
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Account
+      x-api-token-group:
+        - AI Gateway Write
+      x-cfPermissionsRequired:
+        enum:
+          - com.cloudflare.api.account.aig
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: true
+        pro: true
+      x-fern-sdk-group-name: ai-gateway.logging-state
+      x-fern-sdk-method-name: update
   /accounts/{account_id}/ai-search/instances:
     get:
       operationId: ai-search-list-instances
@@ -472801,6 +473027,8 @@ x-forge-commands:
         description: Available evaluator types for scoring AI gateway responses (accuracy, toxicity, etc.)
       evaluations:
         description: Run quality evaluations against gateway logs or datasets to score model outputs
+      logging-state:
+        description: Inspect and migrate the logging platform used by an AI Gateway account
       logs:
         description: Inspect individual request/response pairs that passed through the gateway
       provider-configs:
