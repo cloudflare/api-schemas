@@ -214413,6 +214413,12 @@ paths:
               - asc
               - desc
           explode: false
+        - name: include_tags
+          in: query
+          description: Include Account tags from the resource tag mirror. Omit this parameter to preserve the existing Account response shape.
+          schema:
+            type: boolean
+          explode: false
         - $ref: '#/components/parameters/organizations-api_PageTokenParamsPageToken'
         - $ref: '#/components/parameters/organizations-api_PageTokenParamsPageSize'
       responses:
@@ -418852,6 +418858,11 @@ components:
             - abuse_contact_email
             - use_account_custom_ns_by_default
             - default_nameservers
+        tags:
+          description: Account tags, present only when `include_tags=true` is requested.
+          type: object
+          additionalProperties:
+            type: string
         type:
           type: string
           enum:
