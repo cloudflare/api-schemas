@@ -74080,12 +74080,6 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/tunnel_tunnel_id'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
       responses:
         '200':
           description: Delete a Cloudflare Tunnel response
@@ -74340,12 +74334,6 @@ paths:
           in: query
           schema:
             $ref: '#/components/schemas/tunnel_client_id'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
       responses:
         '200':
           description: Clean up Cloudflare Tunnel connections response
@@ -119441,6 +119429,10 @@ paths:
         enterprise: true
         free: false
         pro: true
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: email-sending
+      x-fern-sdk-method-name: get
+      x-forge-hidden: true
   /accounts/{account_id}/email/sending/send:
     post:
       operationId: email-sending-account-send-builder
@@ -119709,7 +119701,7 @@ paths:
         free: false
         pro: true
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: email_sending
+      x-fern-sdk-group-name: email-sending
       x-fern-sdk-method-name: send
   /accounts/{account_id}/email/sending/send_raw:
     post:
@@ -119979,8 +119971,8 @@ paths:
         free: false
         pro: true
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: email_sending
-      x-fern-sdk-method-name: send_raw
+      x-fern-sdk-group-name: email-sending
+      x-fern-sdk-method-name: send-raw
   /accounts/{account_id}/email/sending/suppression:
     get:
       operationId: get_publicListSuppressionSending
@@ -181574,10 +181566,6 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/tunnel_account_id'
-      requestBody:
-        required: true
-        content:
-          application/json: {}
       responses:
         '200':
           description: Delete a virtual network response
@@ -193116,12 +193104,6 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/tunnel_tunnel_id'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
       responses:
         '200':
           description: Delete a Warp Connector Tunnel response
@@ -394434,6 +394416,9 @@ components:
               - message
             type: object
         result:
+          type: object
+          enum:
+            - null
           nullable: true
         success:
           type: boolean
