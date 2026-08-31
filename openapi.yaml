@@ -137292,6 +137292,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/dos_api-response-common'
+        4XX:
+          description: Delete all DNS Protection rules failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dos_api-response-common-failure'
       security:
         - api_token: []
         - api_email: []
@@ -138048,6 +138054,10 @@ paths:
         - dos-flowtrackd-api_other
       x-api-token-group:
         - DDoS Protection Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: magic-transit.advanced-tcp-protection.configs.prefixes
+      x-fern-sdk-method-name: delete
+      x-forge-hidden: true
     get:
       operationId: getPrefix
       summary: Get prefix.
@@ -391474,12 +391484,14 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/dos_DnsProtectionRule'
+          type: object
     dos_dns-protection-rule-response:
       allOf:
         - $ref: '#/components/schemas/dos_api-response-common'
         - properties:
             result:
               $ref: '#/components/schemas/dos_DnsProtectionRule'
+          type: object
     dos_expression-filter-list-response:
       allOf:
         - $ref: '#/components/schemas/dos_api-response-collection'
@@ -391488,12 +391500,14 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/dos_ExpressionFilter'
+          type: object
     dos_expression-filter-response:
       allOf:
         - $ref: '#/components/schemas/dos_api-response-common'
         - properties:
             result:
               $ref: '#/components/schemas/dos_ExpressionFilter'
+          type: object
     dos_identifier:
       description: Identifier.
       type: string
@@ -391508,12 +391522,14 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/dos_InfraPrefix'
+          type: object
     dos_infra-prefix-response:
       allOf:
         - $ref: '#/components/schemas/dos_api-response-common'
         - properties:
             result:
               $ref: '#/components/schemas/dos_InfraPrefix'
+          type: object
     dos_messages:
       type: array
       items:
@@ -391544,18 +391560,21 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/dos_Prefix'
+          type: object
     dos_prefix-response:
       allOf:
         - $ref: '#/components/schemas/dos_api-response-common'
         - properties:
             result:
               $ref: '#/components/schemas/dos_Prefix'
+          type: object
     dos_protection-status-response:
       allOf:
         - $ref: '#/components/schemas/dos_api-response-common'
         - properties:
             result:
               $ref: '#/components/schemas/dos_ProtectionStatus'
+          type: object
     dos_syn-protection-rule-list-response:
       allOf:
         - $ref: '#/components/schemas/dos_api-response-collection'
@@ -391564,12 +391583,14 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/dos_SynProtectionRule'
+          type: object
     dos_syn-protection-rule-response:
       allOf:
         - $ref: '#/components/schemas/dos_api-response-common'
         - properties:
             result:
               $ref: '#/components/schemas/dos_SynProtectionRule'
+          type: object
     dos_tcp-flow-protection-rule-list-response:
       allOf:
         - $ref: '#/components/schemas/dos_api-response-collection'
@@ -391578,12 +391599,14 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/dos_TcpFlowProtectionRule'
+          type: object
     dos_tcp-flow-protection-rule-response:
       allOf:
         - $ref: '#/components/schemas/dos_api-response-common'
         - properties:
             result:
               $ref: '#/components/schemas/dos_TcpFlowProtectionRule'
+          type: object
     dos_timestamp:
       type: string
       format: date-time
@@ -473273,6 +473296,10 @@ x-forge-commands:
   magic-transit:
     description: DDoS-protected network transit — GRE/IPsec tunnels, static routes, Magic WAN sites, connectors, and packet captures
     groups:
+      advanced-dns-protection:
+        description: Advanced Dns Protection operations
+      advanced-tcp-protection:
+        description: Advanced Tcp Protection operations
       apps:
         description: Application-aware traffic policies for Magic WAN that steer traffic by app type
       bgp-filter-profiles:
