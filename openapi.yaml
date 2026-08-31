@@ -165033,7 +165033,7 @@ paths:
           application/json:
             examples:
               bulk_check:
-                description: Check the same name across multiple supported extensions
+                description: Check the same name across multiple supported extensions.
                 summary: Bulk check across domain extensions
                 value:
                   domains:
@@ -165063,7 +165063,7 @@ paths:
             application/json:
               examples:
                 all_available:
-                  description: Unique names may be available across domain extensions
+                  description: Unique names may remain available across domain extensions.
                   summary: All domains available
                   value:
                     errors: []
@@ -165086,7 +165086,7 @@ paths:
                           tier: standard
                     success: true
                 all_unavailable:
-                  description: Common names are often already registered
+                  description: Every requested domain is unavailable.
                   summary: All domains taken
                   value:
                     errors: []
@@ -165104,7 +165104,7 @@ paths:
                           registrable: false
                     success: true
                 mixed_availability:
-                  description: Some domains available, some taken
+                  description: The response includes both available and already-taken domains.
                   summary: Mixed availability results
                   value:
                     errors: []
@@ -165189,11 +165189,12 @@ paths:
                 $ref: '#/components/schemas/registrar-api-sandbox_domain_check_response'
         '400':
           description: |
-            Invalid request parameters. Common causes:
-            - Empty `domains` array
-            - Exceeds maximum of 20 domains per request
-            - Malformed request body
-            - None of the provided domains are valid
+            Invalid request parameters.
+            Common causes include:
+            - Empty `domains` array.
+            - More than 20 domains per request.
+            - Malformed request body.
+            - Zero valid domains after validation.
           content:
             application/json:
               examples:
@@ -165321,7 +165322,7 @@ paths:
             application/json:
               examples:
                 brand_search:
-                  description: Searching for a brand or company name
+                  description: Searching for a brand or company name.
                   summary: Brand name search - "acme corp"
                   value:
                     errors: []
@@ -165351,7 +165352,7 @@ paths:
                           tier: standard
                     success: true
                 extension_filtered_search:
-                  description: Searching with extensions=com,net limits results to those domain extensions
+                  description: Searching with extensions=com,net limits results to those domain extensions.
                   summary: Search with domain extension filter
                   value:
                     errors: []
@@ -165381,7 +165382,7 @@ paths:
                           tier: standard
                     success: true
                 keyword_search:
-                  description: Searching for a keyword phrase returns relevant domain suggestions
+                  description: Searching for a keyword phrase returns relevant domain suggestions.
                   summary: Keyword search - "coffee shop"
                   value:
                     errors: []
@@ -165418,7 +165419,7 @@ paths:
                           tier: standard
                     success: true
                 no_results:
-                  description: When no registrable domains match the search
+                  description: When no registrable domains match the search.
                   summary: No available domains found
                   value:
                     errors: []
@@ -165460,10 +165461,11 @@ paths:
                 $ref: '#/components/schemas/registrar-api-sandbox_domain_search_response'
         '400':
           description: |
-            Invalid request parameters. Common causes:
-            - Missing required `q` parameter
-            - Query exceeds 100 character limit
-            - Invalid extension format
+            Invalid request parameters.
+            Common causes include:
+            - Missing required `q` parameter.
+            - Query exceeds 100 character limit.
+            - Invalid extension format.
           content:
             application/json:
               examples:
@@ -165654,9 +165656,7 @@ paths:
         - $ref: '#/components/parameters/registrar-api-sandbox_cursor_pagination_direction'
         - name: sort_by
           in: query
-          description: |
-            Column to sort results by. Defaults to registration date
-            (`registry_created_at`) when omitted.
+          description: Column to sort results by. Defaults to registration date (`registry_created_at`) when omitted.
           schema:
             type: string
             default: registry_created_at
@@ -165965,9 +165965,9 @@ paths:
             examples:
               ca_with_contact_extensions:
                 description: |
-                  .ca registrations require a registrant legal type. Provide the
-                  required value in `contact_extensions` as described by the live
-                  .ca registration schema.
+                  CA registrations require a registrant legal type.
+                  Provide the required value in `contact_extensions` as described
+                  by the live .ca registration schema.
                 summary: Register a .ca domain with legal type
                 value:
                   auto_renew: false
@@ -165989,12 +165989,7 @@ paths:
                   domain_name: my-brand-example.ca
                   years: 1
               io_with_role_contacts:
-                description: |
-                  Some extension schemas accept additional standard contact roles
-                  such as `technical`, `administrator`, and `billing`. When these
-                  roles are provided explicitly, Cloudflare preserves the supplied
-                  role-specific contact data instead of deriving it from
-                  `contacts.registrant`.
+                description: Some extension schemas accept additional standard contact roles such as `technical`, `administrator`, and `billing`. When these roles are provided explicitly, Cloudflare preserves the supplied role-specific contact data instead of deriving it from `contacts.registrant`.
                 summary: Register with explicit role contacts
                 value:
                   auto_renew: false
@@ -166051,11 +166046,11 @@ paths:
                   years: 1
               minimal:
                 description: |
-                  The simplest registration request. All defaults apply:
-                  - `years` defaults to the extension's minimum registration period (typically 1 year)
-                  - `auto_renew` defaults to `false`
-                  - `privacy_mode` defaults to `redaction`
-                  - Registrant contact falls back to the account's default address book entry
+                  The simplest registration request uses the following defaults.
+                  - `years` defaults to the extension's minimum registration period (typically 1 year).
+                  - `auto_renew` defaults to `false`.
+                  - `privacy_mode` defaults to `redaction`.
+                  - Registrant contact falls back to the account's default address book entry.
                 summary: Minimal registration — just a domain name
                 value:
                   domain_name: my-new-startup.com
@@ -166945,7 +166940,7 @@ paths:
           application/json:
             examples:
               bulk_check:
-                description: Check the same name across multiple supported extensions
+                description: Check the same name across multiple supported extensions.
                 summary: Bulk check across domain extensions
                 value:
                   domains:
@@ -166975,7 +166970,7 @@ paths:
             application/json:
               examples:
                 all_available:
-                  description: Unique names may be available across domain extensions
+                  description: Unique names may remain available across domain extensions.
                   summary: All domains available
                   value:
                     errors: []
@@ -166998,7 +166993,7 @@ paths:
                           tier: standard
                     success: true
                 all_unavailable:
-                  description: Common names are often already registered
+                  description: Every requested domain is unavailable.
                   summary: All domains taken
                   value:
                     errors: []
@@ -167016,7 +167011,7 @@ paths:
                           registrable: false
                     success: true
                 mixed_availability:
-                  description: Some domains available, some taken
+                  description: The response includes both available and already-taken domains.
                   summary: Mixed availability results
                   value:
                     errors: []
@@ -167101,11 +167096,12 @@ paths:
                 $ref: '#/components/schemas/registrar-api_domain_check_response'
         '400':
           description: |
-            Invalid request parameters. Common causes:
-            - Empty `domains` array
-            - Exceeds maximum of 20 domains per request
-            - Malformed request body
-            - None of the provided domains are valid
+            Invalid request parameters.
+            Common causes include:
+            - Empty `domains` array.
+            - More than 20 domains per request.
+            - Malformed request body.
+            - Zero valid domains after validation.
           content:
             application/json:
               examples:
@@ -167233,7 +167229,7 @@ paths:
             application/json:
               examples:
                 brand_search:
-                  description: Searching for a brand or company name
+                  description: Searching for a brand or company name.
                   summary: Brand name search - "acme corp"
                   value:
                     errors: []
@@ -167263,7 +167259,7 @@ paths:
                           tier: standard
                     success: true
                 extension_filtered_search:
-                  description: Searching with extensions=com,net limits results to those domain extensions
+                  description: Searching with extensions=com,net limits results to those domain extensions.
                   summary: Search with domain extension filter
                   value:
                     errors: []
@@ -167293,7 +167289,7 @@ paths:
                           tier: standard
                     success: true
                 keyword_search:
-                  description: Searching for a keyword phrase returns relevant domain suggestions
+                  description: Searching for a keyword phrase returns relevant domain suggestions.
                   summary: Keyword search - "coffee shop"
                   value:
                     errors: []
@@ -167330,7 +167326,7 @@ paths:
                           tier: standard
                     success: true
                 no_results:
-                  description: When no registrable domains match the search
+                  description: When no registrable domains match the search.
                   summary: No available domains found
                   value:
                     errors: []
@@ -167372,10 +167368,11 @@ paths:
                 $ref: '#/components/schemas/registrar-api_domain_search_response'
         '400':
           description: |
-            Invalid request parameters. Common causes:
-            - Missing required `q` parameter
-            - Query exceeds 100 character limit
-            - Invalid extension format
+            Invalid request parameters.
+            Common causes include:
+            - Missing required `q` parameter.
+            - Query exceeds 100 character limit.
+            - Invalid extension format.
           content:
             application/json:
               examples:
@@ -167415,7 +167412,7 @@ paths:
     get:
       operationId: registrar-domains-list-domains
       summary: List domains
-      description: List domains handled by Registrar.
+      description: Lists domains handled by Registrar.
       parameters:
         - name: account_id
           in: path
@@ -167424,13 +167421,13 @@ paths:
             $ref: '#/components/schemas/registrar-api_identifier'
       responses:
         '200':
-          description: List domains response
+          description: List domains response.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/registrar-api_domain_response_collection'
         4XX:
-          description: List domains response failure
+          description: List domains response failure.
           content:
             application/json:
               schema:
@@ -167467,13 +167464,13 @@ paths:
             $ref: '#/components/schemas/registrar-api_identifier'
       responses:
         '200':
-          description: Get domain response
+          description: Get domain response.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/registrar-api_domain_response_single'
         4XX:
-          description: Get domain response failure
+          description: Get domain response failure.
           content:
             application/json:
               schema:
@@ -167495,7 +167492,7 @@ paths:
     put:
       operationId: registrar-domains-update-domain
       summary: Update domain
-      description: Update individual domain.
+      description: Updates an individual domain.
       parameters:
         - name: domain_name
           in: path
@@ -167516,13 +167513,13 @@ paths:
                 - $ref: '#/components/schemas/registrar-api_domain_update_properties'
       responses:
         '200':
-          description: Update domain response
+          description: Update domain response.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/registrar-api_domain_response_single'
         4XX:
-          description: Update domain response failure
+          description: Update domain response failure.
           content:
             application/json:
               schema:
@@ -167696,9 +167693,7 @@ paths:
         - $ref: '#/components/parameters/registrar-api_cursor_pagination_direction'
         - name: sort_by
           in: query
-          description: |
-            Column to sort results by. Defaults to registration date
-            (`registry_created_at`) when omitted.
+          description: Column to sort results by. Defaults to registration date (`registry_created_at`) when omitted.
           schema:
             type: string
             default: registry_created_at
@@ -168019,9 +168014,9 @@ paths:
             examples:
               ca_with_contact_extensions:
                 description: |
-                  .ca registrations require a registrant legal type. Provide the
-                  required value in `contact_extensions` as described by the live
-                  .ca registration schema.
+                  CA registrations require a registrant legal type.
+                  Provide the required value in `contact_extensions` as described
+                  by the live .ca registration schema.
                 summary: Register a .ca domain with legal type
                 value:
                   auto_renew: false
@@ -168043,12 +168038,7 @@ paths:
                   domain_name: my-brand-example.ca
                   years: 1
               io_with_role_contacts:
-                description: |
-                  Some extension schemas accept additional standard contact roles
-                  such as `technical`, `administrator`, and `billing`. When these
-                  roles are provided explicitly, Cloudflare preserves the supplied
-                  role-specific contact data instead of deriving it from
-                  `contacts.registrant`.
+                description: Some extension schemas accept additional standard contact roles such as `technical`, `administrator`, and `billing`. When these roles are provided explicitly, Cloudflare preserves the supplied role-specific contact data instead of deriving it from `contacts.registrant`.
                 summary: Register with explicit role contacts
                 value:
                   auto_renew: false
@@ -168105,11 +168095,11 @@ paths:
                   years: 1
               minimal:
                 description: |
-                  The simplest registration request. All defaults apply:
-                  - `years` defaults to the extension's minimum registration period (typically 1 year)
-                  - `auto_renew` defaults to `false`
-                  - `privacy_mode` defaults to `redaction`
-                  - Registrant contact falls back to the account's default address book entry
+                  The simplest registration request uses the following defaults.
+                  - `years` defaults to the extension's minimum registration period (typically 1 year).
+                  - `auto_renew` defaults to `false`.
+                  - `privacy_mode` defaults to `redaction`.
+                  - Registrant contact falls back to the account's default address book entry.
                 summary: Minimal registration — just a domain name
                 value:
                   domain_name: my-new-startup.com
@@ -429350,10 +429340,12 @@ components:
         - properties:
             result:
               type: array
-              items: {}
+              items:
+                type: object
               nullable: true
             result_info:
               $ref: '#/components/schemas/registrar-api-sandbox_result_info'
+          type: object
     registrar-api-sandbox_api-response-common:
       type: object
       properties:
@@ -429369,7 +429361,7 @@ components:
               type: array
             - type: string
         success:
-          description: Whether the API call was successful
+          description: Whether the API call was successful.
           type: boolean
           example: true
           enum:
@@ -429399,7 +429391,7 @@ components:
             - null
           nullable: true
         success:
-          description: Whether the API call was successful
+          description: Whether the API call was successful.
           type: boolean
           example: false
           enum:
@@ -429417,6 +429409,7 @@ components:
             result:
               type: object
               nullable: true
+          type: object
     registrar-api-sandbox_auto_renew:
       description: Auto-renew controls whether subscription is automatically renewed upon domain expiration.
       type: boolean
@@ -429427,7 +429420,7 @@ components:
       type: boolean
       example: false
     registrar-api-sandbox_can_register:
-      description: Indicates if the domain can be registered as a new domain.
+      description: Indicates eligibility to register the domain as a new domain.
       type: boolean
       example: false
     registrar-api-sandbox_city:
@@ -429500,10 +429493,10 @@ components:
       example: Cloudflare
     registrar-api-sandbox_cursor_result_info:
       description: |
-        Cursor-based pagination metadata. Used by list endpoints that support
-        cursor pagination. Pass the `cursor` value as a query parameter in the
-        next request to fetch the next page. An empty string indicates there
-        are no more pages.
+        Provides cursor-based pagination metadata. List endpoints use this
+        metadata for cursor pagination. Pass the `cursor` value as a query
+        parameter in the next request to fetch the next page. An empty string
+        indicates the end of pagination.
       type: object
       properties:
         count:
@@ -429514,7 +429507,7 @@ components:
           description: |
             Opaque cursor for fetching the next page. Pass this value as the
             `cursor` query parameter in a subsequent request. An empty string
-            indicates there are no more pages.
+            indicates the end of pagination.
           type: string
           example: eyJ0IjoiMjAyNS0wNi0xNVQxMjowMDowMC4wMDAwMDBaIiwibiI6ImJyYXZvLm5ldCJ9
         per_page:
@@ -429532,10 +429525,10 @@ components:
         domains:
           description: |
             List of fully qualified domain names (FQDNs) to check for availability. Each domain must include the extension.
-            - Minimum: 1 domain
-            - Maximum: 20 domains per request
-            - Domains on unsupported extensions are returned with `registrable: false` and a `reason` field
-            - Malformed domain names (e.g., missing extension) may be omitted from the response
+            - Minimum: 1 domain.
+            - Maximum: 20 domains per request.
+            - The response returns domains on unsupported extensions with `registrable: false` and a `reason` field.
+            - The response may omit malformed domain names (e.g., names missing an extension).
           type: array
           items:
             type: string
@@ -429556,9 +429549,9 @@ components:
               properties:
                 domains:
                   description: |
-                    Array of domain availability results. Domains on unsupported
-                    extensions are included with `registrable: false` and a `reason`
-                    field. Malformed domain names may be omitted.
+                    Array of domain availability results. Results for unsupported
+                    extensions contain `registrable: false` and a `reason`
+                    field. The response may omit malformed domain names.
                   type: array
                   items:
                     $ref: '#/components/schemas/registrar-api-sandbox_domain_check_result'
@@ -429568,7 +429561,7 @@ components:
             - result
           type: object
     registrar-api-sandbox_domain_check_result:
-      description: Represents a single authoritative domain availability result returned by the Check endpoint. Check results reflect current registry status and should be used immediately before registration.
+      description: Describes a single authoritative domain availability result from the Check endpoint. Check results reflect current registry status; use them immediately before registration.
       type: object
       properties:
         name:
@@ -429579,12 +429572,12 @@ components:
           $ref: '#/components/schemas/registrar-api-sandbox_pricing'
         reason:
           description: |-
-            Present only when `registrable` is `false`. Explains why the domain cannot be registered via this API.
-            - `extension_not_supported_via_api`: Cloudflare Registrar supports this extension in the dashboard but it is not yet available for programmatic registration via this API. The user can register via `https://dash.cloudflare.com/{account_id}/domains/registrations`.
-            - `extension_not_supported`: This extension is not supported by Cloudflare Registrar at all.
-            - `extension_disallows_registration`: The extension's registry has temporarily or permanently frozen new registrations. No registrar can register domains on this extension at this time.
-            - `domain_premium`: The domain is premium priced. Premium registration is not currently supported by this API.
-            - `domain_unavailable`: The domain is already registered, reserved, or otherwise not available on a supported extension.
+            Appears only when `registrable` is `false` and explains the result.
+            - `extension_not_supported_via_api`: Cloudflare Registrar supports this extension in the dashboard but currently excludes it from programmatic registration through this API. The user can register via `https://dash.cloudflare.com/{account_id}/domains/registrations`.
+            - `extension_not_supported`: Cloudflare Registrar excludes this extension entirely.
+            - `extension_disallows_registration`: The extension's registry temporarily or permanently freezes new registrations. Registrars currently cannot register domains on this extension.
+            - `domain_premium`: The domain carries premium pricing. This API currently supports standard registrations only.
+            - `domain_unavailable`: An existing registration, reservation, or other registry restriction makes the domain unavailable on a supported extension.
           type: string
           example: domain_unavailable
           enum:
@@ -429595,16 +429588,16 @@ components:
             - domain_unavailable
         registrable:
           description: |-
-            Indicates whether this domain can be registered programmatically through this API based on a real-time registry check.
-            - `true`: Domain is available for registration. The `pricing` object will be included.
-            - `false`: Domain is not available. See the `reason` field for why. `tier` may still be present on some non-registrable results, such as premium domains.
+            Indicates programmatic registration eligibility according to a real-time registry check.
+            - `true`: The domain is available for registration. The response includes the `pricing` object.
+            - `false`: A restriction prevents registration. See the `reason` field for details. Some results, such as premium domains, may still include `tier`.
           type: boolean
           example: true
         tier:
           description: |-
-            The pricing tier for this domain. Always present when `registrable` is `true`; defaults to `standard` for most domains. May be absent when `registrable` is `false`.
-            - `standard`: Standard registry pricing
-            - `premium`: Premium domain with higher pricing set by the registry
+            The pricing tier for this domain. A `registrable` value of `true` always includes this field, which defaults to `standard` for most domains. A `registrable` value of `false` may omit it.
+            - `standard`: Standard registry pricing.
+            - `premium`: Premium domain with higher pricing from the registry.
           type: string
           example: standard
           enum:
@@ -429621,10 +429614,10 @@ components:
       readOnly: true
     registrar-api-sandbox_domain_name:
       description: |
-        Fully qualified domain name (FQDN) including the extension
-        (e.g., `example.com`, `mybrand.app`). The domain name uniquely
-        identifies a registration — the same domain cannot be registered
-        twice, making it a natural idempotency key for registration requests.
+        Provides a fully qualified domain name (FQDN), including the extension
+        (e.g., `example.com`, `mybrand.app`). The domain name uniquely identifies
+        a registration. Cloudflare permits only one registration per domain, making
+        the domain name a natural idempotency key for registration requests.
       type: string
       example: example.com
       x-auditable: true
@@ -429663,12 +429656,14 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/registrar-api-sandbox_domains'
+          type: object
     registrar-api-sandbox_domain_response_single:
       allOf:
         - $ref: '#/components/schemas/registrar-api-sandbox_api-response-single'
         - properties:
             result:
               type: object
+          type: object
     registrar-api-sandbox_domain_search_response:
       allOf:
         - $ref: '#/components/schemas/registrar-api-sandbox_api-response-common'
@@ -429678,7 +429673,7 @@ components:
               type: object
               properties:
                 domains:
-                  description: Array of domain suggestions sorted by relevance. May be empty if no domains match the search criteria.
+                  description: Lists domain suggestions in relevance order. An empty array indicates that the search criteria matched zero domains.
                   type: array
                   items:
                     $ref: '#/components/schemas/registrar-api-sandbox_domain_search_result'
@@ -429688,7 +429683,7 @@ components:
             - result
           type: object
     registrar-api-sandbox_domain_search_result:
-      description: Represents a single domain suggestion returned by the Search endpoint. Search results are non-authoritative and may be based on cached data. Use POST /domain-check to confirm real-time availability and pricing before registration.
+      description: Describes a single domain suggestion from the Search endpoint. Search results use non-authoritative data that may come from a cache. Use POST /domain-check to confirm real-time availability and pricing before registration.
       type: object
       properties:
         name:
@@ -429699,11 +429694,11 @@ components:
           $ref: '#/components/schemas/registrar-api-sandbox_pricing'
         reason:
           description: |-
-            Present only when `registrable` is `false` on search results. Explains why the domain does not appear registrable through this API. These values are advisory; use POST /domain-check for authoritative status.
-            - `extension_not_supported_via_api`: Cloudflare Registrar supports this extension in the dashboard but it is not yet available for programmatic registration via this API.
-            - `extension_not_supported`: This extension is not supported by Cloudflare Registrar at all.
-            - `extension_disallows_registration`: The extension's registry has temporarily or permanently frozen new registrations.
-            - `domain_premium`: The domain is premium priced. Premium registration is not currently supported by this API.
+            Appears only when `registrable` is `false` and explains the advisory search result. Use POST /domain-check for authoritative status.
+            - `extension_not_supported_via_api`: Cloudflare Registrar supports this extension in the dashboard but currently excludes it from programmatic registration through this API.
+            - `extension_not_supported`: Cloudflare Registrar excludes this extension entirely.
+            - `extension_disallows_registration`: The extension's registry temporarily or permanently freezes new registrations.
+            - `domain_premium`: The domain carries premium pricing. This API currently supports standard registrations only.
             - `domain_unavailable`: The domain appears unavailable.
           type: string
           example: domain_unavailable
@@ -429715,17 +429710,19 @@ components:
             - domain_unavailable
         registrable:
           description: |-
-            Indicates whether this domain appears available based on search data. Search results are non-authoritative and may be stale. - `true`: The domain appears available. Use POST /domain-check to confirm before registration.
-            - `false`: The domain does not appear available in search results.
+            Indicates domain availability according to potentially stale, non-authoritative search data.
+            - `true`: The domain appears available. Use POST /domain-check to confirm before registration.
+            - `false`: Search results mark the domain ineligible for registration through this API. See `reason` for details.
           type: boolean
           example: true
         tier:
           description: |
-            The pricing tier for this domain. Always present when `registrable` is `true`;
-            defaults to `standard` for most domains. May be absent when `registrable`
-            is `false`.
-            - `standard`: Standard registry pricing
-            - `premium`: Premium domain with higher pricing set by the registry
+            The pricing tier for this domain.
+            A `registrable` value of `true` always
+            includes this field, which defaults to `standard` for most domains. A
+            `registrable` value of `false` may omit it.
+            - `standard`: Standard registry pricing.
+            - `premium`: Premium domain with higher pricing from the registry.
           type: string
           example: standard
           enum:
@@ -429762,14 +429759,14 @@ components:
       type: object
       properties:
         metadata:
-          description: Extension metadata
+          description: Extension metadata.
           type: object
           properties:
             name:
-              description: The full name of the extension. For example, "co.uk", or "uk"
+              description: The full name of the extension. For example, "co.uk", or "uk".
               type: string
             tld:
-              description: The tld of the extension. For example, for "co.uk", it's "uk". For "uk", it's "uk"
+              description: The TLD of the extension. For example, for "co.uk", it is "uk". For "uk", it is "uk".
               type: string
           required:
             - name
@@ -429814,19 +429811,19 @@ components:
       type: string
       example: 123-867-5309
     registrar-api-sandbox_first_name:
-      description: User's first name
+      description: User's first name.
       type: string
       example: John
       maxLength: 60
       nullable: true
     registrar-api-sandbox_identifier:
-      description: Identifier
+      description: Identifier.
       type: string
       example: 023e105f4ecef8ad9ca31a8372d0c353
       maxLength: 32
       readOnly: true
     registrar-api-sandbox_last_name:
-      description: User's last name
+      description: User's last name.
       type: string
       example: Appleseed
       maxLength: 60
@@ -429845,6 +429842,15 @@ components:
             minimum: 1000
           message:
             type: string
+          source:
+            description: Location of the invalid value that caused the error.
+            type: object
+            properties:
+              pointer:
+                description: JSON Pointer to the invalid or missing request value.
+                type: string
+            required:
+              - pointer
         required:
           - code
           - message
@@ -429857,18 +429863,17 @@ components:
       example: Cloudflare, Inc.
     registrar-api-sandbox_pricing:
       description: |
-        Annual pricing information for a registrable domain. This object is only
-        present when `registrable` is `true`. All prices are per year and returned
-        as strings to preserve decimal precision.
+        Provides annual pricing information for a registrable domain. This object
+        appears only when `registrable` is `true`. The API returns all per-year
+        prices as strings to preserve decimal precision.
 
-        `registration_cost` and `renewal_cost` are frequently the same value, but
-        may differ — especially for premium domains where registries set different
-        rates for initial registration vs. renewal. For a multi-year registration
-        (e.g., 4 years), the first year is charged at `registration_cost` and each
-        subsequent year at `renewal_cost`. Registry pricing may change over time;
-        the values returned here reflect the current registry rate. Premium pricing
-        may be surfaced by Search and Check, but premium registration is not currently
-        supported by this API.
+        `registration_cost` and `renewal_cost` frequently have the same value, but
+        may differ, especially when registries set different premium rates for
+        initial registration and renewal. For a multi-year registration (e.g., 4
+        years), `registration_cost` applies to the first year and `renewal_cost`
+        applies to each subsequent year. The values reflect the current registry
+        rate, which may change over time. Search and Check may surface premium
+        pricing, but this API currently supports standard registrations only.
       type: object
       properties:
         currency:
@@ -429878,10 +429883,9 @@ components:
         registration_cost:
           description: |
             The first-year cost to register this domain. For premium domains
-            (`tier: premium`), this price is set by the registry and may be
-            significantly higher than standard pricing. For multi-year
-            registrations, this cost applies to the first year only; subsequent
-            years are charged at `renewal_cost`.
+            (`tier: premium`), the registry sets this price, which may significantly
+            exceed standard pricing. For multi-year registrations, this cost applies
+            to the first year only; `renewal_cost` applies to subsequent years.
           type: string
           example: '8.57'
         renewal_cost:
@@ -429911,7 +429915,7 @@ components:
       type: object
       properties:
         auto_renew:
-          description: Whether the domain will be automatically renewed before expiration.
+          description: Whether automatic renewal occurs before expiration.
           type: boolean
           example: true
         created_at:
@@ -429922,7 +429926,7 @@ components:
         domain_name:
           $ref: '#/components/schemas/registrar-api-sandbox_domain_name'
         expires_at:
-          description: When the domain registration expires. Present when the registration is ready; may be null only while `status` is `registration_pending`.
+          description: When the domain registration expires. Ready registrations include this value; only `registration_pending` may return null.
           type: string
           format: date-time
           example: 2026-01-15T10:00:00Z
@@ -429941,12 +429945,12 @@ components:
         status:
           description: |
             Current registration status.
-            - `active`: Domain is registered and operational
-            - `registration_pending`: Registration is in progress
-            - `expired`: Domain has expired
-            - `suspended`: Domain is suspended by the registry
-            - `redemption_period`: Domain is in the redemption grace period
-            - `pending_delete`: Domain is pending deletion by the registry
+            - `active`: The domain operates with an active registration.
+            - `registration_pending`: Registration remains in progress.
+            - `expired`: The domain registration expired.
+            - `suspended`: The registry suspended the domain.
+            - `redemption_period`: The domain entered the redemption grace period.
+            - `pending_delete`: The registry scheduled the domain for deletion.
           type: string
           example: active
           enum:
@@ -430007,10 +430011,7 @@ components:
           type: string
           example: '+1.5555555555'
         phone:
-          description: |
-            Phone number in E.164 format: `+{country_code}.{number}` with no
-            spaces or dashes. Examples: `+1.5555555555` (US), `+44.2071234567`
-            (UK), `+81.312345678` (Japan).
+          description: 'Phone number in E.164 format: `+{country_code}.{number}` without spaces or dashes. Examples: `+1.5555555555` (US), `+44.2071234567` (UK), `+81.312345678` (Japan).'
           type: string
           example: '+1.5555555555'
         postal_info:
@@ -430061,12 +430062,7 @@ components:
         address:
           $ref: '#/components/schemas/registrar-api-sandbox_registration_contact_address'
         name:
-          description: |
-            Full legal name of the contact, including all required name components
-            for an individual or authorized representative. Some registries require
-            a complete personal name that includes a family or last name where
-            applicable. Provide the complete name in this single field, for example
-            `Ada Lovelace`; do not send separate first-name or last-name fields.
+          description: Full legal name of the contact, including all required name components for an individual or authorized representative. Some registries require a complete personal name that includes a family or last name where applicable. Provide the complete name in this single field, for example `Ada Lovelace`; do not send separate first-name or last-name fields.
           type: string
           example: Ada Lovelace
         organization:
@@ -430078,45 +430074,63 @@ components:
         - address
     registrar-api-sandbox_registration_contacts:
       description: |
-        Contact data for the registration request.
+        Provides contact data for the registration request.
 
-        The per-extension schema returned by
-        `GET /accounts/{account_id}/registrar/extensions/{extension}` is the
-        authoritative contract for which contact roles are accepted. Every
-        currently supported extension requires only `contacts.registrant` from
-        API callers. Additional roles such as `technical`, `administrator`, and
-        `billing` may be provided when the extension schema includes them. If a
-        registry requires one of those roles and the caller omits it, Cloudflare
+        The per-extension schema from
+        `GET /accounts/{account_id}/registrar/extensions/{extension}` defines the
+        accepted contact roles. Every currently supported extension requires only
+        `contacts.registrant` from API callers. Callers may provide additional roles
+        such as `technical`, `administrator`, and `billing` when the extension
+        schema includes them. When a registry requires an omitted role, Cloudflare
         may derive that contact from `contacts.registrant`.
 
-        If the `contacts` object is omitted entirely from the request, or if
-        `contacts.registrant` is not provided, the system will use the account's
-        default address book entry as the registrant contact. This default must be
-        pre-configured by the account owner at
-        `https://dash.cloudflare.com/{account_id}/domains/registrations`, where
-        they can create or update the address book entry and accept the required
-        agreement. No API exists for managing address book entries at this time.
+        When the request omits either the entire `contacts` object or
+        `contacts.registrant`, the system uses the account's default address book
+        entry as the registrant contact. The account owner must configure this
+        default at `https://dash.cloudflare.com/{account_id}/domains/registrations`,
+        where they can create or update the address book entry and accept the
+        required agreement. Dashboard settings currently provide the only way to
+        manage address book entries.
 
-        If no default address book entry exists and no registrant contact is
-        provided, the registration request will fail with a validation error.
+        Without either a default address book entry or a registrant contact, the
+        registration request fails validation.
       type: object
       properties:
         administrator:
-          $ref: '#/components/schemas/registrar-api-sandbox_registration_contact'
+          description: |
+            Optional administrator contact. Accepted only when the extension
+            schema includes this role. When the registry requires an omitted
+            contact, Cloudflare may derive it from `contacts.registrant`.
+          allOf:
+            - $ref: '#/components/schemas/registrar-api-sandbox_registration_contact'
         billing:
-          $ref: '#/components/schemas/registrar-api-sandbox_registration_contact'
+          description: |
+            Optional billing contact. Accepted only when the extension schema
+            includes this role. When the registry requires an omitted contact,
+            Cloudflare may derive it from `contacts.registrant`.
+          allOf:
+            - $ref: '#/components/schemas/registrar-api-sandbox_registration_contact'
         registrant:
-          $ref: '#/components/schemas/registrar-api-sandbox_registration_contact'
+          description: |
+            Optional registrant contact. If omitted, the account's default
+            address book entry is used instead.
+          allOf:
+            - $ref: '#/components/schemas/registrar-api-sandbox_registration_contact'
         technical:
-          $ref: '#/components/schemas/registrar-api-sandbox_registration_contact'
+          description: |
+            Optional technical contact. Accepted only when the extension schema
+            includes this role. When the registry requires an omitted contact,
+            Cloudflare may derive it from `contacts.registrant`.
+          allOf:
+            - $ref: '#/components/schemas/registrar-api-sandbox_registration_contact'
     registrar-api-sandbox_registration_create_request:
       type: object
       properties:
         acknowledgements:
           description: |
-            User acknowledgements required by a specific extension or premium
-            registration flow. The expected keys are described by the extension
-            registration schema returned by the extension discovery endpoint.
+            Provides user acknowledgements for a specific extension or premium
+            registration flow. The extension registration schema from the
+            extension discovery endpoint identifies the required keys.
           type: object
           example:
             fees:
@@ -430136,14 +430150,14 @@ components:
           default: false
         contact_extensions:
           description: |
-            Registry-specific contact extension values for the registrant. The
-            required keys and allowed values vary by extension and are described
-            by `GET /accounts/{account_id}/registrar/extensions/{extension}` in
-            the `registration_schema.properties.contact_extensions` object.
+            Provides registry-specific contact extension values for the registrant.
+            `GET /accounts/{account_id}/registrar/extensions/{extension}` identifies
+            the required keys and allowed values for each extension in the
+            `registration_schema.properties.contact_extensions` object.
 
             Examples include `.us` nexus fields, `.uk` registrant type fields,
-            and `.ca` legal type fields. Omit this object for extensions whose
-            registration schema does not include `contact_extensions`.
+            and `.ca` legal type fields. Omit this object when the extension's
+            registration schema excludes `contact_extensions`.
           type: object
           example:
             application_purpose: P3
@@ -430155,10 +430169,10 @@ components:
           $ref: '#/components/schemas/registrar-api-sandbox_domain_name'
         privacy_mode:
           description: |
-            WHOIS privacy mode for the registration. Defaults to `redaction`.
-            - `off`: Do not request WHOIS privacy.
-            - `redaction`: Request WHOIS redaction where supported by the extension.
-              Some extensions do not support privacy/redaction.
+            Sets the WHOIS privacy mode for the registration. Defaults to `redaction`.
+            - `off`: Disables WHOIS privacy.
+            - `redaction`: Requests WHOIS redaction where the extension supports it.
+              Some extensions exclude privacy and redaction.
           type: string
           example: redaction
           default: redaction
@@ -430167,16 +430181,14 @@ components:
             - redaction
         years:
           description: |
-            Number of years to register (1–10). If omitted, defaults to the
-            minimum registration period required by the registry for this
-            extension. For most extensions this is 1 year, but some extensions
-            require longer minimum terms (e.g., `.ai` requires a minimum of
-            2 years).
+            Sets the registration term from 1 to 10 years. When omitted, this
+            field defaults to the registry's minimum registration period for the
+            extension. Most extensions require 1 year, while some require longer
+            minimum terms (e.g., `.ai` requires 2 years).
 
-            The registry for each extension may also enforce its own maximum
-            registration term. If the requested value exceeds the registry's
-            maximum, the registration will be rejected. When in doubt, use the
-            default by omitting this field.
+            Each registry may also enforce its own maximum registration term. A
+            request above that maximum fails. When uncertain, omit this field to
+            use the default.
           type: integer
           example: 1
           maximum: 10
@@ -430201,26 +430213,26 @@ components:
           example: true
       minProperties: 1
     registrar-api-sandbox_registry_statuses:
-      description: A comma-separated list of registry status codes. A full list of status codes can be found at [EPP Status Codes](https://www.icann.org/resources/pages/epp-status-codes-2014-06-16-en).
+      description: A comma-separated list of registry status codes. Refer to [EPP Status Codes](https://www.icann.org/resources/pages/epp-status-codes-2014-06-16-en) for the full list.
       type: string
       example: ok,serverTransferProhibited
     registrar-api-sandbox_result_info:
       type: object
       properties:
         count:
-          description: Total number of results for the requested service
+          description: Total number of results for the requested service.
           type: number
           example: 1
         page:
-          description: Current page within paginated list of results
+          description: Current page within paginated list of results.
           type: number
           example: 1
         per_page:
-          description: Number of results per page of results
+          description: Number of results per page of results.
           type: number
           example: 20
         total_count:
-          description: Total results available without any search parameters
+          description: Total results available without any search parameters.
           type: number
           example: 2000
     registrar-api-sandbox_state:
@@ -430228,11 +430240,11 @@ components:
       type: string
       example: TX
     registrar-api-sandbox_supported_tld:
-      description: Whether a particular TLD is currently supported by Cloudflare Registrar. Refer to [TLD Policies](https://www.cloudflare.com/tld-policies/) for a list of supported TLDs.
+      description: Indicates whether Cloudflare Registrar currently supports a particular TLD. Refer to [TLD Policies](https://www.cloudflare.com/tld-policies/) for a list of supported TLDs.
       type: boolean
       example: true
     registrar-api-sandbox_telephone:
-      description: User's telephone number
+      description: User's telephone number.
       type: string
       example: +1 123-123-1234
       maxLength: 20
@@ -430241,14 +430253,14 @@ components:
       description: Statuses for domain transfers into Cloudflare Registrar.
       properties:
         accept_foa:
-          description: Form of authorization has been accepted by the registrant.
+          description: Status of the registrant authorization step.
           type: string
           example: needed
           enum:
             - needed
             - ok
         approve_transfer:
-          description: Shows transfer status with the registry.
+          description: Status of the registry transfer-approval step.
           type: string
           example: unknown
           enum:
@@ -430263,7 +430275,7 @@ components:
           type: boolean
           example: true
         disable_privacy:
-          description: Privacy guards are disabled at the foreign registrar.
+          description: Status of the privacy-guard disabling step at the foreign registrar.
           type: string
           example: ok
           enum:
@@ -430271,7 +430283,7 @@ components:
             - ok
             - unknown
         enter_auth_code:
-          description: Auth code has been entered and verified.
+          description: Status of the auth-code entry and verification step.
           type: string
           example: needed
           enum:
@@ -430281,7 +430293,7 @@ components:
             - trying
             - rejected
         unlock_domain:
-          description: Domain is unlocked at the foreign registrar.
+          description: Status of the domain-unlock step at the foreign registrar.
           type: string
           example: ok
           enum:
@@ -430303,13 +430315,7 @@ components:
               $ref: '#/components/schemas/registrar-api-sandbox_workflow_status'
           type: object
     registrar-api-sandbox_workflow_error:
-      description: |
-        Error details when a workflow reaches the `failed` state. The specific
-        error codes and messages depend on the workflow type (registration,
-        update, etc.) and the underlying registry response. These workflow
-        error codes are separate from immediate HTTP error `errors[].code`
-        values returned by non-2xx responses. Surface
-        `error.message` to the user for context.
+      description: Provides error details when a workflow reaches the `failed` state. The workflow type (registration, update, etc.) and underlying registry response determine the specific codes and messages. Workflow error codes differ from immediate HTTP error `errors[].code` values in non-2xx responses. Surface `error.message` to the user for context.
       type: object
       properties:
         code:
@@ -430341,18 +430347,15 @@ components:
       type: object
       properties:
         completed:
-          description: |
-            Whether the workflow has reached a terminal state. `true` when
-            `state` is `succeeded` or `failed`. `false` for `pending`,
-            `in_progress`, `action_required`, and `blocked`.
+          description: Indicates whether the workflow reached a terminal state. A `succeeded` or `failed` state returns `true`; `pending`, `in_progress`, `action_required`, and `blocked` return `false`.
           type: boolean
           example: false
         context:
           description: |
-            Workflow-specific data for this workflow.
+            Provides workflow-specific data.
 
-            The workflow subject is identified by `context.domain_name` for
-            domain-centric workflows.
+            For domain-centric workflows, `context.domain_name` identifies the
+            workflow subject.
           type: object
           additionalProperties: true
         created_at:
@@ -430367,25 +430370,22 @@ components:
           $ref: '#/components/schemas/registrar-api-sandbox_workflow_links'
         state:
           description: |
-            Workflow lifecycle state.
-            - `pending`: Workflow has been created but not yet started processing.
-            - `in_progress`: Actively processing. Continue polling `links.self`.
-              The workflow has an internal deadline and will not remain in this
-              state indefinitely.
-            - `action_required`: Paused — requires action by the user (not the
-              system). See `context.action` for what is needed. An automated
-              polling loop must break on this state; it will not resolve on its
-              own without user intervention.
-            - `blocked`: The workflow cannot make progress due to a third party
-              such as the domain extension's registry or a losing registrar.
-              No user action will help. Continue polling — the block may resolve
-              when the third party responds.
-            - `succeeded`: Terminal. The operation completed successfully.
-              `completed` will be `true`. For registrations, `context.registration`
-              contains the resulting registration resource.
-            - `failed`: Terminal. The operation failed. `completed` will be `true`.
-              See `error.code` and `error.message` for the reason. Do not
-              auto-retry without user review.
+            Describes the workflow lifecycle state.
+            - `pending`: The workflow awaits processing.
+            - `in_progress`: Processing started. Continue polling `links.self`.
+              An internal deadline limits the duration of this state.
+            - `action_required`: The workflow pauses for user action. See
+              `context.action` for details. Stop automated polling until the user
+              completes the required action.
+            - `blocked`: A third party, such as the domain extension's registry or
+              a losing registrar, prevents progress. Continue polling because the
+              block may resolve when the third party responds.
+            - `succeeded`: Terminal state. The operation completed successfully.
+              `completed` equals `true`. For registrations,
+              `context.registration` contains the resulting registration resource.
+            - `failed`: Terminal state. The operation failed. `completed` equals
+              `true`. See `error.code` and `error.message` for the reason. Require
+              user review before retrying.
           type: string
           example: in_progress
           enum:
@@ -430425,10 +430425,12 @@ components:
         - properties:
             result:
               type: array
-              items: {}
+              items:
+                type: object
               nullable: true
             result_info:
               $ref: '#/components/schemas/registrar-api_result_info'
+          type: object
     registrar-api_api-response-common:
       type: object
       properties:
@@ -430444,7 +430446,7 @@ components:
               type: array
             - type: string
         success:
-          description: Whether the API call was successful
+          description: Whether the API call was successful.
           type: boolean
           example: true
           enum:
@@ -430474,7 +430476,7 @@ components:
             - null
           nullable: true
         success:
-          description: Whether the API call was successful
+          description: Whether the API call was successful.
           type: boolean
           example: false
           enum:
@@ -430492,6 +430494,7 @@ components:
             result:
               type: object
               nullable: true
+          type: object
     registrar-api_auto_renew:
       description: Auto-renew controls whether subscription is automatically renewed upon domain expiration.
       type: boolean
@@ -430502,7 +430505,7 @@ components:
       type: boolean
       example: false
     registrar-api_can_register:
-      description: Indicates if the domain can be registered as a new domain.
+      description: Indicates eligibility to register the domain as a new domain.
       type: boolean
       example: false
     registrar-api_city:
@@ -430575,10 +430578,10 @@ components:
       example: Cloudflare
     registrar-api_cursor_result_info:
       description: |
-        Cursor-based pagination metadata. Used by list endpoints that support
-        cursor pagination. Pass the `cursor` value as a query parameter in the
-        next request to fetch the next page. An empty string indicates there
-        are no more pages.
+        Provides cursor-based pagination metadata. List endpoints use this
+        metadata for cursor pagination. Pass the `cursor` value as a query
+        parameter in the next request to fetch the next page. An empty string
+        indicates the end of pagination.
       type: object
       properties:
         count:
@@ -430589,7 +430592,7 @@ components:
           description: |
             Opaque cursor for fetching the next page. Pass this value as the
             `cursor` query parameter in a subsequent request. An empty string
-            indicates there are no more pages.
+            indicates the end of pagination.
           type: string
           example: eyJ0IjoiMjAyNS0wNi0xNVQxMjowMDowMC4wMDAwMDBaIiwibiI6ImJyYXZvLm5ldCJ9
         per_page:
@@ -430607,10 +430610,10 @@ components:
         domains:
           description: |
             List of fully qualified domain names (FQDNs) to check for availability. Each domain must include the extension.
-            - Minimum: 1 domain
-            - Maximum: 20 domains per request
-            - Domains on unsupported extensions are returned with `registrable: false` and a `reason` field
-            - Malformed domain names (e.g., missing extension) may be omitted from the response
+            - Minimum: 1 domain.
+            - Maximum: 20 domains per request.
+            - The response returns domains on unsupported extensions with `registrable: false` and a `reason` field.
+            - The response may omit malformed domain names (e.g., names missing an extension).
           type: array
           items:
             type: string
@@ -430631,9 +430634,9 @@ components:
               properties:
                 domains:
                   description: |
-                    Array of domain availability results. Domains on unsupported
-                    extensions are included with `registrable: false` and a `reason`
-                    field. Malformed domain names may be omitted.
+                    Array of domain availability results. Results for unsupported
+                    extensions contain `registrable: false` and a `reason`
+                    field. The response may omit malformed domain names.
                   type: array
                   items:
                     $ref: '#/components/schemas/registrar-api_domain_check_result'
@@ -430643,7 +430646,7 @@ components:
             - result
           type: object
     registrar-api_domain_check_result:
-      description: Represents a single authoritative domain availability result returned by the Check endpoint. Check results reflect current registry status and should be used immediately before registration.
+      description: Describes a single authoritative domain availability result from the Check endpoint. Check results reflect current registry status; use them immediately before registration.
       type: object
       properties:
         name:
@@ -430654,12 +430657,12 @@ components:
           $ref: '#/components/schemas/registrar-api_pricing'
         reason:
           description: |-
-            Present only when `registrable` is `false`. Explains why the domain cannot be registered via this API.
-            - `extension_not_supported_via_api`: Cloudflare Registrar supports this extension in the dashboard but it is not yet available for programmatic registration via this API. The user can register via `https://dash.cloudflare.com/{account_id}/domains/registrations`.
-            - `extension_not_supported`: This extension is not supported by Cloudflare Registrar at all.
-            - `extension_disallows_registration`: The extension's registry has temporarily or permanently frozen new registrations. No registrar can register domains on this extension at this time.
-            - `domain_premium`: The domain is premium priced. Premium registration is not currently supported by this API.
-            - `domain_unavailable`: The domain is already registered, reserved, or otherwise not available on a supported extension.
+            Appears only when `registrable` is `false` and explains the result.
+            - `extension_not_supported_via_api`: Cloudflare Registrar supports this extension in the dashboard but currently excludes it from programmatic registration through this API. The user can register via `https://dash.cloudflare.com/{account_id}/domains/registrations`.
+            - `extension_not_supported`: Cloudflare Registrar excludes this extension entirely.
+            - `extension_disallows_registration`: The extension's registry temporarily or permanently freezes new registrations. Registrars currently cannot register domains on this extension.
+            - `domain_premium`: The domain carries premium pricing. This API currently supports standard registrations only.
+            - `domain_unavailable`: An existing registration, reservation, or other registry restriction makes the domain unavailable on a supported extension.
           type: string
           example: domain_unavailable
           enum:
@@ -430670,16 +430673,16 @@ components:
             - domain_unavailable
         registrable:
           description: |-
-            Indicates whether this domain can be registered programmatically through this API based on a real-time registry check.
-            - `true`: Domain is available for registration. The `pricing` object will be included.
-            - `false`: Domain is not available. See the `reason` field for why. `tier` may still be present on some non-registrable results, such as premium domains.
+            Indicates programmatic registration eligibility according to a real-time registry check.
+            - `true`: The domain is available for registration. The response includes the `pricing` object.
+            - `false`: A restriction prevents registration. See the `reason` field for details. Some results, such as premium domains, may still include `tier`.
           type: boolean
           example: true
         tier:
           description: |-
-            The pricing tier for this domain. Always present when `registrable` is `true`; defaults to `standard` for most domains. May be absent when `registrable` is `false`.
-            - `standard`: Standard registry pricing
-            - `premium`: Premium domain with higher pricing set by the registry
+            The pricing tier for this domain. A `registrable` value of `true` always includes this field, which defaults to `standard` for most domains. A `registrable` value of `false` may omit it.
+            - `standard`: Standard registry pricing.
+            - `premium`: Premium domain with higher pricing from the registry.
           type: string
           example: standard
           enum:
@@ -430696,10 +430699,10 @@ components:
       readOnly: true
     registrar-api_domain_name:
       description: |
-        Fully qualified domain name (FQDN) including the extension
-        (e.g., `example.com`, `mybrand.app`). The domain name uniquely
-        identifies a registration — the same domain cannot be registered
-        twice, making it a natural idempotency key for registration requests.
+        Provides a fully qualified domain name (FQDN), including the extension
+        (e.g., `example.com`, `mybrand.app`). The domain name uniquely identifies
+        a registration. Cloudflare permits only one registration per domain, making
+        the domain name a natural idempotency key for registration requests.
       type: string
       example: example.com
       x-auditable: true
@@ -430738,12 +430741,14 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/registrar-api_domains'
+          type: object
     registrar-api_domain_response_single:
       allOf:
         - $ref: '#/components/schemas/registrar-api_api-response-single'
         - properties:
             result:
               type: object
+          type: object
     registrar-api_domain_search_response:
       allOf:
         - $ref: '#/components/schemas/registrar-api_api-response-common'
@@ -430753,7 +430758,7 @@ components:
               type: object
               properties:
                 domains:
-                  description: Array of domain suggestions sorted by relevance. May be empty if no domains match the search criteria.
+                  description: Lists domain suggestions in relevance order. An empty array indicates that the search criteria matched zero domains.
                   type: array
                   items:
                     $ref: '#/components/schemas/registrar-api_domain_search_result'
@@ -430763,7 +430768,7 @@ components:
             - result
           type: object
     registrar-api_domain_search_result:
-      description: Represents a single domain suggestion returned by the Search endpoint. Search results are non-authoritative and may be based on cached data. Use POST /domain-check to confirm real-time availability and pricing before registration.
+      description: Describes a single domain suggestion from the Search endpoint. Search results use non-authoritative data that may come from a cache. Use POST /domain-check to confirm real-time availability and pricing before registration.
       type: object
       properties:
         name:
@@ -430774,11 +430779,11 @@ components:
           $ref: '#/components/schemas/registrar-api_pricing'
         reason:
           description: |-
-            Present only when `registrable` is `false` on search results. Explains why the domain does not appear registrable through this API. These values are advisory; use POST /domain-check for authoritative status.
-            - `extension_not_supported_via_api`: Cloudflare Registrar supports this extension in the dashboard but it is not yet available for programmatic registration via this API.
-            - `extension_not_supported`: This extension is not supported by Cloudflare Registrar at all.
-            - `extension_disallows_registration`: The extension's registry has temporarily or permanently frozen new registrations.
-            - `domain_premium`: The domain is premium priced. Premium registration is not currently supported by this API.
+            Appears only when `registrable` is `false` and explains the advisory search result. Use POST /domain-check for authoritative status.
+            - `extension_not_supported_via_api`: Cloudflare Registrar supports this extension in the dashboard but currently excludes it from programmatic registration through this API.
+            - `extension_not_supported`: Cloudflare Registrar excludes this extension entirely.
+            - `extension_disallows_registration`: The extension's registry temporarily or permanently freezes new registrations.
+            - `domain_premium`: The domain carries premium pricing. This API currently supports standard registrations only.
             - `domain_unavailable`: The domain appears unavailable.
           type: string
           example: domain_unavailable
@@ -430790,17 +430795,19 @@ components:
             - domain_unavailable
         registrable:
           description: |-
-            Indicates whether this domain appears available based on search data. Search results are non-authoritative and may be stale. - `true`: The domain appears available. Use POST /domain-check to confirm before registration.
-            - `false`: The domain does not appear available in search results.
+            Indicates domain availability according to potentially stale, non-authoritative search data.
+            - `true`: The domain appears available. Use POST /domain-check to confirm before registration.
+            - `false`: Search results mark the domain ineligible for registration through this API. See `reason` for details.
           type: boolean
           example: true
         tier:
           description: |
-            The pricing tier for this domain. Always present when `registrable` is `true`;
-            defaults to `standard` for most domains. May be absent when `registrable`
-            is `false`.
-            - `standard`: Standard registry pricing
-            - `premium`: Premium domain with higher pricing set by the registry
+            The pricing tier for this domain.
+            A `registrable` value of `true` always
+            includes this field, which defaults to `standard` for most domains. A
+            `registrable` value of `false` may omit it.
+            - `standard`: Standard registry pricing.
+            - `premium`: Premium domain with higher pricing from the registry.
           type: string
           example: standard
           enum:
@@ -430837,14 +430844,14 @@ components:
       type: object
       properties:
         metadata:
-          description: Extension metadata
+          description: Extension metadata.
           type: object
           properties:
             name:
-              description: The full name of the extension. For example, "co.uk", or "uk"
+              description: The full name of the extension. For example, "co.uk", or "uk".
               type: string
             tld:
-              description: The tld of the extension. For example, for "co.uk", it's "uk". For "uk", it's "uk"
+              description: The TLD of the extension. For example, for "co.uk", it is "uk". For "uk", it is "uk".
               type: string
           required:
             - name
@@ -430889,19 +430896,19 @@ components:
       type: string
       example: 123-867-5309
     registrar-api_first_name:
-      description: User's first name
+      description: User's first name.
       type: string
       example: John
       maxLength: 60
       nullable: true
     registrar-api_identifier:
-      description: Identifier
+      description: Identifier.
       type: string
       example: 023e105f4ecef8ad9ca31a8372d0c353
       maxLength: 32
       readOnly: true
     registrar-api_last_name:
-      description: User's last name
+      description: User's last name.
       type: string
       example: Appleseed
       maxLength: 60
@@ -430920,6 +430927,15 @@ components:
             minimum: 1000
           message:
             type: string
+          source:
+            description: Location of the invalid value that caused the error.
+            type: object
+            properties:
+              pointer:
+                description: JSON Pointer to the invalid or missing request value.
+                type: string
+            required:
+              - pointer
         required:
           - code
           - message
@@ -430932,18 +430948,17 @@ components:
       example: Cloudflare, Inc.
     registrar-api_pricing:
       description: |
-        Annual pricing information for a registrable domain. This object is only
-        present when `registrable` is `true`. All prices are per year and returned
-        as strings to preserve decimal precision.
+        Provides annual pricing information for a registrable domain. This object
+        appears only when `registrable` is `true`. The API returns all per-year
+        prices as strings to preserve decimal precision.
 
-        `registration_cost` and `renewal_cost` are frequently the same value, but
-        may differ — especially for premium domains where registries set different
-        rates for initial registration vs. renewal. For a multi-year registration
-        (e.g., 4 years), the first year is charged at `registration_cost` and each
-        subsequent year at `renewal_cost`. Registry pricing may change over time;
-        the values returned here reflect the current registry rate. Premium pricing
-        may be surfaced by Search and Check, but premium registration is not currently
-        supported by this API.
+        `registration_cost` and `renewal_cost` frequently have the same value, but
+        may differ, especially when registries set different premium rates for
+        initial registration and renewal. For a multi-year registration (e.g., 4
+        years), `registration_cost` applies to the first year and `renewal_cost`
+        applies to each subsequent year. The values reflect the current registry
+        rate, which may change over time. Search and Check may surface premium
+        pricing, but this API currently supports standard registrations only.
       type: object
       properties:
         currency:
@@ -430953,10 +430968,9 @@ components:
         registration_cost:
           description: |
             The first-year cost to register this domain. For premium domains
-            (`tier: premium`), this price is set by the registry and may be
-            significantly higher than standard pricing. For multi-year
-            registrations, this cost applies to the first year only; subsequent
-            years are charged at `renewal_cost`.
+            (`tier: premium`), the registry sets this price, which may significantly
+            exceed standard pricing. For multi-year registrations, this cost applies
+            to the first year only; `renewal_cost` applies to subsequent years.
           type: string
           example: '8.57'
         renewal_cost:
@@ -430986,7 +431000,7 @@ components:
       type: object
       properties:
         auto_renew:
-          description: Whether the domain will be automatically renewed before expiration.
+          description: Whether automatic renewal occurs before expiration.
           type: boolean
           example: true
         created_at:
@@ -430997,7 +431011,7 @@ components:
         domain_name:
           $ref: '#/components/schemas/registrar-api_domain_name'
         expires_at:
-          description: When the domain registration expires. Present when the registration is ready; may be null only while `status` is `registration_pending`.
+          description: When the domain registration expires. Ready registrations include this value; only `registration_pending` may return null.
           type: string
           format: date-time
           example: 2026-01-15T10:00:00Z
@@ -431016,12 +431030,12 @@ components:
         status:
           description: |
             Current registration status.
-            - `active`: Domain is registered and operational
-            - `registration_pending`: Registration is in progress
-            - `expired`: Domain has expired
-            - `suspended`: Domain is suspended by the registry
-            - `redemption_period`: Domain is in the redemption grace period
-            - `pending_delete`: Domain is pending deletion by the registry
+            - `active`: The domain operates with an active registration.
+            - `registration_pending`: Registration remains in progress.
+            - `expired`: The domain registration expired.
+            - `suspended`: The registry suspended the domain.
+            - `redemption_period`: The domain entered the redemption grace period.
+            - `pending_delete`: The registry scheduled the domain for deletion.
           type: string
           example: active
           enum:
@@ -431082,10 +431096,7 @@ components:
           type: string
           example: '+1.5555555555'
         phone:
-          description: |
-            Phone number in E.164 format: `+{country_code}.{number}` with no
-            spaces or dashes. Examples: `+1.5555555555` (US), `+44.2071234567`
-            (UK), `+81.312345678` (Japan).
+          description: 'Phone number in E.164 format: `+{country_code}.{number}` without spaces or dashes. Examples: `+1.5555555555` (US), `+44.2071234567` (UK), `+81.312345678` (Japan).'
           type: string
           example: '+1.5555555555'
         postal_info:
@@ -431136,12 +431147,7 @@ components:
         address:
           $ref: '#/components/schemas/registrar-api_registration_contact_address'
         name:
-          description: |
-            Full legal name of the contact, including all required name components
-            for an individual or authorized representative. Some registries require
-            a complete personal name that includes a family or last name where
-            applicable. Provide the complete name in this single field, for example
-            `Ada Lovelace`; do not send separate first-name or last-name fields.
+          description: Full legal name of the contact, including all required name components for an individual or authorized representative. Some registries require a complete personal name that includes a family or last name where applicable. Provide the complete name in this single field, for example `Ada Lovelace`; do not send separate first-name or last-name fields.
           type: string
           example: Ada Lovelace
         organization:
@@ -431153,45 +431159,63 @@ components:
         - address
     registrar-api_registration_contacts:
       description: |
-        Contact data for the registration request.
+        Provides contact data for the registration request.
 
-        The per-extension schema returned by
-        `GET /accounts/{account_id}/registrar/extensions/{extension}` is the
-        authoritative contract for which contact roles are accepted. Every
-        currently supported extension requires only `contacts.registrant` from
-        API callers. Additional roles such as `technical`, `administrator`, and
-        `billing` may be provided when the extension schema includes them. If a
-        registry requires one of those roles and the caller omits it, Cloudflare
+        The per-extension schema from
+        `GET /accounts/{account_id}/registrar/extensions/{extension}` defines the
+        accepted contact roles. Every currently supported extension requires only
+        `contacts.registrant` from API callers. Callers may provide additional roles
+        such as `technical`, `administrator`, and `billing` when the extension
+        schema includes them. When a registry requires an omitted role, Cloudflare
         may derive that contact from `contacts.registrant`.
 
-        If the `contacts` object is omitted entirely from the request, or if
-        `contacts.registrant` is not provided, the system will use the account's
-        default address book entry as the registrant contact. This default must be
-        pre-configured by the account owner at
-        `https://dash.cloudflare.com/{account_id}/domains/registrations`, where
-        they can create or update the address book entry and accept the required
-        agreement. No API exists for managing address book entries at this time.
+        When the request omits either the entire `contacts` object or
+        `contacts.registrant`, the system uses the account's default address book
+        entry as the registrant contact. The account owner must configure this
+        default at `https://dash.cloudflare.com/{account_id}/domains/registrations`,
+        where they can create or update the address book entry and accept the
+        required agreement. Dashboard settings currently provide the only way to
+        manage address book entries.
 
-        If no default address book entry exists and no registrant contact is
-        provided, the registration request will fail with a validation error.
+        Without either a default address book entry or a registrant contact, the
+        registration request fails validation.
       type: object
       properties:
         administrator:
-          $ref: '#/components/schemas/registrar-api_registration_contact'
+          description: |
+            Optional administrator contact. Accepted only when the extension
+            schema includes this role. When the registry requires an omitted
+            contact, Cloudflare may derive it from `contacts.registrant`.
+          allOf:
+            - $ref: '#/components/schemas/registrar-api_registration_contact'
         billing:
-          $ref: '#/components/schemas/registrar-api_registration_contact'
+          description: |
+            Optional billing contact. Accepted only when the extension schema
+            includes this role. When the registry requires an omitted contact,
+            Cloudflare may derive it from `contacts.registrant`.
+          allOf:
+            - $ref: '#/components/schemas/registrar-api_registration_contact'
         registrant:
-          $ref: '#/components/schemas/registrar-api_registration_contact'
+          description: |
+            Optional registrant contact. If omitted, the account's default
+            address book entry is used instead.
+          allOf:
+            - $ref: '#/components/schemas/registrar-api_registration_contact'
         technical:
-          $ref: '#/components/schemas/registrar-api_registration_contact'
+          description: |
+            Optional technical contact. Accepted only when the extension schema
+            includes this role. When the registry requires an omitted contact,
+            Cloudflare may derive it from `contacts.registrant`.
+          allOf:
+            - $ref: '#/components/schemas/registrar-api_registration_contact'
     registrar-api_registration_create_request:
       type: object
       properties:
         acknowledgements:
           description: |
-            User acknowledgements required by a specific extension or premium
-            registration flow. The expected keys are described by the extension
-            registration schema returned by the extension discovery endpoint.
+            Provides user acknowledgements for a specific extension or premium
+            registration flow. The extension registration schema from the
+            extension discovery endpoint identifies the required keys.
           type: object
           example:
             fees:
@@ -431211,14 +431235,14 @@ components:
           default: false
         contact_extensions:
           description: |
-            Registry-specific contact extension values for the registrant. The
-            required keys and allowed values vary by extension and are described
-            by `GET /accounts/{account_id}/registrar/extensions/{extension}` in
-            the `registration_schema.properties.contact_extensions` object.
+            Provides registry-specific contact extension values for the registrant.
+            `GET /accounts/{account_id}/registrar/extensions/{extension}` identifies
+            the required keys and allowed values for each extension in the
+            `registration_schema.properties.contact_extensions` object.
 
             Examples include `.us` nexus fields, `.uk` registrant type fields,
-            and `.ca` legal type fields. Omit this object for extensions whose
-            registration schema does not include `contact_extensions`.
+            and `.ca` legal type fields. Omit this object when the extension's
+            registration schema excludes `contact_extensions`.
           type: object
           example:
             application_purpose: P3
@@ -431230,10 +431254,10 @@ components:
           $ref: '#/components/schemas/registrar-api_domain_name'
         privacy_mode:
           description: |
-            WHOIS privacy mode for the registration. Defaults to `redaction`.
-            - `off`: Do not request WHOIS privacy.
-            - `redaction`: Request WHOIS redaction where supported by the extension.
-              Some extensions do not support privacy/redaction.
+            Sets the WHOIS privacy mode for the registration. Defaults to `redaction`.
+            - `off`: Disables WHOIS privacy.
+            - `redaction`: Requests WHOIS redaction where the extension supports it.
+              Some extensions exclude privacy and redaction.
           type: string
           example: redaction
           default: redaction
@@ -431242,16 +431266,14 @@ components:
             - redaction
         years:
           description: |
-            Number of years to register (1–10). If omitted, defaults to the
-            minimum registration period required by the registry for this
-            extension. For most extensions this is 1 year, but some extensions
-            require longer minimum terms (e.g., `.ai` requires a minimum of
-            2 years).
+            Sets the registration term from 1 to 10 years. When omitted, this
+            field defaults to the registry's minimum registration period for the
+            extension. Most extensions require 1 year, while some require longer
+            minimum terms (e.g., `.ai` requires 2 years).
 
-            The registry for each extension may also enforce its own maximum
-            registration term. If the requested value exceeds the registry's
-            maximum, the registration will be rejected. When in doubt, use the
-            default by omitting this field.
+            Each registry may also enforce its own maximum registration term. A
+            request above that maximum fails. When uncertain, omit this field to
+            use the default.
           type: integer
           example: 1
           maximum: 10
@@ -431276,26 +431298,26 @@ components:
           example: true
       minProperties: 1
     registrar-api_registry_statuses:
-      description: A comma-separated list of registry status codes. A full list of status codes can be found at [EPP Status Codes](https://www.icann.org/resources/pages/epp-status-codes-2014-06-16-en).
+      description: A comma-separated list of registry status codes. Refer to [EPP Status Codes](https://www.icann.org/resources/pages/epp-status-codes-2014-06-16-en) for the full list.
       type: string
       example: ok,serverTransferProhibited
     registrar-api_result_info:
       type: object
       properties:
         count:
-          description: Total number of results for the requested service
+          description: Total number of results for the requested service.
           type: number
           example: 1
         page:
-          description: Current page within paginated list of results
+          description: Current page within paginated list of results.
           type: number
           example: 1
         per_page:
-          description: Number of results per page of results
+          description: Number of results per page of results.
           type: number
           example: 20
         total_count:
-          description: Total results available without any search parameters
+          description: Total results available without any search parameters.
           type: number
           example: 2000
     registrar-api_state:
@@ -431303,11 +431325,11 @@ components:
       type: string
       example: TX
     registrar-api_supported_tld:
-      description: Whether a particular TLD is currently supported by Cloudflare Registrar. Refer to [TLD Policies](https://www.cloudflare.com/tld-policies/) for a list of supported TLDs.
+      description: Indicates whether Cloudflare Registrar currently supports a particular TLD. Refer to [TLD Policies](https://www.cloudflare.com/tld-policies/) for a list of supported TLDs.
       type: boolean
       example: true
     registrar-api_telephone:
-      description: User's telephone number
+      description: User's telephone number.
       type: string
       example: +1 123-123-1234
       maxLength: 20
@@ -431316,14 +431338,14 @@ components:
       description: Statuses for domain transfers into Cloudflare Registrar.
       properties:
         accept_foa:
-          description: Form of authorization has been accepted by the registrant.
+          description: Status of the registrant authorization step.
           type: string
           example: needed
           enum:
             - needed
             - ok
         approve_transfer:
-          description: Shows transfer status with the registry.
+          description: Status of the registry transfer-approval step.
           type: string
           example: unknown
           enum:
@@ -431338,7 +431360,7 @@ components:
           type: boolean
           example: true
         disable_privacy:
-          description: Privacy guards are disabled at the foreign registrar.
+          description: Status of the privacy-guard disabling step at the foreign registrar.
           type: string
           example: ok
           enum:
@@ -431346,7 +431368,7 @@ components:
             - ok
             - unknown
         enter_auth_code:
-          description: Auth code has been entered and verified.
+          description: Status of the auth-code entry and verification step.
           type: string
           example: needed
           enum:
@@ -431356,7 +431378,7 @@ components:
             - trying
             - rejected
         unlock_domain:
-          description: Domain is unlocked at the foreign registrar.
+          description: Status of the domain-unlock step at the foreign registrar.
           type: string
           example: ok
           enum:
@@ -431378,13 +431400,7 @@ components:
               $ref: '#/components/schemas/registrar-api_workflow_status'
           type: object
     registrar-api_workflow_error:
-      description: |
-        Error details when a workflow reaches the `failed` state. The specific
-        error codes and messages depend on the workflow type (registration,
-        update, etc.) and the underlying registry response. These workflow
-        error codes are separate from immediate HTTP error `errors[].code`
-        values returned by non-2xx responses. Surface
-        `error.message` to the user for context.
+      description: Provides error details when a workflow reaches the `failed` state. The workflow type (registration, update, etc.) and underlying registry response determine the specific codes and messages. Workflow error codes differ from immediate HTTP error `errors[].code` values in non-2xx responses. Surface `error.message` to the user for context.
       type: object
       properties:
         code:
@@ -431416,18 +431432,15 @@ components:
       type: object
       properties:
         completed:
-          description: |
-            Whether the workflow has reached a terminal state. `true` when
-            `state` is `succeeded` or `failed`. `false` for `pending`,
-            `in_progress`, `action_required`, and `blocked`.
+          description: Indicates whether the workflow reached a terminal state. A `succeeded` or `failed` state returns `true`; `pending`, `in_progress`, `action_required`, and `blocked` return `false`.
           type: boolean
           example: false
         context:
           description: |
-            Workflow-specific data for this workflow.
+            Provides workflow-specific data.
 
-            The workflow subject is identified by `context.domain_name` for
-            domain-centric workflows.
+            For domain-centric workflows, `context.domain_name` identifies the
+            workflow subject.
           type: object
           additionalProperties: true
         created_at:
@@ -431442,25 +431455,22 @@ components:
           $ref: '#/components/schemas/registrar-api_workflow_links'
         state:
           description: |
-            Workflow lifecycle state.
-            - `pending`: Workflow has been created but not yet started processing.
-            - `in_progress`: Actively processing. Continue polling `links.self`.
-              The workflow has an internal deadline and will not remain in this
-              state indefinitely.
-            - `action_required`: Paused — requires action by the user (not the
-              system). See `context.action` for what is needed. An automated
-              polling loop must break on this state; it will not resolve on its
-              own without user intervention.
-            - `blocked`: The workflow cannot make progress due to a third party
-              such as the domain extension's registry or a losing registrar.
-              No user action will help. Continue polling — the block may resolve
-              when the third party responds.
-            - `succeeded`: Terminal. The operation completed successfully.
-              `completed` will be `true`. For registrations, `context.registration`
-              contains the resulting registration resource.
-            - `failed`: Terminal. The operation failed. `completed` will be `true`.
-              See `error.code` and `error.message` for the reason. Do not
-              auto-retry without user review.
+            Describes the workflow lifecycle state.
+            - `pending`: The workflow awaits processing.
+            - `in_progress`: Processing started. Continue polling `links.self`.
+              An internal deadline limits the duration of this state.
+            - `action_required`: The workflow pauses for user action. See
+              `context.action` for details. Stop automated polling until the user
+              completes the required action.
+            - `blocked`: A third party, such as the domain extension's registry or
+              a losing registrar, prevents progress. Continue polling because the
+              block may resolve when the third party responds.
+            - `succeeded`: Terminal state. The operation completed successfully.
+              `completed` equals `true`. For registrations,
+              `context.registration` contains the resulting registration resource.
+            - `failed`: Terminal state. The operation failed. `completed` equals
+              `true`. See `error.code` and `error.message` for the reason. Require
+              user review before retrying.
           type: string
           example: in_progress
           enum:
