@@ -180179,6 +180179,7 @@ paths:
                         properties:
                           subscription_id:
                             $ref: '#/components/schemas/bill-subs-api_schemas-identifier'
+                    type: object
         4XX:
           description: Delete Subscription response failure
           content:
@@ -213405,7 +213406,7 @@ paths:
     post:
       operationId: billing-validate-address
       summary: Validate Billing Address
-      description: Validates a billing address and returns validated address suggestions. This endpoint is intentionally unauthenticated to support pre-signup address validation flows.
+      description: Validates a billing address and returns validated address suggestions. Authentication is not enforced to support pre-signup address validation flows, so credentials are accepted but not required.
       requestBody:
         required: true
         content:
@@ -213425,7 +213426,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/bill-subs-api_api-response-common-failure'
-      security: []
+      security:
+        - api_email: []
+          api_key: []
+          api_token: []
+        - {}
       tags:
         - Account Billing
       x-cfPlanAvailability:
@@ -213439,7 +213444,7 @@ paths:
     get:
       operationId: billing-get-rate-plan
       summary: Get Rate Plan by Public Key
-      description: Gets a rate plan's details by its public key (e.g., 'teams_free', 'cf_pro_20_20'). This is a public catalog endpoint and does not require authentication.
+      description: Gets a rate plan's details by its public key (e.g., 'teams_free', 'cf_pro_20_20'). This is a public catalog endpoint, so authentication is not enforced and credentials are accepted but not required.
       parameters:
         - name: public_key
           in: path
@@ -213461,7 +213466,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/bill-subs-api_api-response-common-failure'
-      security: []
+      security:
+        - api_email: []
+          api_key: []
+          api_token: []
+        - {}
       tags:
         - Rate Plans
       x-cfPlanAvailability:
@@ -321858,6 +321867,7 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/bill-subs-api_available-rate-plan'
+                    type: object
         4XX:
           description: List Available Plans response failure
           content:
@@ -321911,6 +321921,7 @@ paths:
                   - properties:
                       result:
                         $ref: '#/components/schemas/bill-subs-api_available-rate-plan'
+                    type: object
         4XX:
           description: Available Plan Details response failure
           content:
@@ -349218,6 +349229,7 @@ paths:
                         properties:
                           subscription_id:
                             $ref: '#/components/schemas/bill-subs-api_schemas-identifier'
+                    type: object
         4XX:
           description: Delete Zone Subscription response failure
           content:
@@ -349232,6 +349244,7 @@ paths:
                             properties:
                               subscription_id:
                                 $ref: '#/components/schemas/bill-subs-api_schemas-identifier'
+                        type: object
                   - $ref: '#/components/schemas/bill-subs-api_api-response-common-failure'
       security:
         - api_email: []
@@ -349419,6 +349432,7 @@ paths:
                         properties:
                           subscription_id:
                             $ref: '#/components/schemas/bill-subs-api_schemas-identifier'
+                    type: object
         4XX:
           description: Delete Zone Subscription response failure
           content:
@@ -349433,6 +349447,7 @@ paths:
                             properties:
                               subscription_id:
                                 $ref: '#/components/schemas/bill-subs-api_schemas-identifier'
+                        type: object
                   - $ref: '#/components/schemas/bill-subs-api_api-response-common-failure'
       security:
         - api_email: []
@@ -370464,10 +370479,12 @@ components:
         - properties:
             result:
               type: array
-              items: {}
+              items:
+                type: object
               nullable: true
             result_info:
               $ref: '#/components/schemas/bill-subs-api_result_info'
+          type: object
     bill-subs-api_api-response-common:
       type: object
       properties:
@@ -370478,7 +370495,8 @@ components:
         result:
           anyOf:
             - type: object
-            - items: {}
+            - items:
+                type: object
               type: array
             - type: string
         success:
@@ -370533,6 +370551,7 @@ components:
                   type: object
                 - nullable: true
                   type: string
+          type: object
     bill-subs-api_available-rate-plan:
       type: object
       properties:
@@ -370617,6 +370636,7 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/bill-subs-api_billing-history'
+          type: object
     bill-subs-api_billing_profile_request:
       description: Request body for creating or updating a billing profile.
       type: object
@@ -371406,6 +371426,7 @@ components:
       properties:
         app:
           description: Cloudflare Apps Marketplace is sunset. This field is retained for legacy grandfathered app subscriptions only.
+          type: object
           deprecated: true
           properties:
             install_id:
