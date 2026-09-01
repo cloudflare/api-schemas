@@ -75020,6 +75020,74 @@ paths:
         pro: true
       x-fern-sdk-group-name: accounts.billing
       x-fern-sdk-method-name: createSetupIntent
+  /accounts/{account_id}/cloudforce-one/banner/{config_id}:
+    get:
+      operationId: get_GetBanners
+      summary: Get the Latest Banner Grab Result
+      description: Retrieves the latest banner grab results for a Cloudforce One scan configuration, including service banners from open ports.
+      parameters:
+        - name: account_id
+          in: path
+          description: Defines the Account ID.
+          required: true
+          schema:
+            description: Defines the Account ID.
+            type: string
+        - name: config_id
+          in: path
+          description: Defines the Config ID.
+          required: true
+          schema:
+            description: Defines the Config ID.
+            type: string
+      responses:
+        '200':
+          description: Returns Current Banner Grab Result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: string
+                  messages:
+                    type: array
+                    items:
+                      type: string
+                  result:
+                    type: object
+                    properties:
+                      1.1.1.1:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/cloudforce-one-port-scan-api_port'
+                    required:
+                      - 1.1.1.1
+                  success:
+                    type: boolean
+                required:
+                  - success
+                  - result
+                  - messages
+                  - errors
+        4XX:
+          description: Get the Latest Banner Grab Result failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cloudforce-one-port-scan-api_api-response-common-failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Scans
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: cloudforce-one.scans.results
+      x-fern-sdk-method-name: getBanners
+      x-forge-hidden: true
   /accounts/{account_id}/cloudforce-one/binary:
     post:
       operationId: post_BinDBPost
@@ -92892,6 +92960,7 @@ paths:
     get:
       operationId: get_ConfigFetch
       summary: List Scan Configs
+      description: Lists scan configurations for Cloudforce One's network scanning service.
       parameters:
         - name: account_id
           in: path
@@ -92935,6 +93004,7 @@ paths:
     post:
       operationId: post_ConfigCreate
       summary: Create a new Scan Config
+      description: Creates a new scan configuration for Cloudforce One's network scanning service.
       parameters:
         - name: account_id
           in: path
@@ -92990,6 +93060,7 @@ paths:
     delete:
       operationId: delete_DeleteScans
       summary: Delete a Scan Config
+      description: Deletes a scan configuration from Cloudforce One's network scanning service.
       parameters:
         - name: account_id
           in: path
@@ -93051,6 +93122,7 @@ paths:
     patch:
       operationId: post_ConfigUpdate
       summary: Update an existing Scan Config
+      description: Updates an existing scan configuration in Cloudforce One's network scanning service.
       parameters:
         - name: account_id
           in: path
@@ -93111,6 +93183,7 @@ paths:
     get:
       operationId: get_GetOpenPorts
       summary: Get the Latest Scan Result
+      description: Retrieves the latest scan results for a Cloudforce One scan configuration, including discovered open ports.
       parameters:
         - name: account_id
           in: path
@@ -473518,6 +473591,8 @@ x-forge-commands:
             description: Rule statistics operations
           tree:
             description: Rule navigation tree operations
+      scans:
+        description: Scan URLs, IPs, and domains for threat intelligence indicators
   containers:
     description: Deploy and manage Containers applications on Cloudflare's global network
     groups:
