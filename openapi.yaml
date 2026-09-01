@@ -61254,9 +61254,16 @@ paths:
         is omitted, the range defaults to the start of the current month through
         today. The maximum date range is 31 days.
 
-        Filters are combined with AND. Filter values that do not match a known
-        billable metric or product family simply match no usage, and the
-        response is an empty result set.
+        Filters of different kinds are combined with AND. Values within one tag
+        filter are combined with OR. Filter values that do not match usage
+        produce an empty result set.
+
+        Results can be grouped by up to two customer resource-tag keys. Grouped
+        values are returned in the `Tags` field. Usage without a requested tag
+        remains in an untagged group, with that key omitted from `Tags`.
+
+        Requests using tag filtering or grouping return HTTP 400 when tag-aware
+        usage data is unavailable.
       parameters:
         - $ref: '#/components/parameters/billable-usage-api_account_id'
       requestBody:
@@ -372122,6 +372129,17 @@ components:
           description: Name assigned to a grouping of services. For Cloudflare, this is the subscription or contract display name.
           type: string
           example: My Subscription
+        Tags:
+          description: Tag values for the requested `GroupBy` keys. Omitted when `GroupBy` is not provided. Missing keys are omitted, and key-only tags are returned as boolean `true`. All other tag values are strings.
+          type: object
+          example:
+            team: fintech
+          additionalProperties:
+            oneOf:
+              - type: string
+              - enum:
+                  - true
+                type: boolean
         x_BillableMetricId:
           description: The unique identifier for the billable metric in the Cloudflare catalog. Cloudflare extension; replaces FOCUS SkuId.
           type: string
@@ -372464,7 +372482,59 @@ components:
             - 3f1b9c1e-0000-4000-8000-000000000000
           maxItems: 10
           uniqueItems: true
+        Tags:
+          description: Restrict results by customer resource tags. Filters for different keys are combined with AND, while values within one filter are combined with OR. Keys must be unique and are case-sensitive.
+          type: array
+          items:
+            $ref: '#/components/schemas/billable-usage-api_v2_tag_filter'
+          maxItems: 10
+          uniqueItems: true
       additionalProperties: false
+    billable-usage-api_v2_group_by:
+      description: A customer resource-tag key used to split result rows.
+      type: object
+      properties:
+        Key:
+          description: Case-sensitive customer resource-tag key.
+          type: string
+          example: team
+          maxLength: 256
+          minLength: 1
+        Type:
+          description: Dimension category. Currently only customer resource tags are supported.
+          type: string
+          example: TAG
+          enum:
+            - TAG
+      additionalProperties: false
+      required:
+        - Type
+        - Key
+    billable-usage-api_v2_tag_filter:
+      description: Values accepted for one customer resource-tag key.
+      type: object
+      properties:
+        Key:
+          description: Case-sensitive customer resource-tag key.
+          type: string
+          example: team
+          maxLength: 256
+          minLength: 1
+        Values:
+          description: Tag values to match. Values are combined with OR and must be unique. An empty string matches a key-only tag.
+          type: array
+          items:
+            maxLength: 1024
+            type: string
+          example:
+            - fintech
+          maxItems: 20
+          minItems: 1
+          uniqueItems: true
+      additionalProperties: false
+      required:
+        - Key
+        - Values
     billable-usage-api_v2_time_period:
       description: Charge period to query, i.e. when consumption happened, not when it was billed. `From` is inclusive and `To` is exclusive. `From` and `To` must be supplied together; supplying one without the other is an error. When both are omitted the range defaults to the start of the current month through today.
       type: object
@@ -372486,6 +372556,13 @@ components:
       properties:
         FilterBy:
           $ref: '#/components/schemas/billable-usage-api_v2_filter_by'
+        GroupBy:
+          description: Customer resource tags used to split result rows. At most two unique tag keys may be supplied.
+          type: array
+          items:
+            $ref: '#/components/schemas/billable-usage-api_v2_group_by'
+          maxItems: 2
+          uniqueItems: true
         TimePeriod:
           $ref: '#/components/schemas/billable-usage-api_v2_time_period'
       additionalProperties: false
