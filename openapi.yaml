@@ -156196,6 +156196,8 @@ paths:
                         example: my_stream
                         maxLength: 128
                         minLength: 1
+                      schema:
+                        $ref: '#/components/schemas/cloudflare-pipelines_ConnectionSchema'
                       version:
                         description: Indicates the current version of this stream.
                         type: integer
@@ -156361,6 +156363,7 @@ paths:
                         - message
                       type: object
                   result:
+                    type: object
                     nullable: true
                   success:
                     type: boolean
@@ -377910,6 +377913,7 @@ components:
     cloud-connector_zone_identifier:
       $ref: '#/components/schemas/cloud-connector_identifier'
     cloudflare-pipelines_ConnectionSchema:
+      description: Defines the schema of the events in the data stream.
       type: object
       properties:
         fields:
@@ -378035,6 +378039,7 @@ components:
               type: object
           title: List
     cloudflare-pipelines_Format:
+      description: Defines the data format of the events.
       discriminator:
         propertyName: type
       oneOf:
@@ -378118,6 +378123,7 @@ components:
         - value_type
         - edge_type
     cloudflare-pipelines_PipelineGraph:
+      description: Indicates the processing flow to implement the SQL.
       type: object
       properties:
         edges:
