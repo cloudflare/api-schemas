@@ -321846,6 +321846,7 @@ paths:
                     - $ref: '#/components/schemas/api-shield_old_validation_enabled'
                     - enum:
                         - true
+                      type: boolean
       responses:
         '200':
           description: Enable validation for a schema response
@@ -321964,6 +321965,7 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/api-shield_old_response_user_schemas_hosts'
+                    type: object
         4XX:
           description: Retrieve schema hosts in a zone response failure
           content:
@@ -353748,6 +353750,7 @@ components:
             - thresholds
             - parameter_schemas
             - schema_info
+            - confidence_intervals
           example: thresholds
           type: string
         example:
@@ -368702,6 +368705,7 @@ components:
         - $ref: '#/components/schemas/api-shield_full_label'
         - properties:
             source:
+              type: string
               example: managed
           type: object
     api-shield_global_setting_change_base:
@@ -369343,22 +369347,11 @@ components:
                   $ref: '#/components/schemas/api-shield_timestamp'
                 id:
                   $ref: '#/components/schemas/api-shield_uuid-2'
-                is_learned:
-                  description: Deprecated. Always false.
-                  type: boolean
-                  example: false
-                  deprecated: true
-                  x-auditable: true
                 name:
                   description: Schema file name.
                   type: string
                   example: api-endpoints-8694824bf5c04d019edcbf399c03c103-api-discovery.example.com-thresholds.json
                   x-auditable: true
-            learned_available:
-              description: Deprecated. Always false.
-              type: boolean
-              example: false
-              x-auditable: true
             mitigation_action:
               description: Action taken on requests failing validation.
               type: string
