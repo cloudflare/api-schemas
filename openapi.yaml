@@ -1092,6 +1092,223 @@ paths:
       x-fern-sdk-group-name: abuse-reports
       x-fern-sdk-method-name: create
       x-forge-hidden: true
+  /accounts/{account_id}/abuse-reports/submitted:
+    get:
+      operationId: ListSubmittedAbuseReports
+      summary: List submitted abuse reports
+      description: List abuse reports submitted by the account.
+      parameters:
+        - name: account_id
+          in: path
+          description: Cloudflare Account ID
+          required: true
+          schema:
+            type: string
+            example: 023e105f4ecef8ad9ca31a8372d0c353
+            maxLength: 32
+        - name: page
+          in: query
+          description: Page of submitted reports to return.
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+        - name: per_page
+          in: query
+          description: Number of submitted reports per page.
+          schema:
+            type: integer
+            default: 100
+            maximum: 200
+            minimum: 1
+        - name: sort
+          in: query
+          description: A property and direction to sort by (id, cdate, domain, type, status).
+          schema:
+            type: string
+          example: cdate,desc
+        - name: id
+          in: query
+          description: Filter by report code.
+          schema:
+            type: string
+        - name: domain
+          in: query
+          description: Filter by reported domain. This parameter can be specified multiple times.
+          schema:
+            type: array
+            items:
+              type: string
+          explode: true
+          style: form
+        - name: created_before
+          in: query
+          description: Return reports submitted before this time.
+          schema:
+            type: string
+            format: date-time
+        - name: created_after
+          in: query
+          description: Return reports submitted after this time.
+          schema:
+            type: string
+            format: date-time
+        - name: status
+          in: query
+          description: Filter by submitter-facing status. This parameter can be specified multiple times.
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/abuse-reports_SubmittedAbuseReportStatus'
+          explode: true
+          style: form
+        - name: type
+          in: query
+          description: Filter by report type. This parameter can be specified multiple times.
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/abuse-reports_ReportType'
+          explode: true
+          style: form
+      responses:
+        '200':
+          description: Submitted abuse reports listed successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/abuse-reports_SubmittedAbuseReportListResponse'
+        '400':
+          description: Invalid account or query parameters.
+        '401':
+          description: The request is not authorized to read abuse reports for this account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/abuse-reports_UnauthorizedErrorResponse'
+        '500':
+          description: Failed to retrieve submitted abuse reports.
+      security:
+        - api_token: []
+      tags:
+        - tseng-abuse-complaint-processor_other
+      x-api-token-group:
+        - Trust and Safety Write
+        - Trust and Safety Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: abuse-reports
+      x-fern-sdk-method-name: listSubmitted
+      x-forge-hidden: true
+  /accounts/{account_id}/abuse-reports/submitted/{report_id}:
+    get:
+      operationId: GetSubmittedAbuseReport
+      summary: Get a submitted abuse report
+      description: Retrieve a report submitted by the account.
+      parameters:
+        - name: account_id
+          in: path
+          description: Cloudflare Account ID
+          required: true
+          schema:
+            type: string
+            example: 023e105f4ecef8ad9ca31a8372d0c353
+            maxLength: 32
+        - name: report_id
+          in: path
+          description: Public report code.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Submitted abuse report found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/abuse-reports_SubmittedAbuseReportDetailResponse'
+        '400':
+          description: Invalid account or report code.
+        '401':
+          description: The request is not authorized to read abuse reports for this account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/abuse-reports_UnauthorizedErrorResponse'
+        '404':
+          description: No matching submitted report was found for the account.
+        '500':
+          description: Failed to retrieve the submitted abuse report.
+      security:
+        - api_token: []
+      tags:
+        - tseng-abuse-complaint-processor_other
+      x-api-token-group:
+        - Trust and Safety Write
+        - Trust and Safety Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: abuse-reports
+      x-fern-sdk-method-name: getSubmitted
+      x-forge-hidden: true
+  /accounts/{account_id}/abuse-reports/submitted/{report_id}/emails:
+    get:
+      operationId: ListSubmittedAbuseReportEmails
+      summary: List emails sent to an abuse report submitter
+      description: List successful emails sent to the submitter of a report submitted by the account. Does not include emails sent to customers or hosts.
+      parameters:
+        - name: account_id
+          in: path
+          description: Cloudflare Account ID
+          required: true
+          schema:
+            type: string
+            example: 023e105f4ecef8ad9ca31a8372d0c353
+            maxLength: 32
+        - name: report_id
+          in: path
+          description: Public report code.
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: Page number to retrieve (default 1).
+          schema:
+            type: integer
+        - name: per_page
+          in: query
+          description: Number of emails per page (default 20, max 100).
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Submitted abuse report emails listed successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/abuse-reports_EmailListResponse'
+        '400':
+          description: Invalid account, report, or query parameters.
+        '401':
+          description: The request is not authorized to read abuse reports for this account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/abuse-reports_UnauthorizedErrorResponse'
+        '404':
+          description: Submitted abuse report not found for the selected account.
+        '500':
+          description: Failed to retrieve submitted abuse report emails.
+      security:
+        - api_token: []
+      tags:
+        - tseng-abuse-complaint-processor_other
+      x-api-token-group:
+        - Trust and Safety Write
+        - Trust and Safety Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: abuse-reports.emails
+      x-fern-sdk-method-name: listSubmitted
+      x-forge-hidden: true
   /accounts/{account_id}/access/ai-controls/mcp/analytics/portals/{portal_id}/tool-calls/timeseries:
     get:
       operationId: mcp-portals-api-portal-tool-call-timeseries
@@ -357874,6 +358091,33 @@ components:
         - body
         - recipient
         - sent_at
+    abuse-reports_EmailListResponse:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/abuse-reports_ErrorMessage'
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/abuse-reports_Message'
+        result:
+          type: object
+          properties:
+            emails:
+              type: array
+              items:
+                $ref: '#/components/schemas/abuse-reports_EmailListItem'
+          required:
+            - emails
+        result_info:
+          $ref: '#/components/schemas/abuse-reports_ResultInfo'
+        success:
+          type: boolean
+      required:
+        - success
+        - result
     abuse-reports_ErrorCode:
       type: string
       oneOf:
@@ -358316,6 +358560,25 @@ components:
         - REG_WHO
         - NCSEI
         - NETWORK
+    abuse-reports_ResultInfo:
+      type: object
+      properties:
+        count:
+          type: number
+        page:
+          type: number
+        per_page:
+          type: number
+        total_count:
+          type: number
+        total_pages:
+          type: number
+      required:
+        - page
+        - per_page
+        - count
+        - total_count
+        - total_pages
     abuse-reports_SubmissionReportType:
       description: The report type for submitted reports.
       type: string
@@ -358386,6 +358649,187 @@ components:
         - request
         - result
         - abuse_rand
+    abuse-reports_SubmittedAbuseReportDenialReason:
+      description: Submitter-safe reason that a submitted report was denied.
+      type: string
+      enum:
+        - unable_to_confirm
+        - incomplete_report
+        - not_on_cloudflare
+        - duplicate_report
+        - content_removed
+        - report_details_mismatch
+        - no_abuse_found
+        - missing_original_work
+        - direct_url_required
+        - wrong_report_category
+        - content_unavailable
+        - law_enforcement_referral_required
+        - domain_dispute_process_required
+    abuse-reports_SubmittedAbuseReportDetail:
+      allOf:
+        - $ref: '#/components/schemas/abuse-reports_SubmittedAbuseReportListItem'
+        - properties:
+            agent_name:
+              description: Authorized agent name supplied with the report.
+              type: string
+            comments:
+              description: Additional comments supplied with the report.
+              type: string
+            court:
+              description: The string "on" when a court proceeding applies to the report; otherwise omitted.
+              type: string
+            destination_ips:
+              description: Destination IP addresses supplied with a network abuse report.
+              type: array
+              items:
+                type: string
+            dsa_attestation:
+              description: Whether the submitter provided the Digital Services Act attestation.
+              type: boolean
+            host_notification:
+              description: Submitter preference for notifying the hosting provider.
+              type: string
+            justification:
+              description: Evidence supplied with the report.
+              type: string
+            ncmec_notification:
+              description: Submitter preference for notifying NCMEC.
+              type: string
+            ncsei_subject_representation:
+              description: Representation supplied for an NCSEI report.
+              type: boolean
+            original_work:
+              description: Original work or targeted brand supplied with the report.
+              type: string
+            owner_notification:
+              description: Submitter preference for notifying the content owner.
+              type: string
+            ports_protocols:
+              description: Ports and protocols supplied with a network abuse report.
+              type: array
+              items:
+                type: string
+            reg_who_request:
+              $ref: '#/components/schemas/abuse-reports_RegistrarWhoIsFields'
+            reported_country:
+              description: Country associated with the reported activity.
+              type: string
+            reported_user_agent:
+              description: User agent associated with the reported activity.
+              type: string
+            source_ips:
+              description: Source IP addresses supplied with a network abuse report.
+              type: array
+              items:
+                type: string
+            subtypes:
+              description: Additional abuse classifications supplied with the report.
+              type: array
+              items:
+                type: string
+            title:
+              description: Title supplied with the report.
+              type: string
+            udrp:
+              description: The string "on" when a UDRP proceeding applies to the report; otherwise omitted.
+              type: string
+            urls:
+              description: URLs supplied with the report.
+              type: array
+              items:
+                type: string
+            urs:
+              description: The string "on" when a URS proceeding applies to the report; otherwise omitted.
+              type: string
+          required:
+            - urls
+            - dsa_attestation
+          type: object
+    abuse-reports_SubmittedAbuseReportDetailResponse:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/abuse-reports_ErrorMessage'
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/abuse-reports_Message'
+        result:
+          $ref: '#/components/schemas/abuse-reports_SubmittedAbuseReportDetail'
+        success:
+          type: boolean
+      required:
+        - success
+        - result
+    abuse-reports_SubmittedAbuseReportListItem:
+      type: object
+      properties:
+        cdate:
+          description: Time the report was submitted.
+          type: string
+          format: date-time
+        denial_reason:
+          description: Submitter-safe reason for a denied report. Null when unavailable.
+          type: string
+          allOf:
+            - $ref: '#/components/schemas/abuse-reports_SubmittedAbuseReportDenialReason'
+          nullable: true
+        domain:
+          description: Domain identified in the report.
+          type: string
+        id:
+          description: Public report code.
+          type: string
+        status:
+          $ref: '#/components/schemas/abuse-reports_SubmittedAbuseReportStatus'
+        submitter:
+          $ref: '#/components/schemas/abuse-reports_SubmitterDetails'
+        type:
+          $ref: '#/components/schemas/abuse-reports_ReportType'
+      required:
+        - id
+        - cdate
+        - domain
+        - type
+        - status
+        - denial_reason
+    abuse-reports_SubmittedAbuseReportListResponse:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/abuse-reports_ErrorMessage'
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/abuse-reports_Message'
+        result:
+          type: object
+          properties:
+            reports:
+              type: array
+              items:
+                $ref: '#/components/schemas/abuse-reports_SubmittedAbuseReportListItem'
+          required:
+            - reports
+        result_info:
+          $ref: '#/components/schemas/abuse-reports_ResultInfo'
+        success:
+          type: boolean
+      required:
+        - success
+        - result
+    abuse-reports_SubmittedAbuseReportStatus:
+      description: Status visible to the account that submitted the report.
+      type: string
+      enum:
+        - submitted
+        - accepted
+        - denied
     abuse-reports_SubmitterDetails:
       description: Information about the submitter of the report.
       type: object
