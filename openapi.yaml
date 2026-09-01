@@ -182198,6 +182198,7 @@ paths:
                         - code
                         - message
                       type: object
+                    maxItems: 0
                   messages:
                     type: array
                     items:
@@ -182215,6 +182216,7 @@ paths:
                     properties:
                       deleted:
                         type: integer
+                        maximum: 9007199254740991
                         minimum: 0
                     required:
                       - deleted
@@ -182375,6 +182377,7 @@ paths:
                         - code
                         - message
                       type: object
+                    maxItems: 0
                   messages:
                     type: array
                     items:
@@ -182644,6 +182647,7 @@ paths:
                         - code
                         - message
                       type: object
+                    maxItems: 0
                   messages:
                     type: array
                     items:
@@ -182913,6 +182917,7 @@ paths:
                         - code
                         - message
                       type: object
+                    maxItems: 0
                   messages:
                     type: array
                     items:
@@ -204758,7 +204763,6 @@ paths:
           in: query
           description: Allows filtering workflows` name.
           schema:
-            description: Allows filtering workflows` name.
             type: string
             maxLength: 64
             minLength: 1
@@ -204788,6 +204792,7 @@ paths:
                         - code
                         - message
                       type: object
+                    maxItems: 0
                   messages:
                     type: array
                     items:
@@ -204814,25 +204819,8 @@ paths:
                           format: uuid
                         instances:
                           type: object
-                          properties:
-                            complete:
-                              type: number
-                            errored:
-                              type: number
-                            paused:
-                              type: number
-                            queued:
-                              type: number
-                            rollingBack:
-                              type: number
-                            running:
-                              type: number
-                            terminated:
-                              type: number
-                            waiting:
-                              type: number
-                            waitingForPause:
-                              type: number
+                          additionalProperties:
+                            type: number
                         modified_on:
                           type: string
                           format: date-time
@@ -204995,6 +204983,7 @@ paths:
                         - code
                         - message
                       type: object
+                    maxItems: 0
                   messages:
                     type: array
                     items:
@@ -205181,6 +205170,7 @@ paths:
                         - code
                         - message
                       type: object
+                    maxItems: 0
                   messages:
                     type: array
                     items:
@@ -205206,25 +205196,8 @@ paths:
                         format: uuid
                       instances:
                         type: object
-                        properties:
-                          complete:
-                            type: number
-                          errored:
-                            type: number
-                          paused:
-                            type: number
-                          queued:
-                            type: number
-                          rollingBack:
-                            type: number
-                          running:
-                            type: number
-                          terminated:
-                            type: number
-                          waiting:
-                            type: number
-                          waitingForPause:
-                            type: number
+                        additionalProperties:
+                          type: number
                       modified_on:
                         type: string
                         format: date-time
@@ -205419,6 +205392,7 @@ paths:
                     limit:
                       description: Maximum number of instances of this workflow that can run concurrently. Additional instances are queued and started as running instances complete. Must not exceed the account concurrency limit.
                       type: integer
+                      maximum: 9007199254740991
                       minimum: 1
                 default_retention:
                   description: Default retention applied to instances of this version when they do not set their own retention.
@@ -205428,10 +205402,6 @@ paths:
                       description: Specifies the duration in milliseconds or as a string like '5 minutes'.
                       anyOf:
                         - description: Specifies the duration in milliseconds.
-                          type: number
-                        - type: string
-                      oneOf:
-                        - description: Specifies the duration in milliseconds.
                           type: integer
                         - example: 5 minutes
                           pattern: ^(\d+)\s+(second|minute|hour|day|week|month|year)s?$
@@ -205439,10 +205409,6 @@ paths:
                     success_retention:
                       description: Specifies the duration in milliseconds or as a string like '5 minutes'.
                       anyOf:
-                        - description: Specifies the duration in milliseconds.
-                          type: number
-                        - type: string
-                      oneOf:
                         - description: Specifies the duration in milliseconds.
                           type: integer
                         - example: 5 minutes
@@ -205453,6 +205419,7 @@ paths:
                   properties:
                     steps:
                       type: integer
+                      maximum: 9007199254740991
                       minimum: 1
                 schedules:
                   type: array
@@ -205493,6 +205460,7 @@ paths:
                         - code
                         - message
                       type: object
+                    maxItems: 0
                   messages:
                     type: array
                     items:
@@ -205649,8 +205617,8 @@ paths:
             pattern: ^[a-zA-Z0-9_][a-zA-Z0-9-_]*$
         - name: page
           in: query
+          description: 'Deprecated: use `cursor` for pagination instead.'
           schema:
-            description: 'Deprecated: use `cursor` for pagination instead.'
             type: number
             deprecated: true
             minimum: 1
@@ -205665,13 +205633,11 @@ paths:
           in: query
           description: Opaque token for cursor-based pagination. Mutually exclusive with `page`.
           schema:
-            description: Opaque token for cursor-based pagination. Mutually exclusive with `page`.
             type: string
         - name: direction
           in: query
           description: Defines the direction for cursor-based pagination.
           schema:
-            description: Defines the direction for cursor-based pagination.
             type: string
             enum:
               - asc
@@ -205694,14 +205660,12 @@ paths:
           in: query
           description: Accepts ISO 8601 with no timezone offsets and in UTC.
           schema:
-            description: Accepts ISO 8601 with no timezone offsets and in UTC.
             type: string
             format: date-time
         - name: date_end
           in: query
           description: Accepts ISO 8601 with no timezone offsets and in UTC.
           schema:
-            description: Accepts ISO 8601 with no timezone offsets and in UTC.
             type: string
             format: date-time
         - name: account_id
@@ -205729,6 +205693,7 @@ paths:
                         - code
                         - message
                       type: object
+                    maxItems: 0
                   messages:
                     type: array
                     items:
@@ -205952,6 +205917,7 @@ paths:
           schema:
             type: string
       requestBody:
+        required: true
         content:
           application/json:
             schema:
@@ -205970,10 +205936,6 @@ paths:
                       description: Specifies the duration in milliseconds or as a string like '5 minutes'.
                       anyOf:
                         - description: Specifies the duration in milliseconds.
-                          type: number
-                        - type: string
-                      oneOf:
-                        - description: Specifies the duration in milliseconds.
                           type: integer
                         - example: 5 minutes
                           pattern: ^(\d+)\s+(second|minute|hour|day|week|month|year)s?$
@@ -205981,10 +205943,6 @@ paths:
                     success_retention:
                       description: Specifies the duration in milliseconds or as a string like '5 minutes'.
                       anyOf:
-                        - description: Specifies the duration in milliseconds.
-                          type: number
-                        - type: string
-                      oneOf:
                         - description: Specifies the duration in milliseconds.
                           type: integer
                         - example: 5 minutes
@@ -206027,6 +205985,7 @@ paths:
                         - code
                         - message
                       type: object
+                    maxItems: 0
                   messages:
                     type: array
                     items:
@@ -206224,9 +206183,9 @@ paths:
             pattern: ^[a-zA-Z0-9_][a-zA-Z0-9-_]*$
         - name: instance_id
           in: path
+          description: Instance identifier. User-created instances match `^[a-zA-Z0-9_][a-zA-Z0-9-_]*$` (max 100 characters); cron-triggered instances can use a longer, system-generated id derived from the cron expression.
           required: true
           schema:
-            description: Instance identifier. User-created instances match `^[a-zA-Z0-9_][a-zA-Z0-9-_]*$` (max 100 characters); cron-triggered instances can use a longer, system-generated id derived from the cron expression.
             type: string
             maxLength: 271
             minLength: 1
@@ -206255,6 +206214,7 @@ paths:
                         - code
                         - message
                       type: object
+                    maxItems: 0
                   messages:
                     type: array
                     items:
@@ -206379,9 +206339,9 @@ paths:
             pattern: ^[a-zA-Z0-9_][a-zA-Z0-9-_]*$
         - name: instance_id
           in: path
+          description: Instance identifier. User-created instances match `^[a-zA-Z0-9_][a-zA-Z0-9-_]*$` (max 100 characters); cron-triggered instances can use a longer, system-generated id derived from the cron expression.
           required: true
           schema:
-            description: Instance identifier. User-created instances match `^[a-zA-Z0-9_][a-zA-Z0-9-_]*$` (max 100 characters); cron-triggered instances can use a longer, system-generated id derived from the cron expression.
             type: string
             maxLength: 271
             minLength: 1
@@ -206389,7 +206349,6 @@ paths:
           in: query
           description: When true, omits step details and returns only metadata with step_count.
           schema:
-            description: When true, omits step details and returns only metadata with step_count.
             type: string
             default: 'false'
             enum:
@@ -206399,7 +206358,6 @@ paths:
           in: query
           description: 'Step ordering: "asc" (default, oldest first) or "desc" (newest first).'
           schema:
-            description: 'Step ordering: "asc" (default, oldest first) or "desc" (newest first).'
             type: string
             default: asc
             enum:
@@ -206430,6 +206388,7 @@ paths:
                         - code
                         - message
                       type: object
+                    maxItems: 0
                   messages:
                     type: array
                     items:
@@ -206520,6 +206479,8 @@ paths:
                           - rollingBack
                       step_count:
                         type: integer
+                        maximum: 9007199254740991
+                        minimum: -9007199254740991
                       steps:
                         type: array
                         items:
@@ -206882,9 +206843,9 @@ paths:
             pattern: ^[a-zA-Z0-9_][a-zA-Z0-9-_]*$
         - name: instance_id
           in: path
+          description: Instance identifier. User-created instances match `^[a-zA-Z0-9_][a-zA-Z0-9-_]*$` (max 100 characters); cron-triggered instances can use a longer, system-generated id derived from the cron expression.
           required: true
           schema:
-            description: Instance identifier. User-created instances match `^[a-zA-Z0-9_][a-zA-Z0-9-_]*$` (max 100 characters); cron-triggered instances can use a longer, system-generated id derived from the cron expression.
             type: string
             maxLength: 271
             minLength: 1
@@ -206902,6 +206863,7 @@ paths:
           schema:
             type: string
       requestBody:
+        required: true
         content:
           application/json:
             schema:
@@ -206926,6 +206888,7 @@ paths:
                         - code
                         - message
                       type: object
+                    maxItems: 0
                   messages:
                     type: array
                     items:
@@ -207088,9 +207051,9 @@ paths:
             pattern: ^[a-zA-Z0-9_][a-zA-Z0-9-_]*$
         - name: instance_id
           in: path
+          description: Instance identifier. User-created instances match `^[a-zA-Z0-9_][a-zA-Z0-9-_]*$` (max 100 characters); cron-triggered instances can use a longer, system-generated id derived from the cron expression.
           required: true
           schema:
-            description: Instance identifier. User-created instances match `^[a-zA-Z0-9_][a-zA-Z0-9-_]*$` (max 100 characters); cron-triggered instances can use a longer, system-generated id derived from the cron expression.
             type: string
             maxLength: 271
             minLength: 1
@@ -207100,6 +207063,7 @@ paths:
           schema:
             type: string
       requestBody:
+        required: true
         content:
           application/json:
             schema:
@@ -207139,6 +207103,7 @@ paths:
                         count:
                           type: integer
                           exclusiveMinimum: true
+                          maximum: 9007199254740991
                           minimum: 0
                         name:
                           type: string
@@ -207179,6 +207144,7 @@ paths:
                         - code
                         - message
                       type: object
+                    maxItems: 0
                   messages:
                     type: array
                     items:
@@ -207429,9 +207395,9 @@ paths:
             pattern: ^[a-zA-Z0-9_][a-zA-Z0-9-_]*$
         - name: instance_id
           in: path
+          description: Instance identifier. User-created instances match `^[a-zA-Z0-9_][a-zA-Z0-9-_]*$` (max 100 characters); cron-triggered instances can use a longer, system-generated id derived from the cron expression.
           required: true
           schema:
-            description: Instance identifier. User-created instances match `^[a-zA-Z0-9_][a-zA-Z0-9-_]*$` (max 100 characters); cron-triggered instances can use a longer, system-generated id derived from the cron expression.
             type: string
             maxLength: 271
             minLength: 1
@@ -207440,7 +207406,6 @@ paths:
           description: Exact step name from the instance logs response, including the generated counter suffix.
           required: true
           schema:
-            description: Exact step name from the instance logs response, including the generated counter suffix.
             type: string
             minLength: 1
         - name: type
@@ -207448,7 +207413,6 @@ paths:
           description: Step type to disambiguate step.do and waitForEvent entries that share the same name.
           required: true
           schema:
-            description: Step type to disambiguate step.do and waitForEvent entries that share the same name.
             type: string
             enum:
               - step
@@ -207457,9 +207421,9 @@ paths:
           in: query
           description: Specific attempt number to retrieve output or error for.
           schema:
-            description: Specific attempt number to retrieve output or error for.
             type: integer
             exclusiveMinimum: true
+            maximum: 9007199254740991
             minimum: 0
         - name: account_id
           in: path
@@ -207486,6 +207450,7 @@ paths:
                         - code
                         - message
                       type: object
+                    maxItems: 0
                   messages:
                     type: array
                     items:
@@ -207753,22 +207718,21 @@ paths:
             pattern: ^[a-zA-Z0-9_][a-zA-Z0-9-_]*$
         - name: instance_id
           in: path
+          description: Instance identifier. User-created instances match `^[a-zA-Z0-9_][a-zA-Z0-9-_]*$` (max 100 characters); cron-triggered instances can use a longer, system-generated id derived from the cron expression.
           required: true
           schema:
-            description: Instance identifier. User-created instances match `^[a-zA-Z0-9_][a-zA-Z0-9-_]*$` (max 100 characters); cron-triggered instances can use a longer, system-generated id derived from the cron expression.
             type: string
             maxLength: 271
             minLength: 1
         - name: cursor
           in: query
+          description: Last event ID already received.
           schema:
-            description: Last event ID already received.
             type: integer
         - name: filter
           in: query
           description: Comma-separated workflow event types to include.
           schema:
-            description: Comma-separated workflow event types to include.
             type: string
         - name: account_id
           in: path
@@ -207874,6 +207838,200 @@ paths:
       x-fern-ignore: true
       x-fern-sdk-group-name: workflows.instances
       x-fern-sdk-method-name: subscribe
+  /accounts/{account_id}/workflows/{workflow_name}/instances/{instance_id}/subscribe/token:
+    get:
+      operationId: wor-create-workflow-instance-subscription-token
+      summary: Create a workflow instance event subscription token
+      description: Creates a short-lived token for connecting to the workflow instance event WebSocket.
+      parameters:
+        - name: workflow_name
+          in: path
+          required: true
+          schema:
+            type: string
+            maxLength: 64
+            minLength: 1
+            pattern: ^[a-zA-Z0-9_][a-zA-Z0-9-_]*$
+        - name: instance_id
+          in: path
+          description: Instance identifier. User-created instances match `^[a-zA-Z0-9_][a-zA-Z0-9-_]*$` (max 100 characters); cron-triggered instances can use a longer, system-generated id derived from the cron expression.
+          required: true
+          schema:
+            type: string
+            maxLength: 271
+            minLength: 1
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A five-minute subscription token.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                      required:
+                        - code
+                        - message
+                      type: object
+                    maxItems: 0
+                  messages:
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                      required:
+                        - code
+                        - message
+                      type: object
+                  result:
+                    type: object
+                    properties:
+                      token:
+                        type: string
+                      websocketUrl:
+                        type: string
+                    required:
+                      - token
+                      - websocketUrl
+                  result_info:
+                    type: object
+                    properties:
+                      count:
+                        type: number
+                      cursor:
+                        type: string
+                      page:
+                        type: number
+                      per_page:
+                        type: number
+                      total_count:
+                        type: number
+                      total_pages:
+                        type: number
+                    required:
+                      - per_page
+                      - count
+                      - total_count
+                  success:
+                    type: boolean
+                    enum:
+                      - true
+                required:
+                  - success
+                  - errors
+                  - result
+                  - messages
+        '400':
+          description: Workflow event subscriptions require control plane v2.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                      required:
+                        - code
+                        - message
+                      type: object
+                  messages:
+                    type: array
+                    items:
+                      type: string
+                  result:
+                    type: object
+                    enum:
+                      - null
+                    nullable: true
+                  success:
+                    type: boolean
+                    enum:
+                      - false
+                required:
+                  - success
+                  - messages
+                  - errors
+                  - result
+        '404':
+          description: Instance not found.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                      required:
+                        - code
+                        - message
+                      type: object
+                  messages:
+                    type: array
+                    items:
+                      type: string
+                  result:
+                    type: object
+                    enum:
+                      - null
+                    nullable: true
+                  success:
+                    type: boolean
+                    enum:
+                      - false
+                required:
+                  - success
+                  - messages
+                  - errors
+                  - result
+      security:
+        - api_email: []
+          api_key: []
+          api_token: []
+      tags:
+        - Workflows
+      x-api-token-group:
+        - Workers Tail Read
+        - Workers Scripts Write
+        - Workers Scripts Read
+      x-cfPermissionsRequired:
+        enum:
+          - com.cloudflare.api.workers.write
+          - com.cloudflare.api.workers.read
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: true
+        pro: true
+      x-fern-ignore: true
+      x-fern-sdk-group-name: workflows.instances
+      x-fern-sdk-method-name: subscribeToken
   /accounts/{account_id}/workflows/{workflow_name}/instances/batch:
     post:
       operationId: wor-batch-create-workflow-instance
@@ -207894,6 +208052,7 @@ paths:
           schema:
             type: string
       requestBody:
+        required: true
         content:
           application/json:
             schema:
@@ -207913,10 +208072,6 @@ paths:
                         description: Specifies the duration in milliseconds or as a string like '5 minutes'.
                         anyOf:
                           - description: Specifies the duration in milliseconds.
-                            type: number
-                          - type: string
-                        oneOf:
-                          - description: Specifies the duration in milliseconds.
                             type: integer
                           - example: 5 minutes
                             pattern: ^(\d+)\s+(second|minute|hour|day|week|month|year)s?$
@@ -207924,10 +208079,6 @@ paths:
                       success_retention:
                         description: Specifies the duration in milliseconds or as a string like '5 minutes'.
                         anyOf:
-                          - description: Specifies the duration in milliseconds.
-                            type: number
-                          - type: string
-                        oneOf:
                           - description: Specifies the duration in milliseconds.
                             type: integer
                           - example: 5 minutes
@@ -207973,6 +208124,7 @@ paths:
                         - code
                         - message
                       type: object
+                    maxItems: 0
                   messages:
                     type: array
                     items:
@@ -208168,6 +208320,7 @@ paths:
           schema:
             type: string
       requestBody:
+        required: true
         content:
           application/json:
             schema:
@@ -208205,6 +208358,7 @@ paths:
                         - code
                         - message
                       type: object
+                    maxItems: 0
                   messages:
                     type: array
                     items:
@@ -208389,6 +208543,7 @@ paths:
           schema:
             type: string
       requestBody:
+        required: true
         content:
           application/json:
             schema:
@@ -208420,6 +208575,7 @@ paths:
                         - code
                         - message
                       type: object
+                    maxItems: 0
                   messages:
                     type: array
                     items:
@@ -208606,6 +208762,7 @@ paths:
                         - code
                         - message
                       type: object
+                    maxItems: 0
                   messages:
                     type: array
                     items:
@@ -208804,6 +208961,7 @@ paths:
                         - code
                         - message
                       type: object
+                    maxItems: 0
                   messages:
                     type: array
                     items:
@@ -208828,6 +208986,7 @@ paths:
                             limit:
                               description: Maximum number of instances of this workflow that can run concurrently. Additional instances are queued and started as running instances complete. Must not exceed the account concurrency limit.
                               type: integer
+                              maximum: 9007199254740991
                               minimum: 1
                         created_on:
                           type: string
@@ -208838,9 +208997,13 @@ paths:
                             error_retention:
                               description: Default error retention in milliseconds.
                               type: integer
+                              maximum: 9007199254740991
+                              minimum: -9007199254740991
                             success_retention:
                               description: Default success retention in milliseconds.
                               type: integer
+                              maximum: 9007199254740991
+                              minimum: -9007199254740991
                         has_dag:
                           type: boolean
                         id:
@@ -208857,6 +209020,7 @@ paths:
                           properties:
                             steps:
                               type: integer
+                              maximum: 9007199254740991
                               minimum: 1
                         modified_on:
                           type: string
@@ -209005,6 +209169,7 @@ paths:
                         - code
                         - message
                       type: object
+                    maxItems: 0
                   messages:
                     type: array
                     items:
@@ -209028,6 +209193,7 @@ paths:
                           limit:
                             description: Maximum number of instances of this workflow that can run concurrently. Additional instances are queued and started as running instances complete. Must not exceed the account concurrency limit.
                             type: integer
+                            maximum: 9007199254740991
                             minimum: 1
                       created_on:
                         type: string
@@ -209038,9 +209204,13 @@ paths:
                           error_retention:
                             description: Default error retention in milliseconds.
                             type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
                           success_retention:
                             description: Default success retention in milliseconds.
                             type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
                       has_dag:
                         type: boolean
                       id:
@@ -209057,6 +209227,7 @@ paths:
                         properties:
                           steps:
                             type: integer
+                            maximum: 9007199254740991
                             minimum: 1
                       modified_on:
                         type: string
@@ -209241,6 +209412,7 @@ paths:
                         - code
                         - message
                       type: object
+                    maxItems: 0
                   messages:
                     type: array
                     items:
@@ -209412,6 +209584,7 @@ paths:
                         - code
                         - message
                       type: object
+                    maxItems: 0
                   messages:
                     type: array
                     items:
@@ -210059,6 +210232,7 @@ paths:
                         - code
                         - message
                       type: object
+                    maxItems: 0
                   messages:
                     type: array
                     items:
@@ -210080,9 +210254,13 @@ paths:
                           error_retention:
                             description: Default error retention in milliseconds.
                             type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
                           success_retention:
                             description: Default success retention in milliseconds.
                             type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
                   result_info:
                     type: object
                     properties:
@@ -210181,6 +210359,7 @@ paths:
           schema:
             type: string
       requestBody:
+        required: true
         content:
           application/json:
             schema:
@@ -210194,10 +210373,6 @@ paths:
                       description: Specifies the duration in milliseconds or as a string like '5 minutes'.
                       anyOf:
                         - description: Specifies the duration in milliseconds.
-                          type: number
-                        - type: string
-                      oneOf:
-                        - description: Specifies the duration in milliseconds.
                           type: integer
                         - example: 5 minutes
                           pattern: ^(\d+)\s+(second|minute|hour|day|week|month|year)s?$
@@ -210205,10 +210380,6 @@ paths:
                     success_retention:
                       description: Specifies the duration in milliseconds or as a string like '5 minutes'.
                       anyOf:
-                        - description: Specifies the duration in milliseconds.
-                          type: number
-                        - type: string
-                      oneOf:
                         - description: Specifies the duration in milliseconds.
                           type: integer
                         - example: 5 minutes
@@ -210234,6 +210405,7 @@ paths:
                         - code
                         - message
                       type: object
+                    maxItems: 0
                   messages:
                     type: array
                     items:
@@ -210255,9 +210427,13 @@ paths:
                           error_retention:
                             description: Default error retention in milliseconds.
                             type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
                           success_retention:
                             description: Default success retention in milliseconds.
                             type: integer
+                            maximum: 9007199254740991
+                            minimum: -9007199254740991
                   result_info:
                     type: object
                     properties:
