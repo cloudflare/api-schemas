@@ -75516,42 +75516,219 @@ paths:
           schema:
             type: array
             items:
-              properties:
-                field:
-                  description: 'Event field to search on. Allowed: attacker, attackerCountry, category, createdAt, date, event, indicator, indicatorType, killChain, mitreAttack, tags, targetCountry, targetIndustry, tlp, uuid.'
-                  type: string
-                  example: attackerCountry
-                op:
-                  description: Search operator. Use 'in' for bulk lookup of up to 100 values at once, e.g. {field:'tags', op:'in', value:['malware','apt']}.
-                  type: string
-                  example: equals
-                  enum:
-                    - equals
-                    - not
-                    - gt
-                    - gte
-                    - lt
-                    - lte
-                    - like
-                    - contains
-                    - startsWith
-                    - endsWith
-                    - in
-                    - find
-                value:
-                  description: Search value. String or number for most operators. Array for 'in' operator (max 100 items).
-                  anyOf:
-                    - example: usa
+              anyOf:
+                - additionalProperties: false
+                  properties:
+                    field:
                       type: string
-                    - example: 1
-                      type: number
-                    - items:
-                        anyOf:
-                          - type: string
-                          - type: number
+                      enum:
+                        - attacker
+                        - attackerCountry
+                        - category
+                        - createdAt
+                        - date
+                        - event
+                        - indicator
+                        - indicatorType
+                        - mitreAttack
+                        - mitreCapec
+                        - tags
+                        - targetCountry
+                        - targetIndustry
+                        - tlp
+                        - uuid
+                    op:
+                      type: string
+                      enum:
+                        - equals
+                        - not
+                        - gt
+                        - gte
+                        - lt
+                        - lte
+                        - like
+                        - contains
+                        - startsWith
+                        - endsWith
+                        - find
+                    value:
+                      type: string
+                      maxLength: 512
+                      minLength: 1
+                  required:
+                    - field
+                    - op
+                    - value
+                  type: object
+                - additionalProperties: false
+                  properties:
+                    field:
+                      type: string
+                      enum:
+                        - attacker
+                        - attackerCountry
+                        - category
+                        - createdAt
+                        - date
+                        - event
+                        - indicator
+                        - indicatorType
+                        - mitreAttack
+                        - mitreCapec
+                        - tags
+                        - targetCountry
+                        - targetIndustry
+                        - tlp
+                        - uuid
+                    op:
+                      type: string
+                      enum:
+                        - in
+                    value:
                       type: array
-              type: object
+                      items:
+                        maxLength: 512
+                        minLength: 1
+                        type: string
+                      maxItems: 100
+                      minItems: 1
+                  required:
+                    - field
+                    - op
+                    - value
+                  type: object
+                - additionalProperties: false
+                  properties:
+                    field:
+                      type: string
+                      enum:
+                        - killChain
+                    op:
+                      type: string
+                      enum:
+                        - equals
+                        - not
+                        - gt
+                        - gte
+                        - lt
+                        - lte
+                    value:
+                      anyOf:
+                        - type: number
+                        - pattern: ^-?(?:\d+\.?\d*|\.\d+)$
+                          type: string
+                  required:
+                    - field
+                    - op
+                    - value
+                  type: object
+                - additionalProperties: false
+                  properties:
+                    field:
+                      type: string
+                      enum:
+                        - killChain
+                    op:
+                      type: string
+                      enum:
+                        - in
+                    value:
+                      type: array
+                      items:
+                        anyOf:
+                          - type: number
+                          - pattern: ^-?(?:\d+\.?\d*|\.\d+)$
+                            type: string
+                      maxItems: 100
+                      minItems: 1
+                  required:
+                    - field
+                    - op
+                    - value
+                  type: object
+                - additionalProperties: false
+                  properties:
+                    field:
+                      type: string
+                      enum:
+                        - hasChildren
+                    op:
+                      type: string
+                      enum:
+                        - equals
+                        - not
+                        - gt
+                        - gte
+                        - lt
+                        - lte
+                    value:
+                      anyOf:
+                        - type: boolean
+                        - enum:
+                            - 'true'
+                          type: string
+                        - enum:
+                            - 'false'
+                          type: string
+                        - enum:
+                            - 1
+                          type: number
+                        - enum:
+                            - 0
+                          type: number
+                        - enum:
+                            - '1'
+                          type: string
+                        - enum:
+                            - '0'
+                          type: string
+                  required:
+                    - field
+                    - op
+                    - value
+                  type: object
+                - additionalProperties: false
+                  properties:
+                    field:
+                      type: string
+                      enum:
+                        - hasChildren
+                    op:
+                      type: string
+                      enum:
+                        - in
+                    value:
+                      type: array
+                      items:
+                        anyOf:
+                          - type: boolean
+                          - enum:
+                              - 'true'
+                            type: string
+                          - enum:
+                              - 'false'
+                            type: string
+                          - enum:
+                              - 1
+                            type: number
+                          - enum:
+                              - 0
+                            type: number
+                          - enum:
+                              - '1'
+                            type: string
+                          - enum:
+                              - '0'
+                            type: string
+                      maxItems: 100
+                      minItems: 1
+                  required:
+                    - field
+                    - op
+                    - value
+                  type: object
             default: []
+            maxItems: 10
         - name: page
           in: query
           schema:
@@ -80414,6 +80591,10 @@ paths:
                           type: array
                           items:
                             properties:
+                              categoryId:
+                                description: The UUID of the tag category, or null when the tag is uncategorized.
+                                type: string
+                                nullable: true
                               categoryName:
                                 type: string
                               uuid:
@@ -80421,6 +80602,11 @@ paths:
                               value:
                                 type: string
                             type: object
+                        tlp:
+                          description: 'Traffic Light Protocol designation. UPPERCASE. Possible values: CLEAR, GREEN, AMBER, AMBER-STRICT, RED, PURPLE. Null when not set.'
+                          type: string
+                          example: AMBER
+                          nullable: true
                         updatedAt:
                           type: string
                           format: date-time
@@ -80457,6 +80643,8 @@ paths:
                 required:
                   - indicators
                   - pagination
+        4XX:
+          $ref: '#/components/responses/cloudforce-one-events_ApiV4ClientError'
       deprecated: true
       security:
         - api_token: []
@@ -80613,6 +80801,10 @@ paths:
                     type: array
                     items:
                       properties:
+                        categoryId:
+                          description: The UUID of the tag category, or null when the tag is uncategorized.
+                          type: string
+                          nullable: true
                         categoryName:
                           type: string
                         uuid:
@@ -80620,6 +80812,11 @@ paths:
                         value:
                           type: string
                       type: object
+                  tlp:
+                    description: 'Traffic Light Protocol designation. UPPERCASE. Possible values: CLEAR, GREEN, AMBER, AMBER-STRICT, RED, PURPLE. Null when not set.'
+                    type: string
+                    example: AMBER
+                    nullable: true
                   updatedAt:
                     type: string
                     format: date-time
@@ -80734,6 +80931,10 @@ paths:
                         required:
                           - value
                         type: object
+                tlp:
+                  description: 'Traffic Light Protocol designation. Case-insensitive on input, stored and returned as UPPERCASE. Allowed values: clear, green, amber, amber-strict, red, purple.'
+                  type: string
+                  example: RED
                 value:
                   type: string
                   example: updated-domain.com
@@ -80779,6 +80980,10 @@ paths:
                     type: array
                     items:
                       properties:
+                        categoryId:
+                          description: The UUID of the tag category, or null when the tag is uncategorized.
+                          type: string
+                          nullable: true
                         categoryName:
                           type: string
                         uuid:
@@ -80786,6 +80991,11 @@ paths:
                         value:
                           type: string
                       type: object
+                  tlp:
+                    description: 'Traffic Light Protocol designation. UPPERCASE. Possible values: CLEAR, GREEN, AMBER, AMBER-STRICT, RED, PURPLE. Null when not set.'
+                    type: string
+                    example: AMBER
+                    nullable: true
                   updatedAt:
                     type: string
                     format: date-time
@@ -80995,14 +81205,16 @@ paths:
                         nullable: true
                       entities:
                         type: array
-                        items: {}
+                        items:
+                          $ref: '#/components/schemas/cloudforce-one-events_HydratedEntity'
                       hasMore:
                         type: boolean
                       hydrationErrors:
                         type: object
                       relationships:
                         type: array
-                        items: {}
+                        items:
+                          $ref: '#/components/schemas/cloudforce-one-events_RelationshipEdge'
                   success:
                     type: boolean
         '400':
@@ -81037,6 +81249,10 @@ paths:
       x-api-token-group:
         - Cloudforce One Write
         - Cloudforce One Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: cloudforce-one.events.dataset.indicators.relationships
+      x-fern-sdk-method-name: list
+      x-forge-hidden: true
     post:
       operationId: post_IndicatorRelationshipCreate
       summary: Create a relationship for an indicator
@@ -81169,6 +81385,10 @@ paths:
       x-api-token-group:
         - Cloudforce One Write
         - Cloudforce One Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: cloudforce-one.events.dataset.indicators.relationships
+      x-fern-sdk-method-name: create
+      x-forge-hidden: true
   /accounts/{account_id}/cloudforce-one/events/dataset/{dataset_id}/indicators/{indicator_id}/relationships/{rel_uuid}:
     delete:
       operationId: delete_IndicatorRelationshipDelete
@@ -81251,6 +81471,10 @@ paths:
         - Indicator
       x-api-token-group:
         - Cloudforce One Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: cloudforce-one.events.dataset.indicators.relationships
+      x-fern-sdk-method-name: delete
+      x-forge-hidden: true
     patch:
       operationId: patch_IndicatorRelationshipUpdate
       summary: Update a relationship
@@ -81379,6 +81603,10 @@ paths:
         - Indicator
       x-api-token-group:
         - Cloudforce One Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: cloudforce-one.events.dataset.indicators.relationships
+      x-fern-sdk-method-name: update
+      x-forge-hidden: true
   /accounts/{account_id}/cloudforce-one/events/dataset/{dataset_id}/indicators/bulk:
     post:
       operationId: post_IndicatorCreateBulk
@@ -81446,6 +81674,10 @@ paths:
                               required:
                                 - value
                               type: object
+                      tlp:
+                        description: 'Traffic Light Protocol designation. Case-insensitive on input, stored and returned as UPPERCASE. Allowed values: clear, green, amber, amber-strict, red, purple.'
+                        type: string
+                        example: AMBER
                       value:
                         type: string
                         example: malicious-domain.com
@@ -81559,6 +81791,10 @@ paths:
                         required:
                           - value
                         type: object
+                tlp:
+                  description: 'Traffic Light Protocol designation. Case-insensitive on input, stored and returned as UPPERCASE. Allowed values: clear, green, amber, amber-strict, red, purple.'
+                  type: string
+                  example: AMBER
                 value:
                   type: string
                   example: malicious-domain.com
@@ -81607,6 +81843,10 @@ paths:
                     type: array
                     items:
                       properties:
+                        categoryId:
+                          description: The UUID of the tag category, or null when the tag is uncategorized.
+                          type: string
+                          nullable: true
                         categoryName:
                           type: string
                         uuid:
@@ -81614,6 +81854,11 @@ paths:
                         value:
                           type: string
                       type: object
+                  tlp:
+                    description: 'Traffic Light Protocol designation. UPPERCASE. Possible values: CLEAR, GREEN, AMBER, AMBER-STRICT, RED, PURPLE. Null when not set.'
+                    type: string
+                    example: AMBER
+                    nullable: true
                   updatedAt:
                     type: string
                     format: date-time
@@ -82534,6 +82779,10 @@ paths:
                           type: array
                           items:
                             properties:
+                              categoryId:
+                                description: The UUID of the tag category, or null when the tag is uncategorized.
+                                type: string
+                                nullable: true
                               categoryName:
                                 type: string
                               uuid:
@@ -82541,6 +82790,11 @@ paths:
                               value:
                                 type: string
                             type: object
+                        tlp:
+                          description: 'Traffic Light Protocol designation. UPPERCASE. Possible values: CLEAR, GREEN, AMBER, AMBER-STRICT, RED, PURPLE. Null when not set.'
+                          type: string
+                          example: AMBER
+                          nullable: true
                         updatedAt:
                           type: string
                           format: date-time
@@ -84524,6 +84778,10 @@ paths:
                                 type: array
                                 items:
                                   properties:
+                                    categoryId:
+                                      description: The UUID of the tag category, or null when the tag is uncategorized.
+                                      type: string
+                                      nullable: true
                                     categoryName:
                                       type: string
                                     uuid:
@@ -84531,6 +84789,11 @@ paths:
                                     value:
                                       type: string
                                   type: object
+                              tlp:
+                                description: 'Traffic Light Protocol designation. UPPERCASE. Possible values: CLEAR, GREEN, AMBER, AMBER-STRICT, RED, PURPLE. Null when not set.'
+                                type: string
+                                example: AMBER
+                                nullable: true
                               updatedAt:
                                 type: string
                                 format: date-time
@@ -84766,15 +85029,15 @@ paths:
                 type: string
         - name: eventDateAfter
           in: query
-          description: "For measure=relationships: only count event links whose eventDate is on/after this date (ISO 8601). Use to bound 'top indicator' to recent activity."
+          description: "For measure=relationships: only count indicator→event links whose relationship was created/observed on or after this date (ISO 8601). Bounds the activity view to recently-observed links. Note: this filters by the relationship's createdAt (link-observation time), not the underlying event's business date."
           schema:
-            description: "For measure=relationships: only count event links whose eventDate is on/after this date (ISO 8601). Use to bound 'top indicator' to recent activity."
+            description: "For measure=relationships: only count indicator→event links whose relationship was created/observed on or after this date (ISO 8601). Bounds the activity view to recently-observed links. Note: this filters by the relationship's createdAt (link-observation time), not the underlying event's business date."
             type: string
         - name: eventDateBefore
           in: query
-          description: 'For measure=relationships: only count event links whose eventDate is on/before this date (ISO 8601).'
+          description: "For measure=relationships: only count indicator→event links whose relationship was created/observed on or before this date (ISO 8601). Bounds the activity view by the relationship's createdAt (link-observation time), not the underlying event's business date."
           schema:
-            description: 'For measure=relationships: only count event links whose eventDate is on/before this date (ISO 8601).'
+            description: "For measure=relationships: only count indicator→event links whose relationship was created/observed on or before this date (ISO 8601). Bounds the activity view by the relationship's createdAt (link-observation time), not the underlying event's business date."
             type: string
         - name: limit
           in: query
@@ -84958,6 +85221,8 @@ paths:
                   - result
                   - success
                   - errors
+        4XX:
+          $ref: '#/components/responses/cloudforce-one-events_ApiV4ClientError'
       security:
         - api_token: []
       tags:
@@ -86189,10 +86454,11 @@ paths:
                               enum:
                                 - red
                                 - amber
-                                - amber+strict
+                                - amber-strict
                                 - green
                                 - clear
                                 - purple
+                                - amber+strict
                             value:
                               type: string
                           required:
@@ -86210,10 +86476,11 @@ paths:
                               enum:
                                 - red
                                 - amber
-                                - amber+strict
+                                - amber-strict
                                 - green
                                 - clear
                                 - purple
+                                - amber+strict
                             value:
                               type: string
                           required:
@@ -86227,7 +86494,7 @@ paths:
                           items:
                             type: string
                         aliases:
-                          description: 'Structured aliases ({ value, confidence 1-10, tlp }). CFONE-only: stripped from responses to non-CFONE accounts.'
+                          description: 'Structured aliases ({ value, confidence 1-10, tlp }). Public: returned to all accounts with per-entry TLP filtering (entries with tlp: purple are removed for non-CFONE accounts).'
                           type: array
                           items:
                             properties:
@@ -86243,10 +86510,11 @@ paths:
                                 enum:
                                   - red
                                   - amber
-                                  - amber+strict
+                                  - amber-strict
                                   - green
                                   - clear
                                   - purple
+                                  - amber+strict
                                 nullable: true
                               value:
                                 type: string
@@ -86267,10 +86535,11 @@ paths:
                               enum:
                                 - red
                                 - amber
-                                - amber+strict
+                                - amber-strict
                                 - green
                                 - clear
                                 - purple
+                                - amber+strict
                             value:
                               type: string
                           required:
@@ -86323,10 +86592,11 @@ paths:
                                 enum:
                                   - red
                                   - amber
-                                  - amber+strict
+                                  - amber-strict
                                   - green
                                   - clear
                                   - purple
+                                  - amber+strict
                               value:
                                 type: string
                             required:
@@ -86350,10 +86620,11 @@ paths:
                                 enum:
                                   - red
                                   - amber
-                                  - amber+strict
+                                  - amber-strict
                                   - green
                                   - clear
                                   - purple
+                                  - amber+strict
                                 nullable: true
                               value:
                                 type: string
@@ -86378,10 +86649,11 @@ paths:
                               enum:
                                 - red
                                 - amber
-                                - amber+strict
+                                - amber-strict
                                 - green
                                 - clear
                                 - purple
+                                - amber+strict
                             value:
                               type: string
                           required:
@@ -86399,10 +86671,11 @@ paths:
                               enum:
                                 - red
                                 - amber
-                                - amber+strict
+                                - amber-strict
                                 - green
                                 - clear
                                 - purple
+                                - amber+strict
                             value:
                               type: string
                           required:
@@ -86422,10 +86695,11 @@ paths:
                               enum:
                                 - red
                                 - amber
-                                - amber+strict
+                                - amber-strict
                                 - green
                                 - clear
                                 - purple
+                                - amber+strict
                             value:
                               type: string
                               nullable: true
@@ -86442,10 +86716,11 @@ paths:
                               enum:
                                 - red
                                 - amber
-                                - amber+strict
+                                - amber-strict
                                 - green
                                 - clear
                                 - purple
+                                - amber+strict
                             value:
                               type: number
                           required:
@@ -86468,10 +86743,11 @@ paths:
                               enum:
                                 - red
                                 - amber
-                                - amber+strict
+                                - amber-strict
                                 - green
                                 - clear
                                 - purple
+                                - amber+strict
                             value:
                               type: string
                           required:
@@ -86483,10 +86759,11 @@ paths:
                           enum:
                             - red
                             - amber
-                            - amber+strict
+                            - amber-strict
                             - green
                             - clear
                             - purple
+                            - amber+strict
                           nullable: true
                         updatedAt:
                           type: string
@@ -86672,10 +86949,11 @@ paths:
                         enum:
                           - red
                           - amber
-                          - amber+strict
+                          - amber-strict
                           - green
                           - clear
                           - purple
+                          - amber+strict
                       value:
                         type: string
                     required:
@@ -86693,10 +86971,11 @@ paths:
                         enum:
                           - red
                           - amber
-                          - amber+strict
+                          - amber-strict
                           - green
                           - clear
                           - purple
+                          - amber+strict
                       value:
                         type: string
                     required:
@@ -86710,7 +86989,7 @@ paths:
                     items:
                       type: string
                   aliases:
-                    description: 'Structured aliases ({ value, confidence 1-10, tlp }). CFONE-only: stripped from responses to non-CFONE accounts.'
+                    description: 'Structured aliases ({ value, confidence 1-10, tlp }). Public: returned to all accounts with per-entry TLP filtering (entries with tlp: purple are removed for non-CFONE accounts).'
                     type: array
                     items:
                       properties:
@@ -86726,10 +87005,11 @@ paths:
                           enum:
                             - red
                             - amber
-                            - amber+strict
+                            - amber-strict
                             - green
                             - clear
                             - purple
+                            - amber+strict
                           nullable: true
                         value:
                           type: string
@@ -86750,10 +87030,11 @@ paths:
                         enum:
                           - red
                           - amber
-                          - amber+strict
+                          - amber-strict
                           - green
                           - clear
                           - purple
+                          - amber+strict
                       value:
                         type: string
                     required:
@@ -86806,10 +87087,11 @@ paths:
                           enum:
                             - red
                             - amber
-                            - amber+strict
+                            - amber-strict
                             - green
                             - clear
                             - purple
+                            - amber+strict
                         value:
                           type: string
                       required:
@@ -86833,10 +87115,11 @@ paths:
                           enum:
                             - red
                             - amber
-                            - amber+strict
+                            - amber-strict
                             - green
                             - clear
                             - purple
+                            - amber+strict
                           nullable: true
                         value:
                           type: string
@@ -86861,10 +87144,11 @@ paths:
                         enum:
                           - red
                           - amber
-                          - amber+strict
+                          - amber-strict
                           - green
                           - clear
                           - purple
+                          - amber+strict
                       value:
                         type: string
                     required:
@@ -86882,10 +87166,11 @@ paths:
                         enum:
                           - red
                           - amber
-                          - amber+strict
+                          - amber-strict
                           - green
                           - clear
                           - purple
+                          - amber+strict
                       value:
                         type: string
                     required:
@@ -86905,10 +87190,11 @@ paths:
                         enum:
                           - red
                           - amber
-                          - amber+strict
+                          - amber-strict
                           - green
                           - clear
                           - purple
+                          - amber+strict
                       value:
                         type: string
                         nullable: true
@@ -86925,10 +87211,11 @@ paths:
                         enum:
                           - red
                           - amber
-                          - amber+strict
+                          - amber-strict
                           - green
                           - clear
                           - purple
+                          - amber+strict
                       value:
                         type: number
                     required:
@@ -86951,10 +87238,11 @@ paths:
                         enum:
                           - red
                           - amber
-                          - amber+strict
+                          - amber-strict
                           - green
                           - clear
                           - purple
+                          - amber+strict
                       value:
                         type: string
                     required:
@@ -86966,10 +87254,11 @@ paths:
                     enum:
                       - red
                       - amber
-                      - amber+strict
+                      - amber-strict
                       - green
                       - clear
                       - purple
+                      - amber+strict
                     nullable: true
                   updatedAt:
                     type: string
@@ -87016,6 +87305,10 @@ paths:
       x-api-token-group:
         - Cloudforce One Write
         - Cloudforce One Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: cloudforce-one.events.tags
+      x-fern-sdk-method-name: get-by-id
+      x-forge-hidden: true
     patch:
       operationId: patch_TagUpdate
       summary: Updates a tag (SoT)
@@ -87054,10 +87347,11 @@ paths:
                           enum:
                             - red
                             - amber
-                            - amber+strict
+                            - amber-strict
                             - green
                             - clear
                             - purple
+                            - amber+strict
                         value:
                           type: string
                       required:
@@ -87076,10 +87370,11 @@ paths:
                           enum:
                             - red
                             - amber
-                            - amber+strict
+                            - amber-strict
                             - green
                             - clear
                             - purple
+                            - amber+strict
                         value:
                           type: string
                       required:
@@ -87094,7 +87389,7 @@ paths:
                   items:
                     type: string
                 aliases:
-                  description: 'Structured aliases ({ value, confidence 1-10, tlp }). CFONE-only: stripped from responses to non-CFONE accounts.'
+                  description: 'Structured aliases ({ value, confidence 1-10, tlp }). Public: returned to all accounts with per-entry TLP filtering (entries with tlp: purple are removed for non-CFONE accounts).'
                   type: array
                   items:
                     properties:
@@ -87110,10 +87405,11 @@ paths:
                         enum:
                           - red
                           - amber
-                          - amber+strict
+                          - amber-strict
                           - green
                           - clear
                           - purple
+                          - amber+strict
                         nullable: true
                       value:
                         type: string
@@ -87134,10 +87430,11 @@ paths:
                           enum:
                             - red
                             - amber
-                            - amber+strict
+                            - amber-strict
                             - green
                             - clear
                             - purple
+                            - amber+strict
                         value:
                           type: string
                       required:
@@ -87196,10 +87493,11 @@ paths:
                         enum:
                           - red
                           - amber
-                          - amber+strict
+                          - amber-strict
                           - green
                           - clear
                           - purple
+                          - amber+strict
                         nullable: true
                       value:
                         type: string
@@ -87224,10 +87522,11 @@ paths:
                           enum:
                             - red
                             - amber
-                            - amber+strict
+                            - amber-strict
                             - green
                             - clear
                             - purple
+                            - amber+strict
                         value:
                           type: string
                       required:
@@ -87246,10 +87545,11 @@ paths:
                           enum:
                             - red
                             - amber
-                            - amber+strict
+                            - amber-strict
                             - green
                             - clear
                             - purple
+                            - amber+strict
                         value:
                           type: string
                       required:
@@ -87268,10 +87568,11 @@ paths:
                           enum:
                             - red
                             - amber
-                            - amber+strict
+                            - amber-strict
                             - green
                             - clear
                             - purple
+                            - amber+strict
                         value:
                           type: string
                       required:
@@ -87290,10 +87591,11 @@ paths:
                           enum:
                             - red
                             - amber
-                            - amber+strict
+                            - amber-strict
                             - green
                             - clear
                             - purple
+                            - amber+strict
                         value:
                           type: number
                       required:
@@ -87316,10 +87618,11 @@ paths:
                           enum:
                             - red
                             - amber
-                            - amber+strict
+                            - amber-strict
                             - green
                             - clear
                             - purple
+                            - amber+strict
                         value:
                           type: string
                       required:
@@ -87332,10 +87635,11 @@ paths:
                   enum:
                     - red
                     - amber
-                    - amber+strict
+                    - amber-strict
                     - green
                     - clear
                     - purple
+                    - amber+strict
                 value:
                   type: string
                   example: APT28
@@ -87358,10 +87662,11 @@ paths:
                         enum:
                           - red
                           - amber
-                          - amber+strict
+                          - amber-strict
                           - green
                           - clear
                           - purple
+                          - amber+strict
                       value:
                         type: string
                     required:
@@ -87379,10 +87684,11 @@ paths:
                         enum:
                           - red
                           - amber
-                          - amber+strict
+                          - amber-strict
                           - green
                           - clear
                           - purple
+                          - amber+strict
                       value:
                         type: string
                     required:
@@ -87396,7 +87702,7 @@ paths:
                     items:
                       type: string
                   aliases:
-                    description: 'Structured aliases ({ value, confidence 1-10, tlp }). CFONE-only: stripped from responses to non-CFONE accounts.'
+                    description: 'Structured aliases ({ value, confidence 1-10, tlp }). Public: returned to all accounts with per-entry TLP filtering (entries with tlp: purple are removed for non-CFONE accounts).'
                     type: array
                     items:
                       properties:
@@ -87412,10 +87718,11 @@ paths:
                           enum:
                             - red
                             - amber
-                            - amber+strict
+                            - amber-strict
                             - green
                             - clear
                             - purple
+                            - amber+strict
                           nullable: true
                         value:
                           type: string
@@ -87436,10 +87743,11 @@ paths:
                         enum:
                           - red
                           - amber
-                          - amber+strict
+                          - amber-strict
                           - green
                           - clear
                           - purple
+                          - amber+strict
                       value:
                         type: string
                     required:
@@ -87492,10 +87800,11 @@ paths:
                           enum:
                             - red
                             - amber
-                            - amber+strict
+                            - amber-strict
                             - green
                             - clear
                             - purple
+                            - amber+strict
                         value:
                           type: string
                       required:
@@ -87519,10 +87828,11 @@ paths:
                           enum:
                             - red
                             - amber
-                            - amber+strict
+                            - amber-strict
                             - green
                             - clear
                             - purple
+                            - amber+strict
                           nullable: true
                         value:
                           type: string
@@ -87547,10 +87857,11 @@ paths:
                         enum:
                           - red
                           - amber
-                          - amber+strict
+                          - amber-strict
                           - green
                           - clear
                           - purple
+                          - amber+strict
                       value:
                         type: string
                     required:
@@ -87568,10 +87879,11 @@ paths:
                         enum:
                           - red
                           - amber
-                          - amber+strict
+                          - amber-strict
                           - green
                           - clear
                           - purple
+                          - amber+strict
                       value:
                         type: string
                     required:
@@ -87591,10 +87903,11 @@ paths:
                         enum:
                           - red
                           - amber
-                          - amber+strict
+                          - amber-strict
                           - green
                           - clear
                           - purple
+                          - amber+strict
                       value:
                         type: string
                         nullable: true
@@ -87611,10 +87924,11 @@ paths:
                         enum:
                           - red
                           - amber
-                          - amber+strict
+                          - amber-strict
                           - green
                           - clear
                           - purple
+                          - amber+strict
                       value:
                         type: number
                     required:
@@ -87637,10 +87951,11 @@ paths:
                         enum:
                           - red
                           - amber
-                          - amber+strict
+                          - amber-strict
                           - green
                           - clear
                           - purple
+                          - amber+strict
                       value:
                         type: string
                     required:
@@ -87652,10 +87967,11 @@ paths:
                     enum:
                       - red
                       - amber
-                      - amber+strict
+                      - amber-strict
                       - green
                       - clear
                       - purple
+                      - amber+strict
                     nullable: true
                   updatedAt:
                     type: string
@@ -87870,6 +88186,10 @@ paths:
                           type: array
                           items:
                             properties:
+                              categoryId:
+                                description: The UUID of the tag category, or null when the tag is uncategorized.
+                                type: string
+                                nullable: true
                               categoryName:
                                 type: string
                               uuid:
@@ -87877,6 +88197,11 @@ paths:
                               value:
                                 type: string
                             type: object
+                        tlp:
+                          description: 'Traffic Light Protocol designation. UPPERCASE. Possible values: CLEAR, GREEN, AMBER, AMBER-STRICT, RED, PURPLE. Null when not set.'
+                          type: string
+                          example: AMBER
+                          nullable: true
                         updatedAt:
                           type: string
                           format: date-time
@@ -88106,7 +88431,8 @@ paths:
                         nullable: true
                       entities:
                         type: array
-                        items: {}
+                        items:
+                          $ref: '#/components/schemas/cloudforce-one-events_HydratedEntity'
                       failedShardCount:
                         type: number
                       hasMore:
@@ -88117,7 +88443,8 @@ paths:
                         type: boolean
                       relationships:
                         type: array
-                        items: {}
+                        items:
+                          $ref: '#/components/schemas/cloudforce-one-events_RelationshipEdge'
                   success:
                     type: boolean
         '400':
@@ -88152,6 +88479,10 @@ paths:
       x-api-token-group:
         - Cloudforce One Write
         - Cloudforce One Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: cloudforce-one.events.tags.relationships
+      x-fern-sdk-method-name: list
+      x-forge-hidden: true
     post:
       operationId: post_TagRelationshipCreate
       summary: Create a relationship for a tag
@@ -88259,6 +88590,10 @@ paths:
       x-api-token-group:
         - Cloudforce One Write
         - Cloudforce One Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: cloudforce-one.events.tags.relationships
+      x-fern-sdk-method-name: create
+      x-forge-hidden: true
   /accounts/{account_id}/cloudforce-one/events/tags/{tag_uuid}/relationships/{rel_uuid}:
     delete:
       operationId: delete_TagRelationshipDelete
@@ -88340,6 +88675,10 @@ paths:
         - Tag
       x-api-token-group:
         - Cloudforce One Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: cloudforce-one.events.tags.relationships
+      x-fern-sdk-method-name: delete
+      x-forge-hidden: true
     patch:
       operationId: patch_TagRelationshipUpdate
       summary: Update a tag relationship
@@ -88467,6 +88806,10 @@ paths:
         - Tag
       x-api-token-group:
         - Cloudforce One Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: cloudforce-one.events.tags.relationships
+      x-fern-sdk-method-name: update
+      x-forge-hidden: true
   /accounts/{account_id}/cloudforce-one/events/tags/categories:
     get:
       operationId: get_TagCategoryList
@@ -88729,6 +89072,10 @@ paths:
       x-api-token-group:
         - Cloudforce One Write
         - Cloudforce One Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: cloudforce-one.events.tags.categories
+      x-fern-sdk-method-name: get-by-id
+      x-forge-hidden: true
     patch:
       operationId: patch_TagCategoryUpdate
       summary: Updates a tag category (SoT)
@@ -89030,10 +89377,11 @@ paths:
                           enum:
                             - red
                             - amber
-                            - amber+strict
+                            - amber-strict
                             - green
                             - clear
                             - purple
+                            - amber+strict
                         value:
                           type: string
                       required:
@@ -89052,10 +89400,11 @@ paths:
                           enum:
                             - red
                             - amber
-                            - amber+strict
+                            - amber-strict
                             - green
                             - clear
                             - purple
+                            - amber+strict
                         value:
                           type: string
                       required:
@@ -89070,7 +89419,7 @@ paths:
                   items:
                     type: string
                 aliases:
-                  description: 'Structured aliases ({ value, confidence 1-10, tlp }). CFONE-only: stripped from responses to non-CFONE accounts.'
+                  description: 'Structured aliases ({ value, confidence 1-10, tlp }). Public: returned to all accounts with per-entry TLP filtering (entries with tlp: purple are removed for non-CFONE accounts).'
                   type: array
                   items:
                     properties:
@@ -89086,10 +89435,11 @@ paths:
                         enum:
                           - red
                           - amber
-                          - amber+strict
+                          - amber-strict
                           - green
                           - clear
                           - purple
+                          - amber+strict
                         nullable: true
                       value:
                         type: string
@@ -89110,10 +89460,11 @@ paths:
                           enum:
                             - red
                             - amber
-                            - amber+strict
+                            - amber-strict
                             - green
                             - clear
                             - purple
+                            - amber+strict
                         value:
                           type: string
                       required:
@@ -89173,10 +89524,11 @@ paths:
                         enum:
                           - red
                           - amber
-                          - amber+strict
+                          - amber-strict
                           - green
                           - clear
                           - purple
+                          - amber+strict
                         nullable: true
                       value:
                         type: string
@@ -89201,10 +89553,11 @@ paths:
                           enum:
                             - red
                             - amber
-                            - amber+strict
+                            - amber-strict
                             - green
                             - clear
                             - purple
+                            - amber+strict
                         value:
                           type: string
                       required:
@@ -89223,10 +89576,11 @@ paths:
                           enum:
                             - red
                             - amber
-                            - amber+strict
+                            - amber-strict
                             - green
                             - clear
                             - purple
+                            - amber+strict
                         value:
                           type: string
                       required:
@@ -89245,10 +89599,11 @@ paths:
                           enum:
                             - red
                             - amber
-                            - amber+strict
+                            - amber-strict
                             - green
                             - clear
                             - purple
+                            - amber+strict
                         value:
                           type: string
                       required:
@@ -89267,10 +89622,11 @@ paths:
                           enum:
                             - red
                             - amber
-                            - amber+strict
+                            - amber-strict
                             - green
                             - clear
                             - purple
+                            - amber+strict
                         value:
                           type: number
                       required:
@@ -89293,26 +89649,28 @@ paths:
                           enum:
                             - red
                             - amber
-                            - amber+strict
+                            - amber-strict
                             - green
                             - clear
                             - purple
+                            - amber+strict
                         value:
                           type: string
                       required:
                         - value
                       type: object
                 tlp:
-                  description: 'Tag-level TLP handling marking. Optional. Allowed values: red, amber, amber+strict, green, clear, purple.'
+                  description: 'Tag-level TLP handling marking. Optional. Allowed values: red, amber, amber-strict, green, clear, purple, amber+strict.'
                   type: string
                   example: amber
                   enum:
                     - red
                     - amber
-                    - amber+strict
+                    - amber-strict
                     - green
                     - clear
                     - purple
+                    - amber+strict
                 value:
                   type: string
                   example: APT28
@@ -89337,10 +89695,11 @@ paths:
                         enum:
                           - red
                           - amber
-                          - amber+strict
+                          - amber-strict
                           - green
                           - clear
                           - purple
+                          - amber+strict
                       value:
                         type: string
                     required:
@@ -89358,10 +89717,11 @@ paths:
                         enum:
                           - red
                           - amber
-                          - amber+strict
+                          - amber-strict
                           - green
                           - clear
                           - purple
+                          - amber+strict
                       value:
                         type: string
                     required:
@@ -89375,7 +89735,7 @@ paths:
                     items:
                       type: string
                   aliases:
-                    description: 'Structured aliases ({ value, confidence 1-10, tlp }). CFONE-only: stripped from responses to non-CFONE accounts.'
+                    description: 'Structured aliases ({ value, confidence 1-10, tlp }). Public: returned to all accounts with per-entry TLP filtering (entries with tlp: purple are removed for non-CFONE accounts).'
                     type: array
                     items:
                       properties:
@@ -89391,10 +89751,11 @@ paths:
                           enum:
                             - red
                             - amber
-                            - amber+strict
+                            - amber-strict
                             - green
                             - clear
                             - purple
+                            - amber+strict
                           nullable: true
                         value:
                           type: string
@@ -89415,10 +89776,11 @@ paths:
                         enum:
                           - red
                           - amber
-                          - amber+strict
+                          - amber-strict
                           - green
                           - clear
                           - purple
+                          - amber+strict
                       value:
                         type: string
                     required:
@@ -89471,10 +89833,11 @@ paths:
                           enum:
                             - red
                             - amber
-                            - amber+strict
+                            - amber-strict
                             - green
                             - clear
                             - purple
+                            - amber+strict
                         value:
                           type: string
                       required:
@@ -89498,10 +89861,11 @@ paths:
                           enum:
                             - red
                             - amber
-                            - amber+strict
+                            - amber-strict
                             - green
                             - clear
                             - purple
+                            - amber+strict
                           nullable: true
                         value:
                           type: string
@@ -89526,10 +89890,11 @@ paths:
                         enum:
                           - red
                           - amber
-                          - amber+strict
+                          - amber-strict
                           - green
                           - clear
                           - purple
+                          - amber+strict
                       value:
                         type: string
                     required:
@@ -89547,10 +89912,11 @@ paths:
                         enum:
                           - red
                           - amber
-                          - amber+strict
+                          - amber-strict
                           - green
                           - clear
                           - purple
+                          - amber+strict
                       value:
                         type: string
                     required:
@@ -89570,10 +89936,11 @@ paths:
                         enum:
                           - red
                           - amber
-                          - amber+strict
+                          - amber-strict
                           - green
                           - clear
                           - purple
+                          - amber+strict
                       value:
                         type: string
                         nullable: true
@@ -89590,10 +89957,11 @@ paths:
                         enum:
                           - red
                           - amber
-                          - amber+strict
+                          - amber-strict
                           - green
                           - clear
                           - purple
+                          - amber+strict
                       value:
                         type: number
                     required:
@@ -89616,10 +89984,11 @@ paths:
                         enum:
                           - red
                           - amber
-                          - amber+strict
+                          - amber-strict
                           - green
                           - clear
                           - purple
+                          - amber+strict
                       value:
                         type: string
                     required:
@@ -89631,10 +90000,11 @@ paths:
                     enum:
                       - red
                       - amber
-                      - amber+strict
+                      - amber-strict
                       - green
                       - clear
                       - purple
+                      - amber+strict
                     nullable: true
                   updatedAt:
                     type: string
@@ -93643,6 +94013,8 @@ paths:
                 required:
                   - matches
                   - total
+        4XX:
+          $ref: '#/components/responses/cloudforce-one-events_ApiV4ClientError'
       security:
         - api_token: []
       tags:
@@ -93834,6 +94206,8 @@ paths:
                   - result
                   - errors
                   - messages
+        4XX:
+          $ref: '#/components/responses/cloudforce-one-events_ApiV4ClientError'
       security:
         - api_token: []
       tags:
@@ -93910,6 +94284,8 @@ paths:
                 required:
                   - success
                   - message
+        4XX:
+          $ref: '#/components/responses/cloudforce-one-events_ApiV4ClientError'
       security:
         - api_token: []
       tags:
@@ -93953,6 +94329,8 @@ paths:
                 required:
                   - success
                   - message
+        4XX:
+          $ref: '#/components/responses/cloudforce-one-events_ApiV4ClientError'
       security:
         - api_token: []
       tags:
@@ -94034,6 +94412,8 @@ paths:
                 required:
                   - success
                   - message
+        4XX:
+          $ref: '#/components/responses/cloudforce-one-events_ApiV4ClientError'
       security:
         - api_token: []
       tags:
@@ -94207,6 +94587,8 @@ paths:
               schema:
                 type: string
                 format: binary
+        4XX:
+          $ref: '#/components/responses/cloudforce-one-events_ApiV4ClientError'
       security:
         - api_token: []
       tags:
@@ -94272,6 +94654,8 @@ paths:
                       type: object
                 required:
                   - templates
+        4XX:
+          $ref: '#/components/responses/cloudforce-one-events_ApiV4ClientError'
       security:
         - api_token: []
       tags:
@@ -94357,6 +94741,8 @@ paths:
                   - body
                   - createdAt
                   - updatedAt
+        4XX:
+          $ref: '#/components/responses/cloudforce-one-events_ApiV4ClientError'
       security:
         - api_token: []
       tags:
@@ -94400,6 +94786,8 @@ paths:
                 required:
                   - success
                   - message
+        4XX:
+          $ref: '#/components/responses/cloudforce-one-events_ApiV4ClientError'
       security:
         - api_token: []
       tags:
@@ -94466,6 +94854,8 @@ paths:
                   - body
                   - createdAt
                   - updatedAt
+        4XX:
+          $ref: '#/components/responses/cloudforce-one-events_ApiV4ClientError'
       security:
         - api_token: []
       tags:
@@ -94554,6 +94944,8 @@ paths:
                   - body
                   - createdAt
                   - updatedAt
+        4XX:
+          $ref: '#/components/responses/cloudforce-one-events_ApiV4ClientError'
       security:
         - api_token: []
       tags:
@@ -94622,6 +95014,8 @@ paths:
                       type: object
                 required:
                   - templates
+        4XX:
+          $ref: '#/components/responses/cloudforce-one-events_ApiV4ClientError'
       security:
         - api_token: []
       tags:
@@ -94732,6 +95126,8 @@ paths:
                 required:
                   - matches
                   - total
+        4XX:
+          $ref: '#/components/responses/cloudforce-one-events_ApiV4ClientError'
       security:
         - api_token: []
       tags:
@@ -94800,6 +95196,8 @@ paths:
                     - similarity_threshold
                     - uploaded_at
                   type: object
+        4XX:
+          $ref: '#/components/responses/cloudforce-one-events_ApiV4ClientError'
       security:
         - api_token: []
       tags:
@@ -94866,6 +95264,8 @@ paths:
                 required:
                   - success
                   - message
+        4XX:
+          $ref: '#/components/responses/cloudforce-one-events_ApiV4ClientError'
       security:
         - api_token: []
       tags:
@@ -94909,6 +95309,8 @@ paths:
                 required:
                   - success
                   - message
+        4XX:
+          $ref: '#/components/responses/cloudforce-one-events_ApiV4ClientError'
       security:
         - api_token: []
       tags:
@@ -95011,6 +95413,8 @@ paths:
                       type: object
                 required:
                   - matches
+        4XX:
+          $ref: '#/components/responses/cloudforce-one-events_ApiV4ClientError'
       security:
         - api_token: []
       tags:
@@ -95086,6 +95490,8 @@ paths:
                       type: object
                 required:
                   - notices
+        4XX:
+          $ref: '#/components/responses/cloudforce-one-events_ApiV4ClientError'
       security:
         - api_token: []
       tags:
@@ -95233,6 +95639,8 @@ paths:
                 required:
                   - success
                   - message
+        4XX:
+          $ref: '#/components/responses/cloudforce-one-events_ApiV4ClientError'
       security:
         - api_token: []
       tags:
@@ -95307,6 +95715,8 @@ paths:
                   - matchType
                   - createdAt
                   - updatedAt
+        4XX:
+          $ref: '#/components/responses/cloudforce-one-events_ApiV4ClientError'
       security:
         - api_token: []
       tags:
@@ -95478,6 +95888,8 @@ paths:
                       type: object
                 required:
                   - letters
+        4XX:
+          $ref: '#/components/responses/cloudforce-one-events_ApiV4ClientError'
       security:
         - api_token: []
       tags:
@@ -95595,6 +96007,8 @@ paths:
                   - letterType
                   - letterText
                   - createdAt
+        4XX:
+          $ref: '#/components/responses/cloudforce-one-events_ApiV4ClientError'
       security:
         - api_token: []
       tags:
@@ -95646,6 +96060,8 @@ paths:
                 required:
                   - success
                   - message
+        4XX:
+          $ref: '#/components/responses/cloudforce-one-events_ApiV4ClientError'
       security:
         - api_token: []
       tags:
@@ -95709,6 +96125,8 @@ paths:
                   - letterType
                   - letterText
                   - createdAt
+        4XX:
+          $ref: '#/components/responses/cloudforce-one-events_ApiV4ClientError'
       security:
         - api_token: []
       tags:
@@ -95754,6 +96172,8 @@ paths:
               schema:
                 type: string
                 format: binary
+        4XX:
+          $ref: '#/components/responses/cloudforce-one-events_ApiV4ClientError'
       security:
         - api_token: []
       tags:
@@ -95870,6 +96290,8 @@ paths:
                       type: object
                 required:
                   - notices
+        4XX:
+          $ref: '#/components/responses/cloudforce-one-events_ApiV4ClientError'
       security:
         - api_token: []
       tags:
@@ -95907,6 +96329,8 @@ paths:
                   required:
                     - total_queries
                   type: object
+        4XX:
+          $ref: '#/components/responses/cloudforce-one-events_ApiV4ClientError'
       security:
         - api_token: []
       tags:
@@ -96002,6 +96426,8 @@ paths:
                   - success
                   - result
                   - pagination
+        4XX:
+          $ref: '#/components/responses/cloudforce-one-events_ApiV4ClientError'
       security:
         - api_token: []
       tags:
@@ -97358,6 +97784,21 @@ paths:
                             - is_not_empty
                         value:
                           description: Value to compare against (not needed for is_empty/is_not_empty)
+                          oneOf:
+                            - nullable: true
+                              type: string
+                            - type: number
+                            - type: boolean
+                            - items:
+                                oneOf:
+                                  - type: string
+                                  - type: number
+                                  - type: boolean
+                                  - additionalProperties: true
+                                    type: object
+                              type: array
+                            - additionalProperties: true
+                              type: object
                       required:
                         - field
                         - op
@@ -97552,6 +97993,1759 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: cloudforce-one.events.graphql.create.graph
       x-fern-sdk-method-name: qlv2
+      x-forge-hidden: true
+  /accounts/{account_id}/cloudforce-one/v2/threat-signals/articles:
+    get:
+      operationId: rssArticleList
+      summary: List Threat Signals articles
+      description: List Threat Signals articles.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: cursor
+          in: query
+          schema:
+            type: string
+            minLength: 1
+        - name: per_page
+          in: query
+          schema:
+            type: integer
+            default: 20
+            maximum: 100
+            minimum: 1
+        - name: feed_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: read
+          in: query
+          schema:
+            type: boolean
+        - name: tag_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: tag
+          in: query
+          schema:
+            type: string
+        - name: tag_category
+          in: query
+          schema:
+            type: string
+        - name: include_total
+          in: query
+          schema:
+            type: boolean
+            default: false
+        - name: search
+          in: query
+          schema:
+            type: string
+            maxLength: 500
+            minLength: 1
+        - name: published_after
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: published_before
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: fetched_after
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: fetched_before
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: feed_category
+          in: query
+          schema:
+            type: string
+        - name: source_type
+          in: query
+          schema:
+            type: string
+            enum:
+              - curated
+              - custom
+        - name: tag_applied_by
+          in: query
+          schema:
+            type: string
+            enum:
+              - ai
+              - analyst
+        - name: sort
+          in: query
+          schema:
+            type: string
+            default: -fetched_at
+            pattern: ^-?(fetched_at|published_at|title)$
+      responses:
+        '200':
+          description: Threat Signals response.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                      required:
+                        - message
+                      type: object
+                  result:
+                    type: object
+                    properties:
+                      articles:
+                        type: array
+                        items:
+                          properties:
+                            dataset_id:
+                              description: Threat Events dataset identifier for the article redirect. Null when the account feeds dataset mapping is unavailable.
+                              type: string
+                              nullable: true
+                            event_id:
+                              description: Threat Events event identifier associated with this article for a UI redirect. Null when no event has been linked.
+                              type: string
+                              nullable: true
+                            feed_display_name:
+                              type: string
+                              nullable: true
+                            feed_id:
+                              type: string
+                              format: uuid
+                            fetched_at:
+                              type: string
+                            id:
+                              type: string
+                              format: uuid
+                            link:
+                              type: string
+                              nullable: true
+                            published_at:
+                              type: string
+                              nullable: true
+                            read:
+                              type: boolean
+                            read_at:
+                              type: string
+                              nullable: true
+                            summary:
+                              description: Persisted enrichment summary. Null until enrichment produces a summary.
+                              type: string
+                              nullable: true
+                            tags:
+                              type: array
+                              items:
+                                properties:
+                                  applied_by:
+                                    type: string
+                                    enum:
+                                      - ai
+                                      - analyst
+                                  categoryId:
+                                    type: string
+                                    format: uuid
+                                    nullable: true
+                                  uuid:
+                                    type: string
+                                    format: uuid
+                                  value:
+                                    type: string
+                                required:
+                                  - uuid
+                                  - value
+                                  - categoryId
+                                  - applied_by
+                                type: object
+                            title:
+                              type: string
+                              nullable: true
+                          required:
+                            - id
+                            - feed_id
+                            - feed_display_name
+                            - title
+                            - link
+                            - published_at
+                            - read
+                            - read_at
+                            - tags
+                            - fetched_at
+                            - summary
+                            - event_id
+                            - dataset_id
+                          type: object
+                      has_more:
+                        type: boolean
+                      next_cursor:
+                        type: string
+                        nullable: true
+                      total_count:
+                        type: number
+                        nullable: true
+                      total_count_is_exact:
+                        type: boolean
+                    required:
+                      - articles
+                      - next_cursor
+                      - has_more
+                      - total_count
+                      - total_count_is_exact
+                  success:
+                    type: boolean
+                    enum:
+                      - true
+                required:
+                  - result
+                  - success
+                  - errors
+        4XX:
+          $ref: '#/components/responses/cloudforce-one-events_ApiV4ClientError'
+      security:
+        - api_token: []
+      tags:
+        - Threat Signals
+      x-api-token-group:
+        - Cloudforce One Write
+        - Cloudforce One Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: cloudforce-one.threat-signals.articles
+      x-fern-sdk-method-name: list
+      x-forge-hidden: true
+    patch:
+      operationId: rssArticleBulkMarkRead
+      summary: Bulk update Threat Signals article read status
+      description: Bulk update Threat Signals article read status.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                article_ids:
+                  type: array
+                  items:
+                    format: uuid
+                    type: string
+                  maxItems: 50
+                  minItems: 1
+                read:
+                  type: boolean
+              required:
+                - article_ids
+                - read
+      responses:
+        '200':
+          description: Threat Signals response.
+        4XX:
+          $ref: '#/components/responses/cloudforce-one-events_ApiV4ClientError'
+      security:
+        - api_token: []
+      tags:
+        - Threat Signals
+      x-api-token-group:
+        - Cloudforce One Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: cloudforce-one.threat-signals.articles
+      x-fern-sdk-method-name: bulk-mark-read
+      x-forge-hidden: true
+  /accounts/{account_id}/cloudforce-one/v2/threat-signals/articles/{article_id}:
+    get:
+      operationId: rssArticleGet
+      summary: Get Threat Signals article
+      description: Get Threat Signals article.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: article_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Threat Signals response.
+        4XX:
+          $ref: '#/components/responses/cloudforce-one-events_ApiV4ClientError'
+      security:
+        - api_token: []
+      tags:
+        - Threat Signals
+      x-api-token-group:
+        - Cloudforce One Write
+        - Cloudforce One Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: cloudforce-one.threat-signals.articles
+      x-fern-sdk-method-name: get
+      x-forge-hidden: true
+    patch:
+      operationId: rssArticleMarkRead
+      summary: Update Threat Signals article read status
+      description: Update Threat Signals article read status.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: article_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                read:
+                  type: boolean
+              required:
+                - read
+      responses:
+        '200':
+          description: Threat Signals response.
+        4XX:
+          $ref: '#/components/responses/cloudforce-one-events_ApiV4ClientError'
+      security:
+        - api_token: []
+      tags:
+        - Threat Signals
+      x-api-token-group:
+        - Cloudforce One Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: cloudforce-one.threat-signals.articles
+      x-fern-sdk-method-name: mark-read
+      x-forge-hidden: true
+  /accounts/{account_id}/cloudforce-one/v2/threat-signals/articles/{article_id}/content:
+    get:
+      operationId: rssArticleContentGet
+      summary: Get Threat Signals article content
+      description: Get Threat Signals article content.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: article_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: format
+          in: query
+          schema:
+            type: string
+            enum:
+              - text
+              - html
+      responses:
+        '200':
+          description: Threat Signals response.
+        4XX:
+          $ref: '#/components/responses/cloudforce-one-events_ApiV4ClientError'
+      security:
+        - api_token: []
+      tags:
+        - Threat Signals
+      x-api-token-group:
+        - Cloudforce One Write
+        - Cloudforce One Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: cloudforce-one.threat-signals.articles
+      x-fern-sdk-method-name: get-content
+      x-forge-hidden: true
+  /accounts/{account_id}/cloudforce-one/v2/threat-signals/articles/{article_id}/skills/{skill_id}/output:
+    get:
+      operationId: rssArticleSkillOutputGet
+      summary: Get Threat Signals article skill output
+      description: Get Threat Signals article skill output.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: article_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: skill_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Threat Signals response.
+        4XX:
+          $ref: '#/components/responses/cloudforce-one-events_ApiV4ClientError'
+      security:
+        - api_token: []
+      tags:
+        - Threat Signals
+      x-api-token-group:
+        - Cloudforce One Write
+        - Cloudforce One Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: cloudforce-one.threat-signals.articles.skills
+      x-fern-sdk-method-name: get-output
+      x-forge-hidden: true
+  /accounts/{account_id}/cloudforce-one/v2/threat-signals/articles/{article_id}/tag:
+    post:
+      operationId: rssArticleTagGenerate
+      summary: Generate Threat Signals article AI tags
+      description: Generate Threat Signals article AI tags.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: article_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Threat Signals response.
+        4XX:
+          $ref: '#/components/responses/cloudforce-one-events_ApiV4ClientError'
+      security:
+        - api_token: []
+      tags:
+        - Threat Signals
+      x-api-token-group:
+        - Cloudforce One Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: cloudforce-one.threat-signals.articles.tags
+      x-fern-sdk-method-name: generate
+      x-forge-hidden: true
+  /accounts/{account_id}/cloudforce-one/v2/threat-signals/articles/{article_id}/tags:
+    post:
+      operationId: rssArticleTagAdd
+      summary: Add tag to Threat Signals article
+      description: Add tag to Threat Signals article.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: article_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tag_id:
+                  type: string
+                  format: uuid
+              required:
+                - tag_id
+      responses:
+        '200':
+          description: Threat Signals response.
+        4XX:
+          $ref: '#/components/responses/cloudforce-one-events_ApiV4ClientError'
+      security:
+        - api_token: []
+      tags:
+        - Threat Signals
+      x-api-token-group:
+        - Cloudforce One Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: cloudforce-one.threat-signals.articles.tags
+      x-fern-sdk-method-name: add
+      x-forge-hidden: true
+  /accounts/{account_id}/cloudforce-one/v2/threat-signals/articles/{article_id}/tags/{tag_id}:
+    delete:
+      operationId: rssArticleTagRemove
+      summary: Remove tag from Threat Signals article
+      description: Remove tag from Threat Signals article.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: article_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: tag_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Threat Signals response.
+        4XX:
+          $ref: '#/components/responses/cloudforce-one-events_ApiV4ClientError'
+      security:
+        - api_token: []
+      tags:
+        - Threat Signals
+      x-api-token-group:
+        - Cloudforce One Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: cloudforce-one.threat-signals.articles.tags
+      x-fern-sdk-method-name: remove
+      x-forge-hidden: true
+  /accounts/{account_id}/cloudforce-one/v2/threat-signals/curated-feeds:
+    get:
+      operationId: rssCuratedFeedList
+      summary: List curated Threat Signals feeds
+      description: List curated Threat Signals feeds.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: category
+          in: query
+          schema:
+            type: string
+            maxLength: 100
+        - name: include_inactive
+          in: query
+          schema:
+            type: boolean
+            default: false
+      responses:
+        '200':
+          description: Threat Signals response.
+        4XX:
+          $ref: '#/components/responses/cloudforce-one-events_ApiV4ClientError'
+      security:
+        - api_token: []
+      tags:
+        - Threat Signals
+      x-api-token-group:
+        - Cloudforce One Write
+        - Cloudforce One Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: cloudforce-one.threat-signals.curated-feeds
+      x-fern-sdk-method-name: list
+      x-forge-hidden: true
+    post:
+      operationId: rssCuratedFeedCreate
+      summary: Create curated Threat Signals feed
+      description: Create curated Threat Signals feed.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                category:
+                  type: string
+                  maxLength: 100
+                  minLength: 1
+                display_order:
+                  type: integer
+                  nullable: true
+                is_active:
+                  type: boolean
+                  default: true
+                name:
+                  type: string
+                  maxLength: 255
+                  minLength: 1
+                url:
+                  type: string
+                  format: uri
+                  maxLength: 2048
+                why_valuable:
+                  type: string
+                  maxLength: 1000
+                  nullable: true
+              required:
+                - url
+                - name
+                - category
+      responses:
+        '200':
+          description: Threat Signals response.
+        4XX:
+          $ref: '#/components/responses/cloudforce-one-events_ApiV4ClientError'
+      security:
+        - api_token: []
+      tags:
+        - Threat Signals
+      x-api-token-group:
+        - Cloudforce One Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: cloudforce-one.threat-signals.curated-feeds
+      x-fern-sdk-method-name: create
+      x-forge-hidden: true
+  /accounts/{account_id}/cloudforce-one/v2/threat-signals/curated-feeds/{curated_feed_id}:
+    delete:
+      operationId: rssCuratedFeedDelete
+      summary: Delete curated Threat Signals feed
+      description: Delete curated Threat Signals feed.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: curated_feed_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Threat Signals response.
+        4XX:
+          $ref: '#/components/responses/cloudforce-one-events_ApiV4ClientError'
+      security:
+        - api_token: []
+      tags:
+        - Threat Signals
+      x-api-token-group:
+        - Cloudforce One Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: cloudforce-one.threat-signals.curated-feeds
+      x-fern-sdk-method-name: delete
+      x-forge-hidden: true
+    patch:
+      operationId: rssCuratedFeedUpdate
+      summary: Update curated Threat Signals feed
+      description: Update curated Threat Signals feed.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: curated_feed_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                category:
+                  type: string
+                  maxLength: 100
+                  minLength: 1
+                display_order:
+                  type: integer
+                  nullable: true
+                is_active:
+                  type: boolean
+                name:
+                  type: string
+                  maxLength: 255
+                  minLength: 1
+                url:
+                  type: string
+                  format: uri
+                  maxLength: 2048
+                why_valuable:
+                  type: string
+                  maxLength: 1000
+                  nullable: true
+      responses:
+        '200':
+          description: Threat Signals response.
+        4XX:
+          $ref: '#/components/responses/cloudforce-one-events_ApiV4ClientError'
+      security:
+        - api_token: []
+      tags:
+        - Threat Signals
+      x-api-token-group:
+        - Cloudforce One Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: cloudforce-one.threat-signals.curated-feeds
+      x-fern-sdk-method-name: update
+      x-forge-hidden: true
+  /accounts/{account_id}/cloudforce-one/v2/threat-signals/curated-feeds/bulk:
+    post:
+      operationId: rssCuratedFeedBulkCreate
+      summary: Bulk create curated Threat Signals feeds
+      description: Bulk create curated Threat Signals feeds.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                feeds:
+                  type: array
+                  items:
+                    properties:
+                      category:
+                        type: string
+                        maxLength: 100
+                        minLength: 1
+                      display_order:
+                        type: integer
+                        nullable: true
+                      is_active:
+                        type: boolean
+                        default: true
+                      name:
+                        type: string
+                        maxLength: 255
+                        minLength: 1
+                      url:
+                        type: string
+                        format: uri
+                        maxLength: 2048
+                      why_valuable:
+                        type: string
+                        maxLength: 1000
+                        nullable: true
+                    required:
+                      - url
+                      - name
+                      - category
+                    type: object
+                  maxItems: 100
+                  minItems: 1
+              required:
+                - feeds
+      responses:
+        '200':
+          description: Threat Signals response.
+        4XX:
+          $ref: '#/components/responses/cloudforce-one-events_ApiV4ClientError'
+      security:
+        - api_token: []
+      tags:
+        - Threat Signals
+      x-api-token-group:
+        - Cloudforce One Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: cloudforce-one.threat-signals.curated-feeds
+      x-fern-sdk-method-name: bulk-create
+      x-forge-hidden: true
+  /accounts/{account_id}/cloudforce-one/v2/threat-signals/curated-feeds/opt-out:
+    patch:
+      operationId: rssCuratedFeedOptOut
+      summary: Opt out of curated Threat Signals feeds
+      description: Opt out of curated Threat Signals feeds.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                opted_out:
+                  type: boolean
+              required:
+                - opted_out
+      responses:
+        '200':
+          description: Threat Signals response.
+        4XX:
+          $ref: '#/components/responses/cloudforce-one-events_ApiV4ClientError'
+      security:
+        - api_token: []
+      tags:
+        - Threat Signals
+      x-api-token-group:
+        - Cloudforce One Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: cloudforce-one.threat-signals.curated-feeds
+      x-fern-sdk-method-name: opt-out
+      x-forge-hidden: true
+  /accounts/{account_id}/cloudforce-one/v2/threat-signals/feeds:
+    get:
+      operationId: rssFeedList
+      summary: List Threat Signals feeds
+      description: List Threat Signals feeds.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+        - name: per_page
+          in: query
+          schema:
+            type: integer
+            default: 20
+            maximum: 100
+            minimum: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            maximum: 100
+            minimum: 1
+        - name: sort
+          in: query
+          schema:
+            type: string
+            default: -created_at
+            pattern: ^-?(created_at|title|category|url)$
+        - name: category
+          in: query
+          schema:
+            type: string
+            maxLength: 100
+        - name: source_type
+          in: query
+          schema:
+            type: string
+            enum:
+              - curated
+              - custom
+        - name: enabled
+          in: query
+          schema:
+            type: boolean
+        - name: status
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Threat Signals response.
+        4XX:
+          $ref: '#/components/responses/cloudforce-one-events_ApiV4ClientError'
+      security:
+        - api_token: []
+      tags:
+        - Threat Signals
+      x-api-token-group:
+        - Cloudforce One Write
+        - Cloudforce One Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: cloudforce-one.threat-signals.feeds
+      x-fern-sdk-method-name: list
+      x-forge-hidden: true
+    post:
+      operationId: rssFeedCreate
+      summary: Create Threat Signals feed
+      description: Create Threat Signals feed.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                category:
+                  type: string
+                  maxLength: 100
+                  nullable: true
+                curated_feed_id:
+                  type: string
+                  format: uuid
+                display_name:
+                  type: string
+                  maxLength: 255
+                  nullable: true
+                enabled:
+                  type: boolean
+                  default: true
+                poll_interval_s:
+                  type: integer
+                  default: 300
+                  maximum: 86400
+                  minimum: 60
+                title:
+                  type: string
+                  maxLength: 255
+                  nullable: true
+                url:
+                  type: string
+                  format: uri
+                  maxLength: 2048
+      responses:
+        '200':
+          description: Threat Signals response.
+        4XX:
+          $ref: '#/components/responses/cloudforce-one-events_ApiV4ClientError'
+      security:
+        - api_token: []
+      tags:
+        - Threat Signals
+      x-api-token-group:
+        - Cloudforce One Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: cloudforce-one.threat-signals.feeds
+      x-fern-sdk-method-name: create
+      x-forge-hidden: true
+  /accounts/{account_id}/cloudforce-one/v2/threat-signals/feeds/{feed_id}:
+    delete:
+      operationId: rssFeedDelete
+      summary: Delete Threat Signals feed
+      description: Delete Threat Signals feed.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: feed_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Threat Signals response.
+        4XX:
+          $ref: '#/components/responses/cloudforce-one-events_ApiV4ClientError'
+      security:
+        - api_token: []
+      tags:
+        - Threat Signals
+      x-api-token-group:
+        - Cloudforce One Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: cloudforce-one.threat-signals.feeds
+      x-fern-sdk-method-name: delete
+      x-forge-hidden: true
+    patch:
+      operationId: rssFeedUpdate
+      summary: Update Threat Signals feed
+      description: Update Threat Signals feed.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: feed_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                category:
+                  type: string
+                  maxLength: 100
+                  nullable: true
+                display_name:
+                  type: string
+                  maxLength: 255
+                  nullable: true
+                enabled:
+                  type: boolean
+                poll_interval_s:
+                  type: integer
+                  maximum: 86400
+                  minimum: 60
+                title:
+                  type: string
+                  maxLength: 255
+                  nullable: true
+      responses:
+        '200':
+          description: Threat Signals response.
+        4XX:
+          $ref: '#/components/responses/cloudforce-one-events_ApiV4ClientError'
+      security:
+        - api_token: []
+      tags:
+        - Threat Signals
+      x-api-token-group:
+        - Cloudforce One Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: cloudforce-one.threat-signals.feeds
+      x-fern-sdk-method-name: update
+      x-forge-hidden: true
+  /accounts/{account_id}/cloudforce-one/v2/threat-signals/feeds/{feed_id}/raw:
+    get:
+      operationId: rssFeedRawGet
+      summary: Get Threat Signals feed XML
+      description: Get Threat Signals feed XML.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: feed_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: format
+          in: query
+          schema:
+            type: string
+            enum:
+              - xml
+      responses:
+        '200':
+          description: Threat Signals response.
+        4XX:
+          $ref: '#/components/responses/cloudforce-one-events_ApiV4ClientError'
+      security:
+        - api_token: []
+      tags:
+        - Threat Signals
+      x-api-token-group:
+        - Cloudforce One Write
+        - Cloudforce One Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: cloudforce-one.threat-signals.feeds
+      x-fern-sdk-method-name: get-raw
+      x-forge-hidden: true
+  /accounts/{account_id}/cloudforce-one/v2/threat-signals/feeds/{feed_id}/skills:
+    get:
+      operationId: rssFeedSkillsGet
+      summary: Get Threat Signals feed skills
+      description: Get Threat Signals feed skills.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: feed_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Threat Signals response.
+        4XX:
+          $ref: '#/components/responses/cloudforce-one-events_ApiV4ClientError'
+      security:
+        - api_token: []
+      tags:
+        - Threat Signals
+      x-api-token-group:
+        - Cloudforce One Write
+        - Cloudforce One Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: cloudforce-one.threat-signals.feeds.skills
+      x-fern-sdk-method-name: get
+      x-forge-hidden: true
+    put:
+      operationId: rssFeedSkillsSet
+      summary: Set Threat Signals feed skills
+      description: Set Threat Signals feed skills.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: feed_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                skill_ids:
+                  type: array
+                  items:
+                    format: uuid
+                    type: string
+                  maxItems: 20
+              required:
+                - skill_ids
+      responses:
+        '200':
+          description: Threat Signals response.
+        4XX:
+          $ref: '#/components/responses/cloudforce-one-events_ApiV4ClientError'
+      security:
+        - api_token: []
+      tags:
+        - Threat Signals
+      x-api-token-group:
+        - Cloudforce One Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: cloudforce-one.threat-signals.feeds.skills
+      x-fern-sdk-method-name: update
+      x-forge-hidden: true
+  /accounts/{account_id}/cloudforce-one/v2/threat-signals/feeds/poll:
+    post:
+      operationId: rssFeedPoll
+      summary: Trigger Threat Signals feed poll
+      description: Trigger Threat Signals feed poll.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: feed_id
+          in: query
+          schema:
+            anyOf:
+              - format: uuid
+                type: string
+              - enum:
+                  - all
+                type: string
+      responses:
+        '200':
+          description: Threat Signals response.
+        4XX:
+          $ref: '#/components/responses/cloudforce-one-events_ApiV4ClientError'
+      security:
+        - api_token: []
+      tags:
+        - Threat Signals
+      x-api-token-group:
+        - Cloudforce One Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: cloudforce-one.threat-signals.feeds
+      x-fern-sdk-method-name: poll
+      x-forge-hidden: true
+  /accounts/{account_id}/cloudforce-one/v2/threat-signals/health:
+    get:
+      operationId: rssHealth
+      summary: Check Threat Signals service health
+      description: Check Threat Signals service health.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Threat Signals response.
+        4XX:
+          $ref: '#/components/responses/cloudforce-one-events_ApiV4ClientError'
+      security:
+        - api_token: []
+      tags:
+        - Threat Signals
+      x-api-token-group:
+        - Cloudforce One Write
+        - Cloudforce One Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: cloudforce-one.threat-signals
+      x-fern-sdk-method-name: health
+      x-forge-hidden: true
+  /accounts/{account_id}/cloudforce-one/v2/threat-signals/indicators:
+    get:
+      operationId: rssArticleIndicatorList
+      summary: List Threat Signals article indicators
+      description: List Threat Signals article indicators.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: feed_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: article_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: search
+          in: query
+          schema:
+            description: NFC-normalized and trimmed, case-insensitive literal substring search of indicator values. Requires 3–500 Unicode code points; the upper code-point bound is described here because OpenAPI string length cannot precisely express it without imposing UTF-16 semantics.
+            type: string
+        - name: per_page
+          in: query
+          schema:
+            type: integer
+            default: 20
+            maximum: 100
+            minimum: 1
+        - name: sort
+          in: query
+          schema:
+            type: string
+            default: id
+            pattern: ^-?(id)$
+        - name: include_total
+          in: query
+          schema:
+            type: boolean
+            default: false
+        - name: cursor
+          in: query
+          schema:
+            type: string
+            minLength: 1
+      responses:
+        '200':
+          description: Threat Signals response.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                      required:
+                        - message
+                      type: object
+                  result:
+                    type: object
+                    properties:
+                      indicators:
+                        type: array
+                        items:
+                          properties:
+                            article_id:
+                              type: string
+                              format: uuid
+                            article_title:
+                              type: string
+                              nullable: true
+                            dataset_id:
+                              description: Threat Events dataset identifier for navigating from this indicator. Null when the account feeds dataset mapping is unavailable.
+                              type: string
+                              nullable: true
+                            feed_display_name:
+                              type: string
+                              nullable: true
+                            feed_id:
+                              type: string
+                              format: uuid
+                            id:
+                              type: string
+                              format: uuid
+                            type:
+                              type: string
+                            value:
+                              type: string
+                          required:
+                            - id
+                            - type
+                            - value
+                            - article_id
+                            - feed_id
+                            - feed_display_name
+                            - article_title
+                            - dataset_id
+                          type: object
+                      pagination:
+                        type: object
+                        properties:
+                          count:
+                            type: integer
+                            minimum: 0
+                          cursor:
+                            type: string
+                            nullable: true
+                          has_more:
+                            type: boolean
+                          page:
+                            description: Ordinal of this cursor page; not a total-results offset.
+                            type: integer
+                            minimum: 1
+                          per_page:
+                            type: integer
+                            maximum: 100
+                            minimum: 1
+                          total_count:
+                            type: integer
+                            minimum: 0
+                            nullable: true
+                          total_count_is_exact:
+                            type: boolean
+                        required:
+                          - page
+                          - count
+                          - per_page
+                          - total_count
+                          - total_count_is_exact
+                          - cursor
+                          - has_more
+                    required:
+                      - indicators
+                      - pagination
+                  success:
+                    type: boolean
+                    enum:
+                      - true
+                required:
+                  - result
+                  - success
+                  - errors
+        4XX:
+          $ref: '#/components/responses/cloudforce-one-events_ApiV4ClientError'
+      security:
+        - api_token: []
+      tags:
+        - Threat Signals
+      x-api-token-group:
+        - Cloudforce One Write
+        - Cloudforce One Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: cloudforce-one.threat-signals.indicators
+      x-fern-sdk-method-name: list
+      x-forge-hidden: true
+  /accounts/{account_id}/cloudforce-one/v2/threat-signals/skills:
+    get:
+      operationId: rssSkillList
+      summary: List Threat Signals skills
+      description: List Threat Signals skills.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+        - name: per_page
+          in: query
+          schema:
+            type: integer
+            default: 20
+            maximum: 100
+            minimum: 1
+      responses:
+        '200':
+          description: Threat Signals response.
+        4XX:
+          $ref: '#/components/responses/cloudforce-one-events_ApiV4ClientError'
+      security:
+        - api_token: []
+      tags:
+        - Threat Signals
+      x-api-token-group:
+        - Cloudforce One Write
+        - Cloudforce One Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: cloudforce-one.threat-signals.skills
+      x-fern-sdk-method-name: list
+      x-forge-hidden: true
+    post:
+      operationId: rssSkillCreate
+      summary: Create Threat Signals skill
+      description: Create Threat Signals skill.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  maxLength: 100
+                  minLength: 1
+                output_schema:
+                  type: string
+                  maxLength: 4096
+                  minLength: 1
+                prompt:
+                  type: string
+                  maxLength: 4000
+                  minLength: 1
+                type:
+                  type: string
+                  enum:
+                    - summary
+                    - tags
+              required:
+                - name
+                - type
+                - prompt
+                - output_schema
+      responses:
+        '200':
+          description: Threat Signals response.
+        4XX:
+          $ref: '#/components/responses/cloudforce-one-events_ApiV4ClientError'
+      security:
+        - api_token: []
+      tags:
+        - Threat Signals
+      x-api-token-group:
+        - Cloudforce One Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: cloudforce-one.threat-signals.skills
+      x-fern-sdk-method-name: create
+      x-forge-hidden: true
+  /accounts/{account_id}/cloudforce-one/v2/threat-signals/skills/{skill_id}:
+    delete:
+      operationId: rssSkillDelete
+      summary: Delete Threat Signals skill
+      description: Delete Threat Signals skill.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: skill_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Threat Signals response.
+        4XX:
+          $ref: '#/components/responses/cloudforce-one-events_ApiV4ClientError'
+      security:
+        - api_token: []
+      tags:
+        - Threat Signals
+      x-api-token-group:
+        - Cloudforce One Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: cloudforce-one.threat-signals.skills
+      x-fern-sdk-method-name: delete
+      x-forge-hidden: true
+    get:
+      operationId: rssSkillGet
+      summary: Get Threat Signals skill
+      description: Get Threat Signals skill.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: skill_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Threat Signals response.
+        4XX:
+          $ref: '#/components/responses/cloudforce-one-events_ApiV4ClientError'
+      security:
+        - api_token: []
+      tags:
+        - Threat Signals
+      x-api-token-group:
+        - Cloudforce One Write
+        - Cloudforce One Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: cloudforce-one.threat-signals.skills
+      x-fern-sdk-method-name: get
+      x-forge-hidden: true
+    patch:
+      operationId: rssSkillUpdate
+      summary: Update Threat Signals skill
+      description: Update Threat Signals skill.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: skill_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                config:
+                  type: string
+                is_active:
+                  type: boolean
+                name:
+                  type: string
+                  maxLength: 100
+                  minLength: 1
+                output_schema:
+                  type: string
+                  maxLength: 4096
+                  minLength: 1
+                prompt:
+                  type: string
+                  maxLength: 4000
+                  minLength: 1
+      responses:
+        '200':
+          description: Threat Signals response.
+        4XX:
+          $ref: '#/components/responses/cloudforce-one-events_ApiV4ClientError'
+      security:
+        - api_token: []
+      tags:
+        - Threat Signals
+      x-api-token-group:
+        - Cloudforce One Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: cloudforce-one.threat-signals.skills
+      x-fern-sdk-method-name: update
+      x-forge-hidden: true
+  /accounts/{account_id}/cloudforce-one/v2/threat-signals/skills/{skill_id}/tag-categories:
+    get:
+      operationId: rssSkillTagCategoriesGet
+      summary: Get Threat Signals skill tag categories
+      description: Get Threat Signals skill tag categories.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: skill_id
+          in: path
+          required: true
+          schema:
+            type: string
+            enum:
+              - default-tagging-skill
+      responses:
+        '200':
+          description: Threat Signals response.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                      required:
+                        - message
+                      type: object
+                  result:
+                    type: object
+                    properties:
+                      category_uuids:
+                        type: array
+                        items:
+                          format: uuid
+                          type: string
+                      skill_id:
+                        type: string
+                        enum:
+                          - default-tagging-skill
+                    required:
+                      - skill_id
+                      - category_uuids
+                  success:
+                    type: boolean
+                    enum:
+                      - true
+                required:
+                  - result
+                  - success
+                  - errors
+        4XX:
+          $ref: '#/components/responses/cloudforce-one-events_ApiV4ClientError'
+      security:
+        - api_token: []
+      tags:
+        - Threat Signals
+      x-api-token-group:
+        - Cloudforce One Write
+        - Cloudforce One Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: cloudforce-one.threat-signals.skills.tag-categories
+      x-fern-sdk-method-name: get
+      x-forge-hidden: true
+    put:
+      operationId: rssSkillTagCategoriesReplace
+      summary: Replace Threat Signals skill tag categories
+      description: Replace Threat Signals skill tag categories.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: skill_id
+          in: path
+          required: true
+          schema:
+            type: string
+            enum:
+              - default-tagging-skill
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                category_uuids:
+                  type: array
+                  items:
+                    format: uuid
+                    type: string
+                  maxItems: 100
+                  uniqueItems: true
+              required:
+                - category_uuids
+      responses:
+        '200':
+          description: Threat Signals response.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                      required:
+                        - message
+                      type: object
+                  result:
+                    type: object
+                    properties:
+                      category_uuids:
+                        type: array
+                        items:
+                          format: uuid
+                          type: string
+                      skill_id:
+                        type: string
+                        enum:
+                          - default-tagging-skill
+                    required:
+                      - skill_id
+                      - category_uuids
+                  success:
+                    type: boolean
+                    enum:
+                      - true
+                required:
+                  - result
+                  - success
+                  - errors
+        4XX:
+          $ref: '#/components/responses/cloudforce-one-events_ApiV4ClientError'
+      security:
+        - api_token: []
+      tags:
+        - Threat Signals
+      x-api-token-group:
+        - Cloudforce One Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: cloudforce-one.threat-signals.skills.tag-categories
+      x-fern-sdk-method-name: update
       x-forge-hidden: true
   /accounts/{account_id}/cni/cnis:
     get:
@@ -379183,7 +381377,11 @@ components:
             tlp:
               type: boolean
         element:
-          $ref: '#/components/schemas/cloudforce-one-events_FieldDefinition'
+          description: Nested FieldDefinition describing the element type of an array field. Required when kind is 'array'. See FieldDefinition (recursive).
+          type: object
+          additionalProperties: true
+          allOf:
+            - $ref: '#/components/schemas/cloudforce-one-events_FieldDefinition'
         enforcement:
           type: string
           enum:
@@ -379240,6 +381438,60 @@ components:
       required:
         - key
         - kind
+    cloudforce-one-events_HydratedEntity:
+      description: Hydrated event, indicator, or tag entity.
+      type: object
+      additionalProperties: true
+    cloudforce-one-events_RelationshipEdge:
+      type: object
+      properties:
+        confidence:
+          description: Confidence score 0–100, or null.
+          type: integer
+          maximum: 100
+          minimum: 0
+          nullable: true
+        createdAt:
+          description: ISO 8601 creation timestamp.
+          type: string
+        datasetId:
+          description: Dataset the relationship belongs to.
+          type: string
+        entityId:
+          description: UUID of the related entity (other end).
+          type: string
+        entityType:
+          description: Type of the related entity.
+          type: string
+          enum:
+            - event
+            - indicator
+            - tag
+        metadata:
+          description: Arbitrary JSON metadata, or null.
+          type: object
+          additionalProperties: true
+          nullable: true
+        relationshipUuid:
+          description: Relationship UUID (use for PATCH/DELETE).
+          type: string
+          format: uuid
+        type:
+          description: Relationship type.
+          type: string
+        updatedAt:
+          description: ISO 8601 last-update timestamp.
+          type: string
+      required:
+        - relationshipUuid
+        - entityId
+        - entityType
+        - type
+        - confidence
+        - metadata
+        - datasetId
+        - createdAt
+        - updatedAt
     cloudforce-one-port-scan-api_api-response-common:
       type: object
       properties:
@@ -472852,6 +475104,8 @@ components:
             success: false
           schema:
             $ref: '#/components/schemas/builds_ErrorResponse'
+    cloudforce-one-events_ApiV4ClientError:
+      description: Client error response.
     email-auth_ClientError:
       description: Client Error
       content:
