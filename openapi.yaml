@@ -397855,17 +397855,26 @@ components:
             pattern: ^[\x20-\x7E]+$
             type: string
           example: []
+        suppressed_recipients:
+          description: Email addresses dropped because they are on the suppression list. Returned when suppressed-recipient dropping is enabled for the sending subdomain; otherwise the request fails instead.
+          type: array
+          items:
+            pattern: ^[\x20-\x7E]+$
+            type: string
+          example: []
       example:
         delivered:
           - recipient@example.com
         message_id: <aB3xK9mP2qR5sT8uV0wX1yZ4cD6fG7hJ9kL0@example.com>
         permanent_bounces: []
         queued: []
+        suppressed_recipients: []
       required:
         - message_id
         - delivered
         - queued
         - permanent_bounces
+        - suppressed_recipients
     email-sending_NamedRecipientList:
       description: Recipient(s). Optional if cc or bcc is provided. A single email string, a named address object, or an array of either.
       example:
