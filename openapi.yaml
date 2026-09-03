@@ -119897,10 +119897,8 @@ paths:
       operationId: email_security_get_domain_verification
       summary: Get domain verification details
       description: |
-        Returns DNS TXT verification details for a domain created through the Terraform API.
-        Returns `200 OK` with the TXT record name and value when the domain uses `dns_txt`
-        verification. Returns `204 No Content` for pre-existing domains or domains verified
-        by other means (Cloudflare zone ownership, CASB integration).
+        Returns the DNS TXT record information when the domain ownership isn't
+        verified through Cloudflare zone ownership or CASB integration.
       responses:
         '200':
           description: DNS TXT verification details.
@@ -119913,8 +119911,6 @@ paths:
                       result:
                         $ref: '#/components/schemas/email-security_DomainVerificationInfo'
                     type: object
-        '204':
-          description: Domain is verified by other means; no TXT record required.
         4XX:
           $ref: '#/components/responses/email-security_ClientError'
       security:
@@ -395623,6 +395619,8 @@ components:
         email_message_id:
           type: string
           nullable: true
+        message:
+          $ref: '#/components/schemas/email-security_MessageDetails'
         message_id:
           type: string
           format: uuid
@@ -396318,10 +396316,10 @@ components:
     email-security_DomainStatus:
       type: string
       enum:
-        - pending
-        - active
-        - failed
-        - timeout
+        - PENDING
+        - ACTIVE
+        - FAILED
+        - TIMEOUT
         - null
       nullable: true
     email-security_DomainVerificationInfo:
@@ -396342,9 +396340,6 @@ components:
           type: string
       required:
         - status
-        - txt_record_name
-        - txt_record_value
-        - last_checked_at
     email-security_EmailsProcessed:
       type: object
       properties:
