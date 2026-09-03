@@ -380083,7 +380083,7 @@ components:
     cc_ContainerInstance:
       description: A container instance belonging to an application.
       allOf:
-        - $ref: '#/components/schemas/cc_ContainersContainerInstanceBase'
+        - $ref: '#/components/schemas/cc_ContainerInstanceBase'
         - properties:
             application_id:
               $ref: '#/components/schemas/cc_ApplicationID'
@@ -380096,12 +380096,100 @@ components:
             - application_id
             - image
           type: object
+    cc_ContainerInstanceBase:
+      description: The last-reported state of a logical container instance.
+      type: object
+      properties:
+        application_id:
+          $ref: '#/components/schemas/cc_ApplicationID'
+        configuration:
+          $ref: '#/components/schemas/cc_ContainerInstanceConfiguration'
+        id:
+          $ref: '#/components/schemas/cc_ContainerInstanceID'
+        image:
+          description: |
+            The image for the current container placement, when one is available.
+          allOf:
+            - $ref: '#/components/schemas/cc_Image'
+        location:
+          $ref: '#/components/schemas/cc_ContainerInstanceLocation'
+        name:
+          description: |
+            The customer-provided instance name, when available. Its UTF-8 encoding uses at most 1,024 bytes.
+          type: string
+        started_at:
+          description: The time at which the current container placement started, when one exists.
+          allOf:
+            - $ref: '#/components/schemas/cc_ISO8601Timestamp'
+        status:
+          $ref: '#/components/schemas/cc_ContainerInstanceStatus'
+      required:
+        - id
+        - status
+    cc_ContainerInstanceConfiguration:
+      description: The resources allocated to the container instance.
+      type: object
+      properties:
+        disk:
+          description: Disk allocated to the container instance, in decimal MB.
+          type: integer
+          minimum: 1
+        memory:
+          description: Memory allocated to the container instance, in MiB.
+          type: integer
+          minimum: 1
+        vcpu:
+          description: Number of virtual CPUs allocated to the container instance.
+          type: number
+          exclusiveMinimum: true
+          minimum: 0
+      required:
+        - vcpu
+        - memory
+        - disk
     cc_ContainerInstanceID:
       description: A container instance ID (64-character hex Durable Object actor ID).
       type: string
       maxLength: 64
       minLength: 64
       pattern: ^[a-f0-9]{64}$
+    cc_ContainerInstanceLocation:
+      description: The location of the instance's current container placement.
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/cc_LocationID'
+        region:
+          $ref: '#/components/schemas/cc_Region'
+      required:
+        - name
+        - region
+    cc_ContainerInstanceStatus:
+      description: The latest known status of a container instance.
+      type: object
+      properties:
+        exit_code:
+          description: The process exit code, when the runtime reports one.
+          type: integer
+        state:
+          $ref: '#/components/schemas/cc_ContainerInstanceStatusState'
+        updated_at:
+          $ref: '#/components/schemas/cc_ISO8601Timestamp'
+      required:
+        - state
+        - updated_at
+    cc_ContainerInstanceStatusState:
+      description: The current lifecycle state of a container instance.
+      type: string
+      enum:
+        - provisioning
+        - running
+        - failed
+        - stopping
+        - stopped
+        - unhealthy
+        - inactive
+        - unknown
     cc_ContainersAccountRegistryToken:
       description: Credentials returned for an authenticated registry configured on a Containers account.
       type: object
@@ -380127,71 +380215,6 @@ components:
       oneOf:
         - $ref: '#/components/schemas/cc_ScheduledApplication'
         - $ref: '#/components/schemas/cc_DurableObjectApplication'
-    cc_ContainersContainerInstanceBase:
-      description: The last-reported state of a logical container instance.
-      type: object
-      properties:
-        application_id:
-          $ref: '#/components/schemas/cc_ApplicationID'
-        id:
-          $ref: '#/components/schemas/cc_ContainerInstanceID'
-        image:
-          description: |
-            The image for the current container placement, when one is available.
-          allOf:
-            - $ref: '#/components/schemas/cc_Image'
-        location:
-          $ref: '#/components/schemas/cc_ContainersContainerInstanceLocation'
-        name:
-          description: |
-            The customer-provided instance name, when available. Its UTF-8 encoding uses at most 1,024 bytes.
-          type: string
-        started_at:
-          description: The time at which the current container placement started, when one exists.
-          allOf:
-            - $ref: '#/components/schemas/cc_ISO8601Timestamp'
-        status:
-          $ref: '#/components/schemas/cc_ContainersContainerInstanceStatus'
-      required:
-        - id
-        - status
-    cc_ContainersContainerInstanceLocation:
-      description: The location of the instance's current container placement.
-      type: object
-      properties:
-        name:
-          $ref: '#/components/schemas/cc_LocationID'
-        region:
-          $ref: '#/components/schemas/cc_Region'
-      required:
-        - name
-        - region
-    cc_ContainersContainerInstanceStatus:
-      description: The latest known status of a container instance.
-      type: object
-      properties:
-        exit_code:
-          description: The process exit code, when the runtime reports one.
-          type: integer
-        state:
-          $ref: '#/components/schemas/cc_ContainersContainerInstanceStatusState'
-        updated_at:
-          $ref: '#/components/schemas/cc_ISO8601Timestamp'
-      required:
-        - state
-        - updated_at
-    cc_ContainersContainerInstanceStatusState:
-      description: The current lifecycle state of a container instance.
-      type: string
-      enum:
-        - provisioning
-        - running
-        - failed
-        - stopping
-        - stopped
-        - unhealthy
-        - inactive
-        - unknown
     cc_ContainersCreateApplicationRequest:
       description: |
         Create a Containers application. Set `scheduling_policy` to `default` for a
