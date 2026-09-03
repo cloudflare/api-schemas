@@ -363982,6 +363982,10 @@ components:
         device_posture:
           type: object
           properties:
+            account_id:
+              description: The ID of the account that owns the device posture integration.
+              allOf:
+                - $ref: '#/components/schemas/access_identifier'
             integration_uid:
               description: The ID of a device posture integration.
               type: string
@@ -364449,6 +364453,13 @@ components:
                       description: Your companies TLD
                       type: string
                       example: mycompany.com
+                    prompt:
+                      description: Configures the Google account chooser prompt.
+                      type: string
+                      example: select_account
+                      enum:
+                        - select_account
+                      x-auditable: true
                   type: object
           type: object
       title: Google Workspace
@@ -364465,6 +364476,12 @@ components:
                       description: Your companies TLD
                       type: string
                       example: mycompany.com
+                    prompt:
+                      description: Configures the Google account chooser prompt.
+                      type: string
+                      example: select_account
+                      enum:
+                        - select_account
                   type: object
           type: object
       title: Google Workspace
@@ -367262,6 +367279,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/access_policy_resp'
         - properties:
+            account_id:
+              $ref: '#/components/schemas/access_identifier'
             app_count:
               $ref: '#/components/schemas/access_app_count'
             reusable:
@@ -367391,6 +367410,11 @@ components:
                   type: boolean
                   default: false
                   x-auditable: true
+                force_authn:
+                  description: Asks the IdP to reauthenticate the user for each SAML authentication request.
+                  type: boolean
+                  default: false
+                  x-auditable: true
                 header_attributes:
                   description: Add a list of attribute names that will be returned in the response header from the Access callback.
                   type: array
@@ -367456,6 +367480,10 @@ components:
                   description: The attribute name for email in the SAML response.
                   type: string
                   example: Email
+                force_authn:
+                  description: Asks the IdP to reauthenticate the user for each SAML authentication request.
+                  type: boolean
+                  default: false
                 header_attributes:
                   description: Add a list of attribute names that will be returned in the response header from the Access callback.
                   type: array
