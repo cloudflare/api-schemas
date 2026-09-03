@@ -157698,7 +157698,7 @@ paths:
                           type: string
                           format: date-time
                         format:
-                          $ref: '#/components/schemas/cloudflare-pipelines_Format'
+                          $ref: '#/components/schemas/cloudflare-pipelines_SinkFormat'
                         id:
                           description: Indicates a unique identifier for this sink.
                           type: string
@@ -157800,7 +157800,7 @@ paths:
                     - $ref: '#/components/schemas/cloudflare-pipelines_r2Table'
                     - $ref: '#/components/schemas/cloudflare-pipelines_r2_data_catalogTable'
                 format:
-                  $ref: '#/components/schemas/cloudflare-pipelines_Format'
+                  $ref: '#/components/schemas/cloudflare-pipelines_SinkFormat'
                 name:
                   description: Defines the name of the Sink.
                   type: string
@@ -157838,7 +157838,7 @@ paths:
                         type: string
                         format: date-time
                       format:
-                        $ref: '#/components/schemas/cloudflare-pipelines_Format'
+                        $ref: '#/components/schemas/cloudflare-pipelines_SinkFormat'
                       id:
                         description: Indicates a unique identifier for this sink.
                         type: string
@@ -157974,7 +157974,7 @@ paths:
                         type: string
                         format: date-time
                       format:
-                        $ref: '#/components/schemas/cloudflare-pipelines_Format'
+                        $ref: '#/components/schemas/cloudflare-pipelines_SinkFormat'
                       id:
                         description: Indicates a unique identifier for this sink.
                         type: string
@@ -380816,6 +380816,13 @@ components:
                 - type
               type: object
           title: Parquet
+    cloudflare-pipelines_JsonCompression:
+      description: Specifies the compression applied to JSON sink output.
+      type: string
+      default: uncompressed
+      enum:
+        - uncompressed
+        - gzip
     cloudflare-pipelines_JsonFormat:
       type: object
       properties:
@@ -380908,6 +380915,42 @@ components:
         - operator
         - description
         - parallelism
+    cloudflare-pipelines_SinkFormat:
+      description: Defines the output data format of a sink.
+      discriminator:
+        mapping:
+          json: '#/components/schemas/cloudflare-pipelines_SinkJsonFormat'
+          parquet: '#/components/schemas/cloudflare-pipelines_SinkParquetFormat'
+        propertyName: type
+      oneOf:
+        - $ref: '#/components/schemas/cloudflare-pipelines_SinkJsonFormat'
+        - $ref: '#/components/schemas/cloudflare-pipelines_SinkParquetFormat'
+    cloudflare-pipelines_SinkJsonFormat:
+      allOf:
+        - $ref: '#/components/schemas/cloudflare-pipelines_JsonFormat'
+        - properties:
+            compression:
+              $ref: '#/components/schemas/cloudflare-pipelines_JsonCompression'
+            type:
+              type: string
+              enum:
+                - json
+          required:
+            - type
+          type: object
+      title: Json
+    cloudflare-pipelines_SinkParquetFormat:
+      allOf:
+        - $ref: '#/components/schemas/cloudflare-pipelines_ParquetFormat'
+        - properties:
+            type:
+              type: string
+              enum:
+                - parquet
+          required:
+            - type
+          type: object
+      title: Parquet
     cloudflare-pipelines_SourceField:
       allOf:
         - $ref: '#/components/schemas/cloudflare-pipelines_FieldType'
