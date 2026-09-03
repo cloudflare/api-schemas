@@ -75521,7 +75521,7 @@ paths:
     get:
       operationId: get_EventListGet
       summary: Filter and list events
-      description: Use `datasetId=all` or `datasetId=*` to query all event datasets for the account (limited to 50). When `datasetId` is unspecified, events are listed from the default Cloudforce One Threat Events dataset. To list existing datasets, use the [`List Datasets`](https://developers.cloudflare.com/api/resources/cloudforce_one/subresources/threat_events/subresources/datasets/methods/list/) endpoint.
+      description: Use `datasetId=all` or `datasetId=*` for the legacy all-datasets scope, `datasetId=analytics` for datasets with `isAnalytics=true`, or `datasetId=operational` for datasets with `isAnalytics=false` (limited to 50). Scope values must be used alone. When `datasetId` is unspecified, events are listed from the default Cloudforce One Threat Events dataset. To list existing datasets, use the [`List Datasets`](https://developers.cloudflare.com/api/resources/cloudforce_one/subresources/threat_events/subresources/datasets/methods/list/) endpoint.
       parameters:
         - name: account_id
           in: path
@@ -75778,7 +75778,7 @@ paths:
         - name: datasetId
           in: query
           schema:
-            description: Dataset IDs to query events from (array of UUIDs), or special value 'all' or '*' to query all event datasets for the account. If not provided, uses the default dataset.
+            description: "Dataset UUIDs to query, or one standalone scope value: 'all'/'*' for the legacy all-datasets behavior, 'analytics' for isAnalytics=true datasets, or 'operational' for isAnalytics=false datasets. If not provided, uses the default dataset."
             type: array
             items:
               type: string
@@ -77267,9 +77267,9 @@ paths:
             type: string
         - name: datasetId
           in: query
-          description: Dataset ID(s) to filter by. Can be a single dataset ID, comma-separated list, or array. If not provided, uses default dataset
+          description: "Dataset UUIDs to filter by, or one standalone scope value: 'all'/'*' for all accessible non-analytics event datasets (analytics datasets are silently excluded), 'analytics' for isAnalytics=true datasets, or 'operational' for isAnalytics=false datasets. If not provided, uses the default dataset."
           schema:
-            description: Dataset ID(s) to filter by. Can be a single dataset ID, comma-separated list, or array. If not provided, uses default dataset
+            description: "Dataset UUIDs to filter by, or one standalone scope value: 'all'/'*' for all accessible non-analytics event datasets (analytics datasets are silently excluded), 'analytics' for isAnalytics=true datasets, or 'operational' for isAnalytics=false datasets. If not provided, uses the default dataset."
             type: array
             items:
               type: string
@@ -78231,6 +78231,7 @@ paths:
                 accountId:
                   type: number
                   example: 123456
+                  x-fern-property-name: accountId_body
                 attacker:
                   type: string
                   example: Flying Yeti
@@ -79546,6 +79547,7 @@ paths:
                 accountId:
                   type: string
                   example: '123'
+                  x-fern-property-name: accountId_body
                 accountTag:
                   type: string
                   example: 5e785ae7a11e4c3c8df4bce13f1b9c02
@@ -83787,9 +83789,9 @@ paths:
               type: string
         - name: datasetIds
           in: query
-          description: Comma-separated dataset UUIDs to restrict neighbor scope. Intersected with ACL grants.
+          description: "Comma-separated dataset UUIDs to restrict neighbor scope, or one standalone scope value: 'all'/'*', 'analytics' for isAnalytics=true datasets, or 'operational' for isAnalytics=false datasets. Intersected with access grants."
           schema:
-            description: Comma-separated dataset UUIDs to restrict neighbor scope. Intersected with ACL grants.
+            description: "Comma-separated dataset UUIDs to restrict neighbor scope, or one standalone scope value: 'all'/'*', 'analytics' for isAnalytics=true datasets, or 'operational' for isAnalytics=false datasets. Intersected with access grants."
             type: array
             items:
               type: string
@@ -84301,9 +84303,9 @@ paths:
             type: string
         - name: datasetIds
           in: query
-          description: Array of dataset IDs to query indicator types from. If not provided, queries all datasets for the account.
+          description: "Dataset UUIDs to query, or one standalone scope value: 'all'/'*', 'analytics' for isAnalytics=true datasets, or 'operational' for isAnalytics=false datasets. If not provided, queries all accessible datasets."
           schema:
-            description: Array of dataset IDs to query indicator types from. If not provided, queries all datasets for the account.
+            description: "Dataset UUIDs to query, or one standalone scope value: 'all'/'*', 'analytics' for isAnalytics=true datasets, or 'operational' for isAnalytics=false datasets. If not provided, queries all accessible datasets."
             type: array
             items:
               type: string
@@ -84441,7 +84443,7 @@ paths:
     get:
       operationId: get_IndicatorList
       summary: Lists indicators across multiple datasets
-      description: Retrieves indicators across specified datasets, ordered by createdAt descending then UUID, dataset ID, and shard ID ascending. Use datasetIds=all or datasetIds=* to query all datasets for the account. If no datasetIds provided, uses the default dataset.
+      description: Retrieves indicators across specified datasets, ordered by createdAt descending then UUID, dataset ID, and shard ID ascending. Use the standalone datasetIds value 'all'/'*' for legacy all-datasets behavior, 'analytics' for isAnalytics=true datasets, or 'operational' for isAnalytics=false datasets. If no datasetIds are provided, uses the default dataset.
       parameters:
         - name: account_id
           in: path
@@ -84452,9 +84454,9 @@ paths:
             type: string
         - name: datasetIds
           in: query
-          description: Dataset IDs to query indicators from (array of UUIDs), or special value 'all' or '*' to query all datasets. If not provided, uses the default dataset.
+          description: "Dataset UUIDs to query, or one standalone scope value: 'all'/'*' for legacy all-datasets behavior, 'analytics' for isAnalytics=true datasets, or 'operational' for isAnalytics=false datasets. If not provided, uses the default dataset."
           schema:
-            description: Dataset IDs to query indicators from (array of UUIDs), or special value 'all' or '*' to query all datasets. If not provided, uses the default dataset.
+            description: "Dataset UUIDs to query, or one standalone scope value: 'all'/'*' for legacy all-datasets behavior, 'analytics' for isAnalytics=true datasets, or 'operational' for isAnalytics=false datasets. If not provided, uses the default dataset."
             type: array
             items:
               type: string
@@ -85026,9 +85028,9 @@ paths:
             type: string
         - name: datasetIds
           in: query
-          description: Dataset ID(s) to filter by. Can be a single dataset ID or comma-separated list. If not provided, aggregates across all accessible datasets
+          description: "Dataset UUIDs to filter by, or one standalone scope value: 'all'/'*' for all accessible datasets, 'analytics' for isAnalytics=true datasets, or 'operational' for isAnalytics=false datasets. If not provided, aggregates across all accessible datasets."
           schema:
-            description: Dataset ID(s) to filter by. Can be a single dataset ID or comma-separated list. If not provided, aggregates across all accessible datasets
+            description: "Dataset UUIDs to filter by, or one standalone scope value: 'all'/'*' for all accessible datasets, 'analytics' for isAnalytics=true datasets, or 'operational' for isAnalytics=false datasets. If not provided, aggregates across all accessible datasets."
             type: array
             items:
               type: string
@@ -88075,7 +88077,7 @@ paths:
     get:
       operationId: get_TagIndicatorsList
       summary: List indicators related to a tag
-      description: Returns indicators associated with the provided tag UUID, with pagination. By default fans out across every indicator dataset the account can read; pass datasetIds to scope to specific datasets.
+      description: Returns indicators associated with the provided tag UUID, with pagination. By default fans out across every indicator dataset the account can read; pass datasetIds to scope to UUIDs, analytics datasets, or operational datasets. Analytics datasets do not expose tag associations, so the analytics scope returns an empty result.
       parameters:
         - name: account_id
           in: path
@@ -88093,9 +88095,9 @@ paths:
             type: string
         - name: datasetIds
           in: query
-          description: Dataset UUIDs to scope to (repeat the param for multiple), or 'all' / '*' for every readable indicator dataset. Omit to search all readable datasets.
+          description: "Dataset UUIDs to scope to (repeat the param for multiple), or one standalone scope: 'all'/'*', 'analytics' for isAnalytics=true datasets, or 'operational' for isAnalytics=false datasets. Analytics datasets do not expose tag associations, so 'analytics' returns an empty result. Omit to search all readable datasets."
           schema:
-            description: Dataset UUIDs to scope to (repeat the param for multiple), or 'all' / '*' for every readable indicator dataset. Omit to search all readable datasets.
+            description: "Dataset UUIDs to scope to (repeat the param for multiple), or one standalone scope: 'all'/'*', 'analytics' for isAnalytics=true datasets, or 'operational' for isAnalytics=false datasets. Analytics datasets do not expose tag associations, so 'analytics' returns an empty result. Omit to search all readable datasets."
             type: array
             items:
               type: string
@@ -88353,7 +88355,7 @@ paths:
     get:
       operationId: get_TagRelationshipsList
       summary: List relationships for a tag
-      description: Returns sparse relationship edges. Optionally hydrate related entities via `expand`. Fans out across all accessible indicator dataset shards.
+      description: Returns sparse relationship edges. Optionally hydrate related entities via `expand`. Fans out across all accessible indicator dataset shards. Analytics datasets do not expose tag associations, so the analytics scope returns an empty result.
       parameters:
         - name: account_id
           in: path
@@ -88372,7 +88374,7 @@ paths:
         - name: datasets
           in: query
           schema:
-            description: Comma-separated dataset UUIDs to scope to, or 'all'/'*' for every readable indicator dataset. Omit for all.
+            description: "Comma-separated dataset UUIDs to scope to, or one standalone scope: 'all'/'*', 'analytics' for isAnalytics=true datasets, or 'operational' for isAnalytics=false datasets. Analytics datasets do not expose tag associations, so 'analytics' returns an empty result. Omit for all."
             type: array
             items:
               type: string
