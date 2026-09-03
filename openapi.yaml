@@ -319369,9 +319369,6 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/zones_identifier'
-      requestBody:
-        content:
-          application/json: {}
       responses:
         '200':
           description: Delete Zone response.
@@ -470958,6 +470955,7 @@ components:
           - $ref: '#/components/schemas/zones_cache-rules_origin_max_http_version'
           - $ref: '#/components/schemas/zones_polish-2'
           - $ref: '#/components/schemas/zones_prefetch_preload'
+          - $ref: '#/components/schemas/zones_pre_render'
           - $ref: '#/components/schemas/zones_privacy_pass'
           - $ref: '#/components/schemas/zones_proxy_read_timeout'
           - $ref: '#/components/schemas/zones_pseudo_ipv4'
@@ -471094,14 +471092,18 @@ components:
                 - orange_to_orange
             value:
               $ref: '#/components/schemas/zones_orange_to_orange_value'
+      deprecated: true
       title: Orange to Orange
+      x-stainless-deprecation-message: This setting is deprecated. Orange to Orange (O2O) is applied automatically for eligible zones and no longer requires configuration; this setting only controlled the legacy O2O v1 (Managed CNAME) path. More information at https://developers.cloudflare.com/fundamentals/api/reference/deprecations/
     zones_orange_to_orange_value:
       description: Value of the zone setting.
       type: string
       default: on
+      deprecated: true
       enum:
         - on
         - off
+      x-stainless-deprecation-message: This setting is deprecated. Orange to Orange (O2O) is applied automatically for eligible zones and no longer requires configuration; this setting only controlled the legacy O2O v1 (Managed CNAME) path. More information at https://developers.cloudflare.com/fundamentals/api/reference/deprecations/
     zones_origin_error_page_pass_thru:
       type: object
       properties:
@@ -471223,6 +471225,28 @@ components:
         - off
         - lossless
         - lossy
+    zones_pre_render:
+      description: |-
+        When enabled, Cloudflare serves pre-rendered HTML to eligible search and
+        AI crawlers instead of the origin's unrendered response.
+      allOf:
+        - $ref: '#/components/schemas/zones_base'
+        - properties:
+            id:
+              description: ID of the zone setting.
+              example: pre_render
+              enum:
+                - pre_render
+            value:
+              $ref: '#/components/schemas/zones_pre_render_value'
+      title: Pre-render
+    zones_pre_render_value:
+      description: Value of the zone setting.
+      type: string
+      default: off
+      enum:
+        - off
+        - on
     zones_prefetch_preload:
       description: Cloudflare will prefetch any URLs that are included in the response headers. This is limited to Enterprise Zones.
       default: off
@@ -471713,6 +471737,7 @@ components:
         - $ref: '#/components/schemas/zones_cache-rules_origin_max_http_version'
         - $ref: '#/components/schemas/zones_polish-2'
         - $ref: '#/components/schemas/zones_prefetch_preload'
+        - $ref: '#/components/schemas/zones_pre_render'
         - $ref: '#/components/schemas/zones_privacy_pass'
         - $ref: '#/components/schemas/zones_proxy_read_timeout'
         - $ref: '#/components/schemas/zones_pseudo_ipv4'
@@ -471794,6 +471819,7 @@ components:
         - $ref: '#/components/schemas/zones_cache-rules_origin_max_http_version_value'
         - $ref: '#/components/schemas/zones_polish_value'
         - $ref: '#/components/schemas/zones_prefetch_preload_value'
+        - $ref: '#/components/schemas/zones_pre_render_value'
         - $ref: '#/components/schemas/zones_privacy_pass_value'
         - $ref: '#/components/schemas/zones_proxy_read_timeout_value'
         - $ref: '#/components/schemas/zones_pseudo_ipv4_value'
@@ -472811,6 +472837,7 @@ components:
                   - $ref: '#/components/schemas/zones_cache-rules_origin_max_http_version'
                   - $ref: '#/components/schemas/zones_polish-2'
                   - $ref: '#/components/schemas/zones_prefetch_preload'
+                  - $ref: '#/components/schemas/zones_pre_render'
                   - $ref: '#/components/schemas/zones_privacy_pass'
                   - $ref: '#/components/schemas/zones_proxy_read_timeout'
                   - $ref: '#/components/schemas/zones_pseudo_ipv4'
