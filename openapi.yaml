@@ -464027,8 +464027,7 @@ components:
               - meta
             type: object
         messages:
-          type: array
-          items: {}
+          $ref: '#/components/schemas/workers_messages'
         result:
           type: object
           enum:
@@ -465297,6 +465296,7 @@ components:
             - result
           type: object
     workers_script-response:
+      type: object
       properties:
         cache_options:
           $ref: '#/components/schemas/workers_cache_options'
@@ -465746,9 +465746,15 @@ components:
                   usage_model: standard
               properties:
                 bindings:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/workers_binding_item'
                   allOf:
                     - $ref: '#/components/schemas/workers_bindings'
-                    - readOnly: true
+                    - items:
+                        $ref: '#/components/schemas/workers_binding_item'
+                      readOnly: true
+                      type: array
                 script:
                   type: object
                   example:
