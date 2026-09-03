@@ -143062,6 +143062,7 @@ paths:
         content:
           application/json:
             schema:
+              type: object
               required:
                 - id
       responses:
@@ -147384,6 +147385,7 @@ paths:
         content:
           application/json:
             schema:
+              type: object
               required:
                 - id
       responses:
@@ -147712,6 +147714,7 @@ paths:
         content:
           application/json:
             schema:
+              type: object
               required:
                 - id
       responses:
@@ -414289,18 +414292,21 @@ components:
         - properties:
             result:
               $ref: '#/components/schemas/magic_acl'
+          type: object
     magic_acl_modified_response:
       allOf:
         - $ref: '#/components/schemas/magic_api-response-single'
         - properties:
             result:
               $ref: '#/components/schemas/magic_acl'
+          type: object
     magic_acl_single_response:
       allOf:
         - $ref: '#/components/schemas/magic_api-response-single'
         - properties:
             result:
               $ref: '#/components/schemas/magic_acl'
+          type: object
     magic_acl_update_request:
       type: object
       properties:
@@ -414370,6 +414376,7 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/magic_acl'
+          type: object
     magic_allow_null_cipher:
       description: When `true`, the tunnel can use a null-cipher (`ENCR_NULL`) in the ESP tunnel (Phase 2).
       type: boolean
@@ -414384,7 +414391,8 @@ components:
         result:
           anyOf:
             - type: object
-            - items: {}
+            - items:
+                type: object
               type: array
             - type: string
         success:
@@ -414439,6 +414447,7 @@ components:
                   type: object
                 - nullable: true
                   type: string
+          type: object
     magic_app:
       description: Collection of Hostnames and/or IP Subnets to associate with traffic decisions.
       type: object
@@ -414462,12 +414471,15 @@ components:
         - required:
             - hostnames
           title: Hostnames
+          type: object
         - required:
             - ip_subnets
           title: Subnets
+          type: object
         - required:
             - source_subnets
           title: Source Subnets
+          type: object
       required:
         - name
         - type
@@ -414498,6 +414510,7 @@ components:
           required:
             - id
             - site_id
+          type: object
         - oneOf:
             - properties:
                 account_app_id:
@@ -414505,12 +414518,14 @@ components:
               required:
                 - account_app_id
               title: Account App
+              type: object
             - properties:
                 managed_app_id:
                   $ref: '#/components/schemas/magic_managed_app_id'
               required:
                 - managed_app_id
               title: Managed App
+              type: object
     magic_app_config_add_single_request:
       type: object
       allOf:
@@ -414521,19 +414536,23 @@ components:
               required:
                 - account_app_id
               title: Account App
+              type: object
             - properties:
                 managed_app_id:
                   $ref: '#/components/schemas/magic_managed_app_id'
               required:
                 - managed_app_id
               title: Managed App
+              type: object
         - anyOf:
             - required:
                 - breakout
               title: Breakout
+              type: object
             - required:
                 - priority
               title: Prioritize
+              type: object
         - properties:
             breakout:
               $ref: '#/components/schemas/magic_app_breakout'
@@ -414541,12 +414560,14 @@ components:
               $ref: '#/components/schemas/magic_app_breakout_preferred_wans'
             priority:
               $ref: '#/components/schemas/magic_app_priority'
+          type: object
     magic_app_config_single_response:
       allOf:
         - $ref: '#/components/schemas/magic_apps-response-object'
         - properties:
             result:
               $ref: '#/components/schemas/magic_app_config'
+          type: object
     magic_app_config_update_request:
       type: object
       properties:
@@ -414568,6 +414589,7 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/magic_app_config'
+          type: object
     magic_app_hostnames:
       description: FQDNs to associate with traffic decisions.
       type: array
@@ -414589,6 +414611,7 @@ components:
         - properties:
             result:
               $ref: '#/components/schemas/magic_account_app'
+          type: object
     magic_app_source_subnets:
       description: IPv4 CIDRs to associate with traffic decisions. (IPv6 CIDRs are currently unsupported)
       type: array
@@ -414596,6 +414619,7 @@ components:
         allOf:
           - $ref: '#/components/schemas/magic_cidr'
           - example: 1.1.1.1/32
+            type: string
     magic_app_subnets:
       description: IPv4 CIDRs to associate with traffic decisions. (IPv6 CIDRs are currently unsupported)
       type: array
@@ -414603,6 +414627,7 @@ components:
         allOf:
           - $ref: '#/components/schemas/magic_cidr'
           - example: 1.1.1.1/32
+            type: string
     magic_app_type:
       description: Category of the app.
       type: string
@@ -414624,18 +414649,23 @@ components:
         - required:
             - name
           title: Update App Name
+          type: object
         - required:
             - type
           title: Update App Type
+          type: object
         - required:
             - hostnames
           title: Update App Hostnames
+          type: object
         - required:
             - ip_subnets
           title: Update App Subnets
+          type: object
         - required:
             - source_subnets
           title: Update App Source Subnets
+          type: object
     magic_apps-response-array:
       type: object
       properties:
@@ -414645,7 +414675,8 @@ components:
           $ref: '#/components/schemas/magic_messages'
         result:
           type: array
-          items: {}
+          items:
+            type: object
           nullable: true
         success:
           description: Whether the API call was successful
@@ -414687,6 +414718,7 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/magic_app'
+          type: object
     magic_automatic_return_routing:
       description: True if automatic stateful return routing should be enabled for a tunnel, false otherwise. Requires the `coupler_integration` account flag to be enabled; requests setting this to `true` without that flag will be rejected.
       type: boolean
@@ -414938,14 +414970,19 @@ components:
       oneOf:
         - required:
             - gre
+          type: object
         - required:
             - ipsec
+          type: object
         - required:
             - gre_interconnect
+          type: object
         - required:
             - mpls_interconnect
+          type: object
         - required:
             - mconn
+          type: object
       required:
         - id
         - name
@@ -414970,6 +415007,7 @@ components:
         - properties:
             result:
               $ref: '#/components/schemas/magic_cf1_site_ramp'
+          type: object
     magic_cf1_site_ramp_type:
       description: The type of network connection (ramp) linking a CF1 Site to Cloudflare's network.
       type: string
@@ -414987,12 +415025,14 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/magic_cf1_site_ramp'
+          type: object
     magic_cf1_site_single_response:
       allOf:
         - $ref: '#/components/schemas/magic_api-response-single'
         - properties:
             result:
               $ref: '#/components/schemas/magic_cf1_site'
+          type: object
     magic_cf1_site_update:
       description: Partial update payload for a CF1 Site. All properties are optional; only fields supplied in the request body are modified.
       type: object
@@ -415015,6 +415055,7 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/magic_cf1_site'
+          type: object
     magic_cidr:
       description: A valid CIDR notation representing an IP range.
       type: string
@@ -415058,6 +415099,7 @@ components:
         - $ref: '#/components/schemas/magic_api-response-single'
         - properties:
             result:
+              type: object
               properties:
                 modified:
                   type: boolean
@@ -415066,6 +415108,7 @@ components:
                   type: array
                   items:
                     $ref: '#/components/schemas/magic_interconnect'
+          type: object
     magic_components-schemas-name:
       description: The name of the interconnect. The name cannot share a name with other tunnels.
       type: string
@@ -415082,6 +415125,7 @@ components:
                   example: true
                 modified_interconnect:
                   $ref: '#/components/schemas/magic_interconnect'
+          type: object
     magic_components-schemas-tunnel_single_response:
       allOf:
         - $ref: '#/components/schemas/magic_api-response-single'
@@ -415091,16 +415135,19 @@ components:
               properties:
                 interconnect:
                   $ref: '#/components/schemas/magic_interconnect'
+          type: object
     magic_components-schemas-tunnels_collection_response:
       allOf:
         - $ref: '#/components/schemas/magic_api-response-single'
         - properties:
             result:
+              type: object
               properties:
                 interconnects:
                   type: array
                   items:
                     $ref: '#/components/schemas/magic_interconnect'
+          type: object
     magic_connector-id:
       description: Magic Connector identifier tag.
       type: string
@@ -415171,6 +415218,7 @@ components:
         - properties:
             result:
               $ref: '#/components/schemas/magic_gre-tunnel'
+          type: object
     magic_create_redundancy_group_request:
       type: object
       properties:
@@ -415218,6 +415266,7 @@ components:
         - properties:
             result:
               $ref: '#/components/schemas/magic_route'
+          type: object
     magic_created_on:
       description: When the route was created.
       type: string
@@ -415263,6 +415312,7 @@ components:
               required:
                 - deleted
                 - deleted_redundancy_group
+          type: object
     magic_description:
       description: An optional human provided description of the static route.
       type: string
@@ -415456,6 +415506,7 @@ components:
           allOf:
             - $ref: '#/components/schemas/magic_gre'
             - description: Omitted in responses for version 1.5 interconnects.
+              type: object
         health_check:
           $ref: '#/components/schemas/magic_interconnect_health_check'
         id:
@@ -415483,6 +415534,7 @@ components:
             - $ref: '#/components/schemas/magic_schemas-identifier'
             - description: An identifier that correlates this interconnect with the corresponding V2 CNI interconnect resource.
               readOnly: true
+              type: string
     magic_interconnect_bgp_config:
       type: object
       properties:
@@ -415559,6 +415611,7 @@ components:
               type: string
               example: 198.41.199.225
               x-auditable: true
+          type: object
     magic_interconnect_tunnel_update_request:
       type: object
       properties:
@@ -415572,6 +415625,7 @@ components:
           allOf:
             - $ref: '#/components/schemas/magic_gre'
             - description: Not configurable for version 1.5 interconnects; supplying it returns an error.
+              type: object
         health_check:
           $ref: '#/components/schemas/magic_interconnect_health_check'
         interface_address:
@@ -415746,6 +415800,7 @@ components:
                   type: object
                   additionalProperties:
                     type: string
+          type: object
     magic_lan:
       type: object
       properties:
@@ -415810,6 +415865,7 @@ components:
         - properties:
             result:
               $ref: '#/components/schemas/magic_lan'
+          type: object
     magic_lan_dhcp_relay:
       type: object
       properties:
@@ -415831,7 +415887,9 @@ components:
         dhcp_pool_start:
           $ref: '#/components/schemas/magic_ip-address'
         dns_server:
-          $ref: '#/components/schemas/magic_ip-address'
+          allOf:
+            - $ref: '#/components/schemas/magic_ip-address'
+          deprecated: true
         dns_servers:
           type: array
           items:
@@ -415851,12 +415909,14 @@ components:
         - properties:
             result:
               $ref: '#/components/schemas/magic_lan'
+          type: object
     magic_lan_single_response:
       allOf:
         - $ref: '#/components/schemas/magic_api-response-single'
         - properties:
             result:
               $ref: '#/components/schemas/magic_lan'
+          type: object
     magic_lan_static_addressing:
       description: If the site is not configured in high availability mode, this configuration is optional (if omitted, use DHCP). However, if in high availability mode, static_address is required along with secondary and virtual address.
       type: object
@@ -415934,12 +415994,14 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/magic_lan'
+          type: object
     magic_magic_bgp_filter_profile_response:
       allOf:
         - $ref: '#/components/schemas/magic_api-response-single'
         - properties:
             result:
               $ref: '#/components/schemas/magic_bgp_filter_profile'
+          type: object
     magic_magic_bgp_filter_profiles_list_response:
       allOf:
         - $ref: '#/components/schemas/magic_api-response-common'
@@ -415948,12 +416010,14 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/magic_bgp_filter_profile'
+          type: object
     magic_magic_bgp_settings_response:
       allOf:
         - $ref: '#/components/schemas/magic_api-response-single'
         - properties:
             result:
               $ref: '#/components/schemas/magic_bgp_settings'
+          type: object
     magic_managed_app:
       description: Managed app defined by Cloudflare.
       type: object
@@ -416004,6 +416068,7 @@ components:
         - $ref: '#/components/schemas/magic_api-response-single'
         - properties:
             result:
+              type: object
               properties:
                 modified:
                   type: boolean
@@ -416012,6 +416077,7 @@ components:
                   type: array
                   items:
                     $ref: '#/components/schemas/magic_gre-tunnel'
+          type: object
     magic_mtu:
       description: Maximum Transmission Unit (MTU) in bytes for the GRE tunnel. The minimum value is 576.
       type: integer
@@ -416022,6 +416088,7 @@ components:
         - $ref: '#/components/schemas/magic_api-response-single'
         - properties:
             result:
+              type: object
               properties:
                 deleted:
                   type: boolean
@@ -416030,11 +416097,13 @@ components:
                   type: array
                   items:
                     $ref: '#/components/schemas/magic_route'
+          type: object
     magic_multiple_route_modified_response:
       allOf:
         - $ref: '#/components/schemas/magic_api-response-single'
         - properties:
             result:
+              type: object
               properties:
                 modified:
                   type: boolean
@@ -416043,6 +416112,7 @@ components:
                   type: array
                   items:
                     $ref: '#/components/schemas/magic_route'
+          type: object
     magic_nat:
       type: object
       properties:
@@ -416119,6 +416189,7 @@ components:
         - properties:
             result:
               $ref: '#/components/schemas/magic_netflow_config'
+          type: object
     magic_nexthop:
       description: The next-hop IP Address for the static route.
       type: string
@@ -416146,6 +416217,7 @@ components:
         - $ref: '#/components/schemas/magic_api-response-single'
         - properties:
             result:
+              type: object
               properties:
                 ipsec_tunnel_id:
                   $ref: '#/components/schemas/magic_identifier'
@@ -416153,6 +416225,7 @@ components:
                   $ref: '#/components/schemas/magic_psk'
                 psk_metadata:
                   $ref: '#/components/schemas/magic_psk_metadata'
+          type: object
     magic_psk_metadata:
       description: The PSK metadata that includes when the PSK was generated.
       type: object
@@ -416187,6 +416260,7 @@ components:
         - properties:
             result:
               $ref: '#/components/schemas/magic_redundancy_group'
+          type: object
     magic_redundancy_group_with_members:
       type: object
       allOf:
@@ -416196,6 +416270,7 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/magic_redundancy_member_data'
+          type: object
     magic_redundancy_group_with_members_response:
       type: object
       allOf:
@@ -416203,6 +416278,7 @@ components:
         - properties:
             result:
               $ref: '#/components/schemas/magic_redundancy_group_with_members'
+          type: object
     magic_redundancy_groups_collection_response:
       type: object
       allOf:
@@ -416215,6 +416291,7 @@ components:
                   type: array
                   items:
                     $ref: '#/components/schemas/magic_redundancy_group_with_members'
+          type: object
     magic_redundancy_member_data:
       type: object
       properties:
@@ -416307,6 +416384,7 @@ components:
               $ref: '#/components/schemas/magic_identifier'
           required:
             - id
+          type: object
     magic_route_delete_many_request:
       type: object
       properties:
@@ -416328,6 +416406,7 @@ components:
                   example: true
                 deleted_route:
                   $ref: '#/components/schemas/magic_route'
+          type: object
     magic_route_modified_response:
       allOf:
         - $ref: '#/components/schemas/magic_api-response-single'
@@ -416340,6 +416419,7 @@ components:
                   example: true
                 modified_route:
                   $ref: '#/components/schemas/magic_route'
+          type: object
     magic_route_single_response:
       allOf:
         - $ref: '#/components/schemas/magic_api-response-single'
@@ -416349,6 +416429,7 @@ components:
               properties:
                 route:
                   $ref: '#/components/schemas/magic_route'
+          type: object
     magic_route_update_many_request:
       type: object
       properties:
@@ -416368,6 +416449,7 @@ components:
               $ref: '#/components/schemas/magic_identifier'
           required:
             - id
+          type: object
         - $ref: '#/components/schemas/magic_route_add_single_request'
     magic_routed_subnet:
       type: object
@@ -416386,17 +416468,20 @@ components:
         - $ref: '#/components/schemas/magic_api-response-single'
         - properties:
             result:
+              type: object
               properties:
                 routes:
                   type: array
                   items:
                     $ref: '#/components/schemas/magic_route'
+          type: object
     magic_schemas-create_ipsec_tunnel_response:
       allOf:
         - $ref: '#/components/schemas/magic_api-response-single'
         - properties:
             result:
               $ref: '#/components/schemas/magic_ipsec-tunnel'
+          type: object
     magic_schemas-created_on:
       description: The date and time the tunnel was created.
       type: string
@@ -416428,6 +416513,7 @@ components:
         - $ref: '#/components/schemas/magic_api-response-single'
         - properties:
             result:
+              type: object
               properties:
                 modified:
                   type: boolean
@@ -416436,6 +416522,7 @@ components:
                   type: array
                   items:
                     $ref: '#/components/schemas/magic_ipsec-tunnel'
+          type: object
     magic_schemas-mtu:
       description: The Maximum Transmission Unit (MTU) in bytes for the interconnect. The minimum value is 576.
       type: integer
@@ -416452,6 +416539,7 @@ components:
                   example: true
                 deleted_ipsec_tunnel:
                   $ref: '#/components/schemas/magic_ipsec-tunnel'
+          type: object
     magic_schemas-tunnel_modified_response:
       allOf:
         - $ref: '#/components/schemas/magic_api-response-single'
@@ -416464,6 +416552,7 @@ components:
                   example: true
                 modified_ipsec_tunnel:
                   $ref: '#/components/schemas/magic_ipsec-tunnel'
+          type: object
     magic_schemas-tunnel_single_response:
       allOf:
         - $ref: '#/components/schemas/magic_api-response-single'
@@ -416473,16 +416562,19 @@ components:
               properties:
                 ipsec_tunnel:
                   $ref: '#/components/schemas/magic_ipsec-tunnel'
+          type: object
     magic_schemas-tunnels_collection_response:
       allOf:
         - $ref: '#/components/schemas/magic_api-response-single'
         - properties:
             result:
+              type: object
               properties:
                 ipsec_tunnels:
                   type: array
                   items:
                     $ref: '#/components/schemas/magic_ipsec-tunnel'
+          type: object
     magic_scope:
       description: Used only for ECMP routes.
       type: object
@@ -416540,18 +416632,21 @@ components:
         - properties:
             result:
               $ref: '#/components/schemas/magic_site'
+          type: object
     magic_site_modified_response:
       allOf:
         - $ref: '#/components/schemas/magic_api-response-single'
         - properties:
             result:
               $ref: '#/components/schemas/magic_site'
+          type: object
     magic_site_single_response:
       allOf:
         - $ref: '#/components/schemas/magic_api-response-single'
         - properties:
             result:
               $ref: '#/components/schemas/magic_site'
+          type: object
     magic_site_update_request:
       type: object
       properties:
@@ -416592,6 +416687,7 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/magic_site'
+          type: object
     magic_ttl:
       description: Time To Live (TTL) in number of hops of the GRE tunnel.
       type: integer
@@ -416609,6 +416705,7 @@ components:
                   example: true
                 deleted_gre_tunnel:
                   $ref: '#/components/schemas/magic_gre-tunnel'
+          type: object
     magic_tunnel_health_check:
       allOf:
         - $ref: '#/components/schemas/magic_health_check_base'
@@ -416621,6 +416718,7 @@ components:
               enum:
                 - unidirectional
                 - bidirectional
+          type: object
     magic_tunnel_modified_response:
       allOf:
         - $ref: '#/components/schemas/magic_api-response-single'
@@ -416633,6 +416731,7 @@ components:
                   example: true
                 modified_gre_tunnel:
                   $ref: '#/components/schemas/magic_gre-tunnel'
+          type: object
     magic_tunnel_single_response:
       allOf:
         - $ref: '#/components/schemas/magic_api-response-single'
@@ -416642,16 +416741,19 @@ components:
               properties:
                 gre_tunnel:
                   $ref: '#/components/schemas/magic_gre-tunnel'
+          type: object
     magic_tunnels_collection_response:
       allOf:
         - $ref: '#/components/schemas/magic_api-response-single'
         - properties:
             result:
+              type: object
               properties:
                 gre_tunnels:
                   type: array
                   items:
                     $ref: '#/components/schemas/magic_gre-tunnel'
+          type: object
     magic_unidirectional:
       description: The desired traffic direction for this ACL policy. If set to "false", the policy will allow bidirectional traffic. If set to "true", the policy will only allow traffic in one direction. If not included in request, will default to false.
       type: boolean
@@ -416737,18 +416839,21 @@ components:
         - properties:
             result:
               $ref: '#/components/schemas/magic_wan'
+          type: object
     magic_wan_modified_response:
       allOf:
         - $ref: '#/components/schemas/magic_api-response-single'
         - properties:
             result:
               $ref: '#/components/schemas/magic_wan'
+          type: object
     magic_wan_single_response:
       allOf:
         - $ref: '#/components/schemas/magic_api-response-single'
         - properties:
             result:
               $ref: '#/components/schemas/magic_wan'
+          type: object
     magic_wan_static_addressing:
       description: (optional) if omitted, use DHCP. Submit secondary_address when site is in high availability mode.
       type: object
@@ -416798,6 +416903,7 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/magic_wan'
+          type: object
     magic_weight:
       description: Optional weight of the ECMP scope - if provided.
       type: integer
