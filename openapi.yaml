@@ -332134,9 +332134,7 @@ paths:
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/email_api-response-single'
-                  - $ref: '#/components/schemas/email_dns_settings_response_collection'
+                $ref: '#/components/schemas/email_email_settings_response_single'
       security:
         - api_email: []
           api_key: []
@@ -332165,17 +332163,17 @@ paths:
             $ref: '#/components/schemas/email_identifier'
         - name: subdomain
           in: query
+          description: Deprecated. When supplied, the response shape differs from the documented default and is not modeled in generated SDKs. Do not rely on this parameter.
           schema:
             $ref: '#/components/schemas/email_email_setting_name'
+          deprecated: true
       responses:
         '200':
           description: Email Routing - DNS settings response
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/email_email_routing_dns_query_response'
-                  - $ref: '#/components/schemas/email_dns_settings_response_collection'
+                $ref: '#/components/schemas/email_dns_settings_response_collection'
       security:
         - api_email: []
           api_key: []
@@ -399766,31 +399764,6 @@ components:
       example: user@example.com
       maxLength: 90
       x-auditable: true
-    email_email_routing_dns_query_response:
-      type: object
-      allOf:
-        - $ref: '#/components/schemas/email_api-response-collection'
-        - properties:
-            result:
-              type: object
-              properties:
-                errors:
-                  $ref: '#/components/schemas/email_email_routing_get_response_dns_errors'
-                record:
-                  type: array
-                  items:
-                    $ref: '#/components/schemas/email_dns_record'
-    email_email_routing_get_response_dns_error:
-      type: object
-      properties:
-        code:
-          type: string
-        missing:
-          $ref: '#/components/schemas/email_dns_record'
-    email_email_routing_get_response_dns_errors:
-      type: array
-      items:
-        $ref: '#/components/schemas/email_email_routing_get_response_dns_error'
     email_email_setting_created:
       description: The date and time the settings have been created.
       type: string
