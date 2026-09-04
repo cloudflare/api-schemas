@@ -78586,6 +78586,26 @@ paths:
                       example: amber
                   required:
                     - data
+                source:
+                  description: Controlled provenance for an event and its indicators derived from a Threat Signals article.
+                  type: object
+                  additionalProperties: false
+                  properties:
+                    resourceId:
+                      type: string
+                      format: uuid
+                    resourceType:
+                      type: string
+                      enum:
+                        - article
+                    system:
+                      type: string
+                      enum:
+                        - threat-signals
+                  required:
+                    - system
+                    - resourceType
+                    - resourceId
                 tags:
                   type: array
                   items:
@@ -80907,6 +80927,28 @@ paths:
                               - datasetId
                               - eventId
                             type: object
+                        sources:
+                          description: RSS article sources from which this indicator was extracted.
+                          type: array
+                          items:
+                            additionalProperties: false
+                            properties:
+                              resourceId:
+                                type: string
+                                format: uuid
+                              resourceType:
+                                type: string
+                                enum:
+                                  - article
+                              system:
+                                type: string
+                                enum:
+                                  - threat-signals
+                            required:
+                              - system
+                              - resourceType
+                              - resourceId
+                            type: object
                         tags:
                           type: array
                           items:
@@ -80943,6 +80985,7 @@ paths:
                         - value
                         - createdAt
                         - updatedAt
+                        - sources
                       type: object
                   pagination:
                     type: object
@@ -85094,6 +85137,28 @@ paths:
                                     - datasetId
                                     - eventId
                                   type: object
+                              sources:
+                                description: RSS article sources from which this indicator was extracted.
+                                type: array
+                                items:
+                                  additionalProperties: false
+                                  properties:
+                                    resourceId:
+                                      type: string
+                                      format: uuid
+                                    resourceType:
+                                      type: string
+                                      enum:
+                                        - article
+                                    system:
+                                      type: string
+                                      enum:
+                                        - threat-signals
+                                  required:
+                                    - system
+                                    - resourceType
+                                    - resourceId
+                                  type: object
                               tags:
                                 type: array
                                 items:
@@ -85130,6 +85195,7 @@ paths:
                               - value
                               - createdAt
                               - updatedAt
+                              - sources
                           type:
                             type: string
                             example: array
@@ -98342,6 +98408,11 @@ paths:
           schema:
             type: string
             format: uuid
+        - name: article_id
+          in: query
+          schema:
+            type: string
+            format: uuid
         - name: read
           in: query
           schema:
@@ -98766,6 +98837,79 @@ paths:
       responses:
         '200':
           description: Threat Signals response.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                      required:
+                        - message
+                      type: object
+                  messages:
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          type: number
+                        expected:
+                          type: string
+                        message:
+                          type: string
+                        path:
+                          type: array
+                          items:
+                            type: string
+                      required:
+                        - message
+                      type: object
+                  result:
+                    type: object
+                    properties:
+                      tag_skill_version:
+                        type: string
+                      tags:
+                        description: Final hydrated assignment set; may be empty when no applicable tags are selected.
+                        type: array
+                        items:
+                          properties:
+                            applied_by:
+                              type: string
+                              enum:
+                                - ai
+                                - analyst
+                            categoryId:
+                              type: string
+                              format: uuid
+                              nullable: true
+                            uuid:
+                              type: string
+                              format: uuid
+                            value:
+                              type: string
+                          required:
+                            - uuid
+                            - value
+                            - categoryId
+                            - applied_by
+                          type: object
+                    required:
+                      - tags
+                      - tag_skill_version
+                  success:
+                    type: boolean
+                    enum:
+                      - true
+                required:
+                  - result
+                  - messages
+                  - success
+                  - errors
         4XX:
           $ref: '#/components/responses/cloudforce-one-events_ApiV4ClientError'
       security:
