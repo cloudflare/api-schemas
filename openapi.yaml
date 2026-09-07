@@ -125065,6 +125065,194 @@ paths:
       x-forge-params:
         enabled:
           default: null
+  /accounts/{account_id}/field_extractors/{extractor}:
+    delete:
+      operationId: deleteFieldExtractor
+      summary: Delete Field Extractor
+      description: Deletes all custom extraction rules for an extractor type.
+      parameters:
+        - name: account_id
+          in: path
+          description: Cloudflare account ID.
+          required: true
+          schema:
+            description: Cloudflare account ID.
+            type: string
+            example: '123456'
+            minLength: 1
+        - name: extractor
+          in: path
+          description: Extractor type.
+          required: true
+          schema:
+            description: Extractor type.
+            type: string
+            example: llm_prompts
+            minLength: 1
+      responses:
+        '200':
+          description: Rules deleted successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/field-extractors_DeleteResponse'
+        '404':
+          description: Unknown extractor type.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/field-extractors_ErrorResponse'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Field Extractors
+      x-fern-availability: alpha
+      x-fern-sdk-group-name: fieldExtractors
+      x-fern-sdk-method-name: delete
+      x-forge-hidden: true
+    get:
+      operationId: getFieldExtractor
+      summary: Get Field Extractor
+      description: Retrieves the custom extraction rules configured for a given extractor type.
+      parameters:
+        - name: account_id
+          in: path
+          description: Cloudflare account ID.
+          required: true
+          schema:
+            description: Cloudflare account ID.
+            type: string
+            example: '123456'
+            minLength: 1
+        - name: extractor
+          in: path
+          description: Extractor type.
+          required: true
+          schema:
+            description: Extractor type.
+            type: string
+            example: llm_prompts
+            minLength: 1
+      responses:
+        '200':
+          description: Custom extraction rules for this extractor type.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/field-extractors_SuccessResponse'
+        '404':
+          description: Unknown extractor type or no rules configured.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/field-extractors_ErrorResponse'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Field Extractors
+      x-fern-availability: alpha
+      x-fern-sdk-group-name: fieldExtractors
+      x-fern-sdk-method-name: get
+      x-forge-hidden: true
+    put:
+      operationId: updateFieldExtractor
+      summary: Update Field Extractor
+      description: Replaces all custom extraction rules for an extractor type. Omitted rules are deleted.
+      parameters:
+        - name: account_id
+          in: path
+          description: Cloudflare account ID.
+          required: true
+          schema:
+            description: Cloudflare account ID.
+            type: string
+            example: '123456'
+            minLength: 1
+        - name: extractor
+          in: path
+          description: Extractor type.
+          required: true
+          schema:
+            description: Extractor type.
+            type: string
+            example: llm_prompts
+            minLength: 1
+      requestBody:
+        description: Desired-state replacement of all rules for this extractor type.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                rules:
+                  type: array
+                  items:
+                    properties:
+                      description:
+                        type: string
+                        maxLength: 4096
+                      fields:
+                        type: array
+                        items:
+                          properties:
+                            expression:
+                              type: string
+                              maxLength: 4096
+                              minLength: 1
+                            name:
+                              type: string
+                              minLength: 1
+                          required:
+                            - name
+                            - expression
+                          type: object
+                        minItems: 1
+                      ref:
+                        type: string
+                        maxLength: 64
+                        minLength: 1
+                        pattern: ^[a-zA-Z0-9_-]+$
+                    required:
+                      - ref
+                      - fields
+                    type: object
+                  maxItems: 10
+                  minItems: 1
+              required:
+                - rules
+      responses:
+        '200':
+          description: Rules replaced successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/field-extractors_SuccessResponse'
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/field-extractors_ErrorResponse'
+        '404':
+          description: Unknown extractor type.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/field-extractors_ErrorResponse'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Field Extractors
+      x-fern-availability: alpha
+      x-fern-sdk-group-name: fieldExtractors
+      x-fern-sdk-method-name: update
+      x-forge-hidden: true
   /accounts/{account_id}/firewall/access_rules/rules:
     get:
       operationId: ip-access-rules-for-an-account-list-ip-access-rules
@@ -400619,6 +400807,169 @@ components:
       maxLength: 32
       minLength: 32
       pattern: ^[0-9a-f]{32}$
+    field-extractors_ApiError:
+      type: object
+      properties:
+        code:
+          type: number
+        message:
+          type: string
+        source:
+          description: Points to the offending input as a JSON Pointer into the request body.
+          type: object
+          example: /rules/0/fields/0/expression
+          properties:
+            pointer:
+              type: string
+          required:
+            - pointer
+      required:
+        - code
+        - message
+    field-extractors_DeleteResponse:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/field-extractors_ApiError'
+        messages:
+          description: Additional informational messages.
+          type: array
+          items:
+            properties:
+              code:
+                type: number
+              message:
+                type: string
+            required:
+              - code
+              - message
+            type: object
+        result:
+          description: Result is null.
+          type: object
+          nullable: true
+        success:
+          type: boolean
+          enum:
+            - true
+      required:
+        - success
+        - errors
+        - messages
+        - result
+    field-extractors_ErrorResponse:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/field-extractors_ApiError'
+        messages:
+          description: Additional informational messages.
+          type: array
+          items:
+            properties:
+              code:
+                type: number
+              message:
+                type: string
+            required:
+              - code
+              - message
+            type: object
+        result:
+          description: Result is null.
+          type: object
+          nullable: true
+        success:
+          type: boolean
+          enum:
+            - false
+      required:
+        - success
+        - errors
+        - messages
+        - result
+    field-extractors_ExtractorResult:
+      type: object
+      properties:
+        extractor:
+          description: Extractor type.
+          type: string
+          example: llm_prompts
+          readOnly: true
+        rules:
+          type: array
+          items:
+            $ref: '#/components/schemas/field-extractors_RuleOutput'
+          minItems: 1
+      required:
+        - extractor
+        - rules
+    field-extractors_FieldOutput:
+      type: object
+      properties:
+        expression:
+          description: Wirefilter value expression.
+          type: string
+          example: filter(http.request.body.json.strings.values, http.request.body.json.strings.pointers[*] matches "^/messages/\\d+/content$")
+        name:
+          description: Field name.
+          type: string
+          example: prompt
+      required:
+        - name
+        - expression
+    field-extractors_RuleOutput:
+      type: object
+      properties:
+        description:
+          description: Human-readable rule description.
+          type: string
+        fields:
+          type: array
+          items:
+            $ref: '#/components/schemas/field-extractors_FieldOutput'
+        ref:
+          description: Stable rule identifier.
+          type: string
+          example: openai-chat
+      required:
+        - ref
+        - fields
+    field-extractors_SuccessResponse:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/field-extractors_ApiError'
+        messages:
+          description: Additional informational messages.
+          type: array
+          items:
+            properties:
+              code:
+                type: number
+              message:
+                type: string
+            required:
+              - code
+              - message
+            type: object
+        result:
+          $ref: '#/components/schemas/field-extractors_ExtractorResult'
+        success:
+          type: boolean
+          enum:
+            - true
+      required:
+        - success
+        - errors
+        - messages
+        - result
     firewall_account_identifier:
       description: Defines an account identifier.
       type: string
