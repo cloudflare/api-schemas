@@ -128955,6 +128955,76 @@ paths:
           schema:
             $ref: '#/components/schemas/zero-trust-gateway_type-2'
           deprecated: true
+        - name: filter
+          in: query
+          description: |-
+            Filter the returned lists by one or more `field:value` pairs.
+            Repeat the parameter to apply multiple filters; they are combined with
+            logical AND (a list must satisfy every filter to be returned).
+
+            Supported fields and their matching behaviour:
+              * `name` — case-insensitive substring match on the list name.
+              * `id` — substring match on the list ID (UUID), with or without dashes.
+              * `type` — exact match on the list type. Supersedes the legacy `type` query
+                parameter when both are supplied. Must be one of the valid type values.
+              * `item_count` — exact integer match on the number of items in the list.
+
+            Each entry must match one of the per-field patterns below: the field must be
+            one of `name`, `id`, `type`, or `item_count`; `name`/`id` accept any value,
+            `type` is restricted to the valid list type values, and `item_count` must be
+            a non-negative integer.
+          schema:
+            type: array
+            items:
+              anyOf:
+                - pattern: ^name:.*$
+                - pattern: ^id:.*$
+                - pattern: ^type:(IP|URL|DOMAIN|CATEGORY|EMAIL|SERIAL|LOCATION|DEVICE|AAGUID)$
+                - pattern: ^item_count:[0-9]+$
+              type: string
+          explode: true
+          style: form
+        - name: search
+          in: query
+          description: |-
+            Case-insensitive substring match on the list name or description. When
+            combined with `filter`, both must match (logical AND).
+          schema:
+            type: string
+        - name: order_by
+          in: query
+          description: |-
+            Field to sort the returned lists by. When omitted, results are ordered by
+            `created_at` in ascending order (i.e. creation order) for backwards
+            compatibility. Supported values:
+              * `name` — sort alphabetically by list name.
+              * `created_at` — sort by creation time; defaults to descending unless `direction` is set.
+              * `updated_at` — sort by last-modified time; defaults to descending unless `direction` is set.
+              * `item_count` — sort by number of items in the list.
+          schema:
+            type: string
+            enum:
+              - name
+              - created_at
+              - updated_at
+              - item_count
+        - name: direction
+          in: query
+          description: |-
+            Sort direction. Applies to the field named in `order_by`; when `order_by`
+            is omitted it applies to the default `created_at` ordering. When
+            `direction` is omitted the default is field-specific: explicitly choosing
+            `created_at` or `updated_at` defaults to descending (newest first); `name`
+            and `item_count` default to ascending; and the default `created_at`
+            ordering used when `order_by` is omitted is ascending (for backwards
+            compatibility).
+              * `asc` — ascending.
+              * `desc` — descending.
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
       responses:
         '200':
           description: List Zero Trust lists response.
@@ -129336,6 +129406,77 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/zero-trust-gateway_identifier-2'
+        - name: filter
+          in: query
+          description: |-
+            Filter the returned locations by one or more `field:value` pairs.
+            Repeat the parameter to apply multiple filters; they are combined with
+            logical AND (a location must satisfy every filter to be returned).
+
+            Supported fields and their matching behaviour:
+              * `name` — case-insensitive substring match on the location name.
+              * `id` — substring match on the location ID (UUID), with or without dashes.
+              * `is_default` — whether it is the default for the account.
+
+            Each entry must match one of the per-field patterns below:
+              * the field must be one of `name`, `id`, or `is_default`;
+              * `name`/`id` accept any value;
+              * `is_default` only accepts `true` or `false`; any other value returns `400`
+          schema:
+            type: array
+            items:
+              anyOf:
+                - pattern: ^name:.*$
+                - pattern: ^id:.*$
+                - pattern: ^is_default:(true|false)$
+              type: string
+          examples:
+            filterByIsDefault:
+              summary: Only default locations
+              value:
+                - is_default:true
+            filterByNameAndIsDefault:
+              summary: Default locations whose name contains "prod"
+              value:
+                - name:prod
+                - is_default:true
+          explode: true
+          style: form
+        - name: search
+          in: query
+          description: |-
+            Case-insensitive substring match on the location name. When combined
+            with `filter`, both must match (logical AND).
+          schema:
+            type: string
+        - name: order_by
+          in: query
+          description: |-
+            Field to sort the returned locations by. When omitted, the order of
+            results is unspecified. Supported values:
+              * `name` — sort alphabetically by location name.
+              * `created_at` — sort by creation time; defaults to descending unless `direction` is set.
+              * `updated_at` — sort by last-modified time; defaults to descending unless `direction` is set.
+          schema:
+            type: string
+            enum:
+              - name
+              - created_at
+              - updated_at
+        - name: direction
+          in: query
+          description: |-
+            Sort direction. Only takes effect when `order_by` is also provided; it
+            is ignored otherwise. When `direction` is omitted the effective
+            direction is field-specific: `created_at` and `updated_at` default to
+            descending (newest first); `name` defaults to ascending.
+              * `asc` — ascending.
+              * `desc` — descending.
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
       responses:
         '200':
           description: Lists Zero Trust Gateway locations response.
@@ -130009,6 +130150,76 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/zero-trust-gateway_identifier-2'
+        - name: filter
+          in: query
+          description: |-
+            Filter the returned proxy endpoints by one or more `field:value` pairs.
+            Repeat the parameter to apply multiple filters; they are combined with
+            logical AND (an endpoint must satisfy every filter to be returned).
+
+            Supported fields and their matching behaviour:
+              * `name` — case-insensitive substring match on the endpoint name.
+              * `id` — substring match on the endpoint ID (UUID), with or without dashes.
+              * `kind` — exact match on the endpoint kind. The value must be `ip` or `identity`; any other value returns `400`.
+
+            Each entry must match one of the per-field patterns below: the field
+            must be one of `name`, `id`, or `kind`; `name`/`id` accept any value,
+            while `kind` only accepts `ip` or `identity`.
+          schema:
+            type: array
+            items:
+              anyOf:
+                - pattern: ^name:.*$
+                - pattern: ^id:.*$
+                - pattern: ^kind:(ip|identity)$
+              type: string
+          examples:
+            filterByKind:
+              summary: Only identity endpoints
+              value:
+                - kind:identity
+            filterByNameAndKind:
+              summary: IP endpoints whose name contains "prod"
+              value:
+                - name:prod
+                - kind:ip
+          explode: true
+          style: form
+        - name: search
+          in: query
+          description: |-
+            Case-insensitive substring match on the endpoint name. When combined
+            with `filter`, both must match (logical AND).
+          schema:
+            type: string
+        - name: order_by
+          in: query
+          description: |-
+            Field to sort the returned endpoints by. When omitted, the order of
+            results is unspecified. Supported values:
+              * `name` — sort alphabetically by endpoint name.
+              * `created_at` — sort by creation time; defaults to descending unless `direction` is set.
+              * `updated_at` — sort by last-modified time; defaults to descending unless `direction` is set.
+          schema:
+            type: string
+            enum:
+              - name
+              - created_at
+              - updated_at
+        - name: direction
+          in: query
+          description: |-
+            Sort direction. Only takes effect when `order_by` is also provided; it
+            is ignored otherwise. When `direction` is omitted the effective
+            direction is field-specific: `created_at` and `updated_at` default to
+            descending (newest first); `name` defaults to ascending.
+              * `asc` — ascending.
+              * `desc` — descending.
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
       responses:
         '200':
           description: Returns a list of proxy endpoints response.
@@ -130244,6 +130455,61 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/zero-trust-gateway_identifier-2'
+        - name: filter
+          in: query
+          description: |-
+            Filter the returned rules by one or more `field:value` pairs. Repeat the
+            parameter to combine filters with logical AND.
+
+            Supported fields are `name`, `id`, `action`, `enabled`, `source_account`,
+            `is_shared`, `filters`, and `expression` (max 1024 bytes). The `source_account`
+            value is matched as a normalized UUID substring. The `filters` value must
+            be one of the rule filter names and matches a member of the rule's `filters`
+            array. The `expression` filter performs a case-insensitive literal
+            substring match across traffic, identity, and device posture expressions.
+          schema:
+            type: array
+            items:
+              anyOf:
+                - pattern: ^name:.*$
+                - pattern: ^id:.*$
+                - pattern: ^action:(on|off|allow|block|scan|noscan|safesearch|ytrestricted|isolate|noisolate|override|l4_override|audit_ssh|egress|resolve|quarantine|redirect|custom)$
+                - pattern: ^enabled:(true|false)$
+                - pattern: ^source_account:.*$
+                - pattern: ^is_shared:(true|false)$
+                - pattern: ^filters:(http|dns|dns_resolver|l4|egress)$
+                - pattern: ^expression:.*$
+              type: string
+          explode: true
+          style: form
+        - name: search
+          in: query
+          description: Case-insensitive substring search across rule name and description.
+          schema:
+            type: string
+        - name: order_by
+          in: query
+          description: |-
+            Field to sort the returned rules by. Supported values are `name`,
+            `created_at`, `updated_at`, and `precedence`.
+          schema:
+            type: string
+            enum:
+              - name
+              - created_at
+              - updated_at
+              - precedence
+        - name: direction
+          in: query
+          description: |-
+            Sort direction. When `order_by` is omitted, this controls the direction
+            of the existing precedence ordering. Shared rules remain first in either
+            direction. Accepted values are `asc` and `desc`.
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
       responses:
         '200':
           description: List Zero Trust Gateway rules response.
