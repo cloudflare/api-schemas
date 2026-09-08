@@ -101651,6 +101651,21 @@ paths:
           description: Opaque token from a previous response to retrieve the next page.
           schema:
             type: string
+        - name: state
+          in: query
+          description: |
+            Filters instances by lifecycle state. `active` includes provisioning, running, and stopping instances; `not-active` includes stopped and failed instances. When omitted, all instances are returned.
+          schema:
+            type: string
+            enum:
+              - active
+              - not-active
+        - name: name_prefix
+          in: query
+          description: |
+            Filter instances by a case-sensitive name prefix. Keep the same prefix when using a page token.
+          schema:
+            type: string
       responses:
         '200':
           description: List of container instances.
@@ -381232,6 +381247,8 @@ components:
           $ref: '#/components/schemas/cc_ISO8601Timestamp'
         durable_objects:
           $ref: '#/components/schemas/cc_DurableObjectsConfigurationNamespaceId'
+        health:
+          $ref: '#/components/schemas/cc_DurableObjectApplicationHealth'
         id:
           $ref: '#/components/schemas/cc_ApplicationID'
         name:
@@ -381248,6 +381265,36 @@ components:
         - name
         - scheduling_policy
         - durable_objects
+    cc_DurableObjectApplicationHealth:
+      description: |
+        Aggregate current activity for the latest observed placement of each instance.
+        Runtime snapshots feed periodic background sweeps. Counts refresh after each
+        complete sweep. Instance listings retain their separate three-month history
+        for failure discovery.
+      type: object
+      properties:
+        instances:
+          description: Counts of observed non-terminal instances.
+          type: object
+          properties:
+            active:
+              description: Number of instances whose runtime reports running or stopping.
+              type: integer
+              minimum: 0
+            starting:
+              description: Number of instances whose runtime reports starting.
+              type: integer
+              minimum: 0
+          required:
+            - active
+            - starting
+        summary:
+          description: Present as pending until the first activity sweep completes; omitted afterward.
+          type: string
+          enum:
+            - pending
+      required:
+        - instances
     cc_DurableObjectApplicationSchedulingPolicy:
       description: |
         Selects a Durable Object-managed application. Each Durable Object creates and
