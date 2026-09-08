@@ -457123,6 +457123,22 @@ components:
       format: date-time
       example: 2014-01-01T05:20:00.123123Z
       readOnly: true
+    turnstile_deployed_via:
+      description: |
+        Origin that created this widget, recorded at creation time and
+        immutable afterward. Server-derived from the create request; not
+        client-settable. Omitted from the response for widgets created
+        before this field existed.
+      type: string
+      example: wrangler
+      enum:
+        - wrangler
+        - dashboard
+        - spin
+        - api
+        - unknown
+      readOnly: true
+      x-auditable: true
     turnstile_domains:
       type: array
       items:
@@ -457157,6 +457173,21 @@ components:
         invalidated, and requests using it will be rejected.
       type: boolean
       default: false
+      x-auditable: true
+    turnstile_last_modified_via:
+      description: |
+        Origin of the most recent mutation (create, update, delete, or
+        secret rotation). Server-derived; not client-settable. Omitted for
+        widgets last mutated before this field existed.
+      type: string
+      example: dashboard
+      enum:
+        - wrangler
+        - dashboard
+        - spin
+        - api
+        - unknown
+      readOnly: true
       x-auditable: true
     turnstile_messages:
       type: array
@@ -457249,10 +457280,14 @@ components:
           $ref: '#/components/schemas/turnstile_clearance_level'
         created_on:
           $ref: '#/components/schemas/turnstile_created_on'
+        deployed_via:
+          $ref: '#/components/schemas/turnstile_deployed_via'
         domains:
           $ref: '#/components/schemas/turnstile_domains'
         ephemeral_id:
           $ref: '#/components/schemas/turnstile_ephemeral_id'
+        last_modified_via:
+          $ref: '#/components/schemas/turnstile_last_modified_via'
         mode:
           $ref: '#/components/schemas/turnstile_widget_mode'
         modified_on:
@@ -457290,10 +457325,14 @@ components:
           $ref: '#/components/schemas/turnstile_clearance_level'
         created_on:
           $ref: '#/components/schemas/turnstile_created_on'
+        deployed_via:
+          $ref: '#/components/schemas/turnstile_deployed_via'
         domains:
           $ref: '#/components/schemas/turnstile_domains'
         ephemeral_id:
           $ref: '#/components/schemas/turnstile_ephemeral_id'
+        last_modified_via:
+          $ref: '#/components/schemas/turnstile_last_modified_via'
         mode:
           $ref: '#/components/schemas/turnstile_widget_mode'
         modified_on:
@@ -479168,6 +479207,11 @@ x-forge-commands:
         description: Entitlements operations
       memberships:
         description: Memberships operations
+  turnstile:
+    description: CAPTCHA-free bot verification widgets that protect forms and APIs without degrading user experience
+    groups:
+      widgets:
+        description: Turnstile widget configurations — site keys, secret rotation, and challenge mode settings
   url-scanner:
     description: Scan URLs for phishing, malware, and other threats — submit scans and retrieve detailed results
     groups:
