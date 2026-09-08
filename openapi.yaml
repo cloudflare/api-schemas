@@ -138754,6 +138754,8 @@ paths:
                   $ref: '#/components/schemas/logpush_enabled'
                 filter:
                   $ref: '#/components/schemas/logpush_filter'
+                filter_attack_traffic:
+                  $ref: '#/components/schemas/logpush_filter_attack_traffic'
                 frequency:
                   $ref: '#/components/schemas/logpush_frequency'
                 kind:
@@ -139041,6 +139043,8 @@ paths:
                   $ref: '#/components/schemas/logpush_enabled'
                 filter:
                   $ref: '#/components/schemas/logpush_filter'
+                filter_attack_traffic:
+                  $ref: '#/components/schemas/logpush_filter_attack_traffic'
                 frequency:
                   $ref: '#/components/schemas/logpush_frequency'
                 kind:
@@ -341392,6 +341396,8 @@ paths:
                   $ref: '#/components/schemas/logpush_enabled'
                 filter:
                   $ref: '#/components/schemas/logpush_filter'
+                filter_attack_traffic:
+                  $ref: '#/components/schemas/logpush_filter_attack_traffic'
                 frequency:
                   $ref: '#/components/schemas/logpush_frequency'
                 kind:
@@ -341679,6 +341685,8 @@ paths:
                   $ref: '#/components/schemas/logpush_enabled'
                 filter:
                   $ref: '#/components/schemas/logpush_filter'
+                filter_attack_traffic:
+                  $ref: '#/components/schemas/logpush_filter_attack_traffic'
                 frequency:
                   $ref: '#/components/schemas/logpush_frequency'
                 kind:
@@ -414198,6 +414206,11 @@ components:
       type: string
       example: '{"where":{"and":[{"key":"ClientCountry","operator":"neq","value":"ca"}]}}'
       x-auditable: true
+    logpush_filter_attack_traffic:
+      description: When true, excludes DDoS attack traffic from logs. This option is supported for the `http_requests`, `firewall_events`, and `network_analytics_logs` datasets.
+      type: boolean
+      default: false
+      x-auditable: true
     logpush_frequency:
       description: This field is deprecated. Please use `max_upload_*` parameters instead. . The frequency at which Cloudflare sends batches of logs to your destination. Setting frequency to high sends your logs in larger quantities of smaller files. Setting frequency to low sends logs in smaller quantities of larger files.
       type: string
@@ -414323,6 +414336,8 @@ components:
           $ref: '#/components/schemas/logpush_enabled'
         error_message:
           $ref: '#/components/schemas/logpush_error_message'
+        filter_attack_traffic:
+          $ref: '#/components/schemas/logpush_filter_attack_traffic'
         frequency:
           $ref: '#/components/schemas/logpush_frequency'
         id:
