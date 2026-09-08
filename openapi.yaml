@@ -133459,17 +133459,13 @@ paths:
                     result: null
                     success: false
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/images_images_list_response_v2'
-                  - $ref: '#/components/schemas/images_api-response-common-failure'
+                $ref: '#/components/schemas/images_api-response-common-failure'
         4XX:
           description: List images response failure
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/images_images_list_response_v2'
-                  - $ref: '#/components/schemas/images_api-response-common-failure'
+                $ref: '#/components/schemas/images_api-response-common-failure'
       security:
         - api_token: []
         - api_email: []
@@ -408516,6 +408512,7 @@ components:
               properties:
                 continuation_token:
                   $ref: '#/components/schemas/images_images_list_continuation_token'
+          type: object
     images_api-response-common:
       type: object
       properties:
@@ -408526,7 +408523,8 @@ components:
         result:
           anyOf:
             - type: object
-            - items: {}
+            - items:
+                type: object
               type: array
             - type: string
         success:
@@ -408581,6 +408579,7 @@ components:
               anyOf:
                 - type: object
                 - type: string
+          type: object
     images_deleted_response:
       allOf:
         - $ref: '#/components/schemas/images_api-response-single'
@@ -408588,6 +408587,7 @@ components:
             result:
               type: object
               example: {}
+          type: object
     images_image:
       type: object
       properties:
@@ -408683,6 +408683,7 @@ components:
         - $ref: '#/components/schemas/images_api-response-single'
         - properties:
             result:
+              type: object
               properties:
                 id:
                   description: Image unique identifier.
@@ -408693,11 +408694,13 @@ components:
                   description: The URL the unauthenticated upload can be performed to using a single HTTP POST (multipart/form-data) request.
                   type: string
                   example: https://upload.imagedelivery.net/FxUufywByo0m2v3xhKSiU8/e22e9e6b-c02b-42fd-c405-6c32af5fe600
+          type: object
     images_image_direct_upload_response_v2:
       allOf:
         - $ref: '#/components/schemas/images_api-response-single'
         - properties:
             result:
+              type: object
               properties:
                 id:
                   description: Image unique identifier.
@@ -408711,6 +408714,7 @@ components:
                   type: string
                   example: https://upload.imagedelivery.net/FxUufywByo0m2v3xhKSiU8/e22e9e6b-c02b-42fd-c405-6c32af5fe600
                   x-auditable: true
+          type: object
     images_image_filename:
       description: Image file name.
       type: string
@@ -408744,6 +408748,7 @@ components:
         - properties:
             result:
               $ref: '#/components/schemas/images_image_keys_response'
+          type: object
     images_image_key_value:
       description: Key value.
       type: string
@@ -408807,6 +408812,7 @@ components:
         - properties:
             result:
               $ref: '#/components/schemas/images_image'
+          type: object
     images_image_thumbnail_url:
       description: URI to thumbnail variant for an image.
       type: string
@@ -408850,6 +408856,7 @@ components:
         - properties:
             result:
               $ref: '#/components/schemas/images_image_variant_definition'
+          type: object
     images_image_variant_height:
       description: Maximum height in image pixels.
       type: number
@@ -408868,6 +408875,7 @@ components:
         - properties:
             result:
               $ref: '#/components/schemas/images_image_variants_response'
+          type: object
     images_image_variant_neverRequireSignedURLs:
       description: Indicates whether the variant can access an image without a signature, regardless of image access control.
       type: boolean
@@ -408935,6 +408943,7 @@ components:
         - properties:
             result:
               $ref: '#/components/schemas/images_image_variant_response'
+          type: object
     images_image_variant_width:
       description: Maximum width in image pixels.
       type: number
@@ -408978,6 +408987,7 @@ components:
                   type: array
                   items:
                     $ref: '#/components/schemas/images_image'
+          type: object
     images_images_list_response_v2:
       allOf:
         - $ref: '#/components/schemas/images_api-response-collection-v2'
@@ -408989,6 +408999,7 @@ components:
                   type: array
                   items:
                     $ref: '#/components/schemas/images_image'
+          type: object
     images_images_stats:
       type: object
       properties:
@@ -409019,6 +409030,7 @@ components:
         - properties:
             result:
               $ref: '#/components/schemas/images_images_stats'
+          type: object
     images_messages:
       type: array
       items:
@@ -409054,6 +409066,7 @@ components:
               required:
                 - keys
                 - truncated
+          type: object
     images_signing_key_identifier:
       type: string
       example: someKey
@@ -409099,6 +409112,7 @@ components:
                   description: Human-readable error description if connectivity failed.
                   type: string
                   nullable: true
+          type: object
     images_sourcingkit_connectivity_precheck_request:
       type: object
       properties:
@@ -409214,6 +409228,7 @@ components:
         - properties:
             result:
               $ref: '#/components/schemas/images_sourcingkit_migration'
+          type: object
     images_sourcingkit_migration_list_response:
       allOf:
         - $ref: '#/components/schemas/images_api-response-common'
@@ -409225,6 +409240,7 @@ components:
                   type: array
                   items:
                     $ref: '#/components/schemas/images_sourcingkit_migration'
+          type: object
     images_sourcingkit_migration_log:
       type: object
       properties:
@@ -409249,6 +409265,7 @@ components:
                   type: array
                   items:
                     $ref: '#/components/schemas/images_sourcingkit_migration_log'
+          type: object
     images_sourcingkit_migration_log_type:
       description: The type of log entry.
       type: string
@@ -409315,12 +409332,14 @@ components:
                   nullable: true
                 status:
                   $ref: '#/components/schemas/images_sourcingkit_migration_status'
+          type: object
     images_sourcingkit_migration_single_response:
       allOf:
         - $ref: '#/components/schemas/images_api-response-single'
         - properties:
             result:
               $ref: '#/components/schemas/images_sourcingkit_migration'
+          type: object
     images_sourcingkit_migration_status:
       description: Current status of the migration.
       type: string
@@ -409399,6 +409418,7 @@ components:
         - properties:
             result:
               $ref: '#/components/schemas/images_sourcingkit_source'
+          type: object
     images_sourcingkit_source_list_response:
       allOf:
         - $ref: '#/components/schemas/images_api-response-common'
@@ -409410,12 +409430,14 @@ components:
                   type: array
                   items:
                     $ref: '#/components/schemas/images_sourcingkit_source'
+          type: object
     images_sourcingkit_source_single_response:
       allOf:
         - $ref: '#/components/schemas/images_api-response-single'
         - properties:
             result:
               $ref: '#/components/schemas/images_sourcingkit_source'
+          type: object
     images_sourcingkit_source_update_request:
       type: object
       properties:
@@ -409433,6 +409455,7 @@ components:
         - properties:
             result:
               $ref: '#/components/schemas/images_sourcingkit_source'
+          type: object
     images_sourcingkit_vendor:
       description: The cloud storage vendor of the source bucket.
       type: string
