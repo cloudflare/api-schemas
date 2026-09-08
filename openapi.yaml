@@ -94395,7 +94395,7 @@ paths:
         - Cloudforce One Write
         - Cloudforce One Read
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: brand-protection.v2.matches
+      x-fern-sdk-group-name: brand-protection.matches
       x-fern-sdk-method-name: get
       x-forge-hidden: true
   /accounts/{account_id}/cloudforce-one/v2/brand-protection/domain/queries:
@@ -94588,7 +94588,7 @@ paths:
         - Cloudforce One Write
         - Cloudforce One Read
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: brand-protection.v2.queries
+      x-fern-sdk-group-name: brand-protection.queries
       x-fern-sdk-method-name: get
       x-forge-hidden: true
     post:
@@ -95508,7 +95508,7 @@ paths:
         - Cloudforce One Write
         - Cloudforce One Read
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: brand-protection.v2.logo-matches
+      x-fern-sdk-group-name: brand-protection.logo-matches
       x-fern-sdk-method-name: get
       x-forge-hidden: true
   /accounts/{account_id}/cloudforce-one/v2/brand-protection/logo/queries:
@@ -95578,7 +95578,7 @@ paths:
         - Cloudforce One Write
         - Cloudforce One Read
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: brand-protection.v2.logos
+      x-fern-sdk-group-name: brand-protection.logos
       x-fern-sdk-method-name: get
       x-forge-hidden: true
     post:
@@ -95645,7 +95645,7 @@ paths:
       x-api-token-group:
         - Cloudforce One Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: brand-protection.v2.logos
+      x-fern-sdk-group-name: brand-protection.logos
       x-fern-sdk-method-name: create
       x-forge-hidden: true
   /accounts/{account_id}/cloudforce-one/v2/brand-protection/logo/queries/{query_id}:
@@ -95690,7 +95690,7 @@ paths:
       x-api-token-group:
         - Cloudforce One Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: brand-protection.v2.logos
+      x-fern-sdk-group-name: brand-protection.logos
       x-fern-sdk-method-name: delete
       x-forge-hidden: true
   /accounts/{account_id}/cloudforce-one/v2/brand-protection/logo/search:
@@ -99633,6 +99633,60 @@ paths:
       responses:
         '200':
           description: Threat Signals response.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                      required:
+                        - message
+                      type: object
+                  result:
+                    type: object
+                    properties:
+                      errors:
+                        type: number
+                      feeds:
+                        type: array
+                        items:
+                          properties:
+                            feed_enabled:
+                              type: boolean
+                            feed_id:
+                              type: string
+                              format: uuid
+                            status:
+                              type: string
+                              enum:
+                                - workflow_created
+                                - error
+                            workflow_id:
+                              type: string
+                          required:
+                            - feed_id
+                            - workflow_id
+                            - status
+                          type: object
+                      triggered:
+                        type: number
+                    required:
+                      - feeds
+                      - triggered
+                      - errors
+                  success:
+                    type: boolean
+                    enum:
+                      - true
+                required:
+                  - result
+                  - success
+                  - errors
         4XX:
           $ref: '#/components/responses/cloudforce-one-events_ApiV4ClientError'
       security:
