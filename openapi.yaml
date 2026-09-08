@@ -74185,6 +74185,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/calls_app_response_single_with_secret'
+        4XX:
+          description: Create app response failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/calls_api-response-common-failure'
       security:
         - api_token: []
       tags:
@@ -74373,6 +74379,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/calls_turn_key_single_with_secret'
+        4XX:
+          description: Create TURN key response failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/calls_api-response-common-failure'
       security:
         - api_token: []
       tags:
@@ -152330,6 +152342,12 @@ paths:
                       result_info:
                         $ref: '#/components/schemas/moq_result_info'
                     type: object
+        '400':
+          description: 'Error 10005: Invalid cursor, pagination, or sort parameter.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/moq_api-response-error'
         '500':
           description: 'Error 21006: Unexpected server error.'
           content:
@@ -181552,9 +181570,8 @@ paths:
         - Stream Write
         - Stream Read
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: stream
+      x-fern-sdk-group-name: stream.videos
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
     post:
       operationId: stream-videos-initiate-video-uploads-using-tus
       summary: Initiate video uploads using TUS
@@ -181619,9 +181636,8 @@ paths:
       x-api-token-group:
         - Stream Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: stream
+      x-fern-sdk-group-name: stream.videos
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
   /accounts/{account_id}/stream/{identifier}:
     delete:
       operationId: stream-videos-delete-video
@@ -181656,9 +181672,9 @@ paths:
       x-api-token-group:
         - Stream Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: stream
+      x-fern-sdk-group-name: stream.videos
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
+      x-forge-require-confirmation: Permanently delete this video?
     get:
       operationId: stream-videos-retrieve-video-details
       summary: Retrieve video details
@@ -181697,9 +181713,8 @@ paths:
         - Stream Write
         - Stream Read
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: stream
+      x-fern-sdk-group-name: stream.videos
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
     post:
       operationId: stream-videos-update-video-details
       summary: Edit video details
@@ -181741,9 +181756,8 @@ paths:
       tags:
         - Stream Videos
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: stream
+      x-fern-sdk-group-name: stream.videos
       x-fern-sdk-method-name: edit
-      x-forge-hidden: true
   /accounts/{account_id}/stream/{identifier}/audio:
     get:
       operationId: list-audio-tracks
@@ -181783,8 +181797,8 @@ paths:
         - Stream Write
         - Stream Read
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: stream.audio-tracks
-      x-fern-sdk-method-name: get
+      x-fern-sdk-group-name: stream.videos.audio-tracks
+      x-fern-sdk-method-name: list
       x-forge-hidden: true
   /accounts/{account_id}/stream/{identifier}/audio/{audio_identifier}:
     delete:
@@ -181829,9 +181843,10 @@ paths:
       x-api-token-group:
         - Stream Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: stream.audio-tracks
+      x-fern-sdk-group-name: stream.videos.audio-tracks
       x-fern-sdk-method-name: delete
       x-forge-hidden: true
+      x-forge-require-confirmation: Permanently delete this audio track?
     patch:
       operationId: edit-audio-tracks
       summary: Edit additional audio tracks on a video
@@ -181880,7 +181895,7 @@ paths:
       x-api-token-group:
         - Stream Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: stream.audio-tracks
+      x-fern-sdk-group-name: stream.videos.audio-tracks
       x-fern-sdk-method-name: edit
       x-forge-hidden: true
   /accounts/{account_id}/stream/{identifier}/audio/copy:
@@ -181925,7 +181940,7 @@ paths:
       tags:
         - Stream Audio Tracks
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: stream.audio-tracks
+      x-fern-sdk-group-name: stream.videos.audio-tracks
       x-fern-sdk-method-name: copy
       x-forge-hidden: true
   /accounts/{account_id}/stream/{identifier}/captions:
@@ -181967,8 +181982,8 @@ paths:
         - Stream Write
         - Stream Read
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: stream.captions
-      x-fern-sdk-method-name: get
+      x-fern-sdk-group-name: stream.videos.captions
+      x-fern-sdk-method-name: list
       x-forge-hidden: true
   /accounts/{account_id}/stream/{identifier}/captions/{language}:
     delete:
@@ -182020,9 +182035,10 @@ paths:
       x-api-token-group:
         - Stream Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: stream.captions.language
+      x-fern-sdk-group-name: stream.videos.captions.language
       x-fern-sdk-method-name: delete
       x-forge-hidden: true
+      x-forge-require-confirmation: Remove this caption?
     get:
       operationId: stream-subtitles/-captions-get-caption-or-subtitle-for-language
       summary: List captions or subtitles for a provided language
@@ -182066,7 +182082,7 @@ paths:
         - Stream Write
         - Stream Read
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: stream.captions.language
+      x-fern-sdk-group-name: stream.videos.captions.language
       x-fern-sdk-method-name: get
       x-forge-hidden: true
     put:
@@ -182117,8 +182133,8 @@ paths:
       x-api-token-group:
         - Stream Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: stream.captions.language
-      x-fern-sdk-method-name: update
+      x-fern-sdk-group-name: stream.videos.captions.language
+      x-fern-sdk-method-name: upload
       x-forge-hidden: true
   /accounts/{account_id}/stream/{identifier}/captions/{language}/generate:
     post:
@@ -182161,8 +182177,8 @@ paths:
       tags:
         - Stream Subtitles/Captions
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: stream.captions.language
-      x-fern-sdk-method-name: create
+      x-fern-sdk-group-name: stream.videos.captions.language
+      x-fern-sdk-method-name: generate
       x-forge-hidden: true
   /accounts/{account_id}/stream/{identifier}/captions/{language}/vtt:
     get:
@@ -182212,12 +182228,12 @@ paths:
         - Stream Write
         - Stream Read
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: stream.captions.language.vtt
+      x-fern-sdk-group-name: stream.videos.captions.language.vtt
       x-fern-sdk-method-name: get
       x-forge-hidden: true
   /accounts/{account_id}/stream/{identifier}/downloads:
     delete:
-      operationId: stream-m-p-4-downloads-delete-downloads
+      operationId: stream-mp4-downloads-delete-downloads
       summary: Delete downloads
       description: Delete the downloads for a video. Use `/downloads/{download_type}` instead for type-specific downloads. Available types are `default` and `audio`.
       parameters:
@@ -182252,12 +182268,13 @@ paths:
         - Stream MP4 Downloads
       x-api-token-group:
         - Stream Write
-      x-fern-availability: generally-available
-      x-fern-sdk-group-name: stream.downloads
+      x-fern-availability: deprecated
+      x-fern-sdk-group-name: stream.videos.downloads-default
       x-fern-sdk-method-name: delete
       x-forge-hidden: true
+      x-forge-require-confirmation: Remove this default download? It will need to be regenerated for future use.
     get:
-      operationId: stream-m-p-4-downloads-list-downloads
+      operationId: stream-mp4-downloads-list-downloads
       summary: List downloads
       description: Lists the downloads created for a video.
       parameters:
@@ -182293,12 +182310,12 @@ paths:
       x-api-token-group:
         - Stream Write
         - Stream Read
-      x-fern-availability: generally-available
-      x-fern-sdk-group-name: stream.downloads
-      x-fern-sdk-method-name: get
+      x-fern-availability: deprecated
+      x-fern-sdk-group-name: stream.videos.downloads-default
+      x-fern-sdk-method-name: list
       x-forge-hidden: true
     post:
-      operationId: stream-m-p-4-downloads-create-downloads
+      operationId: stream-mp4-downloads-create-downloads
       summary: Create downloads
       description: Creates a download for a video when a video is ready to view. Use `/downloads/{download_type}` instead for type-specific downloads. Available types are `default` and `audio`.
       parameters:
@@ -182331,8 +182348,8 @@ paths:
           api_token: []
       tags:
         - Stream MP4 Downloads
-      x-fern-availability: generally-available
-      x-fern-sdk-group-name: stream.downloads
+      x-fern-availability: deprecated
+      x-fern-sdk-group-name: stream.videos.downloads-default
       x-fern-sdk-method-name: create
       x-forge-hidden: true
   /accounts/{account_id}/stream/{identifier}/downloads/{download_type}:
@@ -182378,9 +182395,9 @@ paths:
       x-api-token-group:
         - Stream Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: stream.typed-downloads
+      x-fern-sdk-group-name: stream.videos.downloads
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
+      x-forge-require-confirmation: Remove this download? It will need to be regenerated for future use.
     post:
       operationId: stream-downloads-create-type-specific-downloads
       summary: Create download
@@ -182421,14 +182438,13 @@ paths:
       tags:
         - Stream MP4 Downloads
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: stream.typed-downloads
+      x-fern-sdk-group-name: stream.videos.downloads
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
   /accounts/{account_id}/stream/{identifier}/embed:
     get:
       operationId: stream-videos-retreieve-embed-code-html
-      summary: Retrieve embed Code HTML
-      description: Fetches an HTML code snippet to embed a video in a web page delivered through Cloudflare. On success, returns an HTML fragment for use on web pages to display a video. On failure, returns a JSON response body.
+      summary: 'Deprecated: Retrieve legacy embed code HTML'
+      description: Fetches the legacy HTML code snippet to embed a video in a web page delivered through Cloudflare. On success, returns an HTML fragment for use on web pages to display a video. On failure, returns a JSON response body.
       parameters:
         - name: identifier
           in: path
@@ -182442,14 +182458,14 @@ paths:
             $ref: '#/components/schemas/stream_account_identifier'
       responses:
         '200':
-          description: Retreieve embed Code HTML response.
+          description: Retrieve embed Code HTML response.
           content:
             text/html:
               schema:
                 type: string
                 example: <stream id="ea95132c15732412d22c1476fa83f27a"></stream><script data-cfasync="false" defer type="text/javascript" src="https://embed.cloudflarestream.com/embed/we4g.fla9.latest.js"></script>
         4XX:
-          description: Retreieve embed Code HTML response failure.
+          description: Retrieve embed Code HTML response failure.
           content:
             application/json:
               schema:
@@ -182463,9 +182479,9 @@ paths:
       x-api-token-group:
         - Stream Write
         - Stream Read
-      x-fern-availability: generally-available
-      x-fern-sdk-group-name: stream.embed
-      x-fern-sdk-method-name: get
+      x-fern-availability: deprecated
+      x-fern-sdk-group-name: stream.videos
+      x-fern-sdk-method-name: embed
       x-forge-hidden: true
   /accounts/{account_id}/stream/{identifier}/token:
     post:
@@ -182509,9 +182525,9 @@ paths:
       tags:
         - Stream Videos
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: stream.token
+      x-fern-sdk-group-name: stream.videos.token
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
+      x-forge-require-confirmation: Provision temporary token? For use at scale, consider creating a signing key instead.
   /accounts/{account_id}/stream/clip:
     post:
       operationId: stream-video-clipping-clip-videos-given-a-start-and-end-time
@@ -182551,8 +182567,8 @@ paths:
       x-api-token-group:
         - Stream Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: stream.clip
-      x-fern-sdk-method-name: create
+      x-fern-sdk-group-name: stream.videos
+      x-fern-sdk-method-name: clip
       x-forge-hidden: true
   /accounts/{account_id}/stream/copy:
     post:
@@ -182597,14 +182613,13 @@ paths:
       x-api-token-group:
         - Stream Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: stream.copy
-      x-fern-sdk-method-name: create
-      x-forge-hidden: true
+      x-fern-sdk-group-name: stream.videos
+      x-fern-sdk-method-name: copy
   /accounts/{account_id}/stream/direct_upload:
     post:
       operationId: stream-videos-upload-videos-via-direct-upload-ur-ls
       summary: Upload videos via direct upload URLs
-      description: Creates a direct upload that allows video uploads without an API key.
+      description: Creates a direct upload endpoint that allows an end-user to upload a video without an API key.
       parameters:
         - name: account_id
           in: path
@@ -182643,9 +182658,8 @@ paths:
       x-api-token-group:
         - Stream Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: stream.direct-upload
+      x-fern-sdk-group-name: stream.videos.direct-upload
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
   /accounts/{account_id}/stream/keys:
     get:
       operationId: stream-signing-keys-list-signing-keys
@@ -182681,8 +182695,7 @@ paths:
         - Stream Read
       x-fern-availability: generally-available
       x-fern-sdk-group-name: stream.keys
-      x-fern-sdk-method-name: get
-      x-forge-hidden: true
+      x-fern-sdk-method-name: list
     post:
       operationId: stream-signing-keys-create-signing-keys
       summary: Create signing keys
@@ -182717,7 +182730,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: stream.keys
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
   /accounts/{account_id}/stream/keys/{identifier}:
     delete:
       operationId: stream-signing-keys-delete-signing-keys
@@ -182758,7 +182770,7 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: stream.keys
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
+      x-forge-require-confirmation: Permanently delete signing key? All tokens created with this key will become unauthorized!
   /accounts/{account_id}/stream/live_inputs:
     get:
       operationId: stream-live-inputs-list-live-inputs
@@ -182799,7 +182811,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: stream.live-inputs
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
     post:
       operationId: stream-live-inputs-create-a-live-input
       summary: Create a live input
@@ -182840,12 +182851,11 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: stream.live-inputs
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
   /accounts/{account_id}/stream/live_inputs/{live_input_identifier}:
     delete:
       operationId: stream-live-inputs-delete-a-live-input
       summary: Delete a live input
-      description: Prevents a live input from being streamed to and makes the live input inaccessible to any future API calls.
+      description: Permanently delete a live input, making it inaccessible and blocking current and future broadcasts to it. Existing recordings will be retained.
       parameters:
         - name: live_input_identifier
           in: path
@@ -182877,7 +182887,7 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: stream.live-inputs
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
+      x-forge-require-confirmation: Permanently delete this live input? It cannot be recreated.
     get:
       operationId: stream-live-inputs-retrieve-a-live-input
       summary: Retrieve a live input
@@ -182918,7 +182928,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: stream.live-inputs
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
     put:
       operationId: stream-live-inputs-update-a-live-input
       summary: Update a live input
@@ -182964,12 +182973,11 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: stream.live-inputs
       x-fern-sdk-method-name: update
-      x-forge-hidden: true
   /accounts/{account_id}/stream/live_inputs/{live_input_identifier}/disable:
     post:
       operationId: stream-live-inputs-disable-a-live-input
       summary: Disable a live input
-      description: Prevents a live input from being streamed to and makes the live input inaccessible to any future API calls until enabled.
+      description: Prevents a live input from being streamed to and terminates any active broadcasts until re-enabled.
       parameters:
         - name: live_input_identifier
           in: path
@@ -183001,15 +183009,14 @@ paths:
       tags:
         - Stream Live Inputs
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: stream.live-inputs.disable
-      x-fern-sdk-method-name: create
-      x-forge-hidden: true
-      x-forge-require-confirmation: This operation disables a live input. Active streams to it are dropped.
+      x-fern-sdk-group-name: stream.live-inputs
+      x-fern-sdk-method-name: disable
+      x-forge-require-confirmation: Disable this live input? Active broadcasts will be terminated and future connections will be blocked until it is re-enabled.
   /accounts/{account_id}/stream/live_inputs/{live_input_identifier}/enable:
     post:
       operationId: stream-live-inputs-enable-a-live-input
       summary: Enable a live input
-      description: Allows a live input to be streamed to and makes the live input accessible to any future API calls.
+      description: Allows a disabled live input to start receiving broadcasts again.
       parameters:
         - name: live_input_identifier
           in: path
@@ -183041,9 +183048,8 @@ paths:
       tags:
         - Stream Live Inputs
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: stream.live-inputs.enable
-      x-fern-sdk-method-name: create
-      x-forge-hidden: true
+      x-fern-sdk-group-name: stream.live-inputs
+      x-fern-sdk-method-name: enable
   /accounts/{account_id}/stream/live_inputs/{live_input_identifier}/outputs:
     get:
       operationId: stream-live-inputs-list-all-outputs-associated-with-a-specified-live-input
@@ -183172,6 +183178,7 @@ paths:
       x-fern-sdk-group-name: stream.live-inputs.outputs
       x-fern-sdk-method-name: delete
       x-forge-hidden: true
+      x-forge-require-confirmation: Delete this output? Any active broadcast to this target will be terminated.
     put:
       operationId: stream-live-inputs-update-an-output
       summary: Update an output
@@ -183259,9 +183266,9 @@ paths:
       tags:
         - Stream Live Inputs
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: stream.live-inputs.rotate
-      x-fern-sdk-method-name: update
-      x-forge-hidden: true
+      x-fern-sdk-group-name: stream.live-inputs
+      x-fern-sdk-method-name: rotate-keys
+      x-forge-require-confirmation: Rotate keys for this live input? Active broadcasts will be terminated. New broadcasts cannot start with outdated credentials.
   /accounts/{account_id}/stream/storage-usage:
     get:
       operationId: stream-videos-storage-usage
@@ -183300,9 +183307,8 @@ paths:
         - Stream Write
         - Stream Read
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: stream.videos
+      x-fern-sdk-group-name: stream
       x-fern-sdk-method-name: storage-usage
-      x-forge-hidden: true
   /accounts/{account_id}/stream/usage:
     get:
       operationId: usage-analytics-get-account-stream-usage
@@ -183497,6 +183503,7 @@ paths:
       x-fern-sdk-group-name: stream.watermarks
       x-fern-sdk-method-name: delete
       x-forge-hidden: true
+      x-forge-require-confirmation: Remove this watermark profile? New upload requests referencing this profile will fail.
     get:
       operationId: stream-watermark-profile-watermark-profile-details
       summary: Watermark profile details
@@ -183542,7 +183549,7 @@ paths:
     delete:
       operationId: stream-webhook-delete-webhooks
       summary: Delete webhooks
-      description: Deletes a webhook.
+      description: Deletes the on-demand video webhook.
       parameters:
         - name: account_id
           in: path
@@ -183573,11 +183580,11 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: stream.webhooks
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
+      x-forge-require-confirmation: Delete this webhook? If recreated, the secret will change.
     get:
       operationId: stream-webhook-view-webhooks
-      summary: View webhooks
-      description: Retrieves a list of webhooks.
+      summary: View webhook
+      description: Retrieve current on-demand webhook information.
       parameters:
         - name: account_id
           in: path
@@ -183609,11 +183616,10 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: stream.webhooks
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
     put:
       operationId: stream-webhook-create-webhooks
-      summary: Create webhooks
-      description: Creates a webhook notification.
+      summary: Create VOD webhooks
+      description: Create a webhook for notifications about on-demand video uploads.
       parameters:
         - name: account_id
           in: path
@@ -183650,7 +183656,7 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: stream.webhooks
       x-fern-sdk-method-name: update
-      x-forge-hidden: true
+      x-forge-require-confirmation: Create a webhook for on-demand operations? Will replace previously configured webhook. Live input webhooks are handled via Notifications Service.
   /accounts/{account_id}/subscriptions:
     get:
       operationId: account-subscriptions-list-subscriptions
@@ -381194,6 +381200,11 @@ components:
           $ref: '#/components/schemas/calls_name'
         uid:
           $ref: '#/components/schemas/calls_identifier'
+      required:
+        - uid
+        - name
+        - created
+        - modified
     calls_app_editable_fields:
       type: object
       properties:
@@ -381207,18 +381218,21 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/calls_app'
+          type: object
     calls_app_response_single:
       allOf:
         - $ref: '#/components/schemas/calls_api-response-single'
         - properties:
             result:
               $ref: '#/components/schemas/calls_app'
+          type: object
     calls_app_response_single_with_secret:
       allOf:
         - $ref: '#/components/schemas/calls_api-response-single'
         - properties:
             result:
               $ref: '#/components/schemas/calls_app_with_secret'
+          type: object
     calls_app_with_secret:
       type: object
       properties:
@@ -381232,6 +381246,12 @@ components:
           $ref: '#/components/schemas/calls_secret'
         uid:
           $ref: '#/components/schemas/calls_identifier'
+      required:
+        - uid
+        - name
+        - secret
+        - created
+        - modified
     calls_created:
       description: The date and time the item was created.
       type: string
@@ -381299,6 +381319,7 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/calls_turn_key_object'
+          type: object
     calls_turn_key_editable_fields:
       type: object
       properties:
@@ -381321,26 +381342,25 @@ components:
           $ref: '#/components/schemas/calls_name'
         uid:
           $ref: '#/components/schemas/calls_identifier'
-    calls_turn_key_response_collection:
-      allOf:
-        - $ref: '#/components/schemas/calls_api-response-common'
-        - properties:
-            result:
-              type: array
-              items:
-                $ref: '#/components/schemas/calls_turn_key_object'
+      required:
+        - uid
+        - name
+        - created
+        - modified
     calls_turn_key_response_single:
       allOf:
         - $ref: '#/components/schemas/calls_api-response-single'
         - properties:
             result:
               $ref: '#/components/schemas/calls_turn_key_object'
+          type: object
     calls_turn_key_single_with_secret:
       allOf:
         - $ref: '#/components/schemas/calls_api-response-single'
         - properties:
             result:
               $ref: '#/components/schemas/calls_turn_key_with_key'
+          type: object
     calls_turn_key_with_key:
       type: object
       properties:
@@ -381354,6 +381374,12 @@ components:
           $ref: '#/components/schemas/calls_turn_key_name'
         uid:
           $ref: '#/components/schemas/calls_identifier'
+      required:
+        - uid
+        - name
+        - key
+        - created
+        - modified
     cc_AccountID:
       description: A unique identifier for the user's account.
       type: string
@@ -448975,43 +449001,6 @@ components:
       example: 023e105f4ecef8ad9ca31a8372d0c353
       maxLength: 32
       x-auditable: true
-    stream_clipping:
-      properties:
-        allowedOrigins:
-          $ref: '#/components/schemas/stream_allowedOrigins'
-        clippedFromVideoUID:
-          $ref: '#/components/schemas/stream_clipped_from_video_uid'
-        created:
-          $ref: '#/components/schemas/stream_clipping_created'
-        creator:
-          $ref: '#/components/schemas/stream_creator'
-        endTimeSeconds:
-          $ref: '#/components/schemas/stream_end_time_seconds'
-        maxDurationSeconds:
-          $ref: '#/components/schemas/stream_maxDurationSeconds'
-        meta:
-          $ref: '#/components/schemas/stream_media_metadata'
-        modified:
-          $ref: '#/components/schemas/stream_live_input_modified'
-        playback:
-          $ref: '#/components/schemas/stream_playback'
-        preview:
-          $ref: '#/components/schemas/stream_preview'
-        requireSignedURLs:
-          $ref: '#/components/schemas/stream_requireSignedURLs'
-        startTimeSeconds:
-          $ref: '#/components/schemas/stream_start_time_seconds'
-        status:
-          $ref: '#/components/schemas/stream_media_state'
-        thumbnailTimestampPct:
-          $ref: '#/components/schemas/stream_thumbnailTimestampPct'
-        watermark:
-          $ref: '#/components/schemas/stream_watermarkAtUpload'
-    stream_clipping_created:
-      description: The date and time the clip was created.
-      type: string
-      format: date-time
-      example: 2014-01-02T02:20:00Z
     stream_copyAudioTrack:
       type: object
       properties:
@@ -450087,8 +450076,10 @@ components:
       anyOf:
         - required:
             - input
+          type: object
         - required:
             - url
+          type: object
     stream_video_name:
       description: Provides a fast, exact string match on the `name` key in the `meta` field.
       type: string
@@ -450385,8 +450376,10 @@ components:
       anyOf:
         - required:
             - notificationUrl
+          type: object
         - required:
             - notification_url
+          type: object
     stream_webhook_response_single:
       allOf:
         - $ref: '#/components/schemas/stream_api-response-single'
