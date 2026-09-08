@@ -843,7 +843,7 @@ paths:
     post:
       operationId: RequestReview
       summary: Request review on mitigations
-      description: Request a review for mitigations on an account.
+      description: Request a review for mitigations on an account. Repeating a request for a mitigation with an unresolved appeal is idempotent and returns that mitigation in the in-review state.
       parameters:
         - name: account_id
           in: path
@@ -867,7 +867,13 @@ paths:
               $ref: '#/components/schemas/abuse-reports_MitigationAppealRequest'
       responses:
         '200':
-          description: Mitigation appeals received
+          description: Mitigation appeals received, including idempotent replays of unresolved appeals.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/abuse-reports_MitigationAppealResult'
+        '207':
+          description: Some mitigation appeals were accepted while others were invalid or cannot be appealed.
           content:
             application/json:
               schema:
