@@ -199820,6 +199820,43 @@ paths:
                   - errors
                   - success
                   - messages
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        detail:
+                          type: string
+                        message:
+                          type: string
+                          enum:
+                            - Conflict
+                      required:
+                        - message
+                      type: object
+                  messages:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                      required:
+                        - message
+                      type: object
+                  success:
+                    type: boolean
+                    enum:
+                      - false
+                required:
+                  - errors
+                  - success
+                  - messages
         '500':
           description: Internal error
           content:
@@ -200153,229 +200190,6 @@ paths:
       x-fern-sdk-group-name: observability.destinations
       x-fern-sdk-method-name: update
   /accounts/{account_id}/workers/observability/metricsexport:
-    delete:
-      operationId: metricsExport.delete
-      summary: Delete Metrics Export
-      description: Delete one resource configured for Workers Observability metrics export.
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                resourceId:
-                  type: string
-                  minLength: 1
-                resourceType:
-                  type: string
-                  enum:
-                    - workers
-                    - d1
-                    - r2
-              additionalProperties: false
-              required:
-                - resourceType
-                - resourceId
-      responses:
-        '200':
-          description: Successful request
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  errors:
-                    type: array
-                    items:
-                      properties:
-                        message:
-                          type: string
-                      required:
-                        - message
-                      type: object
-                  messages:
-                    type: array
-                    items:
-                      properties:
-                        message:
-                          type: string
-                          enum:
-                            - Successful request
-                      required:
-                        - message
-                      type: object
-                  result:
-                    type: object
-                    properties:
-                      deleted:
-                        type: boolean
-                    required:
-                      - deleted
-                  success:
-                    type: boolean
-                    enum:
-                      - true
-                required:
-                  - messages
-                  - success
-                  - errors
-                  - result
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  errors:
-                    type: array
-                    items:
-                      properties:
-                        detail:
-                          type: string
-                        message:
-                          type: string
-                          enum:
-                            - Bad Request
-                      required:
-                        - message
-                      type: object
-                  messages:
-                    type: array
-                    items:
-                      properties:
-                        message:
-                          type: string
-                      required:
-                        - message
-                      type: object
-                  success:
-                    type: boolean
-                    enum:
-                      - false
-                required:
-                  - errors
-                  - success
-                  - messages
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  errors:
-                    type: array
-                    items:
-                      properties:
-                        detail:
-                          type: string
-                        message:
-                          type: string
-                          enum:
-                            - Unauthorized
-                      required:
-                        - message
-                      type: object
-                  messages:
-                    type: array
-                    items:
-                      properties:
-                        message:
-                          type: string
-                      required:
-                        - message
-                      type: object
-                  success:
-                    type: boolean
-                    enum:
-                      - false
-                required:
-                  - errors
-                  - success
-                  - messages
-        '404':
-          description: Not found
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  errors:
-                    type: array
-                    items:
-                      properties:
-                        detail:
-                          type: string
-                        message:
-                          type: string
-                          enum:
-                            - Not found
-                      required:
-                        - message
-                      type: object
-                  messages:
-                    type: array
-                    items:
-                      properties:
-                        message:
-                          type: string
-                      required:
-                        - message
-                      type: object
-                  success:
-                    type: boolean
-                    enum:
-                      - false
-                required:
-                  - errors
-                  - success
-                  - messages
-        '500':
-          description: Internal error
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  errors:
-                    type: array
-                    items:
-                      properties:
-                        detail:
-                          type: string
-                        message:
-                          type: string
-                          enum:
-                            - Internal error
-                      required:
-                        - message
-                      type: object
-                  messages:
-                    type: array
-                    items:
-                      properties:
-                        message:
-                          type: string
-                      required:
-                        - message
-                      type: object
-                  success:
-                    type: boolean
-                    enum:
-                      - false
-                required:
-                  - errors
-                  - success
-                  - messages
-      tags:
-        - Metrics Export
-      x-api-token-group:
-        - Workers Observability Write
-      x-fern-ignore: true
-      x-fern-sdk-group-name: observability.metrics-export
-      x-fern-sdk-method-name: delete
-      x-forge-hidden: true
     get:
       operationId: metricsExport.list
       summary: List Metrics Exports
@@ -200430,6 +200244,7 @@ paths:
                             - workers
                             - d1
                             - r2
+                            - containers
                         updatedAt:
                           type: string
                       required:
@@ -200546,105 +200361,52 @@ paths:
         content:
           application/json:
             schema:
-              anyOf:
-                - additionalProperties: false
+              type: object
+              properties:
+                requester:
+                  type: object
+                  additionalProperties: false
                   properties:
-                    destinations:
-                      type: array
-                      items:
-                        minLength: 1
-                        type: string
-                      minItems: 1
-                    resourceId:
+                    requesterId:
                       type: string
                       minLength: 1
-                    resourceType:
+                    requesterType:
                       type: string
                       enum:
                         - workers
-                        - d1
-                        - r2
                   required:
-                    - resourceType
-                    - resourceId
-                    - destinations
-                  type: object
-                - additionalProperties: false
-                  properties:
-                    requester:
-                      type: object
-                      additionalProperties: false
-                      properties:
-                        requesterId:
-                          type: string
+                    - requesterType
+                    - requesterId
+                resources:
+                  type: array
+                  items:
+                    additionalProperties: false
+                    properties:
+                      destinations:
+                        type: array
+                        items:
                           minLength: 1
-                        requesterType:
                           type: string
-                          enum:
-                            - workers
-                      required:
-                        - requesterType
-                        - requesterId
-                    resources:
-                      type: array
-                      items:
-                        additionalProperties: false
-                        properties:
-                          destinations:
-                            type: array
-                            items:
-                              minLength: 1
-                              type: string
-                            minItems: 1
-                          resourceId:
-                            type: string
-                            minLength: 1
-                          resourceType:
-                            type: string
-                            enum:
-                              - workers
-                              - d1
-                              - r2
-                        required:
-                          - resourceType
-                          - resourceId
-                          - destinations
-                        type: object
-                  required:
-                    - requester
-                    - resources
-                  type: object
-                - additionalProperties: false
-                  properties:
-                    resources:
-                      type: array
-                      items:
-                        additionalProperties: false
-                        properties:
-                          destinations:
-                            type: array
-                            items:
-                              minLength: 1
-                              type: string
-                            minItems: 1
-                          resourceId:
-                            type: string
-                            minLength: 1
-                          resourceType:
-                            type: string
-                            enum:
-                              - workers
-                              - d1
-                              - r2
-                        required:
-                          - resourceType
-                          - resourceId
-                          - destinations
-                        type: object
-                      minItems: 1
-                  required:
-                    - resources
-                  type: object
+                        minItems: 1
+                      resourceId:
+                        type: string
+                        minLength: 1
+                      resourceType:
+                        type: string
+                        enum:
+                          - workers
+                          - d1
+                          - r2
+                          - containers
+                    required:
+                      - resourceType
+                      - resourceId
+                      - destinations
+                    type: object
+              additionalProperties: false
+              required:
+                - requester
+                - resources
       responses:
         '201':
           description: Resource created
@@ -200695,6 +200457,7 @@ paths:
                             - workers
                             - d1
                             - r2
+                            - containers
                         updatedAt:
                           type: string
                       required:
@@ -200767,43 +200530,6 @@ paths:
                           type: string
                           enum:
                             - Unauthorized
-                      required:
-                        - message
-                      type: object
-                  messages:
-                    type: array
-                    items:
-                      properties:
-                        message:
-                          type: string
-                      required:
-                        - message
-                      type: object
-                  success:
-                    type: boolean
-                    enum:
-                      - false
-                required:
-                  - errors
-                  - success
-                  - messages
-        '409':
-          description: Conflict
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  errors:
-                    type: array
-                    items:
-                      properties:
-                        detail:
-                          type: string
-                        message:
-                          type: string
-                          enum:
-                            - Conflict
                       required:
                         - message
                       type: object
@@ -204997,6 +204723,1097 @@ paths:
         required: true
         schema:
           type: string
+  /accounts/{account_id}/workers/observability/zones/{zone_id}/observability/tracing/rules:
+    get:
+      operationId: zone.observability.tracing.rules.get
+      summary: View zone trace rules
+      description: Retrieve the ordered sampling overrides for a zone's managed Cloudflare Traces ruleset.
+      parameters:
+        - name: zone_id
+          in: path
+          description: Specify the zone ID.
+          required: true
+          schema:
+            description: Specify the zone ID.
+            type: string
+      responses:
+        '200':
+          description: Successful request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                      required:
+                        - message
+                      type: object
+                  messages:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                          enum:
+                            - Successful request
+                      required:
+                        - message
+                      type: object
+                  result:
+                    type: object
+                    properties:
+                      rules:
+                        description: Trace rules in evaluation order.
+                        type: array
+                        items:
+                          additionalProperties: false
+                          properties:
+                            action:
+                              type: string
+                              enum:
+                                - set_trace_settings
+                            action_parameters:
+                              type: object
+                              additionalProperties: false
+                              properties:
+                                sampling_ratio:
+                                  description: The ratio of requests sampled for tracing, from 0 to 1.
+                                  type: number
+                                  maximum: 1
+                                  minimum: 0
+                              required:
+                                - sampling_ratio
+                            description:
+                              type: string
+                              maxLength: 1000
+                            enabled:
+                              type: boolean
+                            expression:
+                              description: A Rules language expression that selects requests.
+                              type: string
+                              maxLength: 4096
+                              minLength: 1
+                          required:
+                            - action
+                            - action_parameters
+                            - expression
+                            - description
+                            - enabled
+                          type: object
+                        maxItems: 1000
+                    required:
+                      - rules
+                  success:
+                    type: boolean
+                    enum:
+                      - true
+                required:
+                  - messages
+                  - success
+                  - errors
+                  - result
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        detail:
+                          type: string
+                        message:
+                          type: string
+                          enum:
+                            - Bad Request
+                      required:
+                        - message
+                      type: object
+                  messages:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                      required:
+                        - message
+                      type: object
+                  success:
+                    type: boolean
+                    enum:
+                      - false
+                required:
+                  - errors
+                  - success
+                  - messages
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        detail:
+                          type: string
+                        message:
+                          type: string
+                          enum:
+                            - Unauthorized
+                      required:
+                        - message
+                      type: object
+                  messages:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                      required:
+                        - message
+                      type: object
+                  success:
+                    type: boolean
+                    enum:
+                      - false
+                required:
+                  - errors
+                  - success
+                  - messages
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        detail:
+                          type: string
+                        message:
+                          type: string
+                          enum:
+                            - Forbidden
+                      required:
+                        - message
+                      type: object
+                  messages:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                      required:
+                        - message
+                      type: object
+                  success:
+                    type: boolean
+                    enum:
+                      - false
+                required:
+                  - errors
+                  - success
+                  - messages
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        detail:
+                          type: string
+                        message:
+                          type: string
+                          enum:
+                            - Internal error
+                      required:
+                        - message
+                      type: object
+                  messages:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                      required:
+                        - message
+                      type: object
+                  success:
+                    type: boolean
+                    enum:
+                      - false
+                required:
+                  - errors
+                  - success
+                  - messages
+      tags:
+        - Observability
+      x-api-token-group:
+        - Workers Observability Write
+        - Workers Observability Read
+      x-fern-availability: beta
+      x-fern-sdk-group-name: observability.tracing.rules
+      x-fern-sdk-method-name: get
+      x-forge-hidden: true
+    parameters:
+      - name: account_id
+        in: path
+        description: Your Cloudflare account ID.
+        required: true
+        schema:
+          type: string
+    put:
+      operationId: zone.observability.tracing.rules.update
+      summary: Replace zone trace rules
+      description: Replace all sampling overrides in a zone's managed Cloudflare Traces ruleset. Rules are evaluated in the supplied order.
+      parameters:
+        - name: zone_id
+          in: path
+          description: Specify the zone ID.
+          required: true
+          schema:
+            description: Specify the zone ID.
+            type: string
+      requestBody:
+        description: Replace the ordered trace rules
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                rules:
+                  description: Trace rules in evaluation order.
+                  type: array
+                  items:
+                    additionalProperties: false
+                    properties:
+                      action:
+                        type: string
+                        enum:
+                          - set_trace_settings
+                      action_parameters:
+                        type: object
+                        additionalProperties: false
+                        properties:
+                          sampling_ratio:
+                            description: The ratio of requests sampled for tracing, from 0 to 1.
+                            type: number
+                            maximum: 1
+                            minimum: 0
+                        required:
+                          - sampling_ratio
+                      description:
+                        type: string
+                        maxLength: 1000
+                      enabled:
+                        type: boolean
+                      expression:
+                        description: A Rules language expression that selects requests.
+                        type: string
+                        maxLength: 4096
+                        minLength: 1
+                    required:
+                      - action
+                      - action_parameters
+                      - expression
+                      - description
+                      - enabled
+                    type: object
+                  maxItems: 1000
+              required:
+                - rules
+      responses:
+        '200':
+          description: Successful request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                      required:
+                        - message
+                      type: object
+                  messages:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                          enum:
+                            - Successful request
+                      required:
+                        - message
+                      type: object
+                  result:
+                    type: object
+                    properties:
+                      rules:
+                        description: Trace rules in evaluation order.
+                        type: array
+                        items:
+                          additionalProperties: false
+                          properties:
+                            action:
+                              type: string
+                              enum:
+                                - set_trace_settings
+                            action_parameters:
+                              type: object
+                              additionalProperties: false
+                              properties:
+                                sampling_ratio:
+                                  description: The ratio of requests sampled for tracing, from 0 to 1.
+                                  type: number
+                                  maximum: 1
+                                  minimum: 0
+                              required:
+                                - sampling_ratio
+                            description:
+                              type: string
+                              maxLength: 1000
+                            enabled:
+                              type: boolean
+                            expression:
+                              description: A Rules language expression that selects requests.
+                              type: string
+                              maxLength: 4096
+                              minLength: 1
+                          required:
+                            - action
+                            - action_parameters
+                            - expression
+                            - description
+                            - enabled
+                          type: object
+                        maxItems: 1000
+                    required:
+                      - rules
+                  success:
+                    type: boolean
+                    enum:
+                      - true
+                required:
+                  - messages
+                  - success
+                  - errors
+                  - result
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        detail:
+                          type: string
+                        message:
+                          type: string
+                          enum:
+                            - Bad Request
+                      required:
+                        - message
+                      type: object
+                  messages:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                      required:
+                        - message
+                      type: object
+                  success:
+                    type: boolean
+                    enum:
+                      - false
+                required:
+                  - errors
+                  - success
+                  - messages
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        detail:
+                          type: string
+                        message:
+                          type: string
+                          enum:
+                            - Unauthorized
+                      required:
+                        - message
+                      type: object
+                  messages:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                      required:
+                        - message
+                      type: object
+                  success:
+                    type: boolean
+                    enum:
+                      - false
+                required:
+                  - errors
+                  - success
+                  - messages
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        detail:
+                          type: string
+                        message:
+                          type: string
+                          enum:
+                            - Forbidden
+                      required:
+                        - message
+                      type: object
+                  messages:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                      required:
+                        - message
+                      type: object
+                  success:
+                    type: boolean
+                    enum:
+                      - false
+                required:
+                  - errors
+                  - success
+                  - messages
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        detail:
+                          type: string
+                        message:
+                          type: string
+                          enum:
+                            - Internal error
+                      required:
+                        - message
+                      type: object
+                  messages:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                      required:
+                        - message
+                      type: object
+                  success:
+                    type: boolean
+                    enum:
+                      - false
+                required:
+                  - errors
+                  - success
+                  - messages
+      tags:
+        - Observability
+      x-api-token-group:
+        - Workers Observability Write
+      x-fern-availability: beta
+      x-fern-sdk-group-name: observability.tracing.rules
+      x-fern-sdk-method-name: update
+      x-forge-hidden: true
+  /accounts/{account_id}/workers/observability/zones/{zone_id}/observability/tracing/settings:
+    get:
+      operationId: zone.observability.tracing.settings.get
+      summary: View zone tracing settings
+      description: Retrieve the zone-level Cloudflare Traces settings.
+      parameters:
+        - name: zone_id
+          in: path
+          description: Specify the zone ID.
+          required: true
+          schema:
+            description: Specify the zone ID.
+            type: string
+      responses:
+        '200':
+          description: Successful request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                      required:
+                        - message
+                      type: object
+                  messages:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                          enum:
+                            - Successful request
+                      required:
+                        - message
+                      type: object
+                  result:
+                    type: object
+                    additionalProperties: false
+                    properties:
+                      destinations:
+                        description: OpenTelemetry destination identifiers that receive traces.
+                        type: array
+                        items:
+                          maxLength: 256
+                          minLength: 1
+                          type: string
+                        maxItems: 100
+                      enabled:
+                        description: Whether Cloudflare Traces is enabled for the zone.
+                        type: boolean
+                      forward_context:
+                        description: Whether trace context is sent externally or across a zone boundary.
+                        type: boolean
+                      persist:
+                        description: Whether traces are persisted in Cloudflare.
+                        type: boolean
+                      propagation_policy:
+                        description: When inbound trace context may be continued.
+                        type: string
+                        enum:
+                          - authenticated
+                          - unauthenticated
+                      sampling_ratio:
+                        description: The ratio of requests sampled for tracing, from 0 to 1.
+                        type: number
+                        maximum: 1
+                        minimum: 0
+                    required:
+                      - enabled
+                      - persist
+                      - sampling_ratio
+                      - destinations
+                      - propagation_policy
+                      - forward_context
+                  success:
+                    type: boolean
+                    enum:
+                      - true
+                required:
+                  - messages
+                  - success
+                  - errors
+                  - result
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        detail:
+                          type: string
+                        message:
+                          type: string
+                          enum:
+                            - Bad Request
+                      required:
+                        - message
+                      type: object
+                  messages:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                      required:
+                        - message
+                      type: object
+                  success:
+                    type: boolean
+                    enum:
+                      - false
+                required:
+                  - errors
+                  - success
+                  - messages
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        detail:
+                          type: string
+                        message:
+                          type: string
+                          enum:
+                            - Unauthorized
+                      required:
+                        - message
+                      type: object
+                  messages:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                      required:
+                        - message
+                      type: object
+                  success:
+                    type: boolean
+                    enum:
+                      - false
+                required:
+                  - errors
+                  - success
+                  - messages
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        detail:
+                          type: string
+                        message:
+                          type: string
+                          enum:
+                            - Forbidden
+                      required:
+                        - message
+                      type: object
+                  messages:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                      required:
+                        - message
+                      type: object
+                  success:
+                    type: boolean
+                    enum:
+                      - false
+                required:
+                  - errors
+                  - success
+                  - messages
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        detail:
+                          type: string
+                        message:
+                          type: string
+                          enum:
+                            - Internal error
+                      required:
+                        - message
+                      type: object
+                  messages:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                      required:
+                        - message
+                      type: object
+                  success:
+                    type: boolean
+                    enum:
+                      - false
+                required:
+                  - errors
+                  - success
+                  - messages
+      tags:
+        - Observability
+      x-api-token-group:
+        - Workers Observability Write
+        - Workers Observability Read
+      x-fern-availability: beta
+      x-fern-sdk-group-name: observability.tracing.settings
+      x-fern-sdk-method-name: get
+      x-forge-hidden: true
+    parameters:
+      - name: account_id
+        in: path
+        description: Your Cloudflare account ID.
+        required: true
+        schema:
+          type: string
+    patch:
+      operationId: zone.observability.tracing.settings.update
+      summary: Update zone tracing settings
+      description: Update the zone-level Cloudflare Traces settings.
+      parameters:
+        - name: zone_id
+          in: path
+          description: Specify the zone ID.
+          required: true
+          schema:
+            description: Specify the zone ID.
+            type: string
+      requestBody:
+        description: Update zone tracing settings
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                destinations:
+                  description: OpenTelemetry destination identifiers that receive traces.
+                  type: array
+                  items:
+                    maxLength: 256
+                    minLength: 1
+                    type: string
+                  maxItems: 100
+                enabled:
+                  description: Whether Cloudflare Traces is enabled for the zone.
+                  type: boolean
+                forward_context:
+                  description: Whether trace context is sent externally or across a zone boundary.
+                  type: boolean
+                persist:
+                  description: Whether traces are persisted in Cloudflare.
+                  type: boolean
+                propagation_policy:
+                  description: When inbound trace context may be continued.
+                  type: string
+                  enum:
+                    - authenticated
+                    - unauthenticated
+                sampling_ratio:
+                  description: The ratio of requests sampled for tracing, from 0 to 1.
+                  type: number
+                  maximum: 1
+                  minimum: 0
+              additionalProperties: false
+              minProperties: 1
+      responses:
+        '200':
+          description: Successful request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                      required:
+                        - message
+                      type: object
+                  messages:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                          enum:
+                            - Successful request
+                      required:
+                        - message
+                      type: object
+                  result:
+                    type: object
+                    additionalProperties: false
+                    properties:
+                      destinations:
+                        description: OpenTelemetry destination identifiers that receive traces.
+                        type: array
+                        items:
+                          maxLength: 256
+                          minLength: 1
+                          type: string
+                        maxItems: 100
+                      enabled:
+                        description: Whether Cloudflare Traces is enabled for the zone.
+                        type: boolean
+                      forward_context:
+                        description: Whether trace context is sent externally or across a zone boundary.
+                        type: boolean
+                      persist:
+                        description: Whether traces are persisted in Cloudflare.
+                        type: boolean
+                      propagation_policy:
+                        description: When inbound trace context may be continued.
+                        type: string
+                        enum:
+                          - authenticated
+                          - unauthenticated
+                      sampling_ratio:
+                        description: The ratio of requests sampled for tracing, from 0 to 1.
+                        type: number
+                        maximum: 1
+                        minimum: 0
+                    required:
+                      - enabled
+                      - persist
+                      - sampling_ratio
+                      - destinations
+                      - propagation_policy
+                      - forward_context
+                  success:
+                    type: boolean
+                    enum:
+                      - true
+                required:
+                  - messages
+                  - success
+                  - errors
+                  - result
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        detail:
+                          type: string
+                        message:
+                          type: string
+                          enum:
+                            - Bad Request
+                      required:
+                        - message
+                      type: object
+                  messages:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                      required:
+                        - message
+                      type: object
+                  success:
+                    type: boolean
+                    enum:
+                      - false
+                required:
+                  - errors
+                  - success
+                  - messages
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        detail:
+                          type: string
+                        message:
+                          type: string
+                          enum:
+                            - Unauthorized
+                      required:
+                        - message
+                      type: object
+                  messages:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                      required:
+                        - message
+                      type: object
+                  success:
+                    type: boolean
+                    enum:
+                      - false
+                required:
+                  - errors
+                  - success
+                  - messages
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        detail:
+                          type: string
+                        message:
+                          type: string
+                          enum:
+                            - Forbidden
+                      required:
+                        - message
+                      type: object
+                  messages:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                      required:
+                        - message
+                      type: object
+                  success:
+                    type: boolean
+                    enum:
+                      - false
+                required:
+                  - errors
+                  - success
+                  - messages
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        detail:
+                          type: string
+                        message:
+                          type: string
+                          enum:
+                            - Internal error
+                      required:
+                        - message
+                      type: object
+                  messages:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                      required:
+                        - message
+                      type: object
+                  success:
+                    type: boolean
+                    enum:
+                      - false
+                required:
+                  - errors
+                  - success
+                  - messages
+      tags:
+        - Observability
+      x-api-token-group:
+        - Workers Observability Write
+      x-fern-availability: beta
+      x-fern-sdk-group-name: observability.tracing.settings
+      x-fern-sdk-method-name: update
+      x-forge-hidden: true
   /accounts/{account_id}/workers/placement/regions:
     get:
       operationId: worker-placement-list-regions
