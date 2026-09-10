@@ -157675,14 +157675,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/magic-visibility-pcaps_pcaps_collection_response'
-        default:
-          description: List packet capture requests response failure.
+        4XX:
+          description: List packet capture requests response failure (client error).
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/magic-visibility-pcaps_pcaps_collection_response'
-                  - $ref: '#/components/schemas/magic-visibility-pcaps_api-response-common-failure'
+                $ref: '#/components/schemas/magic-visibility-pcaps_api-response-common-failure'
+        5XX:
+          description: List packet capture requests response failure (server error).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/magic-visibility-pcaps_api-response-common-failure'
       security:
         - api_token: []
         - api_email: []
@@ -157724,14 +157728,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/magic-visibility-pcaps_pcaps_single_response'
-        default:
-          description: Create PCAP request response failure.
+        4XX:
+          description: Create PCAP request response failure (client error).
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/magic-visibility-pcaps_pcaps_single_response'
-                  - $ref: '#/components/schemas/magic-visibility-pcaps_api-response-common-failure'
+                $ref: '#/components/schemas/magic-visibility-pcaps_api-response-common-failure'
+        5XX:
+          description: Create PCAP request response failure (server error).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/magic-visibility-pcaps_api-response-common-failure'
       security:
         - api_token: []
         - api_email: []
@@ -157772,14 +157780,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/magic-visibility-pcaps_pcaps_single_response'
-        default:
-          description: Get PCAP request response failure.
+        4XX:
+          description: Get PCAP request response failure (client error).
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/magic-visibility-pcaps_pcaps_single_response'
-                  - $ref: '#/components/schemas/magic-visibility-pcaps_api-response-common-failure'
+                $ref: '#/components/schemas/magic-visibility-pcaps_api-response-common-failure'
+        5XX:
+          description: Get PCAP request response failure (server error).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/magic-visibility-pcaps_api-response-common-failure'
       security:
         - api_token: []
         - api_email: []
@@ -157819,10 +157831,18 @@ paths:
           description: Download Simple PCAP response.
           content:
             application/vnd.tcpdump.pcap: {}
-        default:
-          description: Download Simple PCAP response failure.
+        4XX:
+          description: Download Simple PCAP response failure (client error).
           content:
-            application/json: {}
+            application/json:
+              schema:
+                $ref: '#/components/schemas/magic-visibility-pcaps_api-response-common-failure'
+        5XX:
+          description: Download Simple PCAP response failure (server error).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/magic-visibility-pcaps_api-response-common-failure'
       security:
         - api_token: []
         - api_email: []
@@ -157860,8 +157880,14 @@ paths:
       responses:
         '204':
           description: Stop full PCAP response.
-        default:
-          description: Stop full PCAP response failure.
+        4XX:
+          description: Stop full PCAP response failure (client error).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/magic-visibility-pcaps_api-response-common-failure'
+        5XX:
+          description: Stop full PCAP response failure (server error).
           content:
             application/json:
               schema:
@@ -157902,14 +157928,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/magic-visibility-pcaps_pcaps_ownership_collection'
-        default:
-          description: List PCAPs Bucket Ownership response failure.
+        4XX:
+          description: List PCAPs Bucket Ownership response failure (client error).
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/magic-visibility-pcaps_pcaps_ownership_collection'
-                  - $ref: '#/components/schemas/magic-visibility-pcaps_api-response-common-failure'
+                $ref: '#/components/schemas/magic-visibility-pcaps_api-response-common-failure'
+        5XX:
+          description: List PCAPs Bucket Ownership response failure (server error).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/magic-visibility-pcaps_api-response-common-failure'
       security:
         - api_token: []
         - api_email: []
@@ -157951,14 +157981,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/magic-visibility-pcaps_pcaps_ownership_single_response'
-        default:
-          description: Add buckets for full packet captures response failure.
+        4XX:
+          description: Add buckets for full packet captures response failure (client error).
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/magic-visibility-pcaps_pcaps_ownership_single_response'
-                  - $ref: '#/components/schemas/magic-visibility-pcaps_api-response-common-failure'
+                $ref: '#/components/schemas/magic-visibility-pcaps_api-response-common-failure'
+        5XX:
+          description: Add buckets for full packet captures response failure (server error).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/magic-visibility-pcaps_api-response-common-failure'
       security:
         - api_token: []
         - api_email: []
@@ -157995,10 +158029,18 @@ paths:
       responses:
         '204':
           description: Delete buckets for full packet captures response.
-        default:
-          description: Delete buckets for full packet captures response failure.
+        4XX:
+          description: Delete buckets for full packet captures response failure (client error).
           content:
-            application/json: {}
+            application/json:
+              schema:
+                $ref: '#/components/schemas/magic-visibility-pcaps_api-response-common-failure'
+        5XX:
+          description: Delete buckets for full packet captures response failure (server error).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/magic-visibility-pcaps_api-response-common-failure'
       security:
         - api_token: []
         - api_email: []
@@ -158040,14 +158082,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/magic-visibility-pcaps_pcaps_ownership_single_response'
-        default:
-          description: Validate buckets for full packet captures response failure.
+        4XX:
+          description: Validate buckets for full packet captures response failure (client error).
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/magic-visibility-pcaps_pcaps_ownership_single_response'
-                  - $ref: '#/components/schemas/magic-visibility-pcaps_api-response-common-failure'
+                $ref: '#/components/schemas/magic-visibility-pcaps_api-response-common-failure'
+        5XX:
+          description: Validate buckets for full packet captures response failure (server error).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/magic-visibility-pcaps_api-response-common-failure'
       security:
         - api_token: []
         - api_email: []
@@ -416569,7 +416615,8 @@ components:
         - properties:
             result:
               type: array
-              items: {}
+              items:
+                type: object
               nullable: true
             result_info:
               $ref: '#/components/schemas/magic-visibility-pcaps_result_info'
@@ -416584,7 +416631,8 @@ components:
         result:
           anyOf:
             - type: object
-            - items: {}
+            - items:
+                type: object
               type: array
             - type: string
         success:
@@ -416626,7 +416674,6 @@ components:
       required:
         - success
         - errors
-        - messages
         - result
     magic-visibility-pcaps_api-response-single:
       type: object
@@ -481151,6 +481198,8 @@ x-forge-commands:
         description: GRE tunnel endpoints that connect your network to Cloudflare for Magic Transit
       ipsec-tunnels:
         description: IPsec tunnel endpoints with pre-shared key management for encrypted transit
+      pcaps:
+        description: Packet capture requests for debugging traffic flowing through Magic Transit tunnels
       routes:
         description: Static routes that direct IP prefix traffic through specific GRE/IPsec tunnels
       sites:
