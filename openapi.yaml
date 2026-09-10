@@ -92274,13 +92274,13 @@ paths:
               $ref: '#/components/schemas/cloudforce-one_CreateRule'
       responses:
         '201':
-          description: Rule created (non-email customer accounts).
+          description: Rule created (non-email customer accounts, or silent warning-free customer email rules).
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/cloudforce-one_Rule'
         '202':
-          description: Rule pending approval (internal accounts and customer email rules).
+          description: Rule pending approval (internal accounts, blocking customer email rules, and customer email rules with compiler warnings).
           content:
             application/json:
               schema:
@@ -92438,13 +92438,13 @@ paths:
               $ref: '#/components/schemas/cloudforce-one_UpdateRule'
       responses:
         '200':
-          description: Rule updated (customer accounts).
+          description: Rule updated (non-email customer accounts, or silent warning-free customer email rules).
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/cloudforce-one_RulePreview'
         '202':
-          description: Update pending approval (internal accounts and customer email rules).
+          description: Update pending approval (internal accounts, blocking customer email rules, and customer email rules with compiler warnings).
           content:
             application/json:
               schema:
@@ -93240,6 +93240,13 @@ paths:
                   type: string
                   maxLength: 255
                   minLength: 1
+                status:
+                  description: Disposition for matching email. This emits status metadata with the selected value.
+                  type: string
+                  default: silent
+                  enum:
+                    - silent
+                    - blocking
                 strings:
                   type: array
                   items:
@@ -93286,13 +93293,13 @@ paths:
                 - condition
       responses:
         '201':
-          description: Email rule created.
+          description: Email rule created immediately when submitted by a customer with silent status and no compiler warnings.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/cloudforce-one_RulePreview'
         '202':
-          description: Rule pending approval (internal accounts and customer email rules).
+          description: Rule pending approval (internal accounts, blocking customer rules, and customer rules with compiler warnings).
           content:
             application/json:
               schema:
@@ -93460,6 +93467,12 @@ paths:
                   type: string
                   maxLength: 255
                   minLength: 1
+                status:
+                  description: Disposition for matching email. This emits status metadata with the selected value.
+                  type: string
+                  enum:
+                    - silent
+                    - blocking
                 strings:
                   type: array
                   items:
@@ -93502,13 +93515,13 @@ paths:
                   maxItems: 50
       responses:
         '200':
-          description: Rule updated (customer accounts).
+          description: Rule updated immediately when submitted by a customer with silent status and no compiler warnings.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/cloudforce-one_RulePreview'
         '202':
-          description: Update pending approval (internal accounts and customer email rules).
+          description: Update pending approval (internal accounts, blocking customer rules, and customer rules with compiler warnings).
           content:
             application/json:
               schema:
@@ -93646,7 +93659,7 @@ paths:
               type: object
               properties:
                 condition:
-                  nullable: true
+                  $ref: '#/components/schemas/cloudforce-one_EmailRuleConditionGroup'
                 description:
                   type: string
                   maxLength: 1000
@@ -93662,6 +93675,13 @@ paths:
                   type: string
                   maxLength: 255
                   minLength: 1
+                status:
+                  description: Disposition for matching email. This emits status metadata with the selected value.
+                  type: string
+                  default: silent
+                  enum:
+                    - silent
+                    - blocking
                 strings:
                   type: array
                   items:
@@ -93705,6 +93725,7 @@ paths:
                   maxItems: 50
               required:
                 - name
+                - condition
       responses:
         '200':
           description: Pending approval updated.
@@ -93794,6 +93815,13 @@ paths:
                   type: string
                   maxLength: 255
                   minLength: 1
+                status:
+                  description: Disposition for matching email. This emits status metadata with the selected value.
+                  type: string
+                  default: silent
+                  enum:
+                    - silent
+                    - blocking
                 strings:
                   type: array
                   items:
@@ -94087,6 +94115,13 @@ paths:
                   type: string
                   maxLength: 255
                   minLength: 1
+                status:
+                  description: Disposition for matching email. This emits status metadata with the selected value.
+                  type: string
+                  default: silent
+                  enum:
+                    - silent
+                    - blocking
                 strings:
                   type: array
                   items:
