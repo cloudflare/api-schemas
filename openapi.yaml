@@ -101735,9 +101735,9 @@ paths:
 
         Use `scheduling_policy: "durable_object"` for a Durable Object-managed
         application. Each Durable Object creates and manages the lifecycle of its
-        container instance. This request accepts only `name`, `scheduling_policy`,
-        and `durable_objects`. Application-level configuration, scaling, constraints,
-        versions, and rollouts do not apply.
+        container instance. Supply `name`, `scheduling_policy`, and `durable_objects`,
+        with optional top-level `observability` settings. Deployment configuration,
+        scaling, constraints, versions, and rollouts do not apply.
       requestBody:
         required: true
         content:
@@ -101906,8 +101906,12 @@ paths:
       operationId: modifyApplication
       summary: Modify an application
       description: |
-        Modifies a single application by id. Changes that replace instance deployment
-        configuration, including the image, must be applied with a rollout.
+        Modifies a single application by id. Durable Object-managed application settings are
+        published to runtime metadata without creating deployments or rollouts. Top-level
+        `observability` for these applications supports only `logs.enabled`.
+        The supported fields depend on the existing
+        application's scheduling policy. For scheduler-backed applications, changes that
+        replace instance deployment configuration, including the image, require a rollout.
       parameters:
         - name: application_id
           in: path
@@ -102011,7 +102015,7 @@ paths:
         - name: name_prefix
           in: query
           description: |
-            Filter instances by a case-sensitive name prefix. Keep the same prefix when using a page token.
+            Filter instances by a case-sensitive name prefix, falling back to the actor ID when no name is known. Keep the same prefix when using a page token.
           schema:
             type: string
       responses:
@@ -382434,7 +382438,10 @@ components:
       description: The application name.
       type: string
     cc_ApplicationObservability:
-      description: Settings for application observability such as logging.
+      description: |
+        Settings for application observability such as logging. Supported fields depend
+        on the application's scheduling policy. Durable Object-managed applications
+        accept only `logs.enabled`.
       type: object
       properties:
         logs:
@@ -382780,12 +382787,14 @@ components:
         - $ref: '#/components/schemas/cc_DurableObjectApplication'
     cc_ContainersCreateApplicationRequest:
       description: |
-        Create a Containers application. Set `scheduling_policy` to `default` for a
+        Create a Containers application.
+        Set `scheduling_policy` to `default` for a
         scheduler-backed application with deployment configuration, instance counts,
         constraints, versions, and rollouts. Set it to `durable_object` for a
         Durable Object-managed application where each Durable Object creates and manages
         the lifecycle of its container instance. For `durable_object` requests, supply
-        only `name`, `scheduling_policy`, and `durable_objects`.
+        `name`, `scheduling_policy`, and `durable_objects`, with optional top-level
+        `observability` settings.
       oneOf:
         - $ref: '#/components/schemas/cc_ContainersCreateScheduledApplicationRequest'
         - $ref: '#/components/schemas/cc_ContainersCreateDurableObjectApplicationRequest'
@@ -382853,10 +382862,10 @@ components:
     cc_ContainersCreateDurableObjectApplicationRequest:
       description: |
         Create a Durable Object-managed Containers application. Each Durable Object
-        creates and manages the lifecycle of its container instance. Supply only `name`,
-        `scheduling_policy`, and `durable_objects`. Application-level deployment
-        configuration, instance counts, scaling, constraints, versions, and rollouts do
-        not apply.
+        creates and manages the lifecycle of its container instance. Supply `name`,
+        `scheduling_policy`, and `durable_objects`, with optional top-level `observability`
+        settings. Deployment configuration, instance counts, scaling, constraints,
+        versions, and rollouts do not apply.
       type: object
       properties:
         durable_objects:
@@ -382866,6 +382875,8 @@ components:
         name:
           description: The name for this application.
           type: string
+        observability:
+          $ref: '#/components/schemas/cc_DurableObjectApplicationObservability'
         scheduling_policy:
           $ref: '#/components/schemas/cc_DurableObjectApplicationSchedulingPolicy'
       additionalProperties: false
@@ -383017,8 +383028,10 @@ components:
     cc_ContainersModifyApplicationRequestBody:
       description: |
         Request body for modifying a Containers application without replacing its instances.
-        Deployment configuration changes such as image, resource allocation, command, and
-        environment variables require an application rollout.
+        Durable Object-managed applications support only top-level observability.logs.enabled.
+        The other fields apply to scheduler-backed applications, where deployment configuration
+        changes such as image, resource allocation, command, and environment variables require
+        an application rollout.
       type: object
       properties:
         configuration:
@@ -383031,7 +383044,10 @@ components:
           minimum: 0
         observability:
           description: |
-            Top-level observability settings to hot-reload across existing instances.
+            Top-level application observability settings. Scheduler-backed applications
+            hot-reload these settings across existing instances. An existing Durable
+            Object-managed application accepts only `logs.enabled` and publishes these settings
+            to runtime metadata without creating deployments or rollouts.
           allOf:
             - $ref: '#/components/schemas/cc_ApplicationObservability'
         rollout_active_grace_period:
@@ -383088,6 +383104,8 @@ components:
           $ref: '#/components/schemas/cc_ApplicationID'
         name:
           $ref: '#/components/schemas/cc_ApplicationName'
+        observability:
+          $ref: '#/components/schemas/cc_DurableObjectApplicationObservability'
         scheduling_policy:
           $ref: '#/components/schemas/cc_DurableObjectApplicationSchedulingPolicy'
         updated_at:
@@ -383130,12 +383148,28 @@ components:
             - pending
       required:
         - instances
+    cc_DurableObjectApplicationObservability:
+      description: |
+        Application-wide logging settings for a Durable Object-managed application.
+        The application publishes these settings to its runtime metadata. Updating
+        them does not create a deployment or rollout.
+      type: object
+      properties:
+        logs:
+          description: Application-wide logging settings.
+          type: object
+          additionalProperties: false
+          properties:
+            enabled:
+              type: boolean
+              default: false
+      additionalProperties: false
     cc_DurableObjectApplicationSchedulingPolicy:
       description: |
         Selects a Durable Object-managed application. Each Durable Object creates and
-        manages the lifecycle of its container instance. Application-level deployment
-        configuration, scaling, placement constraints, versions, and rollouts do not
-        apply.
+        manages the lifecycle of its container instance. Configure application-wide
+        observability settings here. Deployment configuration, scaling, placement
+        constraints, versions, and rollouts do not apply.
       type: string
       enum:
         - durable_object
