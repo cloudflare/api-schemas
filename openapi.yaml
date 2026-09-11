@@ -220056,6 +220056,18 @@ paths:
           schema:
             type: boolean
           explode: false
+        - name: include_total
+          in: query
+          description: |-
+            Whether to calculate and return the exact result_info.total_size for cursor
+            pagination. Defaults to true. When false, total_size is omitted. page_size and
+            include_total may change between pages; next_page_token remains the authoritative
+            continuation signal.
+            Legacy page/per_page requests always calculate total_count.
+          schema:
+            type: boolean
+            default: true
+          explode: false
         - $ref: '#/components/parameters/organizations-api_PageTokenParamsPageToken'
         - $ref: '#/components/parameters/organizations-api_PageTokenParamsPageSize'
       responses:
@@ -220865,17 +220877,6 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/organizations-api_MemberID'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                member_id:
-                  $ref: '#/components/schemas/organizations-api_MemberID'
-              required:
-                - member_id
       responses:
         '204':
           description: There is no content to send for this request, but the headers may be useful.
@@ -426472,7 +426473,7 @@ components:
     organizations-api_MemberID:
       description: Organization Member ID
       type: string
-      example: a7b9c3d2e8f4g1h5i6j0k9l2m3n7o4p8
+      example: a7b9c3d2e8f4a1b5c6d0e9f2a3b7c4d8
       pattern: ^[a-f0-9]{32}$
     organizations-api_MemberSubjectUser:
       type: object
@@ -426599,7 +426600,7 @@ components:
         - sub_org_creation
     organizations-api_OrganizationID:
       type: string
-      example: a7b9c3d2e8f4g1h5i6j0k9l2m3n7o4p8
+      example: a7b9c3d2e8f4a1b5c6d0e9f2a3b7c4d8
       pattern: ^[a-f0-9]{32}$
       title: Organization ID
       x-auditable: true
