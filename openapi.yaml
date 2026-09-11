@@ -134798,6 +134798,16 @@ paths:
           schema:
             type: string
             nullable: true
+        - name: tag
+          in: query
+          description: |-
+            Filter by tag key:value pairs. Multiple `tag` params are AND'd.
+            Format: `tag=key:value` (e.g., `tag=environment:production`).
+            Key and value must both be non-empty; `tag=:value` and `tag=key:` return 400.
+          schema:
+            type: array
+            items:
+              type: string
         - name: page
           in: query
           description: Current page in the response
@@ -134885,6 +134895,15 @@ paths:
                   x-auditable: true
                 ip:
                   $ref: '#/components/schemas/infra_IPInfo'
+                tags:
+                  description: |-
+                    Optional tags to associate with the target. Keys and values are
+                    user-defined strings.
+                  type: object
+                  additionalProperties:
+                    type: string
+                  nullable: true
+                  x-stainless-terraform-configurability: computed_optional
               required:
                 - hostname
                 - ip
@@ -135027,6 +135046,15 @@ paths:
                   x-auditable: true
                 ip:
                   $ref: '#/components/schemas/infra_IPInfo'
+                tags:
+                  description: |-
+                    Optional tags to associate with the target. Keys and values are
+                    user-defined strings.
+                  type: object
+                  additionalProperties:
+                    type: string
+                  nullable: true
+                  x-stainless-terraform-configurability: computed_optional
               required:
                 - hostname
                 - ip
@@ -135132,6 +135160,15 @@ paths:
                     x-auditable: true
                   ip:
                     $ref: '#/components/schemas/infra_IPInfo'
+                  tags:
+                    description: |-
+                      Optional tags to associate with the target. Keys and values are
+                      user-defined strings.
+                    type: object
+                    additionalProperties:
+                      type: string
+                    nullable: true
+                    x-stainless-terraform-configurability: computed_optional
                 required:
                   - hostname
                   - ip
@@ -135164,6 +135201,8 @@ paths:
       x-fern-sdk-group-name: access.targets.bulk
       x-fern-sdk-method-name: update
       x-forge-hidden: true
+      x-stainless-skip:
+        - terraform
   /accounts/{account_id}/infrastructure/targets/batch_delete:
     post:
       operationId: infra-targets-delete-batch-post
@@ -135208,6 +135247,60 @@ paths:
       x-fern-sdk-group-name: access.targets.bulk
       x-fern-sdk-method-name: delete
       x-forge-hidden: true
+  /accounts/{account_id}/infrastructure/targets/batch_tags:
+    post:
+      operationId: infra-targets-post-batch-tags
+      summary: Replace tags on existing targets
+      description: Replaces tags for one or more existing infrastructure access targets.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/infra_AccountTag'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                items:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/infra_BatchReplaceTargetTagsItem'
+              required:
+                - items
+      responses:
+        '200':
+          description: Successfully replaced the targets' tags.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/infra_api-response-single'
+                  - properties:
+                      result:
+                        $ref: '#/components/schemas/infra_TargetArray'
+                    type: object
+        4XX:
+          description: Failed to replace the targets' tags.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/infra_api-response-common-failure'
+      security:
+        - api_email: []
+          api_key: []
+          api_token: []
+      tags:
+        - Infrastructure Access Targets
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: access.targets.bulk
+      x-fern-sdk-method-name: replace-tags
+      x-forge-hidden: true
+      x-stainless-skip:
+        - terraform
   /accounts/{account_id}/intel/asn/{asn}:
     get:
       operationId: asn-intelligence-get-asn-overview
@@ -410593,6 +410686,18 @@ components:
           example: verify_full
       required:
         - cert_verification_mode
+    infra_BatchReplaceTargetTagsItem:
+      type: object
+      properties:
+        tags:
+          type: object
+          additionalProperties:
+            type: string
+        target_id:
+          $ref: '#/components/schemas/infra_TargetId'
+      required:
+        - target_id
+        - tags
     infra_ConnectivityServiceArray:
       type: array
       items:
@@ -410829,6 +410934,13 @@ components:
           type: string
           format: date-time
           example: 2019-08-24T14:15:22Z
+        tags:
+          description: Tags assigned to the target. Empty when no tags are assigned.
+          type: object
+          additionalProperties:
+            type: string
+          nullable: true
+          x-stainless-terraform-configurability: computed_optional
       required:
         - id
         - hostname
