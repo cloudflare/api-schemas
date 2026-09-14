@@ -402754,12 +402754,38 @@ components:
             oneOf:
               - $ref: '#/components/schemas/email-sending_EmailInlineAttachment'
               - $ref: '#/components/schemas/email-sending_EmailAttachment'
+          example:
+            - content: JVBERi0xLjQK...
+              disposition: attachment
+              filename: report.pdf
+              type: application/pdf
         bcc:
-          $ref: '#/components/schemas/email-sending_NamedRecipientList'
+          description: Blind carbon copy recipient(s). Optional. A single email string, a named address object, or an array of either.
+          example:
+            - bcc-recipient@example.com
+          oneOf:
+            - $ref: '#/components/schemas/email-sending_EmailAddressString'
+            - $ref: '#/components/schemas/email-sending_EmailAddressObject'
+            - items:
+                oneOf:
+                  - $ref: '#/components/schemas/email-sending_EmailAddressString'
+                  - $ref: '#/components/schemas/email-sending_EmailAddressObject'
+              type: array
         cc:
-          $ref: '#/components/schemas/email-sending_NamedRecipientList'
+          description: Carbon copy recipient(s). Optional. A single email string, a named address object, or an array of either.
+          example:
+            - cc-recipient@example.com
+          oneOf:
+            - $ref: '#/components/schemas/email-sending_EmailAddressString'
+            - $ref: '#/components/schemas/email-sending_EmailAddressObject'
+            - items:
+                oneOf:
+                  - $ref: '#/components/schemas/email-sending_EmailAddressString'
+                  - $ref: '#/components/schemas/email-sending_EmailAddressObject'
+              type: array
         from:
           description: Sender email address. Either a plain string or an object with address and name.
+          example: sender@example.com
           oneOf:
             - $ref: '#/components/schemas/email-sending_EmailAddressString'
             - $ref: '#/components/schemas/email-sending_EmailAddressObject'
@@ -402776,6 +402802,7 @@ components:
           example: <h1>Hello</h1><p>Please find your report attached.</p>
         reply_to:
           description: Reply-to address. Either a plain string or an object with address and name.
+          example: replies@example.com
           oneOf:
             - $ref: '#/components/schemas/email-sending_EmailAddressString'
             - $ref: '#/components/schemas/email-sending_EmailAddressObject'
@@ -402791,7 +402818,17 @@ components:
 
             Please find your report attached.
         to:
-          $ref: '#/components/schemas/email-sending_NamedRecipientList'
+          description: Recipient(s). Optional if cc or bcc is provided. A single email string, a named address object, or an array of either.
+          example:
+            - recipient@example.com
+          oneOf:
+            - $ref: '#/components/schemas/email-sending_EmailAddressString'
+            - $ref: '#/components/schemas/email-sending_EmailAddressObject'
+            - items:
+                oneOf:
+                  - $ref: '#/components/schemas/email-sending_EmailAddressString'
+                  - $ref: '#/components/schemas/email-sending_EmailAddressObject'
+              type: array
       example:
         attachments:
           - content: JVBERi0xLjQK...
@@ -402897,20 +402934,6 @@ components:
         - queued
         - permanent_bounces
         - suppressed_recipients
-    email-sending_NamedRecipientList:
-      description: Recipient(s). Optional if cc or bcc is provided. A single email string, a named address object, or an array of either.
-      example:
-        - recipient-a@example.com
-        - address: recipient-b@example.com
-          name: Recipient B
-      oneOf:
-        - $ref: '#/components/schemas/email-sending_EmailAddressString'
-        - $ref: '#/components/schemas/email-sending_EmailAddressObject'
-        - items:
-            oneOf:
-              - $ref: '#/components/schemas/email-sending_EmailAddressString'
-              - $ref: '#/components/schemas/email-sending_EmailAddressObject'
-          type: array
     email-sending_SendRawRequest:
       type: object
       properties:
