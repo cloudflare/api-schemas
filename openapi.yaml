@@ -6627,10 +6627,6 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/access_identifier-3'
-      requestBody:
-        required: true
-        content:
-          application/json: {}
       responses:
         '200':
           description: Delete a Bookmark application response
@@ -6724,10 +6720,6 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/access_identifier-3'
-      requestBody:
-        required: true
-        content:
-          application/json: {}
       responses:
         '200':
           description: Create a Bookmark application response
@@ -6772,10 +6764,6 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/access_identifier-3'
-      requestBody:
-        required: true
-        content:
-          application/json: {}
       responses:
         '200':
           description: Update a Bookmark application response
@@ -8905,7 +8893,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/access_single_response'
+                $ref: '#/components/schemas/access_get_response'
         4XX:
           description: Get your Zero Trust organization response failure
           content:
@@ -331119,7 +331107,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/access_single_response-15'
+                $ref: '#/components/schemas/access_get_response-2'
         4XX:
           description: Get your Zero Trust organization response failure
           content:
@@ -373309,6 +373297,44 @@ components:
           x-auditable: true
       example:
         country: US
+    access_get_response:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/access_api-response-single'
+        - properties:
+            result:
+              allOf:
+                - $ref: '#/components/schemas/access_organizations'
+                - properties:
+                    trusted_accounts:
+                      description: The account tags of organizations trusted by this organization for policy and device posture sharing.
+                      type: array
+                      items:
+                        type: string
+                      example:
+                        - 023e105f4ecef8ad9ca31a8372d0c353
+                      readOnly: true
+                  type: object
+          type: object
+    access_get_response-2:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/access_api-response-single'
+        - properties:
+            result:
+              allOf:
+                - $ref: '#/components/schemas/access_organizations-2'
+                - properties:
+                    trusted_accounts:
+                      description: The account tags of organizations trusted by this organization for policy and device posture sharing.
+                      type: array
+                      items:
+                        type: string
+                      example:
+                        - 023e105f4ecef8ad9ca31a8372d0c353
+                      readOnly: true
+                  type: object
+          type: object
     access_github:
       type: object
       allOf:
@@ -373389,11 +373415,18 @@ components:
                       type: string
                       example: mycompany.com
                     prompt:
-                      description: Configures the Google account chooser prompt.
+                      description: Configures the prompt behavior for Google authentication.
                       type: string
                       example: select_account
                       enum:
+                        - none
+                        - consent
                         - select_account
+                      x-auditable: true
+                    use_login_hint:
+                      description: Whether to use a previously authenticated Access email as a Google login hint when exactly one email matches the Workspace domain.
+                      type: boolean
+                      example: true
                       x-auditable: true
                   type: object
           type: object
@@ -373412,11 +373445,17 @@ components:
                       type: string
                       example: mycompany.com
                     prompt:
-                      description: Configures the Google account chooser prompt.
+                      description: Configures the prompt behavior for Google authentication.
                       type: string
                       example: select_account
                       enum:
+                        - none
+                        - consent
                         - select_account
+                    use_login_hint:
+                      description: Whether to use a previously authenticated Access email as a Google login hint when exactly one email matches the Workspace domain.
+                      type: boolean
+                      example: true
                   type: object
           type: object
       title: Google Workspace
@@ -377685,15 +377724,58 @@ components:
         items:
           type: string
         type: array
+      deprecated: true
     access_target_criteria_base:
+      description: Defines targets covered by the application. Use either the legacy top-level target_attributes format or the rule format, but not both. The rule format requires include; require and exclude are optional.
       type: object
       properties:
+        exclude:
+          description: Target is excluded when any selector in this rule matches.
+          type: object
+          allOf:
+            - $ref: '#/components/schemas/access_target_rule'
+        include:
+          description: Target matches when any selector in this rule matches.
+          type: object
+          allOf:
+            - $ref: '#/components/schemas/access_target_rule'
         port:
-          $ref: '#/components/schemas/access_port'
+          type: integer
+          allOf:
+            - $ref: '#/components/schemas/access_port'
+        require:
+          description: Target matches only when every selector in this rule matches.
+          type: object
+          allOf:
+            - $ref: '#/components/schemas/access_target_rule'
         target_attributes:
-          $ref: '#/components/schemas/access_target_attributes'
+          type: object
+          allOf:
+            - $ref: '#/components/schemas/access_target_attributes'
+      oneOf:
+        - not:
+            anyOf:
+              - required:
+                  - include
+                type: object
+              - required:
+                  - require
+                type: object
+              - required:
+                  - exclude
+                type: object
+            type: object
+          required:
+            - target_attributes
+          type: object
+        - not:
+            required:
+              - target_attributes
+            type: object
+          required:
+            - include
+          type: object
       required:
-        - target_attributes
         - port
         - protocol
       title: Target Criteria
@@ -377702,15 +377784,62 @@ components:
         - $ref: '#/components/schemas/access_target_criteria_base'
         - properties:
             protocol:
-              $ref: '#/components/schemas/access_protocol_infra_app'
+              type: string
+              allOf:
+                - $ref: '#/components/schemas/access_protocol_infra_app'
           type: object
     access_target_criteria_self_hosted_app:
       allOf:
         - $ref: '#/components/schemas/access_target_criteria_base'
         - properties:
             protocol:
-              $ref: '#/components/schemas/access_protocol_self_hosted_app'
+              type: string
+              allOf:
+                - $ref: '#/components/schemas/access_protocol_self_hosted_app'
           type: object
+    access_target_rule:
+      description: Selectors within an include, require, or exclude rule. At least one of target_attributes or tags must be non-empty.
+      type: object
+      properties:
+        tags:
+          description: Map of target tag keys to values. Values within a key are OR'd.
+          type: object
+          example:
+            environment:
+              - production
+          additionalProperties:
+            items:
+              minLength: 1
+              type: string
+            maxItems: 50
+            minItems: 1
+            type: array
+          maxProperties: 50
+          minProperties: 1
+        target_attributes:
+          type: object
+          allOf:
+            - $ref: '#/components/schemas/access_target_rule_attributes'
+      additionalProperties: false
+      minProperties: 1
+      title: Target Rule
+    access_target_rule_attributes:
+      description: Hostname selector map for include, require, or exclude rules. This is distinct from the deprecated top-level target_attributes field and only supports the hostname key.
+      type: object
+      properties:
+        hostname:
+          type: array
+          items:
+            minLength: 1
+            type: string
+          maxItems: 5000
+          minItems: 1
+      example:
+        hostname:
+          - web-*
+      additionalProperties: false
+      maxProperties: 1
+      minProperties: 1
     access_template_violation:
       description: A single validation finding for a template.
       type: object
