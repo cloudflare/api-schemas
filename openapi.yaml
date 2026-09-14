@@ -136399,6 +136399,10 @@ paths:
           in: query
           schema:
             $ref: '#/components/schemas/security-center_products'
+        - name: source
+          in: query
+          schema:
+            $ref: '#/components/schemas/security-center_sources'
         - name: severity
           in: query
           schema:
@@ -136565,6 +136569,10 @@ paths:
           in: query
           schema:
             $ref: '#/components/schemas/security-center_products'
+        - name: source
+          in: query
+          schema:
+            $ref: '#/components/schemas/security-center_sources'
         - name: severity
           in: query
           schema:
@@ -136647,6 +136655,10 @@ paths:
           in: query
           schema:
             $ref: '#/components/schemas/security-center_products'
+        - name: source
+          in: query
+          schema:
+            $ref: '#/components/schemas/security-center_sources'
         - name: severity
           in: query
           schema:
@@ -136729,6 +136741,10 @@ paths:
           in: query
           schema:
             $ref: '#/components/schemas/security-center_products'
+        - name: source
+          in: query
+          schema:
+            $ref: '#/components/schemas/security-center_sources'
         - name: severity
           in: query
           schema:
@@ -179569,6 +179585,10 @@ paths:
           in: query
           schema:
             $ref: '#/components/schemas/security-center_products'
+        - name: source
+          in: query
+          schema:
+            $ref: '#/components/schemas/security-center_sources'
         - name: severity
           in: query
           schema:
@@ -179908,6 +179928,10 @@ paths:
           in: query
           schema:
             $ref: '#/components/schemas/security-center_products'
+        - name: source
+          in: query
+          schema:
+            $ref: '#/components/schemas/security-center_sources'
         - name: severity
           in: query
           schema:
@@ -179957,6 +179981,47 @@ paths:
         - Security Center Insights
       x-fern-availability: generally-available
       x-fern-sdk-group-name: security-center.insights.class
+      x-fern-sdk-method-name: get
+      x-forge-hidden: true
+  /accounts/{account_id}/security-center/insights/count:
+    get:
+      operationId: get-security-center-partner-insight-count
+      summary: Retrieves a Partner Security Center Insight Count
+      description: Retrieves the uncapped count of active, non-dismissed, unclassified RiskRecon insights for the account.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/security-center_identifier'
+        - name: source
+          in: query
+          required: true
+          schema:
+            type: string
+            enum:
+              - riskrecon
+      responses:
+        '200':
+          description: The request was successful.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/security-center_partnerInsightCountResponse'
+        4XX:
+          description: A client error occurred.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/security-center_api-response-common-failure'
+      security:
+        - api_email: []
+          api_key: []
+        - api_token: []
+      tags:
+        - Security Center Insights
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: security-center.insights
       x-fern-sdk-method-name: get
       x-forge-hidden: true
   /accounts/{account_id}/security-center/insights/scans:
@@ -180069,6 +180134,10 @@ paths:
           in: query
           schema:
             $ref: '#/components/schemas/security-center_products'
+        - name: source
+          in: query
+          schema:
+            $ref: '#/components/schemas/security-center_sources'
         - name: severity
           in: query
           schema:
@@ -180147,6 +180216,10 @@ paths:
           in: query
           schema:
             $ref: '#/components/schemas/security-center_products'
+        - name: source
+          in: query
+          schema:
+            $ref: '#/components/schemas/security-center_sources'
         - name: severity
           in: query
           schema:
@@ -350081,6 +350154,10 @@ paths:
           in: query
           schema:
             $ref: '#/components/schemas/security-center_products'
+        - name: source
+          in: query
+          schema:
+            $ref: '#/components/schemas/security-center_sources'
         - name: severity
           in: query
           schema:
@@ -350386,6 +350463,10 @@ paths:
           in: query
           schema:
             $ref: '#/components/schemas/security-center_products'
+        - name: source
+          in: query
+          schema:
+            $ref: '#/components/schemas/security-center_sources'
         - name: severity
           in: query
           schema:
@@ -350555,6 +350636,10 @@ paths:
           in: query
           schema:
             $ref: '#/components/schemas/security-center_products'
+        - name: source
+          in: query
+          schema:
+            $ref: '#/components/schemas/security-center_sources'
         - name: severity
           in: query
           schema:
@@ -350636,6 +350721,10 @@ paths:
           in: query
           schema:
             $ref: '#/components/schemas/security-center_products'
+        - name: source
+          in: query
+          schema:
+            $ref: '#/components/schemas/security-center_sources'
         - name: severity
           in: query
           schema:
@@ -448891,6 +448980,22 @@ components:
       description: Specifies the current page within paginated list of results.
       type: integer
       example: 1
+    security-center_partnerInsightCountResponse:
+      allOf:
+        - $ref: '#/components/schemas/security-center_api-response-common'
+        - properties:
+            result:
+              anyOf:
+                - additionalProperties: false
+                  properties:
+                    count:
+                      type: integer
+                      example: 1
+                      x-auditable: true
+                  required:
+                    - count
+                  type: object
+          type: object
     security-center_perPage:
       description: Sets the number of results per page of results.
       type: integer
@@ -449033,6 +449138,16 @@ components:
       example:
         - low
         - moderate
+    security-center_sources:
+      type: array
+      items:
+        enum:
+          - cloudflare
+          - riskrecon
+        type: string
+        x-auditable: true
+      example:
+        - cloudflare
     security-center_subject:
       type: string
       example: example.com
