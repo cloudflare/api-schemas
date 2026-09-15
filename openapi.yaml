@@ -174880,7 +174880,14 @@ paths:
           schema:
             type: string
         - $ref: '#/components/parameters/realtimekit_pageNo'
-        - $ref: '#/components/parameters/realtimekit_perPage'
+        - name: per_page
+          in: query
+          description: Number of results per page.
+          schema:
+            type: integer
+            default: 25
+            maximum: 200
+            minimum: 1
         - $ref: '#/components/parameters/realtimekit_sortOrder'
         - $ref: '#/components/parameters/realtimekit_participantsSortBy'
         - name: include_peer_events
@@ -174922,7 +174929,7 @@ paths:
     get:
       operationId: GetParticipantDetails
       summary: Fetch details of a participant
-      description: Returns details of the given participant ID along with call statistics for the given session ID.
+      description: Returns details of the given participant ID for the given session ID. Use the peer report endpoint to retrieve call statistics.
       parameters:
         - name: account_id
           in: path
