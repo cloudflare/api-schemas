@@ -190152,6 +190152,12 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/stream_identifier-2'
+        - name: Idempotency-Key
+          in: header
+          description: Prevents duplicate live inputs from being created when retrying this request. The key is scoped to the account, may contain up to 255 bytes, and expires six hours after the live input is created. Reusing a key for a deleted input before expiry returns a 409 Conflict response.
+          schema:
+            type: string
+            maxLength: 255
       requestBody:
         required: true
         content:
@@ -458613,11 +458619,15 @@ components:
                   type: string
                   format: uri
                   example: https://example.com
+                  x-stainless-skip: true
                 notificationUrl:
                   description: The URL where webhooks will be sent.
                   type: string
                   format: uri
                   example: https://example.com
+                  x-stainless-naming:
+                    go:
+                      property_name: NotificationURL
                 secret:
                   description: The secret used to verify webhook signatures.
                   type: string
