@@ -115395,6 +115395,7 @@ paths:
                     key: U+QTP50RsWfeLGHF4tlGDnmGeuwtsz46KCHr5OyhWq00Rsdfl45mgnQAuEJ6CO0YrkyTl9FUf5iB0bwYR3g4EEFEHhtu6jFaqfMrBMBSz6itv9HQXkaR9OieKQ==
                     key_type: secp256r1
                     last_seen_at: 2025-02-14T13:17:00Z
+                    registration_type: warp
                     revoked_at: null
                     tunnel_type: masque
                     updated_at: 2025-02-14T13:17:00Z
@@ -115412,6 +115413,7 @@ paths:
                     key: V/RSP61StXgfmLHJG5umHEonHfvxtz57LDIs6PziXr11Stegm56nhrRBvFK7DP1ZsLzUm0GVg6jC1cxZS4h5FFGFJiju7kGbrgNsCNCT77juw0IRYlS0QpjgLR==
                     key_type: secp256r1
                     last_seen_at: 2025-02-15T10:25:00Z
+                    registration_type: browser_extension
                     revoked_at: null
                     tunnel_type: masque
                     updated_at: 2025-02-15T10:25:00Z
@@ -460720,6 +460722,8 @@ components:
           x-auditable: true
         policy:
           $ref: '#/components/schemas/teams-devices_policy_summary'
+        registration_type:
+          $ref: '#/components/schemas/teams-devices_registration_type'
         revoked_at:
           description: The RFC3339 timestamp when the registration was revoked.
           type: string
@@ -460754,6 +460758,7 @@ components:
       required:
         - id
         - key
+        - registration_type
         - device
         - created_at
         - updated_at
@@ -460795,6 +460800,14 @@ components:
       type: string
       example: f174e90a-fafe-4643-bbbc-4a0ed4fc8415
       maxLength: 36
+      x-auditable: true
+    teams-devices_registration_type:
+      description: The registration client type, derived from device_type.
+      type: string
+      example: warp
+      enum:
+        - warp
+        - browser_extension
       x-auditable: true
     teams-devices_requireAll:
       description: Whether to check all disks for encryption.
