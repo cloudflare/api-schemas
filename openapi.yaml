@@ -64932,6 +64932,8 @@ paths:
           $ref: '#/components/responses/brex_NotFound'
         '500':
           $ref: '#/components/responses/brex_InternalServerError'
+        '503':
+          $ref: '#/components/responses/brex_ServiceUnavailable'
       security:
         - api_token: []
       tags:
@@ -64959,6 +64961,8 @@ paths:
           $ref: '#/components/responses/brex_NotFound'
         '500':
           $ref: '#/components/responses/brex_InternalServerError'
+        '503':
+          $ref: '#/components/responses/brex_ServiceUnavailable'
       security:
         - api_token: []
       tags:
@@ -64997,6 +65001,8 @@ paths:
           $ref: '#/components/responses/brex_Conflict'
         '500':
           $ref: '#/components/responses/brex_InternalServerError'
+        '503':
+          $ref: '#/components/responses/brex_ServiceUnavailable'
       security:
         - api_token: []
       tags:
@@ -65034,6 +65040,8 @@ paths:
           $ref: '#/components/responses/brex_NotFound'
         '500':
           $ref: '#/components/responses/brex_InternalServerError'
+        '503':
+          $ref: '#/components/responses/brex_ServiceUnavailable'
       security:
         - api_token: []
       tags:
@@ -65081,6 +65089,8 @@ paths:
           $ref: '#/components/responses/brex_Forbidden'
         '500':
           $ref: '#/components/responses/brex_InternalServerError'
+        '503':
+          $ref: '#/components/responses/brex_ServiceUnavailable'
       security:
         - api_token: []
       tags:
@@ -65112,6 +65122,8 @@ paths:
           $ref: '#/components/responses/brex_NotFound'
         '500':
           $ref: '#/components/responses/brex_InternalServerError'
+        '503':
+          $ref: '#/components/responses/brex_ServiceUnavailable'
       security:
         - api_token: []
       tags:
@@ -65128,6 +65140,50 @@ paths:
         schema:
           type: string
           minLength: 1
+  /accounts/{account_id}/browser-extension/config/logs/extension-events/search:
+    parameters:
+      - $ref: '#/components/parameters/brex_AccountId'
+    post:
+      operationId: accounts-browser-extension-config-extension-events-search
+      summary: Search browser extension event logs
+      description: |
+        Searches browser extension event logs for an account. The request accepts
+        only supported fields and filters; raw SQL is not accepted.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/brex_ExtensionEventsSearchRequest'
+      responses:
+        '200':
+          description: Browser extension event log search response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/brex_ExtensionEventsSearchResponse'
+        '400':
+          $ref: '#/components/responses/brex_BadRequest'
+        '401':
+          $ref: '#/components/responses/brex_Unauthorized'
+        '403':
+          $ref: '#/components/responses/brex_Forbidden'
+        '413':
+          $ref: '#/components/responses/brex_BadRequest'
+        '500':
+          $ref: '#/components/responses/brex_InternalServerError'
+        '502':
+          $ref: '#/components/responses/brex_InternalServerError'
+        '503':
+          $ref: '#/components/responses/brex_InternalServerError'
+      security:
+        - api_token: []
+      tags:
+        - Browser Extension Config
+      x-fern-availability: beta
+      x-fern-sdk-group-name: browser-extension.config.logs.extension-events
+      x-fern-sdk-method-name: search
+      x-stability: beta
   /accounts/{account_id}/browser-rendering/accessibilityTree:
     post:
       operationId: brapi-post_AccessibilityTree
@@ -388340,6 +388396,161 @@ components:
         - success
         - errors
         - messages
+    brex_ExtensionEventField:
+      type: string
+      enum:
+        - timestamp
+        - durationMs
+        - eventName
+        - action
+        - userEmail
+        - registrationId
+        - policyId
+        - url
+        - matchedDlpProfiles
+        - inventoryExtensionId
+        - inventoryExtensionName
+        - inventoryExtensionVersion
+    brex_ExtensionEventFilter:
+      type: object
+      properties:
+        field:
+          $ref: '#/components/schemas/brex_ExtensionEventField'
+        op:
+          $ref: '#/components/schemas/brex_ExtensionEventFilterOperator'
+        value:
+          oneOf:
+            - maxLength: 2048
+              minLength: 1
+              type: string
+            - format: int64
+              minimum: 0
+              type: integer
+            - items:
+                maxLength: 2048
+                minLength: 1
+                type: string
+              maxItems: 20
+              minItems: 1
+              type: array
+            - items:
+                format: int64
+                minimum: 0
+                type: integer
+              maxItems: 20
+              minItems: 1
+              type: array
+      required:
+        - field
+        - op
+        - value
+    brex_ExtensionEventFilterOperator:
+      type: string
+      enum:
+        - eq
+        - neq
+        - in
+        - notIn
+        - contains
+        - notContains
+        - includes
+        - notIncludes
+        - gte
+        - lte
+    brex_ExtensionEventLogRow:
+      type: object
+      properties:
+        action:
+          type: string
+        durationMs:
+          type: number
+        eventName:
+          type: string
+        inventoryExtensionId:
+          type: string
+        inventoryExtensionName:
+          type: string
+        inventoryExtensionVersion:
+          type: string
+        matchedDlpProfiles:
+          type: array
+          items:
+            type: string
+        policyId:
+          type: string
+        registrationId:
+          type: string
+        timestamp:
+          type: string
+        url:
+          type: string
+        userEmail:
+          type: string
+    brex_ExtensionEventsSearchRequest:
+      type: object
+      properties:
+        fields:
+          type: array
+          items:
+            $ref: '#/components/schemas/brex_ExtensionEventField'
+          maxItems: 12
+          minItems: 1
+        filters:
+          type: array
+          items:
+            $ref: '#/components/schemas/brex_ExtensionEventFilter'
+          maxItems: 20
+        from:
+          type: string
+          format: date-time
+          maxLength: 64
+        includeTotal:
+          type: boolean
+          default: false
+        limit:
+          type: integer
+          default: 50
+          maximum: 200
+          minimum: 1
+        page:
+          type: integer
+          default: 1
+          minimum: 1
+        to:
+          type: string
+          format: date-time
+          maxLength: 64
+      required:
+        - from
+        - to
+    brex_ExtensionEventsSearchResponse:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/brex_ApiMessage'
+          maxItems: 0
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/brex_ApiMessage'
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/brex_ExtensionEventLogRow'
+        result_info:
+          $ref: '#/components/schemas/brex_PagePaginationInfo'
+        success:
+          type: boolean
+          enum:
+            - true
+      required:
+        - result
+        - result_info
+        - success
+        - errors
+        - messages
     brex_InstalledExtension:
       type: object
       properties:
@@ -388433,6 +388644,21 @@ components:
         - success
         - errors
         - messages
+    brex_PagePaginationInfo:
+      type: object
+      properties:
+        count:
+          type: integer
+        page:
+          type: integer
+        per_page:
+          type: integer
+        total_count:
+          type: integer
+      required:
+        - page
+        - per_page
+        - count
     brex_PaginationInfo:
       type: object
       properties:
@@ -488615,7 +488841,7 @@ components:
           schema:
             $ref: '#/components/schemas/brex_ErrorResponse'
     brex_Forbidden:
-      description: The authenticated user is not authorized to access this account.
+      description: The authenticated user is not authorized to access this account, the Browser Extension service is not enabled for this account, or service availability could not be verified for this account.
       content:
         application/json:
           schema:
@@ -488628,6 +488854,12 @@ components:
             $ref: '#/components/schemas/brex_ErrorResponse'
     brex_NotFound:
       description: Resource not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/brex_ErrorResponse'
+    brex_ServiceUnavailable:
+      description: Browser Extension service availability could not be verified.
       content:
         application/json:
           schema:
