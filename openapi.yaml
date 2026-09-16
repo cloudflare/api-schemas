@@ -115087,6 +115087,7 @@ paths:
         - $ref: '#/components/parameters/teams-devices_devices_list_devices_param_per_page'
         - $ref: '#/components/parameters/teams-devices_devices_list_devices_param_search'
         - $ref: '#/components/parameters/teams-devices_devices_list_devices_param_active_registrations'
+        - $ref: '#/components/parameters/teams-devices_devices_list_devices_param_has_registration_type'
         - $ref: '#/components/parameters/teams-devices_devices_list_devices_param_id'
         - $ref: '#/components/parameters/teams-devices_devices_list_devices_param_last_seen_registration_policy_id'
         - $ref: '#/components/parameters/teams-devices_devices_list_devices_param_include'
@@ -116836,6 +116837,7 @@ paths:
         - $ref: '#/components/parameters/teams-devices_devices_list_registrations_param_seen_after'
         - $ref: '#/components/parameters/teams-devices_devices_list_registrations_param_seen_before'
         - $ref: '#/components/parameters/teams-devices_devices_list_registrations_param_status'
+        - $ref: '#/components/parameters/teams-devices_devices_list_registrations_param_registration_type'
         - $ref: '#/components/parameters/teams-devices_devices_list_registrations_param_per_page'
         - $ref: '#/components/parameters/teams-devices_devices_list_registrations_param_search'
         - $ref: '#/components/parameters/teams-devices_devices_list_registrations_param_sort_by'
@@ -369733,6 +369735,13 @@ components:
       name: cursor
       schema:
         type: string
+    teams-devices_devices_list_devices_param_has_registration_type:
+      description: Filter by the type of active registration associated with the device.
+      explode: false
+      in: query
+      name: has_registration_type
+      schema:
+        $ref: '#/components/schemas/teams-devices_registration_type'
     teams-devices_devices_list_devices_param_id:
       description: Filter by a one or more device IDs.
       explode: true
@@ -369868,6 +369877,13 @@ components:
         type: string
         format: uuid
         example: 11ffb86f-3f0c-4306-b4a2-e62f872b166a
+    teams-devices_devices_list_registrations_param_registration_type:
+      description: Filter by registration client type.
+      explode: false
+      in: query
+      name: registration_type
+      schema:
+        $ref: '#/components/schemas/teams-devices_registration_type'
     teams-devices_devices_list_registrations_param_search:
       description: Filter by registration details.
       explode: false
