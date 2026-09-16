@@ -65166,7 +65166,7 @@ paths:
                   type: number
                   maximum: 120000
                 addScriptTag:
-                  description: Adds a `<script>` tag into the page with the desired URL or content.
+                  description: Adds a script element into the page with the desired URL or content.
                   type: array
                   items:
                     additionalProperties: false
@@ -65517,10 +65517,36 @@ paths:
                   maximum: 120000
               additionalProperties: false
               oneOf:
-                - required:
+                - not:
+                    properties:
+                      html:
+                        type: string
+                    required:
+                      - html
+                    type: object
+                  properties:
+                    html:
+                      type: string
+                    url:
+                      type: string
+                  required:
                     - url
-                - required:
+                  type: object
+                - not:
+                    properties:
+                      url:
+                        type: string
+                    required:
+                      - url
+                    type: object
+                  properties:
+                    html:
+                      type: string
+                    url:
+                      type: string
+                  required:
                     - html
+                  type: object
       responses:
         '200':
           description: Returns the requested formats information.
@@ -65588,6 +65614,7 @@ paths:
                         allOf:
                           - $ref: '#/components/schemas/brapi_SerializedAXNode'
                           - nullable: true
+                            type: object
                     required:
                       - accessibilityTree
                   success:
@@ -65773,7 +65800,7 @@ paths:
                   type: number
                   maximum: 120000
                 addScriptTag:
-                  description: Adds a `<script>` tag into the page with the desired URL or content.
+                  description: Adds a script element into the page with the desired URL or content.
                   type: array
                   items:
                     additionalProperties: false
@@ -66120,10 +66147,36 @@ paths:
                   maximum: 120000
               additionalProperties: false
               oneOf:
-                - required:
+                - not:
+                    properties:
+                      html:
+                        type: string
+                    required:
+                      - html
+                    type: object
+                  properties:
+                    html:
+                      type: string
+                    url:
+                      type: string
+                  required:
                     - url
-                - required:
+                  type: object
+                - not:
+                    properties:
+                      url:
+                        type: string
+                    required:
+                      - url
+                    type: object
+                  properties:
+                    html:
+                      type: string
+                    url:
+                      type: string
+                  required:
                     - html
+                  type: object
       responses:
         '200':
           description: Returns the page's content.
@@ -66370,7 +66423,7 @@ paths:
                       type: number
                       maximum: 120000
                     addScriptTag:
-                      description: Adds a `<script>` tag into the page with the desired URL or content.
+                      description: Adds a script element into the page with the desired URL or content.
                       type: array
                       items:
                         additionalProperties: false
@@ -66666,7 +66719,7 @@ paths:
                             json_schema:
                               description: 'Schema for the response format. More information here: https://developers.cloudflare.com/workers-ai/json-mode/'
                               type: object
-                              additionalProperties: {}
+                              additionalProperties: true
                               nullable: true
                             type:
                               type: string
@@ -66942,7 +66995,7 @@ paths:
                             json_schema:
                               description: 'Schema for the response format. More information here: https://developers.cloudflare.com/workers-ai/json-mode/'
                               type: object
-                              additionalProperties: {}
+                              additionalProperties: true
                               nullable: true
                             type:
                               type: string
@@ -69601,6 +69654,8 @@ paths:
                   required:
                     - sessionId
                   type: object
+        '400':
+          description: Bad request.
         '500':
           description: Internal server error.
       security:
@@ -69753,7 +69808,7 @@ paths:
                   type: number
                   maximum: 120000
                 addScriptTag:
-                  description: Adds a `<script>` tag into the page with the desired URL or content.
+                  description: Adds a script element into the page with the desired URL or content.
                   type: array
                   items:
                     additionalProperties: false
@@ -70061,7 +70116,7 @@ paths:
                     json_schema:
                       description: 'Schema for the response format. More information here: https://developers.cloudflare.com/workers-ai/json-mode/'
                       type: object
-                      additionalProperties: {}
+                      additionalProperties: true
                       nullable: true
                     type:
                       type: string
@@ -70128,10 +70183,36 @@ paths:
                   maximum: 120000
               additionalProperties: false
               oneOf:
-                - required:
+                - not:
+                    properties:
+                      html:
+                        type: string
+                    required:
+                      - html
+                    type: object
+                  properties:
+                    html:
+                      type: string
+                    url:
+                      type: string
+                  required:
                     - url
-                - required:
+                  type: object
+                - not:
+                    properties:
+                      url:
+                        type: string
+                    required:
+                      - url
+                    type: object
+                  properties:
+                    html:
+                      type: string
+                    url:
+                      type: string
+                  required:
                     - html
+                  type: object
       responses:
         '200':
           description: Returns the JSON based on a user prompt or JSON schema.
@@ -70383,7 +70464,7 @@ paths:
                   type: number
                   maximum: 120000
                 addScriptTag:
-                  description: Adds a `<script>` tag into the page with the desired URL or content.
+                  description: Adds a script element into the page with the desired URL or content.
                   type: array
                   items:
                     additionalProperties: false
@@ -70736,10 +70817,36 @@ paths:
                   maximum: 120000
               additionalProperties: false
               oneOf:
-                - required:
+                - not:
+                    properties:
+                      html:
+                        type: string
+                    required:
+                      - html
+                    type: object
+                  properties:
+                    html:
+                      type: string
+                    url:
+                      type: string
+                  required:
                     - url
-                - required:
+                  type: object
+                - not:
+                    properties:
+                      url:
+                        type: string
+                    required:
+                      - url
+                    type: object
+                  properties:
+                    html:
+                      type: string
+                    url:
+                      type: string
+                  required:
                     - html
+                  type: object
       responses:
         '200':
           description: Returns the links.
@@ -70987,7 +71094,7 @@ paths:
                   type: number
                   maximum: 120000
                 addScriptTag:
-                  description: Adds a `<script>` tag into the page with the desired URL or content.
+                  description: Adds a script element into the page with the desired URL or content.
                   type: array
                   items:
                     additionalProperties: false
@@ -71334,10 +71441,36 @@ paths:
                   maximum: 120000
               additionalProperties: false
               oneOf:
-                - required:
+                - not:
+                    properties:
+                      html:
+                        type: string
+                    required:
+                      - html
+                    type: object
+                  properties:
+                    html:
+                      type: string
+                    url:
+                      type: string
+                  required:
                     - url
-                - required:
+                  type: object
+                - not:
+                    properties:
+                      url:
+                        type: string
+                    required:
+                      - url
+                    type: object
+                  properties:
+                    html:
+                      type: string
+                    url:
+                      type: string
+                  required:
                     - html
+                  type: object
       responses:
         '200':
           description: Returns the page markdown.
@@ -71583,7 +71716,7 @@ paths:
                   type: number
                   maximum: 120000
                 addScriptTag:
-                  description: Adds a `<script>` tag into the page with the desired URL or content.
+                  description: Adds a script element into the page with the desired URL or content.
                   type: array
                   items:
                     additionalProperties: false
@@ -72029,10 +72162,36 @@ paths:
                   maximum: 120000
               additionalProperties: false
               oneOf:
-                - required:
+                - not:
+                    properties:
+                      html:
+                        type: string
+                    required:
+                      - html
+                    type: object
+                  properties:
+                    html:
+                      type: string
+                    url:
+                      type: string
+                  required:
                     - url
-                - required:
+                  type: object
+                - not:
+                    properties:
+                      url:
+                        type: string
+                    required:
+                      - url
+                    type: object
+                  properties:
+                    html:
+                      type: string
+                    url:
+                      type: string
+                  required:
                     - html
+                  type: object
       responses:
         '200':
           description: Returns the PDF.
@@ -72219,7 +72378,7 @@ paths:
                   type: number
                   maximum: 120000
                 addScriptTag:
-                  description: Adds a `<script>` tag into the page with the desired URL or content.
+                  description: Adds a script element into the page with the desired URL or content.
                   type: array
                   items:
                     additionalProperties: false
@@ -72576,10 +72735,36 @@ paths:
                   maximum: 120000
               additionalProperties: false
               oneOf:
-                - required:
+                - not:
+                    properties:
+                      html:
+                        type: string
+                    required:
+                      - html
+                    type: object
+                  properties:
+                    html:
+                      type: string
+                    url:
+                      type: string
+                  required:
                     - url
-                - required:
+                  type: object
+                - not:
+                    properties:
+                      url:
+                        type: string
+                    required:
+                      - url
+                    type: object
+                  properties:
+                    html:
+                      type: string
+                    url:
+                      type: string
+                  required:
                     - html
+                  type: object
               required:
                 - elements
       responses:
@@ -72879,7 +73064,7 @@ paths:
                   type: number
                   maximum: 120000
                 addScriptTag:
-                  description: Adds a `<script>` tag into the page with the desired URL or content.
+                  description: Adds a script element into the page with the desired URL or content.
                   type: array
                   items:
                     additionalProperties: false
@@ -73287,10 +73472,36 @@ paths:
                   maximum: 120000
               additionalProperties: false
               oneOf:
-                - required:
+                - not:
+                    properties:
+                      html:
+                        type: string
+                    required:
+                      - html
+                    type: object
+                  properties:
+                    html:
+                      type: string
+                    url:
+                      type: string
+                  required:
                     - url
-                - required:
+                  type: object
+                - not:
+                    properties:
+                      url:
+                        type: string
+                    required:
+                      - url
+                    type: object
+                  properties:
+                    html:
+                      type: string
+                    url:
+                      type: string
+                  required:
                     - html
+                  type: object
       responses:
         '200':
           description: Returns the screenshot.
@@ -73513,7 +73724,7 @@ paths:
                   type: number
                   maximum: 120000
                 addScriptTag:
-                  description: Adds a `<script>` tag into the page with the desired URL or content.
+                  description: Adds a script element into the page with the desired URL or content.
                   type: array
                   items:
                     additionalProperties: false
@@ -73919,10 +74130,36 @@ paths:
                   maximum: 120000
               additionalProperties: false
               oneOf:
-                - required:
+                - not:
+                    properties:
+                      html:
+                        type: string
+                    required:
+                      - html
+                    type: object
+                  properties:
+                    html:
+                      type: string
+                    url:
+                      type: string
+                  required:
                     - url
-                - required:
+                  type: object
+                - not:
+                    properties:
+                      url:
+                        type: string
+                    required:
+                      - url
+                    type: object
+                  properties:
+                    html:
+                      type: string
+                    url:
+                      type: string
+                  required:
                     - html
+                  type: object
       responses:
         '200':
           description: Returns the requested formats information.
