@@ -229404,7 +229404,8 @@ paths:
                           date:
                             description: Date of the returned scan (YYYY-MM-DD). May differ from the requested date if no scan exists for that exact date.
                             type: string
-                            example: 2026-03-24T00:00:00Z
+                            format: date
+                            example: 2026-03-24
                           domainCategories:
                             description: Available domain sub-categories with their scan counts. Use as filter options for the domainCategory parameter.
                             type: array
@@ -233510,7 +233511,7 @@ paths:
                             description: A numeric string that can include decimals and infinity values.
                             type: string
                             example: '10.5'
-                            pattern: ^-?(?:\d+(?:\.\d+)?|inf)$
+                            pattern: ^-?(?:\d+(?:\.\d+)?|[iI][nN][fF])$
                         required:
                           - value
                     required:
@@ -233885,6 +233886,7 @@ paths:
           schema:
             description: Skips the specified number of objects before fetching the results.
             type: integer
+            example: 0
             minimum: 0
         - name: dateRange
           in: query
@@ -234668,6 +234670,7 @@ paths:
           schema:
             description: Skips the specified number of objects before fetching the results.
             type: integer
+            example: 0
             minimum: 0
         - name: dateRange
           in: query
@@ -250122,7 +250125,7 @@ paths:
                               type: string
                               example: France
                             rank:
-                              type: number
+                              type: integer
                               example: 1
                             value:
                               type: string
@@ -250438,7 +250441,7 @@ paths:
                         items:
                           properties:
                             rank:
-                              type: number
+                              type: integer
                               example: 1
                             targetCountryAlpha2:
                               type: string
@@ -258220,7 +258223,7 @@ paths:
                               type: string
                               example: RELIANCEJIO-IN Reliance Jio Infocomm Limited
                             rank:
-                              type: number
+                              type: integer
                               example: 1
                             value:
                               type: string
@@ -259369,7 +259372,7 @@ paths:
                               type: string
                               example: France
                             rank:
-                              type: number
+                              type: integer
                               example: 1
                             value:
                               type: string
@@ -259667,7 +259670,7 @@ paths:
                         items:
                           properties:
                             rank:
-                              type: number
+                              type: integer
                               example: 1
                             targetCountryAlpha2:
                               type: string
@@ -260180,8 +260183,10 @@ paths:
         - name: prefix
           in: query
           schema:
-            type: string
             example: 1.1.1.0/24
+            anyOf:
+              - type: string
+              - type: string
         - name: minConfidence
           in: query
           description: Filters events by minimum confidence score (1-4 low, 5-7 mid, 8+ high).
@@ -260899,6 +260904,7 @@ paths:
                               example: 875649
                             v6_48s:
                               type: integer
+                              example: 0
                           required:
                             - asn
                             - v4_24s
@@ -261421,8 +261427,10 @@ paths:
         - name: prefix
           in: query
           schema:
-            type: string
             example: 1.1.1.0/24
+            anyOf:
+              - type: string
+              - type: string
         - name: invalid_only
           in: query
           description: Lookup only RPKI invalid MOASes.
@@ -261732,8 +261740,10 @@ paths:
         - name: prefix
           in: query
           schema:
-            type: string
             example: 1.1.1.0/24
+            anyOf:
+              - type: string
+              - type: string
         - name: origin
           in: query
           description: Lookup prefixes originated by the given ASN.
@@ -261871,8 +261881,10 @@ paths:
         - name: prefix
           in: query
           schema:
-            type: string
             example: 1.1.1.0/24
+            anyOf:
+              - type: string
+              - type: string
         - name: format
           in: query
           description: Format in which results will be returned.
@@ -263175,7 +263187,9 @@ paths:
             description: Filters results by BGP network prefix.
             type: array
             items:
-              type: string
+              anyOf:
+                - type: string
+                - type: string
             example: 1.1.1.0/24
         - name: updateType
           in: query
@@ -263478,7 +263492,9 @@ paths:
             description: Filters results by BGP network prefix.
             type: array
             items:
-              type: string
+              anyOf:
+                - type: string
+                - type: string
             example: 1.1.1.0/24
         - name: updateType
           in: query
@@ -263929,6 +263945,7 @@ paths:
           schema:
             description: Skips the specified number of objects before fetching the results.
             type: integer
+            example: 0
             minimum: 0
         - name: botCategory
           in: query
@@ -264530,7 +264547,7 @@ paths:
                         additionalProperties:
                           description: A numeric string that can include decimals and infinity values.
                           example: '10.5'
-                          pattern: ^-?(?:\d+(?:\.\d+)?|inf)$
+                          pattern: ^-?(?:\d+(?:\.\d+)?|[iI][nN][fF])$
                           type: string
                     required:
                       - summary_0
@@ -264927,7 +264944,7 @@ paths:
                           items:
                             description: A numeric string that can include decimals and infinity values.
                             example: '10.5'
-                            pattern: ^-?(?:\d+(?:\.\d+)?|inf)$
+                            pattern: ^-?(?:\d+(?:\.\d+)?|[iI][nN][fF])$
                             type: string
                           type: array
                         properties:
@@ -266207,6 +266224,7 @@ paths:
           schema:
             description: Skips the specified number of objects before fetching the results.
             type: integer
+            example: 0
             minimum: 0
         - name: format
           in: query
@@ -266503,11 +266521,13 @@ paths:
                           validFrom:
                             description: The start date of the certificate’s validity period (ISO format).
                             type: string
-                            example: 2019-12-09T00:00:00Z
+                            format: date
+                            example: 2019-12-09
                           validTo:
                             description: The end date of the certificate’s validity period (ISO format).
                             type: string
-                            example: 2032-06-08T00:00:00Z
+                            format: date
+                            example: 2032-06-08
                         required:
                           - sha256Fingerprint
                           - name
@@ -266587,6 +266607,7 @@ paths:
           schema:
             description: Skips the specified number of objects before fetching the results.
             type: integer
+            example: 0
             minimum: 0
         - name: format
           in: query
@@ -268661,6 +268682,7 @@ paths:
           schema:
             description: Skips the specified number of objects before fetching the results.
             type: integer
+            example: 0
             minimum: 0
         - name: datasetType
           in: query
@@ -294888,6 +294910,7 @@ paths:
           schema:
             description: Skips the specified number of objects before fetching the results.
             type: integer
+            example: 0
             minimum: 0
         - name: asn
           in: query
@@ -295474,6 +295497,7 @@ paths:
           schema:
             description: Skips the specified number of objects before fetching the results.
             type: integer
+            example: 0
             minimum: 0
         - name: metric
           in: query
@@ -295654,9 +295678,12 @@ paths:
           required: true
           schema:
             description: IP address.
-            type: string
-            format: ip
             example: 8.8.8.8
+            anyOf:
+              - format: ipv4
+                type: string
+              - format: ipv6
+                type: string
         - name: format
           in: query
           description: Format in which results will be returned.
@@ -295809,9 +295836,12 @@ paths:
           required: true
           schema:
             description: IP address.
-            type: string
-            format: ip
             example: 8.8.8.8
+            anyOf:
+              - format: ipv4
+                type: string
+              - format: ipv6
+                type: string
         - name: format
           in: query
           description: Format in which results will be returned.
@@ -295929,6 +295959,7 @@ paths:
           schema:
             description: Skips the specified number of objects before fetching the results.
             type: integer
+            example: 0
             minimum: 0
         - name: location
           in: query
@@ -296214,6 +296245,7 @@ paths:
           schema:
             description: Skips the specified number of objects before fetching the results.
             type: integer
+            example: 0
             minimum: 0
         - name: geoId
           in: query
@@ -318200,6 +318232,7 @@ paths:
           schema:
             description: Skips the specified number of objects before fetching the results.
             type: integer
+            example: 0
             minimum: 0
         - name: format
           in: query
@@ -320401,14 +320434,20 @@ paths:
                         type: object
                         properties:
                           p25:
+                            description: A numeric string.
                             type: string
                             example: '32.20938'
+                            pattern: ^-?\d+(\.\d+)?$
                           p50:
+                            description: A numeric string.
                             type: string
                             example: '61.819881'
+                            pattern: ^-?\d+(\.\d+)?$
                           p75:
+                            description: A numeric string.
                             type: string
                             example: '133.813087'
+                            pattern: ^-?\d+(\.\d+)?$
                         required:
                           - p75
                           - p50
@@ -320915,17 +320954,23 @@ paths:
                           bandwidthDownload:
                             type: array
                             items:
+                              description: A numeric string.
                               example: '83681'
+                              pattern: ^-?\d+(\.\d+)?$
                               type: string
                           bandwidthUpload:
                             type: array
                             items:
+                              description: A numeric string.
                               example: '181079'
+                              pattern: ^-?\d+(\.\d+)?$
                               type: string
                           bucketMin:
                             type: array
                             items:
+                              description: A numeric string.
                               example: '0'
+                              pattern: ^-?\d+(\.\d+)?$
                               type: string
                         required:
                           - bandwidthUpload
@@ -321349,26 +321394,40 @@ paths:
                         type: object
                         properties:
                           bandwidthDownload:
+                            description: A numeric string.
                             type: string
                             example: '83.765201'
+                            pattern: ^-?\d+(\.\d+)?$
                           bandwidthUpload:
+                            description: A numeric string.
                             type: string
                             example: '39.005561'
+                            pattern: ^-?\d+(\.\d+)?$
                           jitterIdle:
+                            description: A numeric string.
                             type: string
                             example: '25.648713'
+                            pattern: ^-?\d+(\.\d+)?$
                           jitterLoaded:
+                            description: A numeric string.
                             type: string
                             example: '77.462155'
+                            pattern: ^-?\d+(\.\d+)?$
                           latencyIdle:
+                            description: A numeric string.
                             type: string
                             example: '83.165385'
+                            pattern: ^-?\d+(\.\d+)?$
                           latencyLoaded:
+                            description: A numeric string.
                             type: string
                             example: '270.561124'
+                            pattern: ^-?\d+(\.\d+)?$
                           packetLoss:
+                            description: A numeric string.
                             type: string
                             example: '1.23705'
+                            pattern: ^-?\d+(\.\d+)?$
                         required:
                           - bandwidthDownload
                           - bandwidthUpload
@@ -321678,31 +321737,43 @@ paths:
                         items:
                           properties:
                             bandwidthDownload:
+                              description: A numeric string.
                               type: string
                               example: '642.509004'
+                              pattern: ^-?\d+(\.\d+)?$
                             bandwidthUpload:
+                              description: A numeric string.
                               type: string
                               example: '300.672274'
+                              pattern: ^-?\d+(\.\d+)?$
                             clientASN:
-                              type: number
+                              type: integer
                               example: 33353
                             clientASName:
                               type: string
                               example: SIE-CGEI-ASN-1
                             jitterIdle:
+                              description: A numeric string.
                               type: string
                               example: '2.956908'
+                              pattern: ^-?\d+(\.\d+)?$
                             jitterLoaded:
+                              description: A numeric string.
                               type: string
                               example: '19.500469'
+                              pattern: ^-?\d+(\.\d+)?$
                             latencyIdle:
+                              description: A numeric string.
                               type: string
                               example: '15.925'
+                              pattern: ^-?\d+(\.\d+)?$
                             latencyLoaded:
+                              description: A numeric string.
                               type: string
                               example: '65.65'
+                              pattern: ^-?\d+(\.\d+)?$
                             numTests:
-                              type: number
+                              type: integer
                               example: 13123
                             rankPower:
                               type: number
@@ -322007,11 +322078,15 @@ paths:
                         items:
                           properties:
                             bandwidthDownload:
+                              description: A numeric string.
                               type: string
                               example: '295.886073'
+                              pattern: ^-?\d+(\.\d+)?$
                             bandwidthUpload:
+                              description: A numeric string.
                               type: string
                               example: '158.85269'
+                              pattern: ^-?\d+(\.\d+)?$
                             clientCountryAlpha2:
                               type: string
                               example: IS
@@ -322019,19 +322094,27 @@ paths:
                               type: string
                               example: Iceland
                             jitterIdle:
+                              description: A numeric string.
                               type: string
                               example: '9.640685'
+                              pattern: ^-?\d+(\.\d+)?$
                             jitterLoaded:
+                              description: A numeric string.
                               type: string
                               example: '46.480023'
+                              pattern: ^-?\d+(\.\d+)?$
                             latencyIdle:
+                              description: A numeric string.
                               type: string
                               example: '15.208124'
+                              pattern: ^-?\d+(\.\d+)?$
                             latencyLoaded:
+                              description: A numeric string.
                               type: string
                               example: '114.758887'
+                              pattern: ^-?\d+(\.\d+)?$
                             numTests:
-                              type: number
+                              type: integer
                               example: 13123
                             rankPower:
                               type: number
@@ -322101,7 +322184,7 @@ paths:
             description: Domain name.
             type: string
             example: google.com
-            pattern: ^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9])$
+            pattern: ^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][a-zA-Z0-9-]*[A-Za-z0-9])$
         - name: limit
           in: query
           description: Limits the number of objects returned in the response.
@@ -322659,7 +322742,6 @@ paths:
                                 pattern: ^-?\d+(\.\d+)?$
                                 type: string
                               - type: number
-                            description: A numeric string.
                           type: array
                         properties:
                           timestamps:
@@ -322903,6 +322985,18 @@ paths:
                               - ROLLING_AVERAGE
                               - OVERLAPPED_PERCENTAGE
                               - RATIO
+                          top_0:
+                            type: object
+                            properties:
+                              date:
+                                type: string
+                                format: date
+                              serviceCategory:
+                                type: string
+                                example: Overall
+                            required:
+                              - date
+                              - serviceCategory
                           units:
                             description: Measurement units for the results.
                             type: array
@@ -322924,6 +323018,7 @@ paths:
                           - normalization
                           - lastUpdated
                           - units
+                          - top_0
                       top_0:
                         type: array
                         items:
@@ -323276,7 +323371,6 @@ paths:
                                 pattern: ^-?\d+(\.\d+)?$
                                 type: string
                               - type: number
-                            description: A numeric string.
                           type: array
                         properties:
                           timestamps:
@@ -323541,6 +323635,14 @@ paths:
                               - ROLLING_AVERAGE
                               - OVERLAPPED_PERCENTAGE
                               - RATIO
+                          top_0:
+                            type: object
+                            properties:
+                              date:
+                                type: string
+                                format: date
+                            required:
+                              - date
                           units:
                             description: Measurement units for the results.
                             type: array
@@ -323562,6 +323664,7 @@ paths:
                           - normalization
                           - lastUpdated
                           - units
+                          - top_0
                       top_0:
                         type: array
                         items:
@@ -323571,13 +323674,13 @@ paths:
                               items:
                                 properties:
                                   id:
-                                    type: number
+                                    type: integer
                                     example: 81
                                   name:
                                     type: string
                                     example: Content Servers
                                   superCategoryId:
-                                    type: number
+                                    type: integer
                                     example: 26
                                 required:
                                   - superCategoryId
@@ -325048,6 +325151,7 @@ paths:
           schema:
             description: Skips the specified number of objects before fetching the results.
             type: integer
+            example: 0
             minimum: 0
         - name: tldManager
           in: query
@@ -325980,6 +326084,7 @@ paths:
           schema:
             description: Skips the specified number of objects before fetching the results.
             type: integer
+            example: 0
             minimum: 0
         - name: dateRange
           in: query
@@ -326168,6 +326273,7 @@ paths:
                                 - name
                             startDate:
                               type: string
+                              format: date-time
                               example: 2023-08-02T23:15:00Z
                             status:
                               type: string
@@ -326345,6 +326451,7 @@ paths:
                               - name
                           startDate:
                             type: string
+                            format: date-time
                             example: 2023-08-02T23:15:00Z
                           status:
                             type: string
@@ -326406,7 +326513,7 @@ paths:
         pro: true
       x-fern-availability: generally-available
       x-fern-sdk-group-name: radar.traffic-anomalies
-      x-fern-sdk-method-name: getById
+      x-fern-sdk-method-name: get-by-id
       x-forge-hidden: true
   /radar/traffic_anomalies/locations:
     get:
