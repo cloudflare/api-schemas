@@ -205957,8 +205957,8 @@ paths:
   /accounts/{account_id}/workers/account-settings:
     get:
       operationId: worker-account-settings-fetch-worker-account-settings
-      summary: Fetch Worker Account Settings
-      description: Fetches Worker account settings for an account.
+      summary: Fetch Workers Account Settings
+      description: Fetches Workers account settings for an account.
       parameters:
         - name: account_id
           in: path
@@ -205967,7 +205967,7 @@ paths:
             $ref: '#/components/schemas/workers_identifier'
       responses:
         '200':
-          description: Fetch Worker Account Settings response.
+          description: Fetch Workers Account Settings response.
           content:
             application/json:
               schema:
@@ -205980,7 +205980,7 @@ paths:
                       - result
                     type: object
         4XX:
-          description: Fetch Worker Account Settings response failure.
+          description: Fetch Workers Account Settings response failure.
           content:
             application/json:
               schema:
@@ -205990,7 +205990,7 @@ paths:
         - api_email: []
           api_key: []
       tags:
-        - Worker Account Settings
+        - Workers Account Settings
       x-api-token-group:
         - Trust and Safety Write
         - Trust and Safety Read
@@ -206021,14 +206021,16 @@ paths:
         - Billing Read
         - Account Settings Write
         - Account Settings Read
+      x-fern-audiences:
+        - sdk
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: workers.account-settings
+      x-fern-sdk-group-name: workers.accountSettings
       x-fern-sdk-method-name: get
       x-forge-hidden: true
     put:
       operationId: worker-account-settings-create-worker-account-settings
-      summary: Create Worker Account Settings
-      description: Creates Worker account settings for an account.
+      summary: Configure Workers Account Settings
+      description: Configure Workers account settings for an account.
       parameters:
         - name: account_id
           in: path
@@ -206043,7 +206045,7 @@ paths:
               $ref: '#/components/schemas/workers_account-settings'
       responses:
         '200':
-          description: Create Worker Account Settings response.
+          description: Create Workers Account Settings response.
           content:
             application/json:
               schema:
@@ -206056,7 +206058,7 @@ paths:
                       - result
                     type: object
         4XX:
-          description: Create Worker Account Settings response failure.
+          description: Create Workers Account Settings response failure.
           content:
             application/json:
               schema:
@@ -206066,18 +206068,20 @@ paths:
         - api_email: []
           api_key: []
       tags:
-        - Worker Account Settings
+        - Workers Account Settings
       x-api-token-group:
         - Account Settings Write
+      x-fern-audiences:
+        - sdk
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: workers.account-settings
+      x-fern-sdk-group-name: workers.accountSettings
       x-fern-sdk-method-name: update
       x-forge-hidden: true
   /accounts/{account_id}/workers/assets/upload:
     post:
       operationId: worker-assets-upload
-      summary: Upload Assets
-      description: Upload assets ahead of creating a Worker version.  To learn more about the direct uploads of assets, see https://developers.cloudflare.com/workers/static-assets/direct-upload/.
+      summary: Upload Worker Assets
+      description: Upload Worker assets ahead of creating a Worker version. To learn more about the direct uploads of assets, see https://developers.cloudflare.com/workers/static-assets/direct-upload/.
       parameters:
         - name: account_id
           in: path
@@ -206127,6 +206131,8 @@ paths:
         - assets_jwt: []
       tags:
         - Worker Script
+      x-fern-audiences:
+        - sdk
       x-fern-availability: generally-available
       x-fern-sdk-group-name: workers.assets.upload
       x-fern-sdk-method-name: create
@@ -206134,8 +206140,8 @@ paths:
   /accounts/{account_id}/workers/dispatch/namespaces:
     get:
       operationId: namespace-worker-list
-      summary: List dispatch namespaces
-      description: Fetch a list of Workers for Platforms namespaces.
+      summary: List Workers for Platforms Dispatch Namespaces
+      description: Fetch a list of Workers for Platforms dispatch namespaces.
       parameters:
         - name: account_id
           in: path
@@ -206166,13 +206172,13 @@ paths:
         - Workers Scripts Write
         - Workers Scripts Read
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: dispatch-namespaces
+      x-fern-sdk-group-name: workersForPlatforms.dispatchNamespaces
       x-fern-sdk-method-name: list
       x-forge-hidden: true
     post:
       operationId: namespace-worker-create
-      summary: Create dispatch namespace
-      description: Create a new Workers for Platforms namespace.
+      summary: Create Workers for Platforms Dispatch Namespace
+      description: Create a new Workers for Platforms dispatch namespace.
       parameters:
         - name: account_id
           in: path
@@ -206213,14 +206219,14 @@ paths:
       x-api-token-group:
         - Workers Scripts Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: dispatch-namespaces
+      x-fern-sdk-group-name: workersForPlatforms.dispatchNamespaces
       x-fern-sdk-method-name: create
       x-forge-hidden: true
   /accounts/{account_id}/workers/dispatch/namespaces/{dispatch_namespace}:
     delete:
       operationId: namespace-worker-delete-namespace
-      summary: Delete dispatch namespace
-      description: Delete a Workers for Platforms namespace.
+      summary: Delete Workers for Platforms Dispatch Namespace
+      description: Delete a Workers for Platforms dispatch namespace.
       parameters:
         - name: account_id
           in: path
@@ -206254,13 +206260,14 @@ paths:
       x-api-token-group:
         - Workers Scripts Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: dispatch-namespaces
+      x-fern-sdk-group-name: workersForPlatforms.dispatchNamespaces
       x-fern-sdk-method-name: delete
       x-forge-hidden: true
+      x-forge-require-confirmation: This will permanently delete the Workers for Platforms dispatch namespace.
     get:
       operationId: namespace-worker-get-namespace
-      summary: Get dispatch namespace
-      description: Get a Workers for Platforms namespace.
+      summary: Get Workers for Platforms Dispatch Namespace
+      description: Get a Workers for Platforms dispatch namespace.
       parameters:
         - name: account_id
           in: path
@@ -206296,13 +206303,13 @@ paths:
         - Workers Scripts Write
         - Workers Scripts Read
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: dispatch-namespaces
+      x-fern-sdk-group-name: workersForPlatforms.dispatchNamespaces
       x-fern-sdk-method-name: get
       x-forge-hidden: true
     patch:
       operationId: namespace-worker-patch-namespace
-      summary: Patch dispatch namespace
-      description: Patch a Workers for Platforms namespace. Omitted fields are left unchanged.
+      summary: Patch Workers for Platforms Dispatch Namespace
+      description: Patch a Workers for Platforms dispatch namespace. Omitted fields are left unchanged.
       parameters:
         - name: account_id
           in: path
@@ -206350,13 +206357,13 @@ paths:
       x-api-token-group:
         - Workers Scripts Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: dispatch-namespaces
+      x-fern-sdk-group-name: workersForPlatforms.dispatchNamespaces
       x-fern-sdk-method-name: edit
       x-forge-hidden: true
     put:
       operationId: namespace-worker-put-namespace
-      summary: Update dispatch namespace
-      description: Update a Workers for Platforms namespace.
+      summary: Update Workers for Platforms Dispatch Namespace
+      description: Update a Workers for Platforms dispatch namespace.
       parameters:
         - name: account_id
           in: path
@@ -206403,15 +206410,17 @@ paths:
         - Workers for Platforms
       x-api-token-group:
         - Workers Scripts Write
+      x-fern-audiences:
+        - sdk
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: dispatch-namespaces
+      x-fern-sdk-group-name: workersForPlatforms.dispatchNamespaces
       x-fern-sdk-method-name: update
       x-forge-hidden: true
   /accounts/{account_id}/workers/dispatch/namespaces/{dispatch_namespace}/scripts:
     delete:
       operationId: namespace-worker-delete-scripts
-      summary: Delete Scripts in Namespace
-      description: Delete multiple scripts from a Workers for Platforms namespace based on optional tag filters.
+      summary: Delete Workers for Platforms Scripts
+      description: Delete multiple scripts from a Workers for Platforms dispatch namespace based on optional tag filters.
       parameters:
         - name: account_id
           in: path
@@ -206457,13 +206466,14 @@ paths:
       x-api-token-group:
         - Workers Scripts Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: dispatch-namespaces.scripts
-      x-fern-sdk-method-name: bulk-delete
+      x-fern-sdk-group-name: workersForPlatforms.dispatchNamespaces.scripts
+      x-fern-sdk-method-name: bulkDelete
       x-forge-hidden: true
+      x-forge-require-confirmation: This will permanently delete matching scripts in the Workers for Platforms dispatch namespace.
     get:
       operationId: namespace-worker-list-scripts
-      summary: List Scripts in Namespace
-      description: Fetch a list of scripts uploaded to a Workers for Platforms namespace.
+      summary: List Workers for Platforms Scripts
+      description: Fetch a list of scripts uploaded to a Workers for Platforms dispatch namespace.
       parameters:
         - name: account_id
           in: path
@@ -206514,14 +206524,14 @@ paths:
         - Workers Scripts Write
         - Workers Scripts Read
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: dispatch-namespaces.scripts
+      x-fern-sdk-group-name: workersForPlatforms.dispatchNamespaces.scripts
       x-fern-sdk-method-name: list
       x-forge-hidden: true
   /accounts/{account_id}/workers/dispatch/namespaces/{dispatch_namespace}/scripts/{script_name}:
     delete:
       operationId: namespace-worker-script-delete-worker
-      summary: Delete Worker
-      description: Delete a worker from a Workers for Platforms namespace. This call has no response body on a successful delete.
+      summary: Delete Workers for Platforms Script
+      description: Delete a script from a Workers for Platforms dispatch namespace. This call has no response body on a successful delete.
       parameters:
         - name: account_id
           in: path
@@ -206565,13 +206575,13 @@ paths:
       x-api-token-group:
         - Workers Scripts Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: dispatch-namespaces.scripts
+      x-fern-sdk-group-name: workersForPlatforms.dispatchNamespaces.scripts
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
+      x-forge-require-confirmation: This will permanently delete the Workers for Platforms script.
     get:
       operationId: namespace-worker-script-worker-details
-      summary: Worker Details
-      description: Fetch information about a script uploaded to a Workers for Platforms namespace.
+      summary: Get Workers for Platforms Script details
+      description: Fetch information about a script uploaded to a Workers for Platforms dispatch namespace.
       parameters:
         - name: account_id
           in: path
@@ -206612,13 +206622,12 @@ paths:
         - Workers Scripts Write
         - Workers Scripts Read
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: dispatch-namespaces.scripts
+      x-fern-sdk-group-name: workersForPlatforms.dispatchNamespaces.scripts
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
     put:
       operationId: namespace-worker-script-upload-worker-module
-      summary: Upload Worker Module
-      description: 'Upload a worker module to a Workers for Platforms namespace. You can find more about the multipart metadata on our docs: https://developers.cloudflare.com/workers/configuration/multipart-upload-metadata/.'
+      summary: Upload Workers for Platforms Script Module
+      description: 'Upload a Workers for Platforms script module to a dispatch namespace. You can find more about the multipart metadata on our docs: https://developers.cloudflare.com/workers/configuration/multipart-upload-metadata/.'
       parameters:
         - name: account_id
           in: path
@@ -206658,14 +206667,13 @@ paths:
       x-api-token-group:
         - Workers Scripts Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: dispatch-namespaces.scripts
+      x-fern-sdk-group-name: workersForPlatforms.dispatchNamespaces.scripts
       x-fern-sdk-method-name: update
-      x-forge-hidden: true
   /accounts/{account_id}/workers/dispatch/namespaces/{dispatch_namespace}/scripts/{script_name}/assets-upload-session:
     post:
       operationId: namespace-worker-script-update-create-assets-upload-session
-      summary: Create Assets Upload Session
-      description: Start uploading a collection of assets for use in a Worker version. To learn more about the direct uploads of assets, see https://developers.cloudflare.com/workers/static-assets/direct-upload/.
+      summary: Create Workers for Platforms Assets Upload Session
+      description: Start uploading a collection of assets for use in a Workers for Platforms script version. To learn more about the direct uploads of assets, see https://developers.cloudflare.com/workers/static-assets/direct-upload/.
       parameters:
         - name: account_id
           in: path
@@ -206707,15 +206715,17 @@ paths:
           api_key: []
       tags:
         - Workers for Platforms
+      x-fern-audiences:
+        - sdk
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: dispatch-namespaces.scripts.asset-upload
-      x-fern-sdk-method-name: create
+      x-fern-sdk-group-name: workersForPlatforms.dispatchNamespaces.scripts.assets.upload
+      x-fern-sdk-method-name: createSession
       x-forge-hidden: true
   /accounts/{account_id}/workers/dispatch/namespaces/{dispatch_namespace}/scripts/{script_name}/bindings:
     get:
       operationId: namespace-worker-get-script-bindings
-      summary: Get Script Bindings
-      description: Fetch script bindings from a script uploaded to a Workers for Platforms namespace.
+      summary: Get Workers for Platforms Script Bindings
+      description: Fetch bindings from a script uploaded to a Workers for Platforms dispatch namespace.
       parameters:
         - name: account_id
           in: path
@@ -206762,15 +206772,17 @@ paths:
         - Workers Tail Read
         - Workers Scripts Write
         - Workers Scripts Read
+      x-fern-audiences:
+        - sdk
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: dispatch-namespaces.scripts.bindings
+      x-fern-sdk-group-name: workersForPlatforms.dispatchNamespaces.scripts.bindings
       x-fern-sdk-method-name: get
       x-forge-hidden: true
   /accounts/{account_id}/workers/dispatch/namespaces/{dispatch_namespace}/scripts/{script_name}/content:
     get:
       operationId: namespace-worker-get-script-content
-      summary: Get Script Content
-      description: Fetch script content from a script uploaded to a Workers for Platforms namespace.
+      summary: Get Workers for Platforms Script Content
+      description: Fetch content from a script uploaded to a Workers for Platforms dispatch namespace.
       parameters:
         - name: account_id
           in: path
@@ -206816,14 +206828,16 @@ paths:
         - Workers Tail Read
         - Workers Scripts Write
         - Workers Scripts Read
+      x-fern-audiences:
+        - sdk
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: dispatch-namespaces.scripts.content
+      x-fern-sdk-group-name: workersForPlatforms.dispatchNamespaces.scripts.content
       x-fern-sdk-method-name: get
       x-forge-hidden: true
     put:
       operationId: namespace-worker-put-script-content
-      summary: Put Script Content
-      description: Put script content for a script uploaded to a Workers for Platforms namespace.
+      summary: Replace Workers for Platforms Script Content
+      description: Replace content for a script uploaded to a Workers for Platforms dispatch namespace.
       parameters:
         - name: account_id
           in: path
@@ -206904,15 +206918,17 @@ paths:
         - Workers for Platforms
       x-api-token-group:
         - Workers Scripts Write
+      x-fern-audiences:
+        - sdk
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: dispatch-namespaces.scripts.content
+      x-fern-sdk-group-name: workersForPlatforms.dispatchNamespaces.scripts.content
       x-fern-sdk-method-name: update
       x-forge-hidden: true
   /accounts/{account_id}/workers/dispatch/namespaces/{dispatch_namespace}/scripts/{script_name}/secrets:
     get:
       operationId: namespace-worker-list-script-secrets
-      summary: List Script Secrets
-      description: List secrets bound to a script uploaded to a Workers for Platforms namespace.
+      summary: List Workers for Platforms Script Secrets
+      description: List secrets bound to a script uploaded to a Workers for Platforms dispatch namespace.
       parameters:
         - name: account_id
           in: path
@@ -206961,15 +206977,17 @@ paths:
         - Workers Tail Read
         - Workers Scripts Write
         - Workers Scripts Read
+      x-fern-audiences:
+        - sdk
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: dispatch-namespaces.scripts.secrets
+      x-fern-sdk-group-name: workersForPlatforms.dispatchNamespaces.scripts.secrets
       x-fern-sdk-method-name: list
       x-forge-hidden: true
     put:
       operationId: namespace-worker-put-script-secrets
-      summary: Add script secret
+      summary: Add a secret to a Workers for Platforms script
       description: |
-        Add a secret to a script by creating a new version with that secret.
+        Add a secret to a Workers for Platforms script by creating a new version with that secret.
 
         When changing more than one secret at a time, prefer the "Patch multiple
         script secrets" API instead of changing many secrets individually.
@@ -207029,16 +207047,18 @@ paths:
         - Workers for Platforms
       x-api-token-group:
         - Workers Scripts Write
+      x-fern-audiences:
+        - sdk
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: dispatch-namespaces.scripts.secrets
+      x-fern-sdk-group-name: workersForPlatforms.dispatchNamespaces.scripts.secrets
       x-fern-sdk-method-name: update
       x-forge-hidden: true
   /accounts/{account_id}/workers/dispatch/namespaces/{dispatch_namespace}/scripts/{script_name}/secrets-bulk:
     patch:
       operationId: namespace-worker-patch-script-secrets-bulk
-      summary: Patch multiple script secrets
+      summary: Patch multiple Workers for Platforms script secrets
       description: |
-        Create, update, or delete multiple secrets on a script in a single operation using JSON Merge Patch (RFC 7396).
+        Create, update, or delete multiple secrets on a Workers for Platforms script in a single operation using JSON Merge Patch (RFC 7396).
         This operation creates a single version with all changes included.
         Prefer this API instead of changing many secrets individually.
 
@@ -207104,16 +207124,18 @@ paths:
           api_key: []
       tags:
         - Workers for Platforms
+      x-fern-audiences:
+        - sdk
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: dispatch-namespaces.scripts.secrets
-      x-fern-sdk-method-name: bulk-edit
+      x-fern-sdk-group-name: workersForPlatforms.dispatchNamespaces.scripts.secrets
+      x-fern-sdk-method-name: bulkEdit
       x-forge-hidden: true
   /accounts/{account_id}/workers/dispatch/namespaces/{dispatch_namespace}/scripts/{script_name}/secrets/{secret_name}:
     delete:
       operationId: namespace-worker-delete-script-secret
-      summary: Delete script secret
+      summary: Delete Workers for Platforms script secret
       description: |
-        Remove a secret from a script by creating a new version without that
+        Remove a secret from a Workers for Platforms script by creating a new version without that
         secret.
 
         When changing more than one secret at a time, prefer the "Patch multiple
@@ -207164,14 +207186,16 @@ paths:
         - Workers for Platforms
       x-api-token-group:
         - Workers Scripts Write
+      x-fern-audiences:
+        - sdk
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: dispatch-namespaces.scripts.secrets
+      x-fern-sdk-group-name: workersForPlatforms.dispatchNamespaces.scripts.secrets
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
+      x-forge-require-confirmation: This will permanently delete the Workers for Platforms script secret.
     get:
       operationId: namespace-worker-get-script-secrets
-      summary: Get secret binding
-      description: Get a given secret binding (value omitted) on a script uploaded to a Workers for Platforms namespace.
+      summary: Get Workers for Platforms Script Secret
+      description: Get a given secret binding (value omitted) on a script uploaded to a Workers for Platforms dispatch namespace.
       parameters:
         - name: account_id
           in: path
@@ -207227,15 +207251,17 @@ paths:
         - Workers Tail Read
         - Workers Scripts Write
         - Workers Scripts Read
+      x-fern-audiences:
+        - sdk
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: dispatch-namespaces.scripts.secrets
+      x-fern-sdk-group-name: workersForPlatforms.dispatchNamespaces.scripts.secrets
       x-fern-sdk-method-name: get
       x-forge-hidden: true
   /accounts/{account_id}/workers/dispatch/namespaces/{dispatch_namespace}/scripts/{script_name}/settings:
     get:
       operationId: namespace-worker-get-script-settings
-      summary: Get Script Settings
-      description: Get script settings from a script uploaded to a Workers for Platforms namespace.
+      summary: Get Workers for Platforms Script Settings
+      description: Get settings for a script uploaded to a Workers for Platforms dispatch namespace.
       parameters:
         - name: account_id
           in: path
@@ -207280,14 +207306,16 @@ paths:
         - Workers Tail Read
         - Workers Scripts Write
         - Workers Scripts Read
+      x-fern-audiences:
+        - sdk
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: dispatch-namespaces.scripts.settings
+      x-fern-sdk-group-name: workersForPlatforms.dispatchNamespaces.scripts.settings
       x-fern-sdk-method-name: get
       x-forge-hidden: true
     patch:
       operationId: namespace-worker-patch-script-settings
-      summary: Patch Script Settings
-      description: Patch script metadata, such as bindings.
+      summary: Patch Workers for Platforms Script Settings
+      description: Patch metadata for a script uploaded to a Workers for Platforms dispatch namespace, such as bindings.
       parameters:
         - name: account_id
           in: path
@@ -207349,15 +207377,17 @@ paths:
         - Workers for Platforms
       x-api-token-group:
         - Workers Scripts Write
+      x-fern-audiences:
+        - sdk
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: dispatch-namespaces.scripts.settings
+      x-fern-sdk-group-name: workersForPlatforms.dispatchNamespaces.scripts.settings
       x-fern-sdk-method-name: edit
       x-forge-hidden: true
   /accounts/{account_id}/workers/dispatch/namespaces/{dispatch_namespace}/scripts/{script_name}/tags:
     get:
       operationId: namespace-worker-get-script-tags
-      summary: Get Script Tags
-      description: Fetch tags from a script uploaded to a Workers for Platforms namespace.
+      summary: List Workers for Platforms Script Tags
+      description: Fetch tags from a script uploaded to a Workers for Platforms dispatch namespace.
       parameters:
         - name: account_id
           in: path
@@ -207407,14 +207437,15 @@ paths:
         - Workers Tail Read
         - Workers Scripts Write
         - Workers Scripts Read
+      x-fern-audiences:
+        - sdk
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: dispatch-namespaces.scripts.tags
+      x-fern-sdk-group-name: workersForPlatforms.dispatchNamespaces.scripts.tags
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
     put:
       operationId: namespace-worker-put-script-tags
-      summary: Put Script Tags
-      description: Put script tags for a script uploaded to a Workers for Platforms namespace.
+      summary: Replace Workers for Platforms Script Tags
+      description: Replace tags for a script uploaded to a Workers for Platforms dispatch namespace.
       parameters:
         - name: account_id
           in: path
@@ -207469,15 +207500,16 @@ paths:
         - Workers for Platforms
       x-api-token-group:
         - Workers Scripts Write
+      x-fern-audiences:
+        - sdk
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: dispatch-namespaces.scripts.tags
+      x-fern-sdk-group-name: workersForPlatforms.dispatchNamespaces.scripts.tags.bulk
       x-fern-sdk-method-name: update
-      x-forge-hidden: true
   /accounts/{account_id}/workers/dispatch/namespaces/{dispatch_namespace}/scripts/{script_name}/tags/{tag}:
     delete:
       operationId: namespace-worker-delete-script-tag
-      summary: Delete Script Tag
-      description: Delete script tag for a script uploaded to a Workers for Platforms namespace.
+      summary: Delete Workers for Platforms Script Tag
+      description: Delete a tag from a script uploaded to a Workers for Platforms dispatch namespace.
       parameters:
         - name: account_id
           in: path
@@ -207520,14 +207552,16 @@ paths:
         - Workers for Platforms
       x-api-token-group:
         - Workers Scripts Write
+      x-fern-audiences:
+        - sdk
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: dispatch-namespaces.scripts.tags
+      x-fern-sdk-group-name: workersForPlatforms.dispatchNamespaces.scripts.tags
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
+      x-forge-require-confirmation: This will delete the tag from the Workers for Platforms script.
     put:
       operationId: namespace-worker-put-script-tag
-      summary: Put Script Tag
-      description: Put a single tag on a script uploaded to a Workers for Platforms namespace.
+      summary: Create Workers for Platforms Script Tag
+      description: Add a single tag to a script uploaded to a Workers for Platforms dispatch namespace.
       parameters:
         - name: account_id
           in: path
@@ -207570,15 +207604,16 @@ paths:
         - Workers for Platforms
       x-api-token-group:
         - Workers Scripts Write
+      x-fern-audiences:
+        - sdk
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: dispatch-namespaces.scripts.tags
+      x-fern-sdk-group-name: workersForPlatforms.dispatchNamespaces.scripts.tags
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
   /accounts/{account_id}/workers/domains:
     get:
       operationId: workers.domains.list
-      summary: List Domains
-      description: Lists all domains for an account.
+      summary: List Worker Domains
+      description: Lists all Worker domains for an account.
       parameters:
         - name: account_id
           in: path
@@ -207647,13 +207682,14 @@ paths:
       x-api-token-group:
         - Workers Scripts Write
         - Workers Scripts Read
+      x-fern-audiences:
+        - sdk
       x-fern-availability: generally-available
       x-fern-sdk-group-name: workers.domains
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
     put:
       operationId: workers.domains.update
-      summary: Attach Domain
+      summary: Attach Worker Domain
       description: Attaches a domain that routes traffic to a Worker.
       parameters:
         - name: account_id
@@ -207700,14 +207736,15 @@ paths:
         - Domains
       x-api-token-group:
         - Workers Scripts Write
+      x-fern-audiences:
+        - sdk
       x-fern-availability: generally-available
       x-fern-sdk-group-name: workers.domains
       x-fern-sdk-method-name: update
-      x-forge-hidden: true
   /accounts/{account_id}/workers/domains/{domain_id}:
     delete:
       operationId: workers.domains.delete
-      summary: Detach Domain
+      summary: Detach Worker Domain
       description: Detaches a domain from a Worker. Both the Worker and all of its previews are no longer routable using this domain.
       parameters:
         - name: account_id
@@ -207743,14 +207780,16 @@ paths:
         - Domains
       x-api-token-group:
         - Workers Scripts Write
+      x-fern-audiences:
+        - sdk
       x-fern-availability: generally-available
       x-fern-sdk-group-name: workers.domains
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
+      x-forge-require-confirmation: This will stop routing traffic on this domain to the Worker.
     get:
       operationId: workers.domains.get
-      summary: Get Domain
-      description: Gets information about a domain.
+      summary: Get Worker Domain
+      description: Gets information about a Worker domain.
       parameters:
         - name: account_id
           in: path
@@ -207793,14 +207832,15 @@ paths:
       x-api-token-group:
         - Workers Scripts Write
         - Workers Scripts Read
+      x-fern-audiences:
+        - sdk
       x-fern-availability: generally-available
       x-fern-sdk-group-name: workers.domains
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
   /accounts/{account_id}/workers/durable_objects/namespaces:
     get:
       operationId: durable-objects-namespace-list-namespaces
-      summary: List Namespaces
+      summary: List Durable Object Namespaces
       description: Returns the Durable Object namespaces owned by an account.
       parameters:
         - name: account_id
@@ -207862,14 +207902,13 @@ paths:
         - Workers Scripts Write
         - Workers Scripts Read
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: durable-objects.namespaces
+      x-fern-sdk-group-name: durableObjects.namespaces
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
   /accounts/{account_id}/workers/durable_objects/namespaces/{id}/objects:
     get:
       operationId: durable-objects-namespace-list-objects
-      summary: List Objects
-      description: Returns the Durable Objects in a given namespace.
+      summary: List Objects in a Durable Object namespace
+      description: Returns the Durable Objects in a given Durable Object namespace.
       parameters:
         - name: account_id
           in: path
@@ -207952,9 +207991,8 @@ paths:
         - Workers Scripts Write
         - Workers Scripts Read
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: durable-objects.namespaces.objects
+      x-fern-sdk-group-name: durableObjects.namespaces.objects
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
   /accounts/{account_id}/workers/observability/destinations:
     get:
       operationId: destination.list
@@ -214681,7 +214719,7 @@ paths:
   /accounts/{account_id}/workers/placement/regions:
     get:
       operationId: worker-placement-list-regions
-      summary: List Placement Regions
+      summary: List Workers Smart Placement Regions
       description: Returns a list of available placement regions organized by cloud provider. These regions can be used to configure Smart Placement for Workers.
       parameters:
         - name: account_id
@@ -214714,7 +214752,7 @@ paths:
         - api_email: []
           api_key: []
       tags:
-        - Worker Placement
+        - Workers Smart Placement
       x-api-token-group:
         - Workers Tail Read
         - Workers Scripts Write
@@ -214722,12 +214760,11 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: workers.placement.regions
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
   /accounts/{account_id}/workers/scripts:
     get:
       operationId: worker-script-list-workers
-      summary: List Workers
-      description: Fetch a list of uploaded workers.
+      summary: List Worker Scripts
+      description: Fetch a list of uploaded Worker scripts.
       parameters:
         - name: account_id
           in: path
@@ -214763,15 +214800,16 @@ paths:
         - Workers Tail Read
         - Workers Scripts Write
         - Workers Scripts Read
-      x-fern-availability: generally-available
-      x-fern-sdk-group-name: workers.scripts
+      x-fern-audiences:
+        - sdk
+      x-fern-availability: deprecated
+      x-fern-sdk-group-name: workers.legacy.scripts
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
   /accounts/{account_id}/workers/scripts-search:
     get:
       operationId: worker-script-search-workers
-      summary: Search Workers
-      description: Search for Workers in an account.
+      summary: Search Worker Scripts
+      description: Search for Worker scripts in an account.
       parameters:
         - name: account_id
           in: path
@@ -214877,7 +214915,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: workers.scripts
       x-fern-sdk-method-name: search
-      x-forge-hidden: true
   /accounts/{account_id}/workers/scripts/{script_name}:
     delete:
       operationId: worker-script-delete-worker
@@ -214920,14 +214957,16 @@ paths:
         - Worker Script
       x-api-token-group:
         - Workers Scripts Write
-      x-fern-availability: generally-available
-      x-fern-sdk-group-name: workers.scripts
+      x-fern-audiences:
+        - sdk
+      x-fern-availability: deprecated
+      x-fern-sdk-group-name: workers.legacy.scripts
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
+      x-forge-require-confirmation: This will permanently delete the Worker script.
     get:
       operationId: worker-script-download-worker
-      summary: Download Worker
-      description: Fetch raw script content for your worker. Note this is the original script content, not JSON encoded.
+      summary: Download Worker Script
+      description: Fetch raw content for a Worker script. Note this is the original script content, not JSON encoded.
       parameters:
         - name: account_id
           in: path
@@ -214975,10 +215014,11 @@ paths:
         - Workers Tail Read
         - Workers Scripts Write
         - Workers Scripts Read
-      x-fern-availability: generally-available
-      x-fern-sdk-group-name: workers.scripts
+      x-fern-audiences:
+        - sdk
+      x-fern-availability: deprecated
+      x-fern-sdk-group-name: workers.legacy.scripts
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
     put:
       operationId: worker-script-upload-worker-module
       summary: Upload Worker Module
@@ -215052,14 +215092,15 @@ paths:
         - Worker Script
       x-api-token-group:
         - Workers Scripts Write
-      x-fern-availability: generally-available
-      x-fern-sdk-group-name: workers.scripts
+      x-fern-audiences:
+        - sdk
+      x-fern-availability: deprecated
+      x-fern-sdk-group-name: workers.legacy.scripts
       x-fern-sdk-method-name: update
-      x-forge-hidden: true
   /accounts/{account_id}/workers/scripts/{script_name}/assets-upload-session:
     post:
       operationId: worker-script-update-create-assets-upload-session
-      summary: Create Assets Upload Session
+      summary: Create Worker Assets Upload Session
       description: Start uploading a collection of assets for use in a Worker version. To learn more about the direct uploads of assets, see https://developers.cloudflare.com/workers/static-assets/direct-upload/.
       parameters:
         - name: account_id
@@ -215101,15 +215142,17 @@ paths:
         - Worker Script
       x-api-token-group:
         - Workers Scripts Write
+      x-fern-audiences:
+        - sdk
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: workers.scripts.assets.upload
-      x-fern-sdk-method-name: create
+      x-fern-sdk-group-name: workers.assets.upload
+      x-fern-sdk-method-name: createSession
       x-forge-hidden: true
   /accounts/{account_id}/workers/scripts/{script_name}/content:
     put:
       operationId: worker-script-put-content
-      summary: Put script content
-      description: Put script content without touching config or metadata.
+      summary: Replace Worker Script Content
+      description: Replace Worker script content without touching config or metadata.
       parameters:
         - name: account_id
           in: path
@@ -215185,6 +215228,8 @@ paths:
         - Worker Script
       x-api-token-group:
         - Workers Scripts Write
+      x-fern-audiences:
+        - sdk
       x-fern-availability: generally-available
       x-fern-sdk-group-name: workers.scripts.content
       x-fern-sdk-method-name: update
@@ -215192,8 +215237,8 @@ paths:
   /accounts/{account_id}/workers/scripts/{script_name}/content/v2:
     get:
       operationId: worker-script-get-content
-      summary: Get script content
-      description: Fetch script content only.
+      summary: Get Worker Script Content
+      description: Fetch Worker script content only.
       parameters:
         - name: account_id
           in: path
@@ -215234,6 +215279,8 @@ paths:
         - Workers Tail Read
         - Workers Scripts Write
         - Workers Scripts Read
+      x-fern-audiences:
+        - sdk
       x-fern-availability: generally-available
       x-fern-sdk-group-name: workers.scripts.content
       x-fern-sdk-method-name: get
@@ -215241,8 +215288,8 @@ paths:
   /accounts/{account_id}/workers/scripts/{script_name}/deployments:
     get:
       operationId: worker-deployments-list-deployments
-      summary: List Deployments
-      description: List of Worker Deployments. The first deployment in the list is the latest deployment actively serving traffic.
+      summary: List Worker Deployments
+      description: List Worker deployments. The first deployment in the list is the latest deployment actively serving traffic.
       parameters:
         - name: account_id
           in: path
@@ -215294,11 +215341,10 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: workers.deployments
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
     post:
       operationId: worker-deployments-create-deployment
-      summary: Create Deployment
-      description: Deployments configure how [Worker Versions](https://developers.cloudflare.com/api/operations/worker-versions-list-versions) are deployed to traffic. A deployment can consist of one or two versions of a Worker.
+      summary: Create Worker Deployment
+      description: Deployments configure how [Worker Versions](https://developers.cloudflare.com/api/operations/worker-versions-list-versions) are deployed to traffic. A deployment can consist of multiple versions of a Worker.
       parameters:
         - name: account_id
           in: path
@@ -215352,11 +215398,10 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: workers.deployments
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
   /accounts/{account_id}/workers/scripts/{script_name}/deployments/{deployment_id}:
     delete:
       operationId: worker-deployments-delete-deployment
-      summary: Delete Deployment
+      summary: Delete Worker Deployment
       description: Delete a Worker Deployment. The latest deployment, which is actively serving traffic, cannot be deleted. All other deployments can be deleted.
       parameters:
         - name: account_id
@@ -215399,10 +215444,10 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: workers.deployments
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
+      x-forge-require-confirmation: This will permanently delete the Worker deployment.
     get:
       operationId: worker-deployments-get-deployment
-      summary: Get Deployment
+      summary: Get Worker Deployment
       description: Get information about a Worker Deployment.
       parameters:
         - name: account_id
@@ -215454,12 +215499,11 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: workers.deployments
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
   /accounts/{account_id}/workers/scripts/{script_name}/schedules:
     get:
       operationId: worker-cron-trigger-get-cron-triggers
-      summary: Get Cron Triggers
-      description: Fetches Cron Triggers for a Worker.
+      summary: Get Worker Script Schedules (Cron Triggers)
+      description: Get the schedules (Cron Triggers) for a Worker script.
       parameters:
         - name: account_id
           in: path
@@ -215507,14 +215551,15 @@ paths:
       x-api-token-group:
         - Workers Scripts Write
         - Workers Scripts Read
+      x-fern-audiences:
+        - sdk
       x-fern-availability: generally-available
       x-fern-sdk-group-name: workers.scripts.schedules
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
     put:
       operationId: worker-cron-trigger-update-cron-triggers
-      summary: Update Cron Triggers
-      description: Updates Cron Triggers for a Worker.
+      summary: Update Worker Script Schedules (Cron Triggers)
+      description: Update the schedules (Cron Triggers) for a Worker script.
       parameters:
         - name: account_id
           in: path
@@ -215569,15 +215614,16 @@ paths:
         - Worker Cron Trigger
       x-api-token-group:
         - Workers Scripts Write
+      x-fern-audiences:
+        - sdk
       x-fern-availability: generally-available
       x-fern-sdk-group-name: workers.scripts.schedules
       x-fern-sdk-method-name: update
-      x-forge-hidden: true
   /accounts/{account_id}/workers/scripts/{script_name}/script-settings:
     get:
       operationId: worker-script-settings-get-settings
-      summary: Get Script Settings
-      description: Get script-level settings when using [Worker Versions](https://developers.cloudflare.com/api/operations/worker-versions-list-versions). Includes Logpush and Tail Consumers.
+      summary: Get Worker Script Settings
+      description: Get Worker script-level settings when using [Worker Versions](https://developers.cloudflare.com/api/operations/worker-versions-list-versions). Includes Logpush and Tail Consumers.
       parameters:
         - name: account_id
           in: path
@@ -215612,14 +215658,15 @@ paths:
         - Workers Tail Read
         - Workers Scripts Write
         - Workers Scripts Read
+      x-fern-audiences:
+        - sdk
       x-fern-availability: generally-available
       x-fern-sdk-group-name: workers.scripts.settings
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
     patch:
       operationId: worker-script-settings-patch-settings
-      summary: Patch Script Settings
-      description: Patch script-level settings when using [Worker Versions](https://developers.cloudflare.com/api/operations/worker-versions-list-versions). Including but not limited to Logpush and Tail Consumers.
+      summary: Patch Worker Script Settings
+      description: Patch Worker script-level settings when using [Worker Versions](https://developers.cloudflare.com/api/operations/worker-versions-list-versions). Including but not limited to Logpush and Tail Consumers.
       parameters:
         - name: account_id
           in: path
@@ -215665,15 +215712,16 @@ paths:
         - Worker Script
       x-api-token-group:
         - Workers Scripts Write
+      x-fern-audiences:
+        - sdk
       x-fern-availability: generally-available
       x-fern-sdk-group-name: workers.scripts.settings
       x-fern-sdk-method-name: edit
-      x-forge-hidden: true
   /accounts/{account_id}/workers/scripts/{script_name}/secrets:
     get:
       operationId: worker-list-script-secrets
-      summary: List script secrets
-      description: List secrets bound to a script.
+      summary: List secrets bound to a Worker script
+      description: List the names of secrets bound to a Worker script.
       parameters:
         - name: account_id
           in: path
@@ -215718,12 +215766,11 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: workers.secrets
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
     put:
       operationId: worker-put-script-secret
-      summary: Add script secret
+      summary: Add a secret to a Worker script
       description: |
-        Add a secret to a script by creating a new version with that secret.
+        Add a secret to a Worker script by creating a new version with that secret.
 
         When changing more than one secret at a time, prefer the "Patch multiple
         script secrets" API instead of changing many secrets individually.
@@ -215776,6 +215823,8 @@ paths:
         - Worker Script
       x-api-token-group:
         - Workers Scripts Write
+      x-fern-audiences:
+        - sdk
       x-fern-availability: generally-available
       x-fern-sdk-group-name: workers.secrets
       x-fern-sdk-method-name: update
@@ -215787,9 +215836,9 @@ paths:
   /accounts/{account_id}/workers/scripts/{script_name}/secrets-bulk:
     patch:
       operationId: worker-patch-script-secrets-bulk
-      summary: Patch multiple script secrets
+      summary: Patch multiple Worker script secrets
       description: |
-        Create, update, or delete multiple secrets on a script in a single operation using JSON Merge Patch (RFC 7396).
+        Create, update, or delete multiple secrets on a Worker script in a single operation using JSON Merge Patch (RFC 7396).
         This operation creates a single version with all changes included.
         Prefer this API instead of changing many secrets individually.
 
@@ -215848,16 +215897,18 @@ paths:
           api_key: []
       tags:
         - Worker Script
+      x-fern-audiences:
+        - sdk
       x-fern-availability: generally-available
       x-fern-sdk-group-name: workers.secrets
-      x-fern-sdk-method-name: bulk-edit
+      x-fern-sdk-method-name: bulkEdit
       x-forge-hidden: true
   /accounts/{account_id}/workers/scripts/{script_name}/secrets/{secret_name}:
     delete:
       operationId: worker-delete-script-secret
-      summary: Delete script secret
+      summary: Delete Worker script secret
       description: |
-        Remove a secret from a script by creating a new version without that
+        Remove a secret from a Worker script by creating a new version without that
         secret.
 
         When changing more than one secret at a time, prefer the "Patch multiple
@@ -215906,11 +215957,11 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: workers.secrets
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
+      x-forge-require-confirmation: This will permanently delete the Worker script secret.
     get:
       operationId: worker-get-script-secret
-      summary: Get secret binding
-      description: Get a given secret binding (value omitted) on a script.
+      summary: Get a secret binding
+      description: Get a given secret binding (value omitted) on a Worker script.
       parameters:
         - name: account_id
           in: path
@@ -215958,12 +216009,11 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: workers.secrets
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
   /accounts/{account_id}/workers/scripts/{script_name}/settings:
     get:
       operationId: worker-script-get-settings
-      summary: Get Settings
-      description: Get metadata and config, such as bindings or usage model.
+      summary: Get Worker Script and Version Settings
+      description: Get Worker script metadata and config, such as bindings or usage model.
       parameters:
         - name: account_id
           in: path
@@ -215998,14 +216048,15 @@ paths:
         - Workers Tail Read
         - Workers Scripts Write
         - Workers Scripts Read
+      x-fern-audiences:
+        - sdk
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: workers.scripts.script-and-version-settings
+      x-fern-sdk-group-name: workers.scripts.scriptAndVersionSettings
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
     patch:
       operationId: worker-script-patch-settings
-      summary: Patch Settings
-      description: Patch metadata or config, such as bindings or usage model.
+      summary: Patch Worker Script and Version Settings
+      description: Patch Worker script metadata or config, such as bindings or usage model.
       parameters:
         - name: account_id
           in: path
@@ -216057,15 +216108,16 @@ paths:
         - Worker Script
       x-api-token-group:
         - Workers Scripts Write
+      x-fern-audiences:
+        - sdk
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: workers.scripts.script-and-version-settings
+      x-fern-sdk-group-name: workers.scripts.scriptAndVersionSettings
       x-fern-sdk-method-name: edit
-      x-forge-hidden: true
   /accounts/{account_id}/workers/scripts/{script_name}/subdomain:
     delete:
       operationId: worker-script-delete-subdomain
-      summary: Delete Worker subdomain
-      description: Disable all workers.dev subdomains for a Worker.
+      summary: Delete Worker Script Subdomain
+      description: Disable all workers.dev subdomains for a Worker script.
       parameters:
         - name: account_id
           in: path
@@ -216106,14 +216158,17 @@ paths:
         - Worker Script
       x-api-token-group:
         - Workers Scripts Write
+      x-fern-audiences:
+        - sdk
       x-fern-availability: generally-available
       x-fern-sdk-group-name: workers.scripts.subdomain
       x-fern-sdk-method-name: delete
       x-forge-hidden: true
+      x-forge-require-confirmation: This will disable all workers.dev subdomains for the Worker script.
     get:
       operationId: worker-script-get-subdomain
-      summary: Get Worker subdomain
-      description: Get if the Worker is available on the workers.dev subdomain.
+      summary: Get Worker Script Subdomain
+      description: Get whether a Worker script is available on the workers.dev subdomain.
       parameters:
         - name: account_id
           in: path
@@ -216156,14 +216211,16 @@ paths:
         - Workers Tail Read
         - Workers Scripts Write
         - Workers Scripts Read
+      x-fern-audiences:
+        - sdk
       x-fern-availability: generally-available
       x-fern-sdk-group-name: workers.scripts.subdomain
       x-fern-sdk-method-name: get
       x-forge-hidden: true
     post:
       operationId: worker-script-post-subdomain
-      summary: Post Worker subdomain
-      description: Enable or disable the Worker on the workers.dev subdomain.
+      summary: Update Worker Script Subdomain
+      description: Enable or disable a Worker script on the workers.dev subdomain.
       parameters:
         - name: account_id
           in: path
@@ -216224,6 +216281,8 @@ paths:
         - Worker Script
       x-api-token-group:
         - Workers Scripts Write
+      x-fern-audiences:
+        - sdk
       x-fern-availability: generally-available
       x-fern-sdk-group-name: workers.scripts.subdomain
       x-fern-sdk-method-name: create
@@ -216231,8 +216290,8 @@ paths:
   /accounts/{account_id}/workers/scripts/{script_name}/tails:
     get:
       operationId: worker-tail-logs-list-tails
-      summary: List Tails
-      description: Get list of tails currently deployed on a Worker.
+      summary: List Worker Tails
+      description: Get a list of tails currently deployed on a Worker.
       parameters:
         - name: account_id
           in: path
@@ -216273,14 +216332,15 @@ paths:
       x-api-token-group:
         - Workers Tail Read
         - Workers Scripts Write
+      x-fern-audiences:
+        - sdk
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: workers.scripts.tail
-      x-fern-sdk-method-name: get
-      x-forge-hidden: true
+      x-fern-sdk-group-name: workers.tail
+      x-fern-sdk-method-name: list
     post:
       operationId: worker-tail-logs-start-tail
-      summary: Start Tail
-      description: Starts a tail that receives logs and exception from a Worker.
+      summary: Start Worker Tail
+      description: Starts a tail that receives logs and exceptions from a Worker.
       parameters:
         - name: account_id
           in: path
@@ -216321,14 +216381,16 @@ paths:
       x-api-token-group:
         - Workers Tail Read
         - Workers Scripts Write
+      x-fern-audiences:
+        - sdk
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: workers.scripts.tail
-      x-fern-sdk-method-name: create
+      x-fern-sdk-group-name: workers.tail
+      x-fern-sdk-method-name: start
       x-forge-hidden: true
   /accounts/{account_id}/workers/scripts/{script_name}/tails/{id}:
     delete:
       operationId: worker-tail-logs-delete-tail
-      summary: Delete Tail
+      summary: Delete Worker Tail
       description: Deletes a tail from a Worker.
       parameters:
         - name: account_id
@@ -216368,15 +216430,17 @@ paths:
       x-api-token-group:
         - Workers Tail Read
         - Workers Scripts Write
+      x-fern-audiences:
+        - sdk
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: workers.scripts.tail
+      x-fern-sdk-group-name: workers.tail
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
+      x-forge-require-confirmation: This will permanently delete the Worker tail session.
   /accounts/{account_id}/workers/scripts/{script_name}/usage-model:
     get:
       operationId: worker-script-fetch-usage-model
-      summary: Fetch Usage Model
-      description: Fetches the Usage Model for a given Worker.
+      summary: Get Worker Script Usage Model
+      description: Fetches the usage model for a Worker script.
       parameters:
         - name: account_id
           in: path
@@ -216411,14 +216475,15 @@ paths:
         - Workers Tail Read
         - Workers Scripts Write
         - Workers Scripts Read
+      x-fern-audiences:
+        - sdk
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: workers.scripts.usage-model
+      x-fern-sdk-group-name: workers.scripts.usageModel
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
     put:
       operationId: worker-script-update-usage-model
-      summary: Update Usage Model
-      description: Updates the Usage Model for a given Worker. Requires a Workers Paid subscription.
+      summary: Replace Worker Script Usage Model
+      description: Replaces the usage model for a Worker script. Requires a Workers Paid subscription.
       parameters:
         - name: account_id
           in: path
@@ -216462,10 +216527,11 @@ paths:
         - Worker Script
       x-api-token-group:
         - Workers Scripts Write
+      x-fern-audiences:
+        - sdk
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: workers.scripts.usage-model
+      x-fern-sdk-group-name: workers.scripts.usageModel
       x-fern-sdk-method-name: update
-      x-forge-hidden: true
   /accounts/{account_id}/workers/scripts/{script_name}/versions:
     get:
       operationId: worker-versions-list-versions
@@ -216524,10 +216590,11 @@ paths:
         - Workers Tail Read
         - Workers Scripts Write
         - Workers Scripts Read
-      x-fern-availability: generally-available
-      x-fern-sdk-group-name: workers.versions
+      x-fern-audiences:
+        - sdk
+      x-fern-availability: deprecated
+      x-fern-sdk-group-name: workers.legacy.scripts.versions
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
     post:
       operationId: worker-versions-upload-version
       summary: Upload Version
@@ -216582,15 +216649,16 @@ paths:
         - Worker Versions
       x-api-token-group:
         - Workers Scripts Write
-      x-fern-availability: generally-available
-      x-fern-sdk-group-name: workers.versions
+      x-fern-audiences:
+        - sdk
+      x-fern-availability: deprecated
+      x-fern-sdk-group-name: workers.legacy.scripts.versions
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
   /accounts/{account_id}/workers/scripts/{script_name}/versions/{version_id}:
     get:
       operationId: worker-versions-get-version-detail
-      summary: Get Version Detail
-      description: Retrieves detailed information about a specific version of a Workers script.
+      summary: Get Worker Script Version
+      description: Retrieves detailed information about a specific version of a Worker script.
       parameters:
         - name: account_id
           in: path
@@ -216632,15 +216700,16 @@ paths:
         - Workers Tail Read
         - Workers Scripts Write
         - Workers Scripts Read
-      x-fern-availability: generally-available
-      x-fern-sdk-group-name: workers.versions
+      x-fern-audiences:
+        - sdk
+      x-fern-availability: deprecated
+      x-fern-sdk-group-name: workers.legacy.scripts.versions
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
   /accounts/{account_id}/workers/services/{service_name}/environments/{environment_name}/content:
     get:
       operationId: worker-environment-get-script-content
-      summary: Get script content
-      description: Get script content from a worker with an environment.
+      summary: Get Worker Environment Script Content
+      description: Get Worker script content for an environment.
       parameters:
         - name: account_id
           in: path
@@ -216686,14 +216755,16 @@ paths:
         - Workers Tail Read
         - Workers Scripts Write
         - Workers Scripts Read
+      x-fern-audiences:
+        - sdk
       x-fern-availability: generally-available
       x-fern-sdk-group-name: workers.services.environments.content
       x-fern-sdk-method-name: get
       x-forge-hidden: true
     put:
       operationId: worker-environment-put-script-content
-      summary: Put script content
-      description: Put script content from a worker with an environment.
+      summary: Replace Worker Environment Script Content
+      description: Replace Worker script content for an environment.
       parameters:
         - name: account_id
           in: path
@@ -216774,6 +216845,8 @@ paths:
         - Worker Environment
       x-api-token-group:
         - Workers Scripts Write
+      x-fern-audiences:
+        - sdk
       x-fern-availability: generally-available
       x-fern-sdk-group-name: workers.services.environments.content
       x-fern-sdk-method-name: update
@@ -216781,8 +216854,8 @@ paths:
   /accounts/{account_id}/workers/services/{service_name}/environments/{environment_name}/settings:
     get:
       operationId: worker-script-environment-get-settings
-      summary: Get Script Settings
-      description: Get script settings from a worker with an environment.
+      summary: Get Worker Environment Settings
+      description: Get Worker script settings for an environment.
       parameters:
         - name: account_id
           in: path
@@ -216822,14 +216895,16 @@ paths:
         - Workers Tail Read
         - Workers Scripts Write
         - Workers Scripts Read
+      x-fern-audiences:
+        - sdk
       x-fern-availability: generally-available
       x-fern-sdk-group-name: workers.services.environments.settings
       x-fern-sdk-method-name: get
       x-forge-hidden: true
     patch:
       operationId: worker-script-environment-patch-settings
-      summary: Patch Script Settings
-      description: Patch script metadata, such as bindings.
+      summary: Patch Worker Environment Settings
+      description: Patch Worker script metadata for an environment, such as bindings.
       parameters:
         - name: account_id
           in: path
@@ -216878,6 +216953,8 @@ paths:
           api_key: []
       tags:
         - Worker Environment
+      x-fern-audiences:
+        - sdk
       x-fern-availability: generally-available
       x-fern-sdk-group-name: workers.services.environments.settings
       x-fern-sdk-method-name: edit
@@ -216885,7 +216962,7 @@ paths:
   /accounts/{account_id}/workers/subdomain:
     delete:
       operationId: worker-subdomain-delete-subdomain
-      summary: Delete Subdomain
+      summary: Delete Workers Subdomain
       description: Deletes a Workers subdomain for an account.
       parameters:
         - name: account_id
@@ -216910,13 +216987,15 @@ paths:
         - Worker Subdomain
       x-api-token-group:
         - Workers Scripts Write
+      x-fern-audiences:
+        - sdk
       x-fern-availability: generally-available
       x-fern-sdk-group-name: workers.subdomains
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
+      x-forge-require-confirmation: This will permanently delete the Workers subdomain.
     get:
       operationId: worker-subdomain-get-subdomain
-      summary: Get Subdomain
+      summary: Get a Workers Subdomain
       description: Returns a Workers subdomain for an account.
       parameters:
         - name: account_id
@@ -216953,13 +217032,14 @@ paths:
       x-api-token-group:
         - Workers Scripts Write
         - Workers Scripts Read
+      x-fern-audiences:
+        - sdk
       x-fern-availability: generally-available
       x-fern-sdk-group-name: workers.subdomains
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
     put:
       operationId: worker-subdomain-create-subdomain
-      summary: Create Subdomain
+      summary: Create a Workers Subdomain
       description: Creates a Workers subdomain for an account.
       parameters:
         - name: account_id
@@ -217001,10 +217081,11 @@ paths:
         - Worker Subdomain
       x-api-token-group:
         - Workers Scripts Write
+      x-fern-audiences:
+        - sdk
       x-fern-availability: generally-available
       x-fern-sdk-group-name: workers.subdomains
       x-fern-sdk-method-name: update
-      x-forge-hidden: true
   /accounts/{account_id}/workers/workers:
     get:
       operationId: listWorkers
@@ -217082,9 +217163,8 @@ paths:
         - Workers Scripts Write
         - Workers Scripts Read
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: workers.beta.workers
+      x-fern-sdk-group-name: workers
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
     post:
       operationId: createWorker
       summary: Create Worker
@@ -217209,10 +217289,11 @@ paths:
         - Workers
       x-api-token-group:
         - Workers Scripts Write
+      x-fern-audiences:
+        - sdk
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: workers.beta.workers
+      x-fern-sdk-group-name: workers
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
   /accounts/{account_id}/workers/workers/{worker_id}:
     delete:
       operationId: deleteWorker
@@ -217273,9 +217354,9 @@ paths:
       x-api-token-group:
         - Workers Scripts Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: workers.beta.workers
+      x-fern-sdk-group-name: workers
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
+      x-forge-require-confirmation: This will permanently delete the Worker and its associated versions and deployments.
     get:
       operationId: getWorker
       summary: Get Worker
@@ -217342,9 +217423,8 @@ paths:
         - Workers Scripts Write
         - Workers Scripts Read
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: workers.beta.workers
+      x-fern-sdk-group-name: workers
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
     patch:
       operationId: editWorker
       summary: Edit Worker
@@ -217480,10 +217560,11 @@ paths:
           api_key: []
       tags:
         - Workers
+      x-fern-audiences:
+        - sdk
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: workers.beta.workers
+      x-fern-sdk-group-name: workers
       x-fern-sdk-method-name: edit
-      x-forge-hidden: true
     put:
       operationId: updateWorker
       summary: Update Worker
@@ -217618,14 +217699,15 @@ paths:
         - Workers
       x-api-token-group:
         - Workers Scripts Write
+      x-fern-audiences:
+        - sdk
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: workers.beta.workers
+      x-fern-sdk-group-name: workers
       x-fern-sdk-method-name: update
-      x-forge-hidden: true
   /accounts/{account_id}/workers/workers/{worker_id}/versions:
     get:
       operationId: listWorkerVersions
-      summary: List Versions
+      summary: List Worker Versions
       description: List all versions for a Worker.
       parameters:
         - name: account_id
@@ -217687,13 +217769,12 @@ paths:
         - Workers Scripts Write
         - Workers Scripts Read
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: workers.beta.workers.versions
+      x-fern-sdk-group-name: workers.versions
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
     post:
       operationId: createWorkerVersion
-      summary: Create Version
-      description: Create a new version.
+      summary: Create Worker Version
+      description: Create a new version for a Worker.
       parameters:
         - name: account_id
           in: path
@@ -217753,15 +217834,16 @@ paths:
         - Versions
       x-api-token-group:
         - Workers Scripts Write
+      x-fern-audiences:
+        - sdk
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: workers.beta.workers.versions
+      x-fern-sdk-group-name: workers.versions
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
   /accounts/{account_id}/workers/workers/{worker_id}/versions/{version_id}:
     delete:
       operationId: deleteWorkerVersion
-      summary: Delete Version
-      description: Delete a version.
+      summary: Delete Worker Version
+      description: Delete a Worker version.
       parameters:
         - name: account_id
           in: path
@@ -217800,13 +217882,13 @@ paths:
       tags:
         - Versions
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: workers.beta.workers.versions
+      x-fern-sdk-group-name: workers.versions
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
+      x-forge-require-confirmation: This will permanently delete the Worker version.
     get:
       operationId: getWorkerVersion
-      summary: Get Version
-      description: Get details about a specific version.
+      summary: Get Worker Version
+      description: Get details about a specific Worker version.
       parameters:
         - name: account_id
           in: path
@@ -217863,14 +217945,13 @@ paths:
         - Workers Scripts Write
         - Workers Scripts Read
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: workers.beta.workers.versions
+      x-fern-sdk-group-name: workers.versions
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
   /accounts/{account_id}/workers/workers/{worker_id}/versions/latest:
     patch:
       operationId: patchLatestWorkerVersion
-      summary: Patch Latest Version
-      description: Only `/versions/latest` is supported. Creates a new version by applying a JSON Merge Patch (RFC 7396) to the latest version. Patching a specific version ID is not supported. Omitted fields are inherited from the latest version.
+      summary: Patch Latest Worker Version
+      description: Only `/versions/latest` is supported. Creates a new Worker version by applying a JSON Merge Patch (RFC 7396) to the latest version. Patching a specific version ID is not supported. Omitted fields are inherited from the latest version.
       parameters:
         - name: account_id
           in: path
@@ -217934,10 +218015,11 @@ paths:
           api_key: []
       tags:
         - Versions
+      x-fern-audiences:
+        - sdk
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: workers.beta.workers.versions
-      x-fern-sdk-method-name: edit
-      x-forge-hidden: true
+      x-fern-sdk-group-name: workers.versions
+      x-fern-sdk-method-name: editLatest
   /accounts/{account_id}/workflows:
     get:
       operationId: wor-list-workflows
@@ -366977,8 +367059,8 @@ paths:
   /zones/{zone_id}/workers/routes:
     get:
       operationId: worker-routes-list-routes
-      summary: List Routes
-      description: Returns routes for a zone.
+      summary: List Worker Routes
+      description: Returns Worker routes for a zone.
       parameters:
         - name: zone_id
           in: path
@@ -367017,13 +367099,14 @@ paths:
       x-api-token-group:
         - Workers Routes Write
         - Workers Routes Read
+      x-fern-audiences:
+        - sdk
       x-fern-availability: generally-available
       x-fern-sdk-group-name: workers.routes
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
     post:
       operationId: worker-routes-create-route
-      summary: Create Route
+      summary: Create Worker Route
       description: Creates a route that maps a URL pattern to a Worker.
       parameters:
         - name: zone_id
@@ -367066,15 +367149,16 @@ paths:
         - Worker Routes
       x-api-token-group:
         - Workers Routes Write
+      x-fern-audiences:
+        - sdk
       x-fern-availability: generally-available
       x-fern-sdk-group-name: workers.routes
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
   /zones/{zone_id}/workers/routes/{route_id}:
     delete:
       operationId: worker-routes-delete-route
-      summary: Delete Route
-      description: Deletes a route.
+      summary: Delete Worker Route
+      description: Deletes a Worker route.
       parameters:
         - name: route_id
           in: path
@@ -367118,14 +367202,16 @@ paths:
         - Worker Routes
       x-api-token-group:
         - Workers Routes Write
+      x-fern-audiences:
+        - sdk
       x-fern-availability: generally-available
       x-fern-sdk-group-name: workers.routes
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
+      x-forge-require-confirmation: This will permanently delete the Worker route.
     get:
       operationId: worker-routes-get-route
-      summary: Get Route
-      description: Returns information about a route, including URL pattern and Worker.
+      summary: Get Worker Route
+      description: Returns information about a Worker route, including URL pattern and Worker.
       parameters:
         - name: route_id
           in: path
@@ -367167,14 +367253,15 @@ paths:
       x-api-token-group:
         - Workers Routes Write
         - Workers Routes Read
+      x-fern-audiences:
+        - sdk
       x-fern-availability: generally-available
       x-fern-sdk-group-name: workers.routes
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
     put:
       operationId: worker-routes-update-route
-      summary: Update Route
-      description: Updates the URL pattern or Worker associated with a route.
+      summary: Replace Worker Route
+      description: Replaces the URL pattern or Worker associated with a Worker route.
       parameters:
         - name: route_id
           in: path
@@ -367221,10 +367308,11 @@ paths:
         - Worker Routes
       x-api-token-group:
         - Workers Routes Write
+      x-fern-audiences:
+        - sdk
       x-fern-availability: generally-available
       x-fern-sdk-group-name: workers.routes
       x-fern-sdk-method-name: update
-      x-forge-hidden: true
   /zones/{zone_identifier}/analytics/colos:
     get:
       operationId: zone-analytics-(-deprecated)-get-analytics-by-co-locations
@@ -474178,8 +474266,8 @@ components:
             Code, sourcemaps, and other content used at runtime.
 
             This includes [`_headers`](https://developers.cloudflare.com/workers/static-assets/headers/#custom-headers) and
-            [`_redirects`](https://developers.cloudflare.com/workers/static-assets/redirects/) files used to configure 
-            [Static Assets](https://developers.cloudflare.com/workers/static-assets/). `_headers` and `_redirects` files should be 
+            [`_redirects`](https://developers.cloudflare.com/workers/static-assets/redirects/) files used to configure
+            [Static Assets](https://developers.cloudflare.com/workers/static-assets/). `_headers` and `_redirects` files should be
             included as modules named `_headers` and `_redirects` with content type `text/plain`.
           type: array
           items:
