@@ -171809,7 +171809,7 @@ paths:
         - Workers R2 Storage Write
       x-fern-availability: generally-available
       x-fern-sdk-group-name: r2.buckets
-      x-fern-sdk-method-name: createByName
+      x-fern-sdk-method-name: create-by-name
       x-forge-hidden: true
   /accounts/{account_id}/r2/buckets/{bucket_name}/cors:
     delete:
@@ -172695,6 +172695,48 @@ paths:
       x-fern-sdk-method-name: update
       x-forge-hidden: true
   /accounts/{account_id}/r2/buckets/{bucket_name}/lock:
+    delete:
+      operationId: r2-delete-bucket-lock-configuration
+      summary: Delete Bucket Lock Rules
+      description: Delete all lock rules for a bucket.
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/r2_bucket_name'
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/r2_account_identifier'
+        - name: cf-r2-jurisdiction
+          in: header
+          schema:
+            $ref: '#/components/schemas/r2_jurisdiction'
+      responses:
+        '200':
+          description: Success Response.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/r2_v4_response'
+                  - type: object
+        4XX:
+          description: Error Response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2_v4_response_failure'
+      security:
+        - api_token: []
+      tags:
+        - R2 Bucket
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: r2.buckets.locks
+      x-fern-sdk-method-name: delete
+      x-forge-hidden: true
     get:
       operationId: r2-get-bucket-lock-configuration
       summary: Get Bucket Lock Rules
