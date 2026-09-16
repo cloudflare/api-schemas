@@ -76650,7 +76650,7 @@ paths:
         - 'Cloudflare One Connector: cloudflared Write'
         - Cloudflare Tunnel Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: tunnel.management.token
+      x-fern-sdk-group-name: tunnel.management-token
       x-fern-sdk-method-name: create
       x-forge-hidden: true
   /accounts/{account_id}/cfd_tunnel/{tunnel_id}/token:
@@ -466915,10 +466915,12 @@ components:
         - properties:
             result:
               type: array
-              items: {}
+              items:
+                type: object
               nullable: true
             result_info:
               $ref: '#/components/schemas/tunnel_result_info'
+          type: object
     tunnel_api-response-common:
       type: object
       properties:
@@ -466929,7 +466931,8 @@ components:
         result:
           anyOf:
             - type: object
-            - items: {}
+            - items:
+                type: object
               type: array
             - type: string
         success:
@@ -467030,27 +467033,6 @@ components:
       description: The cloudflared OS architecture used to establish this connection.
       type: string
       example: linux_amd64
-    tunnel_argo-tunnel:
-      type: object
-      properties:
-        connections:
-          description: The tunnel connections between your origin and Cloudflare's edge.
-          type: array
-          items:
-            $ref: '#/components/schemas/tunnel_connection'
-        created_at:
-          $ref: '#/components/schemas/tunnel_created_at'
-        deleted_at:
-          $ref: '#/components/schemas/tunnel_deleted_at'
-        id:
-          $ref: '#/components/schemas/tunnel_tunnel_id'
-        name:
-          $ref: '#/components/schemas/tunnel_tunnel_name'
-      required:
-        - id
-        - name
-        - created_at
-        - connections
     tunnel_cfd-tunnel-response-collection:
       allOf:
         - $ref: '#/components/schemas/tunnel_api-response-collection'
@@ -467182,14 +467164,7 @@ components:
         - properties:
             result:
               $ref: '#/components/schemas/tunnel_configuration'
-    tunnel_connection:
-      properties:
-        colo_name:
-          $ref: '#/components/schemas/tunnel_colo_name'
-        is_pending_reconnect:
-          $ref: '#/components/schemas/tunnel_is_pending_reconnect'
-        uuid:
-          $ref: '#/components/schemas/tunnel_connection_id'
+          type: object
     tunnel_connection_id:
       description: UUID of the Cloudflare Tunnel connection.
       type: string
@@ -467386,22 +467361,6 @@ components:
       deprecated: true
       x-fern-ignore: true
       x-stainless-deprecation-message: This functionality has been removed. The is_pending_reconnect field will now always report false.
-    tunnel_legacy-tunnel-response-collection:
-      allOf:
-        - $ref: '#/components/schemas/tunnel_api-response-collection'
-        - properties:
-            result:
-              type: array
-              items:
-                $ref: '#/components/schemas/tunnel_argo-tunnel'
-          type: object
-    tunnel_legacy-tunnel-response-single:
-      allOf:
-        - $ref: '#/components/schemas/tunnel_api-response-common'
-        - properties:
-            result:
-              $ref: '#/components/schemas/tunnel_argo-tunnel'
-          type: object
     tunnel_management-resources:
       description: Management resources the token will have access to.
       type: string
@@ -467990,23 +467949,6 @@ components:
       example: f70ff985-a4ef-4643-bbbc-4a0ed4fc8415
       maxLength: 36
       x-auditable: true
-    tunnel_tunnel_link:
-      description: The id of the tunnel linked and the date that link was created.
-      type: object
-      properties:
-        created_at:
-          $ref: '#/components/schemas/tunnel_created_at'
-        linked_tunnel_id:
-          $ref: '#/components/schemas/tunnel_tunnel_id'
-    tunnel_tunnel_links_response:
-      allOf:
-        - $ref: '#/components/schemas/tunnel_api-response-collection'
-        - properties:
-            result:
-              type: array
-              items:
-                $ref: '#/components/schemas/tunnel_tunnel_link'
-          type: object
     tunnel_tunnel_name:
       description: A user-friendly name for a tunnel.
       type: string
