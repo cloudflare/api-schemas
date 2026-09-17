@@ -136888,10 +136888,6 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/zero-trust-gateway_identifier-2'
-      requestBody:
-        required: true
-        content:
-          application/json: {}
       responses:
         '200':
           description: Deletes Zero Trust certificate response.
@@ -136974,10 +136970,6 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/zero-trust-gateway_identifier-2'
-      requestBody:
-        required: true
-        content:
-          application/json: {}
       responses:
         '202':
           description: Activates Zero Trust certificate details response.
@@ -137019,10 +137011,6 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/zero-trust-gateway_identifier-2'
-      requestBody:
-        required: true
-        content:
-          application/json: {}
       responses:
         '201':
           description: Deactivate Zero Trust certificate details response.
@@ -137323,9 +137311,13 @@ paths:
             items:
               anyOf:
                 - pattern: ^name:.*$
+                  type: string
                 - pattern: ^id:.*$
+                  type: string
                 - pattern: ^type:(IP|URL|DOMAIN|CATEGORY|EMAIL|SERIAL|LOCATION|DEVICE|AAGUID)$
+                  type: string
                 - pattern: ^item_count:[0-9]+$
+                  type: string
               type: string
           explode: true
           style: form
@@ -137466,10 +137458,6 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/zero-trust-gateway_identifier-2'
-      requestBody:
-        required: true
-        content:
-          application/json: {}
       responses:
         '200':
           description: Delete Zero Trust list response.
@@ -137772,8 +137760,11 @@ paths:
             items:
               anyOf:
                 - pattern: ^name:.*$
+                  type: string
                 - pattern: ^id:.*$
+                  type: string
                 - pattern: ^is_default:(true|false)$
+                  type: string
               type: string
           examples:
             filterByIsDefault:
@@ -137930,10 +137921,6 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/zero-trust-gateway_identifier-2'
-      requestBody:
-        required: true
-        content:
-          application/json: {}
       responses:
         '200':
           description: Deletes a Zero Trust Gateway location response.
@@ -138515,8 +138502,11 @@ paths:
             items:
               anyOf:
                 - pattern: ^name:.*$
+                  type: string
                 - pattern: ^id:.*$
+                  type: string
                 - pattern: ^kind:(ip|identity)$
+                  type: string
               type: string
           examples:
             filterByKind:
@@ -138664,10 +138654,6 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/zero-trust-gateway_identifier-2'
-      requestBody:
-        required: true
-        content:
-          application/json: {}
       responses:
         '200':
           description: Returns a deleted proxy endpoint response.
@@ -138817,13 +138803,21 @@ paths:
             items:
               anyOf:
                 - pattern: ^name:.*$
+                  type: string
                 - pattern: ^id:.*$
+                  type: string
                 - pattern: ^action:(on|off|allow|block|scan|noscan|safesearch|ytrestricted|isolate|noisolate|override|l4_override|audit_ssh|egress|resolve|quarantine|redirect|custom)$
+                  type: string
                 - pattern: ^enabled:(true|false)$
+                  type: string
                 - pattern: ^source_account:.*$
+                  type: string
                 - pattern: ^is_shared:(true|false)$
+                  type: string
                 - pattern: ^filters:(http|dns|dns_resolver|l4|egress)$
+                  type: string
                 - pattern: ^expression:.*$
+                  type: string
               type: string
           explode: true
           style: form
@@ -138905,7 +138899,7 @@ paths:
                   enabled:
                     $ref: '#/components/schemas/zero-trust-gateway_enabled'
                   id:
-                    $ref: '#/components/schemas/zero-trust-gateway_uuid-2'
+                    $ref: '#/components/schemas/zero-trust-gateway_uuid-4'
                   name:
                     $ref: '#/components/schemas/zero-trust-gateway_name-3'
                   precedence:
@@ -139020,16 +139014,12 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/zero-trust-gateway_uuid-2'
+            $ref: '#/components/schemas/zero-trust-gateway_uuid-4'
         - name: account_id
           in: path
           required: true
           schema:
             $ref: '#/components/schemas/zero-trust-gateway_identifier-2'
-      requestBody:
-        required: true
-        content:
-          application/json: {}
       responses:
         '200':
           description: Delete a Zero Trust Gateway rule response.
@@ -139065,7 +139055,7 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/zero-trust-gateway_uuid-2'
+            $ref: '#/components/schemas/zero-trust-gateway_uuid-4'
         - name: account_id
           in: path
           required: true
@@ -139106,7 +139096,7 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/zero-trust-gateway_uuid-2'
+            $ref: '#/components/schemas/zero-trust-gateway_uuid-4'
         - name: account_id
           in: path
           required: true
@@ -139162,7 +139152,7 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/zero-trust-gateway_uuid-2'
+            $ref: '#/components/schemas/zero-trust-gateway_uuid-4'
         - name: account_id
           in: path
           required: true
@@ -139238,7 +139228,7 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/zero-trust-gateway_uuid-2'
+            $ref: '#/components/schemas/zero-trust-gateway_uuid-4'
         - name: account_id
           in: path
           required: true
@@ -479647,6 +479637,7 @@ components:
       description: Contains the ids of the approved applications.
       type: array
       items:
+        format: int64
         type: integer
       x-stainless-collection-type: set
     zero-trust-gateway_beta:
@@ -480044,6 +480035,7 @@ components:
           x-auditable: true
         pair_type:
           description: Specify whether the pair shared across multiple accounts (shared) or available exclusively to this account. Non-shared pairs can contain Cloudflare-owned IPs (dedicated) or customer-provided IPs (byoip).
+          type: string
           example: shared
           enum:
             - shared
@@ -480483,6 +480475,7 @@ components:
       description: Contains the ids of the applications in review.
       type: array
       items:
+        format: int64
         type: integer
       x-stainless-collection-type: set
     zero-trust-gateway_inspection-settings:
@@ -481580,7 +481573,7 @@ components:
         filters:
           $ref: '#/components/schemas/zero-trust-gateway_filters'
         id:
-          $ref: '#/components/schemas/zero-trust-gateway_uuid-2'
+          $ref: '#/components/schemas/zero-trust-gateway_uuid-4'
         identity:
           $ref: '#/components/schemas/zero-trust-gateway_identity'
         name:
@@ -481685,7 +481678,7 @@ components:
         public_key:
           $ref: '#/components/schemas/zero-trust-gateway_public_key'
         seed_id:
-          $ref: '#/components/schemas/zero-trust-gateway_uuid-4'
+          $ref: '#/components/schemas/zero-trust-gateway_uuid-5'
         updated_at:
           $ref: '#/components/schemas/zero-trust-gateway_read_only_timestamp'
     zero-trust-gateway_sharable:
@@ -481860,6 +481853,7 @@ components:
       description: Contains the ids of the unapproved applications.
       type: array
       items:
+        format: int64
         type: integer
       x-stainless-collection-type: set
     zero-trust-gateway_url:
@@ -481885,6 +481879,13 @@ components:
       example: ed35569b41ce4d1facfe683550f54086
       x-auditable: true
     zero-trust-gateway_uuid-4:
+      description: Identify the API resource with a UUID.
+      type: string
+      format: uuid
+      example: f174e90a-fafe-4643-bbbc-4a0ed4fc8415
+      maxLength: 36
+      x-auditable: true
+    zero-trust-gateway_uuid-5:
       description: Identify the seed ID.
       type: string
       example: f174e90a-fafe-4643-bbbc-4a0ed4fc8415
