@@ -443695,6 +443695,24 @@ components:
           type: number
         avg:
           type: number
+    realtimekit_PagingInfo:
+      type: object
+      properties:
+        end_offset:
+          type: number
+          example: 30
+        start_offset:
+          type: number
+          example: 1
+        total_count:
+          type: number
+          example: 30
+          minimum: 0
+      required:
+        - total_count
+        - start_offset
+        - end_offset
+      title: PagingInfo
     realtimekit_PagingResponse:
       type: object
       properties:
@@ -443703,22 +443721,7 @@ components:
           items:
             type: object
         paging:
-          type: object
-          properties:
-            end_offset:
-              type: number
-              example: 30
-            start_offset:
-              type: number
-              example: 1
-            total_count:
-              type: number
-              example: 30
-              minimum: 0
-          required:
-            - total_count
-            - start_offset
-            - end_offset
+          $ref: '#/components/schemas/realtimekit_PagingInfo'
         success:
           type: boolean
           example: true
