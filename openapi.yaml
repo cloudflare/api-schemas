@@ -88,8 +88,16 @@ paths:
       x-forge-hidden: true
     post:
       operationId: account-creation
-      summary: Create an account
-      description: Create an account (only available for tenant admins at this time)
+      summary: Create an Account
+      description: 'Create an Account. To create the Account within an Organization, provide `unit.id` and omit `standalone`. To create a standalone Free Account, provide `standalone: true` and omit `unit`. Providing both fields is invalid. If you omit both fields, Cloudflare can determine the destination only when the User is an administrator of exactly one Organization. Cloudflare creates the Account in that Organization; otherwise, the request returns an error.'
+      parameters:
+        - name: Idempotency-Key
+          in: header
+          description: Optional key that identifies an Account-creation request. Free Account creation can require exactly one valid key, so API clients should send a key with every Account-creation request. Reuse the same key when retrying the same request.
+          schema:
+            type: string
+            maxLength: 128
+            minLength: 1
       requestBody:
         description: Parameters for account creation
         required: true
@@ -184800,6 +184808,60 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: scim.groups
       x-fern-sdk-method-name: edit
+      x-forge-hidden: true
+    put:
+      operationId: scim-groups-put
+      summary: Replace SCIM Group
+      description: |
+        Replaces the mutable attributes of a SCIM Group (RFC 7644 Section 3.5.1), including its complete member set. Omitting `externalId` clears it, and omitting `members` replaces the member set with an empty list. For system groups (prefixed `cloudflare-v1-`), only the member set is replaced.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/iam_account_identifier'
+        - name: group_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/iam_scim_group_identifier'
+      requestBody:
+        required: true
+        content:
+          application/scim+json:
+            schema:
+              $ref: '#/components/schemas/iam_scim_group_replace_request'
+      responses:
+        '200':
+          description: Replace SCIM Group response
+          content:
+            application/scim+json:
+              schema:
+                $ref: '#/components/schemas/iam_scim_group'
+        4XX:
+          description: Replace SCIM Group response failure
+          content:
+            application/scim+json:
+              schema:
+                $ref: '#/components/schemas/iam_scim_error_response'
+      security:
+        - api_token: []
+      tags:
+        - SCIM Groups
+      x-api-token-group:
+        - SCIM Provisioning
+        - Account Settings Write
+      x-cfPermissionsRequired:
+        enum:
+          - com.cloudflare.api.account.member.update
+      x-cfPlanAvailability:
+        business: false
+        enterprise: true
+        free: false
+        pro: false
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: scim.groups
+      x-fern-sdk-method-name: update
       x-forge-hidden: true
   /accounts/{account_id}/scim/v2/ResourceTypes:
     get:
@@ -416261,10 +416323,16 @@ components:
         name:
           description: Account name
           type: string
+        standalone:
+          description: Set to `true` and omit `unit` to create a standalone Free Account. If provided, this field must be `true`.
+          type: boolean
+          enum:
+            - true
+          x-stainless-terraform-configurability: computed_optional
         type:
           $ref: '#/components/schemas/iam_account-type'
         unit:
-          description: information related to the tenant unit, and optionally, an id of the unit to create the account on. see https://developers.cloudflare.com/tenant/how-to/manage-accounts/
+          description: Information related to the tenant unit. Provide its ID and omit `standalone` to create the Account within an Organization. See https://developers.cloudflare.com/tenant/how-to/manage-accounts/.
           type: object
           properties:
             id:
@@ -416274,9 +416342,13 @@ components:
               x-auditable: true
               x-stainless-terraform-configurability: computed_optional
           x-stainless-terraform-configurability: computed_optional
+      not:
+        required:
+          - unit
+          - standalone
       required:
         - name
-      title: Create account
+      title: Create Account
     iam_create-member-with-policies:
       type: object
       properties:
@@ -417753,6 +417825,38 @@ components:
       required:
         - op
       title: SCIM Group Patch Operation
+    iam_scim_group_replace_request:
+      description: Request body for replacing a SCIM Group (PUT).
+      type: object
+      properties:
+        displayName:
+          description: A human-readable name for the Group.
+          type: string
+          example: My IdP Group
+          x-auditable: true
+        externalId:
+          description: |
+            Identifier for the Group as defined by the provisioning client (IdP). Omission clears the existing value.
+          type: string
+          example: idp-group-456
+          x-auditable: true
+        members:
+          description: |
+            The complete replacement member set. Omission is treated as an empty list.
+          type: array
+          items:
+            $ref: '#/components/schemas/iam_scim_group_patch_member_value'
+        schemas:
+          description: Must contain `urn:ietf:params:scim:schemas:core:2.0:Group`.
+          type: array
+          items:
+            type: string
+          example:
+            - urn:ietf:params:scim:schemas:core:2.0:Group
+      required:
+        - schemas
+        - displayName
+      title: SCIM Group Replace Request
     iam_scim_group_summary:
       description: A SCIM 2.0 Group resource as returned in list responses. Does not include members; use the individual GET endpoint to retrieve members.
       type: object
