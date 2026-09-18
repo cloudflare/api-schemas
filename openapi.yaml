@@ -219363,6 +219363,33 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/workers_script_name'
+        - name: since
+          in: query
+          description: Start of the deployment creation time range, inclusive.
+          schema:
+            type: string
+            format: date-time
+        - name: until
+          in: query
+          description: End of the deployment creation time range, inclusive.
+          schema:
+            type: string
+            format: date-time
+        - name: page
+          in: query
+          description: Current page.
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+        - name: per_page
+          in: query
+          description: Items per page.
+          schema:
+            type: integer
+            default: 10
+            maximum: 100
+            minimum: 1
       responses:
         '200':
           description: List Deployments response.
@@ -219370,7 +219397,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/workers_api-response-common'
+                  - $ref: '#/components/schemas/workers_api-response-collection'
                   - properties:
                       result:
                         type: object
