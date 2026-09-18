@@ -63068,6 +63068,49 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: billing.usage
       x-fern-sdk-method-name: query
+  /accounts/{account_id}/billable/usage/billable-metrics:
+    get:
+      operationId: billable-usage-v2-get-account-billable-metrics
+      summary: List Account Billable Metrics (Version 2, Alpha, Restricted)
+      description: |
+        Lists billable metrics available to the account through contracts and
+        subscriptions that overlap the requested period. Results are
+        deduplicated and ordered. If no qualifying contract exists, the
+        result is an empty array.
+
+        When `from` and `to` are omitted, the period defaults to the start of
+        the current month through today. The maximum date range is 31 days.
+      parameters:
+        - $ref: '#/components/parameters/billable-usage-api_account_id'
+        - $ref: '#/components/parameters/billable-usage-api_v2_from'
+        - $ref: '#/components/parameters/billable-usage-api_v2_to'
+      responses:
+        '200':
+          description: Account billable metrics were successfully retrieved.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/billable-usage-api_v2_account_billable_metrics_response'
+        4XX:
+          description: Indicates the request failed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/billable-usage-api_api-response-common-failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Billable Usage V2
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: true
+        pro: true
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: billing.usage
+      x-fern-sdk-method-name: get-account-billable-metrics
   /accounts/{account_id}/billing/bad-debt:
     get:
       operationId: account-billing-get-bad-debt
@@ -387564,6 +387607,61 @@ components:
         - errors
         - messages
         - result
+    billable-usage-api_v2_account_billable_metric:
+      type: object
+      properties:
+        DimensionKeys:
+          type: array
+          items:
+            type: string
+        Id:
+          description: Public catalog identifier of the billable metric.
+          type: string
+        Name:
+          description: Human-readable billable metric name.
+          type: string
+        ProductCategory:
+          type: array
+          items:
+            $ref: '#/components/schemas/billable-usage-api_v2_product_category'
+        ProductFamily:
+          type: array
+          items:
+            $ref: '#/components/schemas/billable-usage-api_v2_product_family'
+      required:
+        - Id
+        - Name
+        - ProductFamily
+        - ProductCategory
+        - DimensionKeys
+    billable-usage-api_v2_account_billable_metrics_response:
+      description: Successful response containing account-visible billable metrics.
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/billable-usage-api_message'
+          nullable: true
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/billable-usage-api_message'
+          nullable: true
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/billable-usage-api_v2_account_billable_metric'
+        success:
+          type: boolean
+          example: true
+          enum:
+            - true
+      required:
+        - success
+        - errors
+        - messages
+        - result
     billable-usage-api_v2_filter_by:
       description: Usage filters. Filters of different kinds are combined with AND, so a record must match every filter present to be returned.
       type: object
@@ -387617,6 +387715,26 @@ components:
       required:
         - Type
         - Key
+    billable-usage-api_v2_product_category:
+      type: object
+      properties:
+        Id:
+          type: string
+        Name:
+          type: string
+      required:
+        - Id
+        - Name
+    billable-usage-api_v2_product_family:
+      type: object
+      properties:
+        Id:
+          type: string
+        Name:
+          type: string
+      required:
+        - Id
+        - Name
     billable-usage-api_v2_tag_filter:
       description: Values accepted for one customer resource-tag key.
       type: object
