@@ -109674,8 +109674,8 @@ paths:
         Use `scheduling_policy: "durable_object"` for a Durable Object-managed
         application. Each Durable Object creates and manages the lifecycle of its
         container instance. Supply `name`, `scheduling_policy`, and `durable_objects`,
-        with optional top-level `observability` settings. Deployment configuration,
-        scaling, constraints, versions, and rollouts do not apply.
+        with optional `configuration` and optional top-level `observability` settings.
+        Deployment configuration, scaling, constraints, versions, and rollouts do not apply.
       requestBody:
         required: true
         content:
@@ -396038,8 +396038,8 @@ components:
         constraints, versions, and rollouts. Set it to `durable_object` for a
         Durable Object-managed application where each Durable Object creates and manages
         the lifecycle of its container instance. For `durable_object` requests, supply
-        `name`, `scheduling_policy`, and `durable_objects`, with optional top-level
-        `observability` settings.
+        `name`, `scheduling_policy`, and `durable_objects`, with optional `configuration`
+        and top-level `observability` settings.
       oneOf:
         - $ref: '#/components/schemas/cc_ContainersCreateScheduledApplicationRequest'
         - $ref: '#/components/schemas/cc_ContainersCreateDurableObjectApplicationRequest'
@@ -396108,11 +396108,15 @@ components:
       description: |
         Create a Durable Object-managed Containers application. Each Durable Object
         creates and manages the lifecycle of its container instance. Supply `name`,
-        `scheduling_policy`, and `durable_objects`, with optional top-level `observability`
-        settings. Deployment configuration, instance counts, scaling, constraints,
-        versions, and rollouts do not apply.
+        `scheduling_policy`, and `durable_objects`, with optional `configuration` and
+        top-level `observability` settings. Deployment configuration, instance counts,
+        scaling, constraints, versions, and rollouts do not apply.
       type: object
       properties:
+        configuration:
+          description: Configuration for a Durable Object-managed application.
+          allOf:
+            - $ref: '#/components/schemas/cc_DurableObjectApplicationConfiguration'
         durable_objects:
           description: The customer-owned Durable Object namespace that owns this application and its instances.
           allOf:
@@ -396270,6 +396274,8 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/cc_UserSSHPublicKey'
+        wrangler_ssh:
+          $ref: '#/components/schemas/cc_WranglerSSHConfig'
     cc_ContainersModifyApplicationRequestBody:
       description: |
         Request body for modifying a Containers application without replacing its instances.
@@ -396339,6 +396345,8 @@ components:
       properties:
         account_id:
           $ref: '#/components/schemas/cc_AccountID'
+        configuration:
+          $ref: '#/components/schemas/cc_DurableObjectApplicationConfiguration'
         created_at:
           $ref: '#/components/schemas/cc_ISO8601Timestamp'
         durable_objects:
@@ -396363,6 +396371,17 @@ components:
         - name
         - scheduling_policy
         - durable_objects
+    cc_DurableObjectApplicationConfiguration:
+      description: Application-wide settings for a Durable Object-managed application.
+      type: object
+      properties:
+        authorized_keys:
+          type: array
+          items:
+            $ref: '#/components/schemas/cc_UserSSHPublicKey'
+        wrangler_ssh:
+          $ref: '#/components/schemas/cc_WranglerSSHConfig'
+      additionalProperties: false
     cc_DurableObjectApplicationHealth:
       description: |
         Aggregate current activity for the latest observed placement of each instance.
@@ -396885,6 +396904,18 @@ components:
         - success
         - errors
         - messages
+    cc_WranglerSSHConfig:
+      description: Configuration properties for connecting with SSH to a container using Wrangler.
+      type: object
+      properties:
+        enabled:
+          type: boolean
+          default: true
+        port:
+          type: integer
+          default: 22
+          maximum: 65535
+          minimum: 1
     client-side-security_api-get-response-collection:
       type: object
       allOf:
