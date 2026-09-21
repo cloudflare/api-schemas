@@ -392726,15 +392726,6 @@ components:
       items:
         $ref: '#/components/schemas/bill-subs-api_client_secret'
       nullable: true
-    bill-subs-api_component-value:
-      type: object
-      properties:
-        default:
-          $ref: '#/components/schemas/bill-subs-api_default'
-        name:
-          $ref: '#/components/schemas/bill-subs-api_components-schemas-name'
-        unit_price:
-          $ref: '#/components/schemas/bill-subs-api_unit_price'
     bill-subs-api_component_value:
       description: A component value for a subscription.
       type: object
@@ -393035,6 +393026,30 @@ components:
             result:
               $ref: '#/components/schemas/bill-subs-api_payment_method'
           type: object
+    bill-subs-api_plan_component_value:
+      type: object
+      properties:
+        default:
+          $ref: '#/components/schemas/bill-subs-api_default'
+        name:
+          $ref: '#/components/schemas/bill-subs-api_components-schemas-name'
+        unit_price:
+          $ref: '#/components/schemas/bill-subs-api_unit_price'
+    bill-subs-api_plan_rate_plan:
+      type: object
+      properties:
+        components:
+          $ref: '#/components/schemas/bill-subs-api_schemas-component_values'
+        currency:
+          $ref: '#/components/schemas/bill-subs-api_currency'
+        duration:
+          $ref: '#/components/schemas/bill-subs-api_duration'
+        frequency:
+          $ref: '#/components/schemas/bill-subs-api_schemas-frequency'
+        id:
+          $ref: '#/components/schemas/bill-subs-api_rate-plan_components-schemas-identifier'
+        name:
+          $ref: '#/components/schemas/bill-subs-api_schemas-name'
     bill-subs-api_plan_response_collection:
       allOf:
         - $ref: '#/components/schemas/bill-subs-api_api-response-collection'
@@ -393050,21 +393065,6 @@ components:
       example: 20
       readOnly: true
       x-auditable: true
-    bill-subs-api_rate-plan:
-      type: object
-      properties:
-        components:
-          $ref: '#/components/schemas/bill-subs-api_schemas-component_values'
-        currency:
-          $ref: '#/components/schemas/bill-subs-api_currency'
-        duration:
-          $ref: '#/components/schemas/bill-subs-api_duration'
-        frequency:
-          $ref: '#/components/schemas/bill-subs-api_schemas-frequency'
-        id:
-          $ref: '#/components/schemas/bill-subs-api_rate-plan_components-schemas-identifier'
-        name:
-          $ref: '#/components/schemas/bill-subs-api_schemas-name'
     bill-subs-api_rate-plan_components-schemas-identifier:
       description: Plan identifier tag.
       type: string
@@ -393167,7 +393167,7 @@ components:
       description: Array of available components values for the plan.
       type: array
       items:
-        $ref: '#/components/schemas/bill-subs-api_component-value'
+        $ref: '#/components/schemas/bill-subs-api_plan_component_value'
     bill-subs-api_schemas-frequency:
       description: The frequency at which you will be billed for this plan.
       type: string
@@ -393201,7 +393201,7 @@ components:
     bill-subs-api_schemas-rate-plan:
       type: object
       allOf:
-        - $ref: '#/components/schemas/bill-subs-api_rate-plan'
+        - $ref: '#/components/schemas/bill-subs-api_plan_rate_plan'
     bill-subs-api_schemas-zone:
       type: object
       properties:
