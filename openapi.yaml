@@ -208457,6 +208457,59 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: durable-objects.namespaces.objects
       x-fern-sdk-method-name: list
+  /accounts/{account_id}/workers/durable_objects/namespaces/{id}/query/v2:
+    post:
+      operationId: durable-objects-namespace-query
+      summary: Query a Durable Object
+      description: Executes one or more SQL queries against a Durable Object.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/workers_identifier'
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/workers_schemas-id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/workers_query-by-id'
+                - $ref: '#/components/schemas/workers_query-by-name'
+      responses:
+        '200':
+          description: Query execution response.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/workers_api-response-common'
+                  - properties:
+                      result: {}
+                    type: object
+        4XX:
+          description: Query execution failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/workers_api-response-common-failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Durable Objects Namespace
+      x-api-token-group:
+        - Workers Scripts Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: durable-objects.namespaces
+      x-fern-sdk-method-name: query
+      x-forge-hidden: true
   /accounts/{account_id}/workers/observability/destinations:
     get:
       operationId: destination.list
@@ -223366,6 +223419,800 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: workers
       x-fern-sdk-method-name: update
+  /accounts/{account_id}/workers/workers/{worker_id}/previews:
+    get:
+      operationId: workers.previews.list
+      summary: List Previews
+      description: List all Previews for a Worker.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/workers_identifier'
+        - name: worker_id
+          in: path
+          required: true
+          schema:
+            description: Identifier for the Worker, which can be ID or name.
+            type: string
+        - name: page
+          in: query
+          description: Current page.
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+        - name: per_page
+          in: query
+          description: Items per-page.
+          schema:
+            type: integer
+            default: 10
+            maximum: 100
+            minimum: 1
+        - name: order_by
+          in: query
+          description: Property to sort results by.
+          schema:
+            type: string
+            default: deployed_on
+            enum:
+              - deployed_on
+              - updated_on
+              - created_on
+              - slug
+              - name
+        - name: order
+          in: query
+          description: Sort direction.
+          schema:
+            type: string
+            default: desc
+            enum:
+              - asc
+              - desc
+        - name: slug
+          in: query
+          description: Partial-match filter on preview slug.
+          schema:
+            type: string
+        - name: name
+          in: query
+          description: Partial-match filter on preview name.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List Previews success.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/workers_api-response-collection'
+                  - properties:
+                      result:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/workers_Preview'
+                    required:
+                      - result
+                    type: object
+        4XX:
+          description: List Previews failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/workers_api-response-common-failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Previews
+      x-api-token-group:
+        - Workers Tail Read
+        - Workers Scripts Write
+        - Workers Scripts Read
+      x-fern-audiences:
+        - sdk
+      x-fern-availability: beta
+      x-fern-sdk-group-name: workers.previews
+      x-fern-sdk-method-name: list
+    post:
+      operationId: workers.previews.create
+      summary: Create Preview
+      description: Create a new Preview for a Worker.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/workers_identifier'
+        - name: worker_id
+          in: path
+          required: true
+          schema:
+            description: Identifier for the Worker, which can be ID or name.
+            type: string
+        - name: ignore_defaults
+          in: query
+          schema:
+            description: If true, preview defaults/base config from the parent Worker is ignored.
+            type: boolean
+        - name: ignore_base_config
+          in: query
+          schema:
+            description: If true, preview base config from the parent Worker is ignored.
+            type: boolean
+      requestBody:
+        description: Preview creation parameters.
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/workers_Preview'
+                - required:
+                    - name
+                  type: object
+      responses:
+        '200':
+          description: Create Preview success.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/workers_api-response-common'
+                  - properties:
+                      result:
+                        $ref: '#/components/schemas/workers_Preview'
+                    required:
+                      - result
+                    type: object
+        4XX:
+          description: Create Preview failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/workers_api-response-common-failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Previews
+      x-fern-audiences:
+        - sdk
+      x-fern-availability: beta
+      x-fern-sdk-group-name: workers.previews
+      x-fern-sdk-method-name: create
+  /accounts/{account_id}/workers/workers/{worker_id}/previews/{preview_id}:
+    delete:
+      operationId: workers.previews.delete
+      summary: Delete Preview
+      description: Delete a Preview.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/workers_identifier'
+        - name: worker_id
+          in: path
+          required: true
+          schema:
+            description: Identifier for the Worker, which can be ID or name.
+            type: string
+        - name: preview_id
+          in: path
+          required: true
+          schema:
+            description: Identifier for the Preview, which can be ID, slug, or URL-encoded name.
+            type: string
+        - name: force
+          in: query
+          description: If true, delete the Preview even when a service binding, Durable Object, or other binding still references it. The delete also removes those bindings and Durable Objects.
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Delete Preview success.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/workers_api-response-common'
+        4XX:
+          description: Delete Preview failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/workers_api-response-common-failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Previews
+      x-api-token-group:
+        - Workers Scripts Write
+      x-fern-audiences:
+        - sdk
+      x-fern-availability: beta
+      x-fern-sdk-group-name: workers.previews
+      x-fern-sdk-method-name: delete
+      x-forge-require-confirmation: This will permanently delete the preview.
+    get:
+      operationId: workers.previews.get
+      summary: Get Preview
+      description: Get details about a specific Preview.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/workers_identifier'
+        - name: worker_id
+          in: path
+          required: true
+          schema:
+            description: Identifier for the Worker, which can be ID or name.
+            type: string
+        - name: preview_id
+          in: path
+          required: true
+          schema:
+            description: Identifier for the Preview, which can be ID, slug, or URL-encoded name.
+            type: string
+      responses:
+        '200':
+          description: Get Preview success.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/workers_api-response-common'
+                  - properties:
+                      result:
+                        $ref: '#/components/schemas/workers_Preview'
+                    required:
+                      - result
+                    type: object
+        4XX:
+          description: Get Preview failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/workers_api-response-common-failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Previews
+      x-api-token-group:
+        - Workers Tail Read
+        - Workers Scripts Write
+        - Workers Scripts Read
+      x-fern-audiences:
+        - sdk
+      x-fern-availability: beta
+      x-fern-sdk-group-name: workers.previews
+      x-fern-sdk-method-name: get
+    patch:
+      operationId: workers.previews.edit
+      summary: Edit Preview
+      description: Perform a partial update on a Preview, where omitted properties are left unchanged.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/workers_identifier'
+        - name: worker_id
+          in: path
+          required: true
+          schema:
+            description: Identifier for the Worker, which can be ID or name.
+            type: string
+        - name: preview_id
+          in: path
+          required: true
+          schema:
+            description: Identifier for the Preview, which can be ID, slug, or URL-encoded name.
+            type: string
+      requestBody:
+        description: Preview partial update parameters.
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/workers_Preview'
+                - type: object
+          application/merge-patch+json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/workers_Preview'
+                - type: object
+      responses:
+        '200':
+          description: Edit Preview success.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/workers_api-response-common'
+                  - properties:
+                      result:
+                        $ref: '#/components/schemas/workers_Preview'
+                    required:
+                      - result
+                    type: object
+        4XX:
+          description: Edit Preview failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/workers_api-response-common-failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Previews
+      x-fern-audiences:
+        - sdk
+      x-fern-availability: beta
+      x-fern-sdk-group-name: workers.previews
+      x-fern-sdk-method-name: edit
+    put:
+      operationId: workers.previews.update
+      summary: Update Preview
+      description: Perform a complete replacement of a Preview, where omitted properties are set to defaults.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/workers_identifier'
+        - name: worker_id
+          in: path
+          required: true
+          schema:
+            description: Identifier for the Worker, which can be ID or name.
+            type: string
+        - name: preview_id
+          in: path
+          required: true
+          schema:
+            description: Identifier for the Preview, which can be ID, slug, or URL-encoded name.
+            type: string
+        - name: ignore_defaults
+          in: query
+          schema:
+            description: If true, preview defaults/base config from the parent Worker is ignored.
+            type: boolean
+        - name: ignore_base_config
+          in: query
+          schema:
+            description: If true, preview base config from the parent Worker is ignored.
+            type: boolean
+      requestBody:
+        description: Preview update parameters.
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/workers_Preview'
+                - required:
+                    - name
+                  type: object
+      responses:
+        '200':
+          description: Update Preview success.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/workers_api-response-common'
+                  - properties:
+                      result:
+                        $ref: '#/components/schemas/workers_Preview'
+                    required:
+                      - result
+                    type: object
+        4XX:
+          description: Update Preview failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/workers_api-response-common-failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Previews
+      x-api-token-group:
+        - Workers Scripts Write
+      x-fern-audiences:
+        - sdk
+      x-fern-availability: beta
+      x-fern-sdk-group-name: workers.previews
+      x-fern-sdk-method-name: update
+  /accounts/{account_id}/workers/workers/{worker_id}/previews/{preview_id}/deployments:
+    get:
+      operationId: workers.previews.deployments.list
+      summary: List Preview Deployments
+      description: List all deployments for a Preview.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/workers_identifier'
+        - name: worker_id
+          in: path
+          required: true
+          schema:
+            description: Identifier for the Worker, which can be ID or name.
+            type: string
+        - name: preview_id
+          in: path
+          required: true
+          schema:
+            description: Identifier for the Preview, which can be ID, slug, or URL-encoded name.
+            type: string
+        - name: page
+          in: query
+          description: Current page.
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+        - name: per_page
+          in: query
+          description: Items per-page.
+          schema:
+            type: integer
+            default: 10
+            maximum: 100
+            minimum: 1
+      responses:
+        '200':
+          description: List Preview Deployments success.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/workers_api-response-collection'
+                  - properties:
+                      result:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/workers_PreviewDeployment'
+                    required:
+                      - result
+                    type: object
+        4XX:
+          description: List Preview Deployments failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/workers_api-response-common-failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Preview Deployments
+      x-api-token-group:
+        - Workers Tail Read
+        - Workers Scripts Write
+        - Workers Scripts Read
+      x-fern-audiences:
+        - sdk
+      x-fern-availability: beta
+      x-fern-sdk-group-name: workers.previews.deployments
+      x-fern-sdk-method-name: list
+    post:
+      operationId: workers.previews.deployments.create
+      summary: Create Preview Deployment
+      description: Create a new deployment for a Preview.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/workers_identifier'
+        - name: worker_id
+          in: path
+          required: true
+          schema:
+            description: Identifier for the Worker, which can be ID or name.
+            type: string
+        - name: preview_id
+          in: path
+          required: true
+          schema:
+            description: Identifier for the Preview, which can be ID, slug, or URL-encoded name.
+            type: string
+        - name: ignore_defaults
+          in: query
+          schema:
+            description: If true, preview defaults from the parent Worker are ignored.
+            type: boolean
+      requestBody:
+        description: Preview deployment creation parameters.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/workers_PreviewDeploymentRequest'
+          multipart/form-data:
+            encoding:
+              files:
+                contentType: application/javascript+module, text/javascript+module, application/javascript, text/javascript, text/x-python, text/x-python-requirement, application/wasm, text/plain, application/octet-stream, application/source-map
+              metadata:
+                contentType: application/json
+            schema:
+              type: object
+              properties:
+                files:
+                  description: |
+                    Code, sourcemaps, and other content used at runtime. Each
+                    part's filename is the module name. Sourcemaps use
+                    `application/source-map`.
+                  type: array
+                  items:
+                    format: binary
+                    type: string
+                  x-stainless-collection-type: set
+                metadata:
+                  $ref: '#/components/schemas/workers_PreviewDeploymentConfig'
+              required:
+                - metadata
+      responses:
+        '200':
+          description: Create Preview Deployment success.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/workers_api-response-common'
+                  - properties:
+                      result:
+                        $ref: '#/components/schemas/workers_PreviewDeployment'
+                    required:
+                      - result
+                    type: object
+        4XX:
+          description: |
+            Create Preview Deployment failure. When the upload uses the
+            declarative `exports` field and one or more entries fail
+            reconciliation, the response is the exports reconciliation
+            error envelope (error code 100402) with per-class detail in
+            `errors[].meta.details`.
+          content:
+            application/json:
+              schema:
+                anyOf:
+                  - $ref: '#/components/schemas/workers_api-response-common-failure'
+                  - $ref: '#/components/schemas/workers_exports_reconciliation_error_response'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Preview Deployments
+      x-fern-audiences:
+        - sdk
+      x-fern-availability: beta
+      x-fern-sdk-group-name: workers.previews.deployments
+      x-fern-sdk-method-name: create
+  /accounts/{account_id}/workers/workers/{worker_id}/previews/{preview_id}/deployments/{deployment_id}:
+    delete:
+      operationId: workers.previews.deployments.delete
+      summary: Delete Preview Deployment
+      description: Delete a preview deployment.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/workers_identifier'
+        - name: worker_id
+          in: path
+          required: true
+          schema:
+            description: Identifier for the Worker, which can be ID or name.
+            type: string
+        - name: preview_id
+          in: path
+          required: true
+          schema:
+            description: Identifier for the Preview, which can be ID, slug, or URL-encoded name.
+            type: string
+        - name: deployment_id
+          in: path
+          required: true
+          schema:
+            description: Identifier for the deployment, which can be a UUID, a UUID prefix (minimum length 8), or the literal "latest" to operate on the most recently created deployment.
+            type: string
+      responses:
+        '200':
+          description: Delete Preview Deployment success.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/workers_api-response-common'
+        4XX:
+          description: Delete Preview Deployment failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/workers_api-response-common-failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Preview Deployments
+      x-api-token-group:
+        - Workers Scripts Write
+      x-fern-audiences:
+        - sdk
+      x-fern-availability: beta
+      x-fern-sdk-group-name: workers.previews.deployments
+      x-fern-sdk-method-name: delete
+      x-forge-require-confirmation: This will permanently delete the preview deployment.
+    get:
+      operationId: workers.previews.deployments.get
+      summary: Get Preview Deployment
+      description: Get details about a specific preview deployment.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/workers_identifier'
+        - name: worker_id
+          in: path
+          required: true
+          schema:
+            description: Identifier for the Worker, which can be ID or name.
+            type: string
+        - name: preview_id
+          in: path
+          required: true
+          schema:
+            description: Identifier for the Preview, which can be ID, slug, or URL-encoded name.
+            type: string
+        - name: deployment_id
+          in: path
+          required: true
+          schema:
+            description: Identifier for the deployment, which can be a UUID, a UUID prefix (minimum length 8), or the literal "latest" to operate on the most recently created deployment.
+            type: string
+        - name: include
+          in: query
+          schema:
+            description: Whether to include the `modules` property of the deployment in the response, which contains code and sourcemap content and may add several megabytes to the response size.
+            type: string
+            enum:
+              - modules
+      responses:
+        '200':
+          description: Get Preview Deployment success.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/workers_api-response-common'
+                  - properties:
+                      result:
+                        $ref: '#/components/schemas/workers_PreviewDeployment'
+                    required:
+                      - result
+                    type: object
+        4XX:
+          description: Get Preview Deployment failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/workers_api-response-common-failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Preview Deployments
+      x-api-token-group:
+        - Workers Tail Read
+        - Workers Scripts Write
+        - Workers Scripts Read
+      x-fern-audiences:
+        - sdk
+      x-fern-availability: beta
+      x-fern-sdk-group-name: workers.previews.deployments
+      x-fern-sdk-method-name: get
+  /accounts/{account_id}/workers/workers/{worker_id}/previews/{preview_id}/deployments/latest:
+    patch:
+      operationId: workers.previews.deployments.patchLatest
+      summary: Patch Latest Preview Deployment
+      description: Only `/deployments/latest` is supported. Creates a new preview deployment by applying a JSON Merge Patch (RFC 7396) to the latest deployment. Patching a specific deployment ID is not supported. Omitted fields are inherited from the latest deployment. Preview base config is used for the first deployment.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/workers_identifier'
+        - name: worker_id
+          in: path
+          required: true
+          schema:
+            description: Identifier for the Worker, which can be ID or name.
+            type: string
+        - name: preview_id
+          in: path
+          required: true
+          schema:
+            description: Identifier for the Preview, which can be ID, slug, or URL-encoded name.
+            type: string
+        - name: ignore_defaults
+          in: query
+          schema:
+            description: If true, preview defaults from the parent Worker are ignored.
+            type: boolean
+      requestBody:
+        description: JSON Merge Patch to apply to the latest preview deployment. An empty object creates a new deployment with no changes.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/workers_PreviewDeploymentRequest'
+          application/merge-patch+json:
+            schema:
+              $ref: '#/components/schemas/workers_PreviewDeploymentRequest'
+      responses:
+        '200':
+          description: Patch Preview Deployment success.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/workers_api-response-common'
+                  - properties:
+                      result:
+                        $ref: '#/components/schemas/workers_PreviewDeployment'
+                    required:
+                      - result
+                    type: object
+        4XX:
+          description: |
+            Patch Preview Deployment failure. When the patch uses the
+            declarative `exports` field and one or more entries fail
+            reconciliation, the response is the exports reconciliation
+            error envelope (error code 100402) with per-class detail in
+            `errors[].meta.details`.
+          content:
+            application/json:
+              schema:
+                anyOf:
+                  - $ref: '#/components/schemas/workers_api-response-common-failure'
+                  - $ref: '#/components/schemas/workers_exports_reconciliation_error_response'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Preview Deployments
+      x-fern-audiences:
+        - sdk
+      x-fern-availability: beta
+      x-fern-sdk-group-name: workers.previews.deployments
+      x-fern-sdk-method-name: edit
   /accounts/{account_id}/workers/workers/{worker_id}/versions:
     get:
       operationId: listWorkerVersions
@@ -480290,6 +481137,458 @@ components:
       required:
         - code
         - message
+    workers_Preview:
+      type: object
+      properties:
+        created_on:
+          description: When the Preview was created.
+          type: string
+          format: date-time
+          readOnly: true
+          x-auditable: true
+        deployed_on:
+          description: When the Preview's most recent deployment was created. `null` if the Preview has never been deployed.
+          type: string
+          format: date-time
+          nullable: true
+          readOnly: true
+        id:
+          description: Immutable ID of the Preview.
+          type: string
+          example: 63bafce9179948688866bb22268eb1c6
+          pattern: ^[0-9a-f]{32}$
+          readOnly: true
+          x-auditable: true
+        logpush:
+          description: Whether logpush is enabled for the Preview.
+          type: boolean
+          default: false
+          x-auditable: true
+        name:
+          description: Human-readable name of the Preview.
+          type: string
+          example: feature/my-branch
+          maxLength: 256
+          pattern: ^[a-zA-Z0-9]([a-zA-Z0-9\-_/.+=]*[a-zA-Z0-9])?$
+          x-auditable: true
+        observability:
+          description: Observability settings for the Preview.
+          type: object
+          properties:
+            enabled:
+              description: Whether observability is enabled for the Preview.
+              type: boolean
+              default: false
+              x-auditable: true
+            head_sampling_rate:
+              description: The sampling rate for observability. From 0 to 1 (1 = 100%, 0.1 = 10%).
+              type: number
+              example: 1
+              default: 1
+              x-auditable: true
+            issues:
+              description: Real-time Issues settings for the Preview.
+              type: object
+              nullable: true
+              properties:
+                enabled:
+                  description: Whether real-time Issues are enabled for the Preview.
+                  type: boolean
+                  default: false
+                  x-auditable: true
+            logs:
+              description: Log settings for the Preview.
+              type: object
+              properties:
+                destinations:
+                  description: A list of destinations where logs will be exported to.
+                  type: array
+                  items:
+                    type: string
+                  default: []
+                  x-auditable: true
+                enabled:
+                  description: Whether logs are enabled for the Preview.
+                  type: boolean
+                  default: false
+                  x-auditable: true
+                head_sampling_rate:
+                  description: The sampling rate for logs. From 0 to 1 (1 = 100%, 0.1 = 10%).
+                  type: number
+                  example: 1
+                  default: 1
+                  x-auditable: true
+                invocation_logs:
+                  description: Whether invocation logs are enabled for the Preview.
+                  type: boolean
+                  default: true
+                  x-auditable: true
+                persist:
+                  description: Whether log persistence is enabled for the Preview.
+                  type: boolean
+                  default: true
+                  x-auditable: true
+            redact_query_string:
+              description: Whether query strings are removed from request URLs in logs and traces.
+              type: boolean
+              default: false
+              x-auditable: true
+            traces:
+              description: Trace settings for the Preview.
+              type: object
+              properties:
+                destinations:
+                  description: A list of destinations where traces will be exported to.
+                  type: array
+                  items:
+                    type: string
+                  default: []
+                  x-auditable: true
+                enabled:
+                  description: Whether traces are enabled for the Preview.
+                  type: boolean
+                  default: false
+                  x-auditable: true
+                head_sampling_rate:
+                  description: The sampling rate for traces. From 0 to 1 (1 = 100%, 0.1 = 10%).
+                  type: number
+                  example: 1
+                  default: 1
+                  x-auditable: true
+                persist:
+                  description: Whether trace persistence is enabled for the Preview.
+                  type: boolean
+                  default: true
+                  x-auditable: true
+        slug:
+          description: Immutable URL-safe identifier for the Preview.
+          type: string
+          example: feature-my-branch
+          readOnly: true
+          x-auditable: true
+        tags:
+          description: Tags associated with the Preview.
+          type: array
+          items:
+            maxLength: 1024
+            pattern: ^[^,&]*$
+            type: string
+          example:
+            - my-team
+            - my-preview
+          default: []
+          maxItems: 8
+          x-stainless-collection-type: set
+        tail_consumers:
+          description: Other Workers that should consume logs from the Preview.
+          type: array
+          items:
+            properties:
+              name:
+                description: Name of the consumer Worker.
+                type: string
+                example: my-tail-consumer
+                x-auditable: true
+            required:
+              - name
+            type: object
+          default: []
+          x-stainless-collection-type: set
+        updated_on:
+          description: When the Preview was most recently updated.
+          type: string
+          format: date-time
+          readOnly: true
+          x-auditable: true
+        urls:
+          description: Routable URLs for the Preview.
+          type: array
+          items:
+            example: https://feature-my-branch-my-worker.workers.dev
+            type: string
+          readOnly: true
+      required:
+        - id
+        - slug
+        - name
+        - tags
+        - observability
+        - logpush
+        - tail_consumers
+        - urls
+        - created_on
+        - updated_on
+    workers_PreviewDeployment:
+      allOf:
+        - $ref: '#/components/schemas/workers_PreviewDeploymentRequest'
+        - properties:
+            author_email:
+              description: Email of the user who created the deployment. May be empty for deployments created using an API token.
+              type: string
+              readOnly: true
+              x-auditable: true
+            author_id:
+              description: Identifier of the user who created the deployment.
+              type: string
+              readOnly: true
+              x-auditable: true
+            created_on:
+              description: When the deployment was created.
+              type: string
+              format: date-time
+              readOnly: true
+              x-auditable: true
+            exports_reconciliation:
+              description: |
+                Summary of the declarative exports reconciliation that ran on
+                this upload. Populated only when the uploaded metadata included
+                an `exports` block. Durable Object entries drive reconciliation;
+                `type: worker` entries do not contribute to this summary.
+              allOf:
+                - $ref: '#/components/schemas/workers_exports_reconciliation_result'
+            id:
+              description: Deployment identifier.
+              type: string
+              format: uuid
+              readOnly: true
+              x-auditable: true
+            migration_tag:
+              description: Durable Object migration tag. Omitted if the Preview does not use Durable Objects.
+              type: string
+              example: v1
+              readOnly: true
+            number:
+              description: The integer deployment number, starting from one.
+              type: integer
+              readOnly: true
+              x-auditable: true
+            source:
+              description: The client used to create the deployment.
+              type: string
+              example: wrangler
+              readOnly: true
+              x-auditable: true
+            startup_time_ms:
+              description: Time in milliseconds spent on Worker startup.
+              type: integer
+              example: 10
+              readOnly: true
+              x-auditable: true
+            urls:
+              description: All routable URLs that always point to this deployment.
+              type: array
+              items:
+                format: uri
+                type: string
+              example:
+                - https://9387e76d-my-preview.my-subdomain.workers.dev
+              readOnly: true
+          required:
+            - id
+            - number
+            - author_id
+            - author_email
+            - urls
+            - created_on
+          type: object
+    workers_PreviewDeploymentConfig:
+      description: Configuration shared by JSON and multipart preview deployment uploads.
+      type: object
+      properties:
+        annotations:
+          description: Metadata about the deployment.
+          type: object
+          properties:
+            workers/commit_sha:
+              description: Full commit SHA associated with the deployment, detected from the CI environment. Maximum 64 bytes.
+              type: string
+              example: 8b6aeb38455e2f92e170deb46313b90166ccc1e5
+              maxLength: 64
+              x-auditable: true
+            workers/message:
+              description: Human-readable message about the deployment. Truncated to 1000 bytes if longer.
+              type: string
+              example: Fixed bug.
+              maxLength: 1000
+              x-auditable: true
+            workers/pull_request_number:
+              description: Number of the pull or merge request associated with the deployment, detected from the CI environment. Maximum 20 bytes.
+              type: string
+              example: '14966'
+              maxLength: 20
+              x-auditable: true
+            workers/pull_request_title:
+              description: Title of the pull or merge request associated with the deployment, detected from the CI environment. Maximum 512 bytes.
+              type: string
+              example: Add a cool new feature
+              maxLength: 512
+              x-auditable: true
+            workers/pull_request_url:
+              description: URL of the pull or merge request associated with the deployment, detected from the CI environment. Maximum 512 bytes.
+              type: string
+              example: https://github.com/cloudflare/workers-sdk/pull/14966
+              maxLength: 512
+              x-auditable: true
+            workers/repository_url:
+              description: URL of the source repository the deployment was built from, detected from the CI environment. Maximum 512 bytes.
+              type: string
+              example: https://github.com/cloudflare/workers-sdk
+              maxLength: 512
+              x-auditable: true
+            workers/tag:
+              description: User-provided identifier for the deployment. Maximum 100 bytes.
+              type: string
+              example: v1.0.1
+              maxLength: 100
+              x-auditable: true
+            workers/triggered_by:
+              description: Operation that triggered the creation of the deployment.
+              type: string
+              example: create_preview_deployment_api
+              readOnly: true
+              x-auditable: true
+        assets:
+          $ref: '#/components/schemas/workers_assets'
+        bindings:
+          description: |
+            Bindings attached to the deployment, as an array of objects
+            that each name themselves. An upload can send `env` or
+            `bindings`, and a read returns both. Uploads to a Preview whose
+            parent Worker has a previews base config must use `env`.
+          allOf:
+            - $ref: '#/components/schemas/workers_bindings'
+        cache_options:
+          $ref: '#/components/schemas/workers_cache_options'
+        compatibility_date:
+          $ref: '#/components/schemas/workers_compatibility_date'
+        compatibility_flags:
+          $ref: '#/components/schemas/workers_compatibility_flags'
+        containers:
+          $ref: '#/components/schemas/workers_containers'
+        env:
+          description: |
+            Bindings attached to the deployment, keyed by binding name. An
+            upload can send `env` or `bindings`, and a read returns both.
+          allOf:
+            - $ref: '#/components/schemas/workers_env'
+        exports:
+          description: |
+            Declarative exports for the deployment, including Durable
+            Object classes (with their `storage` backend) and named Worker
+            entrypoints. On reads, tombstoned lifecycle entries are
+            omitted, so only live exports (`created` and
+            `expecting-transfer`) are returned. `exports` and `migrations`
+            are mutually exclusive on upload.
+          allOf:
+            - $ref: '#/components/schemas/workers_exports_config_map'
+        limits:
+          description: Resource limits enforced at runtime.
+          type: object
+          properties:
+            cpu_ms:
+              description: CPU time limit in milliseconds.
+              type: integer
+              example: 50
+            subrequests:
+              description: Subrequest limit per request.
+              type: integer
+              example: 1000
+          x-stainless-terraform-configurability: computed_optional
+        main_module:
+          description: The name of the module that exports a `fetch` handler. Multipart uploads reference the file part by filename.
+          type: string
+          example: index.js
+          x-auditable: true
+        migrations:
+          description: Migrations for Durable Objects associated with the deployment. Migrations are applied when the deployment is created.
+          oneOf:
+            - $ref: '#/components/schemas/workers_single_step_migrations'
+            - $ref: '#/components/schemas/workers_multiple_step_migrations'
+        placement:
+          $ref: '#/components/schemas/workers_placement_info_no_status'
+        usage_model:
+          description: Usage model for the deployment.
+          type: string
+          example: standard
+          default: standard
+          enum:
+            - standard
+            - bundled
+            - unbound
+          deprecated: true
+          x-auditable: true
+    workers_PreviewDeploymentRequest:
+      description: Preview deployment configuration with base64-encoded modules.
+      allOf:
+        - $ref: '#/components/schemas/workers_PreviewDeploymentConfig'
+        - properties:
+            modules:
+              description: Code, sourcemaps, and other content used at runtime.
+              type: array
+              items:
+                properties:
+                  content_base64:
+                    description: The base64-encoded module content.
+                    type: string
+                    format: byte
+                    example: ZXhwb3J0IGRlZmF1bHQgewogIGFzeW5jIGZldGNoKHJlcXVlc3QsIGVudiwgY3R4KSB7CiAgICByZXR1cm4gbmV3IFJlc3BvbnNlKCdIZWxsbyBXb3JsZCEnKQogIH0KfQ==
+                  content_type:
+                    description: The content type of the module.
+                    type: string
+                    example: application/javascript+module
+                  name:
+                    description: The name of the module.
+                    type: string
+                    example: index.js
+                required:
+                  - name
+                  - content_type
+                  - content_base64
+                type: object
+              x-stainless-collection-type: set
+          type: object
+    workers_PreviewsBaseConfig:
+      type: object
+      properties:
+        cache_options:
+          description: Cache options used when creating new Previews.
+          allOf:
+            - $ref: '#/components/schemas/workers_cache_options'
+        env:
+          description: Bindings used when creating new Previews, keyed by binding name.
+          allOf:
+            - $ref: '#/components/schemas/workers_env'
+        limits:
+          description: Resource limits enforced at runtime for newly created Previews.
+          allOf:
+            - $ref: '#/components/schemas/workers_limits'
+          x-stainless-terraform-configurability: computed_optional
+        logpush:
+          description: Whether logpush is enabled when creating new Previews.
+          type: boolean
+          x-auditable: true
+        observability:
+          description: Observability settings used when creating new Previews.
+          allOf:
+            - $ref: '#/components/schemas/workers_observability'
+        placement:
+          description: Placement configuration used when creating new Previews.
+          allOf:
+            - $ref: '#/components/schemas/workers_placement_info_no_status'
+        tail_consumers:
+          description: Other Workers that should consume logs from newly created Previews.
+          type: array
+          items:
+            properties:
+              name:
+                description: Name of the consumer Worker.
+                type: string
+                example: my-tail-consumer
+                x-auditable: true
+            required:
+              - name
+            type: object
+          x-stainless-collection-type: set
     workers_Version:
       type: object
       properties:
@@ -480674,6 +481973,11 @@ components:
                     - null
                   nullable: true
                   x-auditable: true
+        previews_base_config:
+          description: Template configuration used when creating new Previews for this Worker.
+          allOf:
+            - $ref: '#/components/schemas/workers_PreviewsBaseConfig'
+          x-auditable: true
         references:
           description: Other resources that reference the Worker and depend on it existing.
           type: object
@@ -480979,6 +482283,55 @@ components:
       allOf:
         - $ref: '#/components/schemas/workers_api-response-common'
     workers_assets:
+      description: |
+        Configuration for assets within a Worker.
+
+        [`_headers`](https://developers.cloudflare.com/workers/static-assets/headers/#custom-headers) and
+        [`_redirects`](https://developers.cloudflare.com/workers/static-assets/redirects/) files should be
+        included as modules named `_headers` and `_redirects` with content type `text/plain`.
+      type: object
+      properties:
+        config:
+          description: Configuration for assets within a Worker.
+          type: object
+          properties:
+            html_handling:
+              description: Determines the redirects and rewrites of requests for HTML content.
+              type: string
+              example: auto-trailing-slash
+              default: auto-trailing-slash
+              enum:
+                - auto-trailing-slash
+                - force-trailing-slash
+                - drop-trailing-slash
+                - none
+              x-auditable: true
+            not_found_handling:
+              description: Determines the response when a request does not match a static asset, and there is no Worker script.
+              type: string
+              example: 404-page
+              default: none
+              enum:
+                - none
+                - 404-page
+                - single-page-application
+              x-auditable: true
+            run_worker_first:
+              default: false
+              oneOf:
+                - description: Contains a list path rules to control routing to either the Worker or assets. Glob (*) and negative (!) rules are supported. Rules must start with either '/' or '!/'. At least one non-negative rule must be provided, and negative rules have higher precedence than non-negative rules.
+                  example: '["/api/*", "/oauth/callback", "!/api/assets/*"]'
+                  items:
+                    type: string
+                  type: array
+                - description: Enables routing to always invoke the Worker script ahead of all requests. When true, this is equivalent to `["/*"]` in the string array version of this field.
+                  example: true
+                  type: boolean
+        jwt:
+          description: Token provided upon successful upload of all files from a registered manifest.
+          type: string
+          x-sensitive: true
+    workers_assets-2:
       description: Configuration for assets within a Worker.
       type: object
       properties:
@@ -481057,6 +482410,7 @@ components:
           images: '#/components/schemas/workers_binding_kind_images'
           inherit: '#/components/schemas/workers_binding_kind_inherit'
           json: '#/components/schemas/workers_binding_kind_json'
+          k2: '#/components/schemas/workers_binding_kind_k2'
           kv_namespace: '#/components/schemas/workers_binding_kind_kv_namespace'
           media: '#/components/schemas/workers_binding_kind_media'
           messaging: '#/components/schemas/workers_binding_kind_messaging'
@@ -481100,6 +482454,7 @@ components:
         - $ref: '#/components/schemas/workers_binding_kind_mtls_certificate'
         - $ref: '#/components/schemas/workers_binding_kind_plain_text'
         - $ref: '#/components/schemas/workers_binding_kind_pipelines'
+        - $ref: '#/components/schemas/workers_binding_kind_k2'
         - $ref: '#/components/schemas/workers_binding_kind_queue'
         - $ref: '#/components/schemas/workers_binding_kind_ratelimit'
         - $ref: '#/components/schemas/workers_binding_kind_r2_bucket'
@@ -481468,6 +482823,28 @@ components:
         - name
         - type
         - json
+    workers_binding_kind_k2:
+      description: A K2 stream binding. Available only to accounts enabled for K2.
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/workers_binding_name'
+        stream:
+          description: ID of a K2 stream owned by the account deploying the Worker.
+          type: string
+          example: 0123456789abcdef0123456789abcdef
+          pattern: ^[a-f0-9]{32}$
+          x-auditable: true
+        type:
+          description: The kind of resource that the binding provides.
+          type: string
+          enum:
+            - k2
+          x-auditable: true
+      required:
+        - name
+        - type
+        - stream
     workers_binding_kind_kv_namespace:
       type: object
       properties:
@@ -482417,6 +483794,34 @@ components:
       additionalProperties: false
       required:
         - enabled
+    workers_env:
+      description: |
+        Bindings attached to a Worker, keyed by binding name. `bindings`
+        carries the same information as an array of objects that each
+        name themselves, and an upload can use one form or the other.
+      type: object
+      example:
+        MY_ENV_VAR:
+          text: my_data
+          type: plain_text
+      additionalProperties:
+        $ref: '#/components/schemas/workers_env_binding_item'
+    workers_env_binding_item:
+      description: |
+        A single entry in the `env` map. An entry holds the same payload
+        as an entry of `bindings` without the `name` property, because
+        the map key supplies the name. See `binding_item` for the payload
+        of each binding kind.
+      type: object
+      properties:
+        type:
+          description: The kind of resource that the binding provides.
+          type: string
+          example: plain_text
+          x-auditable: true
+      additionalProperties: true
+      required:
+        - type
     workers_environment:
       description: Optional environment if the Worker utilizes one.
       type: string
@@ -482959,7 +484364,7 @@ components:
           type: object
           properties:
             assets:
-              $ref: '#/components/schemas/workers_assets'
+              $ref: '#/components/schemas/workers_assets-2'
             bindings:
               $ref: '#/components/schemas/workers_bindings'
             body_part:
@@ -483014,7 +484419,7 @@ components:
                 - $ref: '#/components/schemas/workers_multiple_step_migrations'
               writeOnly: true
             observability:
-              $ref: '#/components/schemas/workers_observability'
+              $ref: '#/components/schemas/workers_observability-2'
             package_dependencies:
               description: |
                 The list of npm packages that were installed and used when this Worker
@@ -483176,7 +484581,7 @@ components:
             - $ref: '#/components/schemas/workers_multiple_step_migrations'
           writeOnly: true
         observability:
-          $ref: '#/components/schemas/workers_observability'
+          $ref: '#/components/schemas/workers_observability-2'
         placement:
           allOf:
             - $ref: '#/components/schemas/workers_placement_info_no_status'
@@ -483266,6 +484671,104 @@ components:
           example: fe7803fc55b964e09d94666545aab688d360c6bda69ba349ced1e5f28d2fc2c8
           readOnly: true
     workers_observability:
+      description: Observability settings for the Worker.
+      type: object
+      properties:
+        enabled:
+          description: Whether observability is enabled for the Worker.
+          type: boolean
+          default: false
+          x-auditable: true
+        head_sampling_rate:
+          description: The sampling rate for observability. From 0 to 1 (1 = 100%, 0.1 = 10%).
+          type: number
+          example: 1
+          default: 1
+          x-auditable: true
+        issues:
+          description: Real-time Issues settings for the Worker.
+          type: object
+          nullable: true
+          properties:
+            enabled:
+              description: Whether real-time Issues are enabled for the Worker.
+              type: boolean
+              default: false
+              x-auditable: true
+        logs:
+          description: Log settings for the Worker.
+          type: object
+          properties:
+            destinations:
+              description: A list of destinations where logs will be exported to.
+              type: array
+              items:
+                type: string
+              default: []
+              x-auditable: true
+            enabled:
+              description: Whether logs are enabled for the Worker.
+              type: boolean
+              default: false
+              x-auditable: true
+            head_sampling_rate:
+              description: The sampling rate for logs. From 0 to 1 (1 = 100%, 0.1 = 10%).
+              type: number
+              example: 1
+              default: 1
+              x-auditable: true
+            invocation_logs:
+              description: Whether [invocation logs](https://developers.cloudflare.com/workers/observability/logs/workers-logs/#invocation-logs) are enabled for the Worker.
+              type: boolean
+              default: true
+              x-auditable: true
+            persist:
+              description: Whether log persistence is enabled for the Worker.
+              type: boolean
+              default: true
+              x-auditable: true
+        redact_query_string:
+          description: Whether query strings are removed from request URLs in logs and traces.
+          type: boolean
+          default: false
+          x-auditable: true
+        traces:
+          description: Trace settings for the Worker.
+          type: object
+          properties:
+            destinations:
+              description: A list of destinations where traces will be exported to.
+              type: array
+              items:
+                type: string
+              default: []
+              x-auditable: true
+            enabled:
+              description: Whether traces are enabled for the Worker.
+              type: boolean
+              default: false
+              x-auditable: true
+            head_sampling_rate:
+              description: The sampling rate for traces. From 0 to 1 (1 = 100%, 0.1 = 10%).
+              type: number
+              example: 1
+              default: 1
+              x-auditable: true
+            persist:
+              description: Whether trace persistence is enabled for the Worker.
+              type: boolean
+              default: true
+              x-auditable: true
+            propagation_policy:
+              description: Controls how inbound trace context (traceparent/tracestate) headers on incoming requests are handled. "authenticated" honors inbound trace context only when accompanied by a valid trace auth token. "accept" unconditionally accepts inbound trace context. Requires the trace propagation feature to be enabled. Returns null when the trace propagation feature is not enabled for the account.
+              type: string
+              enum:
+                - authenticated
+                - accept
+                - null
+              nullable: true
+              x-auditable: true
+    workers_observability-2:
       description: Observability settings for the Worker.
       type: object
       properties:
@@ -483691,6 +485194,50 @@ components:
           required:
             - host
           type: object
+    workers_query:
+      type: object
+      properties:
+        params:
+          type: array
+          items: {}
+        sql:
+          type: string
+          minLength: 1
+      required:
+        - sql
+    workers_query-by-id:
+      type: object
+      properties:
+        durable_object_id:
+          type: string
+          minLength: 1
+        queries:
+          type: array
+          items:
+            $ref: '#/components/schemas/workers_query'
+      required:
+        - durable_object_id
+        - queries
+    workers_query-by-name:
+      type: object
+      properties:
+        durable_object_name:
+          type: string
+          minLength: 1
+        jurisdiction:
+          type: string
+          enum:
+            - fedramp
+            - eu
+            - none
+        queries:
+          type: array
+          items:
+            $ref: '#/components/schemas/workers_query'
+      required:
+        - durable_object_name
+        - jurisdiction
+        - queries
     workers_route:
       type: object
       properties:
@@ -483805,7 +485352,7 @@ components:
             - $ref: '#/components/schemas/workers_multiple_step_migrations'
           writeOnly: true
         observability:
-          $ref: '#/components/schemas/workers_observability'
+          $ref: '#/components/schemas/workers_observability-2'
         placement:
           allOf:
             - $ref: '#/components/schemas/workers_placement_info_no_status'
@@ -483910,7 +485457,7 @@ components:
                 example: MyDurableObject
             type: object
         observability:
-          $ref: '#/components/schemas/workers_observability'
+          $ref: '#/components/schemas/workers_observability-2'
         placement:
           $ref: '#/components/schemas/workers_placement_info'
         placement_mode:
@@ -484022,7 +485569,7 @@ components:
           $ref: '#/components/schemas/workers_logpush'
         observability:
           allOf:
-            - $ref: '#/components/schemas/workers_observability'
+            - $ref: '#/components/schemas/workers_observability-2'
             - nullable: true
               type: object
               x-auditable: true
