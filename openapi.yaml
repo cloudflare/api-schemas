@@ -187478,7 +187478,7 @@ paths:
       x-fern-sdk-group-name: security-center.insights.class
       x-fern-sdk-method-name: get
       x-forge-hidden: true
-  /accounts/{account_id}/security-center/insights/count:
+  /accounts/{account_id}/security-center/insights/partner-count:
     get:
       operationId: get-security-center-partner-insight-count
       summary: Retrieves a Partner Security Center Insight Count
@@ -187517,7 +187517,7 @@ paths:
         - Security Center Insights
       x-fern-availability: generally-available
       x-fern-sdk-group-name: security-center.insights
-      x-fern-sdk-method-name: get
+      x-fern-sdk-method-name: get-partner-count
       x-forge-hidden: true
   /accounts/{account_id}/security-center/insights/scans:
     get:
@@ -362417,6 +362417,50 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: security-center.zone-insights.class
       x-fern-sdk-method-name: get
+      x-forge-hidden: true
+  /zones/{zone_id}/security-center/insights/partner-count:
+    get:
+      operationId: get-zone-security-center-partner-insight-count
+      summary: Retrieves a Partner Zone Security Center Insight Count
+      description: Retrieves the uncapped count of active, non-dismissed, unclassified RiskRecon insights for the zone.
+      parameters:
+        - name: zone_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/security-center_identifier'
+        - name: source
+          in: query
+          required: true
+          schema:
+            type: string
+            enum:
+              - riskrecon
+      responses:
+        '200':
+          description: The request was successful.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/security-center_partnerInsightCountResponse'
+        4XX:
+          description: A client error occurred.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/security-center_api-response-common-failure'
+      security:
+        - api_email: []
+          api_key: []
+        - api_token: []
+      tags:
+        - Security Center Insights
+      x-api-token-group:
+        - Zone Settings Write
+        - Zone Settings Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: security-center.zone-insights
+      x-fern-sdk-method-name: get-partner-count
       x-forge-hidden: true
   /zones/{zone_id}/security-center/insights/scans:
     get:
