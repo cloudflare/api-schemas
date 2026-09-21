@@ -161841,7 +161841,7 @@ paths:
                     items:
                       $ref: '#/components/schemas/organizations-api_V4Message'
                   result:
-                    $ref: '#/components/schemas/organizations-api_MoveAccountResponse'
+                    $ref: '#/components/schemas/organizations-api_MoveAccountResult'
                   success:
                     type: boolean
                     enum:
@@ -234805,7 +234805,7 @@ paths:
                     items:
                       $ref: '#/components/schemas/organizations-api_V4Message'
                   result:
-                    $ref: '#/components/schemas/organizations-api_DeleteOrganizationResponse'
+                    $ref: '#/components/schemas/organizations-api_DeleteOrganizationResult'
                   success:
                     type: boolean
                     enum:
@@ -235172,6 +235172,74 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: organizations.billing.usage
       x-fern-sdk-method-name: get
+  /organizations/{organization_id}/invites/{member_code}:
+    put:
+      operationId: Organizations_handleOrganizationInvite
+      summary: Handle organization invite
+      description: Accept or reject an invitation to a specific organization. (Currently in Public Beta - see https://developers.cloudflare.com/fundamentals/organizations/)
+      parameters:
+        - name: organization_id
+          in: path
+          description: The ID of the organization associated with the invitation.
+          required: true
+          schema:
+            $ref: '#/components/schemas/organizations-api_OrganizationID'
+        - name: member_code
+          in: path
+          description: The invitation code to accept or reject.
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: The invitation action. Use `accept` to join the organization or `reject` to decline the invitation.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/organizations-api_HandleOrganizationInviteRequest'
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                    maxItems: 0
+                  messages:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/organizations-api_V4Message'
+                  result:
+                    $ref: '#/components/schemas/organizations-api_Member'
+                  success:
+                    type: boolean
+                    enum:
+                      - true
+                required:
+                  - success
+                  - errors
+                  - messages
+                  - result
+        4XX:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/organizations-api_V4ErrorResponse'
+      security:
+        - api_email: []
+          api_key: []
+      tags:
+        - Organizations
+      x-fern-availability: beta
+      x-fern-sdk-group-name: organization.invite
+      x-fern-sdk-method-name: update
+      x-forge-hidden: true
   /organizations/{organization_id}/logs/audit:
     get:
       operationId: audit-logs-v2-get-organization-audit-logs
@@ -236068,7 +236136,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/organizations-api_Profile'
+              $ref: '#/components/schemas/organizations-api_ModifyOrganizationProfileRequest'
       responses:
         '204':
           description: There is no content to send for this request, but the headers may be useful.
@@ -442375,20 +442443,23 @@ components:
           enum:
             - active
             - canceled
+          x-auditable: true
         user:
           type: object
           properties:
             email:
               type: string
+              x-auditable: true
           required:
             - email
       required:
         - user
-    organizations-api_DeleteOrganizationResponse:
+    organizations-api_DeleteOrganizationResult:
       type: object
       properties:
         id:
           type: string
+          x-auditable: true
       required:
         - id
     organizations-api_Entitlement:
@@ -442411,6 +442482,17 @@ components:
           type: string
       required:
         - key
+    organizations-api_HandleOrganizationInviteRequest:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+            - accept
+            - reject
+          x-auditable: true
+      required:
+        - status
     organizations-api_InnateEntitlements:
       type: object
       properties:
@@ -442467,6 +442549,7 @@ components:
             - pending
             - rejected
             - canceled
+          x-auditable: true
         update_time:
           type: string
           format: date-time
@@ -442484,23 +442567,51 @@ components:
       type: string
       example: a7b9c3d2e8f4a1b5c6d0e9f2a3b7c4d8
       pattern: ^[a-f0-9]{32}$
+      x-auditable: true
     organizations-api_MemberSubjectUser:
       type: object
       properties:
         email:
           type: string
+          x-auditable: true
         id:
           type: string
+          x-auditable: true
         name:
           type: string
+          x-auditable: true
         two_factor_authentication_enabled:
           type: boolean
+          x-auditable: true
       required:
         - id
         - email
         - name
         - two_factor_authentication_enabled
-    organizations-api_MoveAccountResponse:
+    organizations-api_ModifyOrganizationProfileRequest:
+      type: object
+      properties:
+        business_address:
+          type: string
+          x-auditable: true
+        business_email:
+          type: string
+          x-auditable: true
+        business_name:
+          type: string
+          x-auditable: true
+        business_phone:
+          type: string
+          x-auditable: true
+        external_metadata:
+          type: string
+      required:
+        - business_name
+        - business_email
+        - business_phone
+        - business_address
+        - external_metadata
+    organizations-api_MoveAccountResult:
       type: object
       properties:
         account_id:
@@ -442560,6 +442671,7 @@ components:
           readOnly: true
         name:
           type: string
+          x-auditable: true
         parent:
           type: object
           properties:
@@ -442568,6 +442680,7 @@ components:
             name:
               type: string
               readOnly: true
+              x-auditable: true
           required:
             - id
             - name
