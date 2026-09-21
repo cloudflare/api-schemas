@@ -81575,6 +81575,10 @@ paths:
                       type: string
                       enum:
                         - threat-signals
+                    title:
+                      description: Threat Signals article title; null for historical provenance without a stored title.
+                      type: string
+                      nullable: true
                   required:
                     - system
                     - resourceType
@@ -83917,10 +83921,15 @@ paths:
                                 type: string
                                 enum:
                                   - threat-signals
+                              title:
+                                description: Threat Signals article title; null for historical provenance without a stored title.
+                                type: string
+                                nullable: true
                             required:
                               - system
                               - resourceType
                               - resourceId
+                              - title
                             type: object
                         tags:
                           type: array
@@ -88707,10 +88716,15 @@ paths:
                                       type: string
                                       enum:
                                         - threat-signals
+                                    title:
+                                      description: Threat Signals article title; null for historical provenance without a stored title.
+                                      type: string
+                                      nullable: true
                                   required:
                                     - system
                                     - resourceType
                                     - resourceId
+                                    - title
                                   type: object
                               tags:
                                 type: array
@@ -104122,7 +104136,9 @@ paths:
             type: number
         - name: status
           in: query
+          description: Status filter. Projects with a narrowed dashboard vocabulary accept only their customer-facing values.
           schema:
+            description: Status filter. Projects with a narrowed dashboard vocabulary accept only their customer-facing values.
             type: string
         - name: search
           in: query
@@ -104166,6 +104182,7 @@ paths:
           in: query
           schema:
             type: string
+          x-fern-parameter-name: filterAccountId
         - name: metadata
           in: query
           description: 'JSON string object of metadata filters. Supports two formats: 1) Simple values for exact match (backward compatible): {"status": "open"} 2) Operator objects for advanced filtering: {"identifiers": {"operator": "contains_line", "value": "blah.com"}}. Available operators: ''eq'' (exact match, default), ''contains'' (substring match), ''contains_line'' (match complete line in newline-separated text). Date fields are automatically normalized to YYYY-MM-DD format.'
@@ -104480,7 +104497,7 @@ paths:
                       - response_tokens
                       - message_tokens
                   status:
-                    description: RFI status
+                    description: RFI status. Project-specific dashboard surfaces may return a narrowed customer-facing vocabulary.
                     type: string
                     example: accepted
                     enum:
@@ -104490,6 +104507,7 @@ paths:
                       - in_progress
                       - awaiting_customer
                       - awaiting_external
+                      - response_needed
                       - completed
                       - closed
                   summary:
@@ -104754,7 +104772,7 @@ paths:
                       - response_tokens
                       - message_tokens
                   status:
-                    description: RFI status
+                    description: RFI status. Project-specific dashboard surfaces may return a narrowed customer-facing vocabulary.
                     type: string
                     example: accepted
                     enum:
@@ -104764,6 +104782,7 @@ paths:
                       - in_progress
                       - awaiting_customer
                       - awaiting_external
+                      - response_needed
                       - completed
                       - closed
                   summary:
@@ -105075,7 +105094,7 @@ paths:
                       - response_tokens
                       - message_tokens
                   status:
-                    description: RFI status
+                    description: RFI status. Project-specific dashboard surfaces may return a narrowed customer-facing vocabulary.
                     type: string
                     example: accepted
                     enum:
@@ -105085,6 +105104,7 @@ paths:
                       - in_progress
                       - awaiting_customer
                       - awaiting_external
+                      - response_needed
                       - completed
                       - closed
                   summary:
@@ -106990,8 +107010,16 @@ paths:
         - name: article_id
           in: query
           schema:
-            type: string
-            format: uuid
+            description: Repeatable article UUID filter. Returns the union of matching account-owned articles; use this to list every Threat Signals article referenced by an indicator's sources.
+            type: array
+            items:
+              format: uuid
+              type: string
+            example:
+              - 550e8400-e29b-41d4-a716-446655440000
+              - 660e8400-e29b-41d4-a716-446655440000
+            maxItems: 90
+            minItems: 1
         - name: read
           in: query
           schema:
@@ -106999,16 +107027,37 @@ paths:
         - name: tag_id
           in: query
           schema:
-            type: string
-            format: uuid
+            description: Repeatable tag UUID filter. An article matches any selected tag.
+            type: array
+            items:
+              format: uuid
+              type: string
+            example:
+              - 550e8400-e29b-41d4-a716-446655440000
+        - name: tag_category_id
+          in: query
+          schema:
+            description: Repeatable tag-category UUID filter. An article matches any selected category; when tag_id is also present, the tag and category groups are ANDed.
+            type: array
+            items:
+              format: uuid
+              type: string
+            example:
+              - 660e8400-e29b-41d4-a716-446655440000
+            maxItems: 90
+            minItems: 1
         - name: tag
           in: query
           schema:
+            description: Legacy human-readable tag-value filter. Ignored when tag_id is supplied; prefer tag_id.
             type: string
+            deprecated: true
         - name: tag_category
           in: query
           schema:
+            description: Legacy category-name disambiguator for tag. It has no effect without tag; prefer tag_category_id.
             type: string
+            deprecated: true
         - name: include_total
           in: query
           schema:
@@ -107054,10 +107103,12 @@ paths:
         - name: tag_applied_by
           in: query
           schema:
+            description: Assignment provenance filter. When combined with tag_id or tag_category_id, the matching assignment must have this provenance.
             type: string
             enum:
               - ai
               - analyst
+              - system
         - name: sort
           in: query
           schema:
@@ -107131,6 +107182,7 @@ paths:
                                     enum:
                                       - ai
                                       - analyst
+                                      - system
                                   categoryId:
                                     type: string
                                     format: uuid
@@ -107417,134 +107469,101 @@ paths:
                         - message
                       type: object
                   result:
-                    type: object
-                    properties:
-                      batches:
-                        type: array
-                        items:
-                          oneOf:
-                            - properties:
-                                batchIndex:
-                                  type: integer
-                                  exclusiveMinimum: true
-                                  minimum: 0
-                                outcome:
-                                  type: string
-                                  enum:
-                                    - success
-                                prompt:
-                                  type: string
-                                rawResponse:
-                                  description: Unparsed response returned by the AI provider.
-                                  oneOf:
-                                    - additionalProperties: true
-                                      type: object
-                                    - items:
-                                        $ref: '#/components/schemas/cloudforce-one-events_ArticleTagDiagnosticJsonValue'
-                                      type: array
-                                    - nullable: true
-                                      type: string
-                                    - type: number
-                                    - type: boolean
-                              required:
-                                - batchIndex
-                                - prompt
-                                - outcome
-                                - rawResponse
-                              type: object
-                            - properties:
-                                batchIndex:
-                                  type: integer
-                                  exclusiveMinimum: true
-                                  minimum: 0
-                                error:
-                                  type: object
-                                  properties:
-                                    aiDurationMs:
-                                      type: number
-                                      minimum: 0
-                                    batchCount:
-                                      type: integer
-                                      exclusiveMinimum: true
-                                      minimum: 0
-                                    batchIndex:
-                                      type: integer
-                                      exclusiveMinimum: true
-                                      minimum: 0
-                                    failureKind:
-                                      type: string
-                                      enum:
-                                        - timeout
-                                        - rate_limited
-                                        - invalid_request
-                                        - unavailable
-                                        - aborted
-                                        - binding_error
-                                        - unknown
-                                    failureStage:
-                                      type: string
-                                      enum:
-                                        - ai_run
-                                    providerErrorName:
-                                      type: string
-                                      enum:
-                                        - AbortError
-                                        - TypeError
-                                        - unknown
-                                    providerStatus:
-                                      type: string
-                                      enum:
-                                        - '400'
-                                        - '401'
-                                        - '403'
-                                        - '408'
-                                        - '413'
-                                        - '422'
-                                        - '429'
-                                        - 5xx
-                                        - unknown
-                                    timeoutMs:
-                                      type: number
-                                      exclusiveMinimum: true
-                                      minimum: 0
-                                  required:
-                                    - failureStage
-                                    - failureKind
-                                    - aiDurationMs
-                                    - batchIndex
-                                    - batchCount
-                                    - providerStatus
-                                    - providerErrorName
-                                outcome:
-                                  type: string
-                                  enum:
-                                    - failed
-                                prompt:
-                                  type: string
-                              required:
-                                - batchIndex
-                                - prompt
-                                - outcome
-                                - error
-                              type: object
-                        minItems: 1
-                      executedBatchCount:
-                        type: integer
-                        exclusiveMinimum: true
-                        minimum: 0
-                      plannedBatchCount:
-                        type: integer
-                        exclusiveMinimum: true
-                        minimum: 0
-                      skillId:
-                        type: string
-                        enum:
-                          - default-tagging-skill
-                    required:
-                      - skillId
-                      - plannedBatchCount
-                      - executedBatchCount
-                      - batches
+                    oneOf:
+                      - properties:
+                          outcome:
+                            type: string
+                            enum:
+                              - success
+                          prompt:
+                            type: string
+                          rawResponse:
+                            description: Unparsed response returned by the AI provider.
+                            oneOf:
+                              - additionalProperties: true
+                                type: object
+                              - items:
+                                  $ref: '#/components/schemas/cloudforce-one-events_ArticleTagDiagnosticJsonValue'
+                                type: array
+                              - nullable: true
+                                type: string
+                              - type: number
+                              - type: boolean
+                          skillId:
+                            type: string
+                            enum:
+                              - default-tagging-skill
+                        required:
+                          - skillId
+                          - prompt
+                          - outcome
+                          - rawResponse
+                        type: object
+                      - properties:
+                          error:
+                            type: object
+                            properties:
+                              aiDurationMs:
+                                type: number
+                                minimum: 0
+                              failureKind:
+                                type: string
+                                enum:
+                                  - timeout
+                                  - rate_limited
+                                  - invalid_request
+                                  - unavailable
+                                  - aborted
+                                  - binding_error
+                                  - unknown
+                              failureStage:
+                                type: string
+                                enum:
+                                  - ai_run
+                              providerErrorName:
+                                type: string
+                                enum:
+                                  - AbortError
+                                  - TypeError
+                                  - unknown
+                              providerStatus:
+                                type: string
+                                enum:
+                                  - '400'
+                                  - '401'
+                                  - '403'
+                                  - '408'
+                                  - '413'
+                                  - '422'
+                                  - '429'
+                                  - 5xx
+                                  - unknown
+                              timeoutMs:
+                                type: number
+                                exclusiveMinimum: true
+                                minimum: 0
+                            required:
+                              - failureStage
+                              - failureKind
+                              - aiDurationMs
+                              - providerStatus
+                              - providerErrorName
+                          outcome:
+                            type: string
+                            enum:
+                              - failed
+                          prompt:
+                            type: string
+                          skillId:
+                            type: string
+                            enum:
+                              - default-tagging-skill
+                        required:
+                          - skillId
+                          - prompt
+                          - outcome
+                          - error
+                        type: object
                   success:
                     type: boolean
                     enum:
@@ -107670,6 +107689,7 @@ paths:
                               enum:
                                 - ai
                                 - analyst
+                                - system
                             categoryId:
                               type: string
                               format: uuid
@@ -107790,6 +107810,79 @@ paths:
       x-fern-sdk-group-name: cloudforce-one.threat-signals.articles.tags
       x-fern-sdk-method-name: remove
       x-forge-hidden: true
+  /accounts/{account_id}/cloudforce-one/v2/threat-signals/categories:
+    get:
+      operationId: rssFeedCategoryList
+      summary: List Threat Signals feed categories
+      description: List Threat Signals feed categories.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Threat Signals response.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                      required:
+                        - message
+                      type: object
+                  result:
+                    type: object
+                    properties:
+                      categories:
+                        type: array
+                        items:
+                          properties:
+                            description:
+                              description: Plain-language description of the category.
+                              type: string
+                            id:
+                              description: Wire value accepted by the feed `category_id` field.
+                              type: string
+                              format: uuid
+                            name:
+                              description: Human-readable display label.
+                              type: string
+                          required:
+                            - id
+                            - name
+                            - description
+                          type: object
+                    required:
+                      - categories
+                  success:
+                    type: boolean
+                    enum:
+                      - true
+                required:
+                  - result
+                  - success
+                  - errors
+        4XX:
+          $ref: '#/components/responses/cloudforce-one-events_ApiV4ClientError'
+      security:
+        - api_token: []
+      tags:
+        - Threat Signals
+      x-api-token-group:
+        - Cloudforce One Write
+        - Cloudforce One Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: cloudforce-one.threat-signals.categories
+      x-fern-sdk-method-name: list
+      x-forge-hidden: true
   /accounts/{account_id}/cloudforce-one/v2/threat-signals/curated-feeds:
     get:
       operationId: rssCuratedFeedList
@@ -107843,10 +107936,18 @@ paths:
             schema:
               type: object
               properties:
-                category:
+                category_id:
+                  description: One of the predefined Threat Signals feed categories; see GET /:account_id/v2/threat-signals/categories.
                   type: string
-                  maxLength: 100
-                  minLength: 1
+                  enum:
+                    - b12a0fd6-f7b9-5393-9ef3-f888d506c550
+                    - d5b70eaa-626f-5761-b55b-6d9590df49fb
+                    - 3b572d2b-890d-5286-9433-f18c85079030
+                    - 17f90d3b-37d3-5241-8ad4-7d6abbc2006c
+                    - c68f28e9-7e8f-5d4b-853b-f3076893a9ee
+                    - bb0e4a94-38ab-5c14-80a7-28cee9f4b139
+                    - b1ef66d9-a73c-58dc-b269-22d34dfd11f4
+                    - ab02a976-0a20-5c76-a553-7f6325afacfe
                 display_order:
                   type: integer
                   nullable: true
@@ -107868,7 +107969,7 @@ paths:
               required:
                 - url
                 - name
-                - category
+                - category_id
       responses:
         '200':
           description: Threat Signals response.
@@ -107938,10 +108039,18 @@ paths:
             schema:
               type: object
               properties:
-                category:
+                category_id:
+                  description: One of the predefined Threat Signals feed categories; see GET /:account_id/v2/threat-signals/categories.
                   type: string
-                  maxLength: 100
-                  minLength: 1
+                  enum:
+                    - b12a0fd6-f7b9-5393-9ef3-f888d506c550
+                    - d5b70eaa-626f-5761-b55b-6d9590df49fb
+                    - 3b572d2b-890d-5286-9433-f18c85079030
+                    - 17f90d3b-37d3-5241-8ad4-7d6abbc2006c
+                    - c68f28e9-7e8f-5d4b-853b-f3076893a9ee
+                    - bb0e4a94-38ab-5c14-80a7-28cee9f4b139
+                    - b1ef66d9-a73c-58dc-b269-22d34dfd11f4
+                    - ab02a976-0a20-5c76-a553-7f6325afacfe
                 display_order:
                   type: integer
                   nullable: true
@@ -107995,10 +108104,18 @@ paths:
                   type: array
                   items:
                     properties:
-                      category:
+                      category_id:
+                        description: One of the predefined Threat Signals feed categories; see GET /:account_id/v2/threat-signals/categories.
                         type: string
-                        maxLength: 100
-                        minLength: 1
+                        enum:
+                          - b12a0fd6-f7b9-5393-9ef3-f888d506c550
+                          - d5b70eaa-626f-5761-b55b-6d9590df49fb
+                          - 3b572d2b-890d-5286-9433-f18c85079030
+                          - 17f90d3b-37d3-5241-8ad4-7d6abbc2006c
+                          - c68f28e9-7e8f-5d4b-853b-f3076893a9ee
+                          - bb0e4a94-38ab-5c14-80a7-28cee9f4b139
+                          - b1ef66d9-a73c-58dc-b269-22d34dfd11f4
+                          - ab02a976-0a20-5c76-a553-7f6325afacfe
                       display_order:
                         type: integer
                         nullable: true
@@ -108020,7 +108137,7 @@ paths:
                     required:
                       - url
                       - name
-                      - category
+                      - category_id
                     type: object
                   maxItems: 100
                   minItems: 1
@@ -108165,9 +108282,18 @@ paths:
             schema:
               type: object
               properties:
-                category:
+                category_id:
+                  description: One of the predefined Threat Signals feed categories; see GET /:account_id/v2/threat-signals/categories.
                   type: string
-                  maxLength: 100
+                  enum:
+                    - b12a0fd6-f7b9-5393-9ef3-f888d506c550
+                    - d5b70eaa-626f-5761-b55b-6d9590df49fb
+                    - 3b572d2b-890d-5286-9433-f18c85079030
+                    - 17f90d3b-37d3-5241-8ad4-7d6abbc2006c
+                    - c68f28e9-7e8f-5d4b-853b-f3076893a9ee
+                    - bb0e4a94-38ab-5c14-80a7-28cee9f4b139
+                    - b1ef66d9-a73c-58dc-b269-22d34dfd11f4
+                    - ab02a976-0a20-5c76-a553-7f6325afacfe
                   nullable: true
                 curated_feed_id:
                   type: string
@@ -108261,9 +108387,18 @@ paths:
             schema:
               type: object
               properties:
-                category:
+                category_id:
+                  description: One of the predefined Threat Signals feed categories; see GET /:account_id/v2/threat-signals/categories.
                   type: string
-                  maxLength: 100
+                  enum:
+                    - b12a0fd6-f7b9-5393-9ef3-f888d506c550
+                    - d5b70eaa-626f-5761-b55b-6d9590df49fb
+                    - 3b572d2b-890d-5286-9433-f18c85079030
+                    - 17f90d3b-37d3-5241-8ad4-7d6abbc2006c
+                    - c68f28e9-7e8f-5d4b-853b-f3076893a9ee
+                    - bb0e4a94-38ab-5c14-80a7-28cee9f4b139
+                    - b1ef66d9-a73c-58dc-b269-22d34dfd11f4
+                    - ab02a976-0a20-5c76-a553-7f6325afacfe
                   nullable: true
                 display_name:
                   type: string
@@ -108897,6 +109032,9 @@ paths:
       x-fern-sdk-group-name: cloudforce-one.threat-signals.skills
       x-fern-sdk-method-name: update
       x-forge-hidden: true
+      x-forge-params:
+        config:
+          flagName: skill-config
   /accounts/{account_id}/cloudforce-one/v2/threat-signals/skills/{skill_id}/tag-categories:
     get:
       operationId: rssSkillTagCategoriesGet
