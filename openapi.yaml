@@ -127038,7 +127038,13 @@ paths:
                 destination:
                   $ref: '#/components/schemas/email-security_MailboxDestination'
                 expected_disposition:
-                  $ref: '#/components/schemas/email-security_DispositionLabel'
+                  description: 'Nonfunctional field. End of life: December 1, 2026.'
+                  type: string
+                  allOf:
+                    - $ref: '#/components/schemas/email-security_DispositionLabel'
+                  deprecated: true
+                  nullable: true
+                  x-stainless-deprecation-message: This field is nonfunctional.
               required:
                 - destination
       responses:
@@ -127551,7 +127557,13 @@ paths:
                 destination:
                   $ref: '#/components/schemas/email-security_MailboxDestination'
                 expected_disposition:
-                  $ref: '#/components/schemas/email-security_DispositionLabel'
+                  description: 'Nonfunctional field. End of life: December 1, 2026.'
+                  type: string
+                  allOf:
+                    - $ref: '#/components/schemas/email-security_DispositionLabel'
+                  deprecated: true
+                  nullable: true
+                  x-stainless-deprecation-message: This field is nonfunctional.
                 ids:
                   description: List of message IDs to move.
                   type: array
@@ -412939,9 +412951,17 @@ components:
           type: string
           nullable: true
         destination:
-          $ref: '#/components/schemas/email-security_MailboxDestination'
+          description: Required when action is 'MOVE'.
+          allOf:
+            - $ref: '#/components/schemas/email-security_MailboxDestination'
         expected_disposition:
-          $ref: '#/components/schemas/email-security_DispositionLabel'
+          description: 'Nonfunctional field. End of life: December 1, 2026.'
+          type: string
+          allOf:
+            - $ref: '#/components/schemas/email-security_DispositionLabel'
+          deprecated: true
+          nullable: true
+          x-stainless-deprecation-message: This field is nonfunctional.
         search_params:
           $ref: '#/components/schemas/email-security_BulkSearchParams'
       required:
@@ -412955,7 +412975,14 @@ components:
             destination:
               $ref: '#/components/schemas/email-security_MailboxDestination'
             expected_disposition:
-              $ref: '#/components/schemas/email-security_DispositionLabel'
+              description: 'Nonfunctional field. End of life: December 1, 2026.'
+              type: string
+              allOf:
+                - $ref: '#/components/schemas/email-security_DispositionLabel'
+              deprecated: true
+              nullable: true
+              x-stainless-deprecation-message: This field is nonfunctional.
+              x-sunset: 2026-12-01T00:00:00Z
             type:
               type: string
               enum:
@@ -412995,9 +413022,15 @@ components:
         job_id:
           type: string
           format: uuid
+        messages_cancelled:
+          description: 'Messages that were cancelled: rows cancelled via the API before being claimed, and rows whose in-flight attempt ended when the job reached a terminal state. Together the counters satisfy total_messages_discovered = messages_pending + messages_successful + messages_failed + messages_skipped + messages_cancelled.'
+          type: integer
         messages_failed:
           type: integer
         messages_pending:
+          type: integer
+        messages_skipped:
+          description: Messages that discovery skipped (for example, phish submissions, which the job cannot action).
           type: integer
         messages_successful:
           type: integer
@@ -413032,6 +413065,8 @@ components:
         - messages_pending
         - messages_successful
         - messages_failed
+        - messages_skipped
+        - messages_cancelled
         - created_at
     email-security_BulkMessageActionParams:
       discriminator:
@@ -413043,7 +413078,14 @@ components:
             destination:
               $ref: '#/components/schemas/email-security_MailboxDestination'
             expected_disposition:
-              $ref: '#/components/schemas/email-security_DispositionLabel'
+              description: 'Nonfunctional field. End of life: December 1, 2026.'
+              type: string
+              allOf:
+                - $ref: '#/components/schemas/email-security_DispositionLabel'
+              deprecated: true
+              nullable: true
+              x-stainless-deprecation-message: This field is nonfunctional.
+              x-sunset: 2026-12-01T00:00:00Z
             type:
               type: string
               enum:
@@ -413077,7 +413119,10 @@ components:
           type: string
           nullable: true
         delivery_status:
-          $ref: '#/components/schemas/email-security_MessageDeliveryStatus'
+          type: string
+          allOf:
+            - $ref: '#/components/schemas/email-security_MessageDeliveryStatus'
+          nullable: true
         detections_only:
           type: boolean
           default: true
@@ -413093,7 +413138,10 @@ components:
           type: string
           nullable: true
         final_disposition:
-          $ref: '#/components/schemas/email-security_DispositionLabel'
+          type: string
+          allOf:
+            - $ref: '#/components/schemas/email-security_DispositionLabel'
+          nullable: true
         message_action:
           type: string
           enum:
@@ -413476,7 +413524,10 @@ components:
             $ref: '#/components/schemas/email-security_DeliveryMode'
           x-stainless-collection-type: set
         authorization:
-          $ref: '#/components/schemas/email-security_DomainAuthorization'
+          type: object
+          allOf:
+            - $ref: '#/components/schemas/email-security_DomainAuthorization'
+          nullable: true
         created_at:
           allOf:
             - $ref: '#/components/schemas/email-security_timestamp'
@@ -413493,7 +413544,10 @@ components:
             $ref: '#/components/schemas/email-security_DispositionLabel'
           x-stainless-collection-type: set
         emails_processed:
-          $ref: '#/components/schemas/email-security_EmailsProcessed'
+          type: object
+          allOf:
+            - $ref: '#/components/schemas/email-security_EmailsProcessed'
+          nullable: true
         folder:
           allOf:
             - $ref: '#/components/schemas/email-security_ScannableFolder'
@@ -413712,7 +413766,10 @@ components:
           maxLength: 1024
           x-auditable: true
         provenance:
-          $ref: '#/components/schemas/email-security_Provenance'
+          type: string
+          allOf:
+            - $ref: '#/components/schemas/email-security_Provenance'
+          nullable: true
     email-security_ImpersonationRegistryId:
       description: Impersonation registry entry identifier.
       type: string
@@ -413790,7 +413847,10 @@ components:
           items:
             type: string
         delivery_mode:
-          $ref: '#/components/schemas/email-security_MessageDeliveryMode'
+          type: string
+          allOf:
+            - $ref: '#/components/schemas/email-security_MessageDeliveryMode'
+          nullable: true
         delivery_status:
           type: array
           items:
@@ -413812,7 +413872,10 @@ components:
             type: string
           nullable: true
         final_disposition:
-          $ref: '#/components/schemas/email-security_DispositionLabel'
+          type: string
+          allOf:
+            - $ref: '#/components/schemas/email-security_DispositionLabel'
+          nullable: true
         findings:
           description: 'Deprecated, use the `findings` field from `GET /investigate/{investigate_id}/detections` instead. End of life: November 1, 2026. Detection findings for this message.'
           type: array
@@ -413825,7 +413888,10 @@ components:
                 type: string
                 nullable: true
               detection:
-                $ref: '#/components/schemas/email-security_DispositionLabel'
+                type: string
+                allOf:
+                  - $ref: '#/components/schemas/email-security_DispositionLabel'
+                nullable: true
               field:
                 type: string
                 nullable: true
@@ -413974,7 +414040,10 @@ components:
           readOnly: true
           x-stainless-deprecation-message: Use `scanned_at` instead.
         validation:
-          $ref: '#/components/schemas/email-security_Validation'
+          type: object
+          allOf:
+            - $ref: '#/components/schemas/email-security_Validation'
+          nullable: true
         x_originating_ip:
           type: string
           nullable: true
@@ -413998,7 +414067,10 @@ components:
           items:
             $ref: '#/components/schemas/email-security_Attachment'
         final_disposition:
-          $ref: '#/components/schemas/email-security_DispositionLabel'
+          type: string
+          allOf:
+            - $ref: '#/components/schemas/email-security_DispositionLabel'
+          nullable: true
         findings:
           type: array
           items:
@@ -414775,11 +414847,20 @@ components:
           type: string
           nullable: true
         dkim:
-          $ref: '#/components/schemas/email-security_ValidationStatus'
+          type: string
+          allOf:
+            - $ref: '#/components/schemas/email-security_ValidationStatus'
+          nullable: true
         dmarc:
-          $ref: '#/components/schemas/email-security_ValidationStatus'
+          type: string
+          allOf:
+            - $ref: '#/components/schemas/email-security_ValidationStatus'
+          nullable: true
         spf:
-          $ref: '#/components/schemas/email-security_ValidationStatus'
+          type: string
+          allOf:
+            - $ref: '#/components/schemas/email-security_ValidationStatus'
+          nullable: true
     email-security_ValidationStatus:
       type: string
       enum:
