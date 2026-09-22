@@ -116123,6 +116123,11 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/teams-devices_identifier'
+        - name: profile_type
+          in: query
+          description: Filter profiles by client type. When omitted, only WARP profiles are returned.
+          schema:
+            $ref: '#/components/schemas/teams-devices_profile_type'
       responses:
         '200':
           description: List device settings profiles response.
@@ -116289,8 +116294,12 @@ paths:
                   $ref: '#/components/schemas/teams-devices_allowed_to_leave'
                 auto_connect:
                   $ref: '#/components/schemas/teams-devices_auto_connect'
+                browser_extension_config:
+                  $ref: '#/components/schemas/teams-devices_browser_extension_config'
                 captive_portal:
                   $ref: '#/components/schemas/teams-devices_captive_portal'
+                default:
+                  $ref: '#/components/schemas/teams-devices_default'
                 description:
                   allOf:
                     - $ref: '#/components/schemas/teams-devices_schemas-description'
@@ -116326,6 +116335,8 @@ paths:
                   maxLength: 100
                 precedence:
                   $ref: '#/components/schemas/teams-devices_precedence'
+                profile_type:
+                  $ref: '#/components/schemas/teams-devices_profile_type'
                 register_interface_ip_with_dns:
                   $ref: '#/components/schemas/teams-devices_register_interface_ip_with_dns'
                 sccm_vpn_boundary_support:
@@ -116344,8 +116355,6 @@ paths:
                   $ref: '#/components/schemas/teams-devices_virtual_networks'
               required:
                 - name
-                - precedence
-                - match
       responses:
         '200':
           description: Create a device settings profile response.
@@ -116480,8 +116489,12 @@ paths:
                   $ref: '#/components/schemas/teams-devices_allowed_to_leave'
                 auto_connect:
                   $ref: '#/components/schemas/teams-devices_auto_connect'
+                browser_extension_config:
+                  $ref: '#/components/schemas/teams-devices_browser_extension_config'
                 captive_portal:
                   $ref: '#/components/schemas/teams-devices_captive_portal'
+                default:
+                  $ref: '#/components/schemas/teams-devices_default'
                 description:
                   $ref: '#/components/schemas/teams-devices_schemas-description'
                 disable_auto_fallback:
@@ -116513,6 +116526,8 @@ paths:
                   maxLength: 100
                 precedence:
                   $ref: '#/components/schemas/teams-devices_precedence'
+                profile_type:
+                  $ref: '#/components/schemas/teams-devices_profile_type'
                 register_interface_ip_with_dns:
                   $ref: '#/components/schemas/teams-devices_register_interface_ip_with_dns'
                 sccm_vpn_boundary_support:
@@ -468548,6 +468563,24 @@ components:
       type: number
       example: 0
       default: 0
+    teams-devices_browser_extension_config:
+      description: Browser extension proxy settings. Required when profile_type is browser_extension and invalid for WARP profiles.
+      type: object
+      properties:
+        proxy_control:
+          description: Whether the user may disable the browser extension proxy.
+          type: string
+          enum:
+            - unlocked
+            - locked
+        proxy_enabled:
+          description: Whether the browser extension proxy is active.
+          type: boolean
+      additionalProperties: false
+      nullable: true
+      required:
+        - proxy_enabled
+        - proxy_control
     teams-devices_captive_portal:
       description: Turn on the captive portal after the specified amount of time.
       type: number
@@ -468925,9 +468958,10 @@ components:
         - operator
       title: Custom Device Posture Integration Input
     teams-devices_default:
-      description: Whether the policy is the default policy for an account.
+      description: Whether the policy is the account default. WARP group profiles cannot set this field.
       type: boolean
       example: false
+      default: false
     teams-devices_default_device_settings_policy:
       type: object
       properties:
@@ -468968,6 +469002,8 @@ components:
           $ref: '#/components/schemas/teams-devices_include'
         policy_id:
           $ref: '#/components/schemas/teams-devices_schemas-uuid'
+        profile_type:
+          $ref: '#/components/schemas/teams-devices_profile_type'
         register_interface_ip_with_dns:
           $ref: '#/components/schemas/teams-devices_register_interface_ip_with_dns'
         sccm_vpn_boundary_support:
@@ -469200,6 +469236,8 @@ components:
           $ref: '#/components/schemas/teams-devices_allowed_to_leave'
         auto_connect:
           $ref: '#/components/schemas/teams-devices_auto_connect'
+        browser_extension_config:
+          $ref: '#/components/schemas/teams-devices_browser_extension_config'
         captive_portal:
           $ref: '#/components/schemas/teams-devices_captive_portal'
         default:
@@ -469242,6 +469280,8 @@ components:
           $ref: '#/components/schemas/teams-devices_schemas-uuid'
         precedence:
           $ref: '#/components/schemas/teams-devices_precedence'
+        profile_type:
+          $ref: '#/components/schemas/teams-devices_profile_type'
         register_interface_ip_with_dns:
           $ref: '#/components/schemas/teams-devices_register_interface_ip_with_dns'
         sccm_vpn_boundary_support:
@@ -470355,6 +470395,14 @@ components:
       description: The precedence of the policy. Lower values indicate higher precedence. Policies will be evaluated in ascending order of this field.
       type: number
       example: 100
+    teams-devices_profile_type:
+      description: The client type to which the device settings profile applies.
+      type: string
+      example: warp
+      default: warp
+      enum:
+        - warp
+        - browser_extension
     teams-devices_register_interface_ip_with_dns:
       description: Determines if the operating system will register WARP's local interface IP with your on-premises DNS server.
       type: boolean
