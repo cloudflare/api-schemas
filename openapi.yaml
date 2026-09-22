@@ -116315,7 +116315,7 @@ paths:
     post:
       operationId: revoke-device
       summary: Revoke device registrations
-      description: Revokes all WARP registrations associated with the specified device.
+      description: Revokes all WARP registrations associated with the specified device. Prefer "delete" operation instead, "revoke" does not release virtual IPs.
       parameters:
         - name: account_id
           in: path
@@ -116358,17 +116358,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/teams-devices_v4_error_response'
+      deprecated: true
       security:
         - api_token: []
       tags:
         - Physical Devices
       x-api-token-group:
         - Zero Trust Write
-      x-fern-availability: generally-available
+      x-fern-availability: deprecated
+      x-fern-ignore: true
       x-fern-sdk-group-name: zero-trust.devices
       x-fern-sdk-method-name: revoke
       x-forge-hidden: true
-      x-forge-require-confirmation: This operation revokes a device's session destructively.
   /accounts/{account_id}/devices/policies:
     get:
       operationId: devices-list-device-settings-policies
@@ -116524,7 +116525,7 @@ paths:
         - Zero Trust Write
       x-fern-availability: generally-available
       x-fern-sdk-group-name: zero-trust.devices.policies.default
-      x-fern-sdk-method-name: edit
+      x-fern-sdk-method-name: update
       x-forge-hidden: true
     post:
       operationId: devices-create-device-settings-policy
@@ -116824,7 +116825,7 @@ paths:
         - Zero Trust Write
       x-fern-availability: generally-available
       x-fern-sdk-group-name: zero-trust.devices.policies.custom
-      x-fern-sdk-method-name: edit
+      x-fern-sdk-method-name: update
       x-forge-hidden: true
   /accounts/{account_id}/devices/policy/{policy_id}/exclude:
     get:
@@ -117321,7 +117322,7 @@ paths:
   /accounts/{account_id}/devices/posture:
     get:
       operationId: device-posture-rules-list-device-posture-rules
-      summary: List device posture rules
+      summary: List posture rules
       description: Fetches device posture rules for a Zero Trust account.
       parameters:
         - name: account_id
@@ -117349,12 +117350,12 @@ paths:
       tags:
         - Device posture rules
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.posture
+      x-fern-sdk-group-name: zero-trust.devices.posture.rules
       x-fern-sdk-method-name: list
       x-forge-hidden: true
     post:
       operationId: device-posture-rules-create-device-posture-rule
-      summary: Create a device posture rule
+      summary: Create posture rule
       description: Creates a new device posture rule.
       parameters:
         - name: account_id
@@ -117408,13 +117409,13 @@ paths:
       x-api-token-group:
         - Zero Trust Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.posture
+      x-fern-sdk-group-name: zero-trust.devices.posture.rules
       x-fern-sdk-method-name: create
       x-forge-hidden: true
   /accounts/{account_id}/devices/posture/{rule_id}:
     delete:
       operationId: device-posture-rules-delete-device-posture-rule
-      summary: Delete a device posture rule
+      summary: Delete posture rule
       description: Deletes a device posture rule.
       parameters:
         - name: rule_id
@@ -117449,12 +117450,12 @@ paths:
       x-api-token-group:
         - Zero Trust Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.posture
+      x-fern-sdk-group-name: zero-trust.devices.posture.rules
       x-fern-sdk-method-name: delete
       x-forge-hidden: true
     get:
       operationId: device-posture-rules-device-posture-rules-details
-      summary: Get device posture rule details
+      summary: Get posture rule
       description: Fetches a single device posture rule.
       parameters:
         - name: rule_id
@@ -117487,12 +117488,12 @@ paths:
       tags:
         - Device posture rules
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.posture
+      x-fern-sdk-group-name: zero-trust.devices.posture.rules
       x-fern-sdk-method-name: get
       x-forge-hidden: true
     put:
       operationId: device-posture-rules-update-device-posture-rule
-      summary: Update a device posture rule
+      summary: Update posture rule
       description: Updates a device posture rule.
       parameters:
         - name: rule_id
@@ -117551,13 +117552,13 @@ paths:
       x-api-token-group:
         - Zero Trust Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.posture
+      x-fern-sdk-group-name: zero-trust.devices.posture.rules
       x-fern-sdk-method-name: update
       x-forge-hidden: true
   /accounts/{account_id}/devices/posture/integration:
     get:
       operationId: device-posture-integrations-list-device-posture-integrations
-      summary: List your device posture integrations
+      summary: List posture integrations
       description: Fetches the list of device posture integrations for an account.
       parameters:
         - name: account_id
@@ -117590,7 +117591,7 @@ paths:
       x-forge-hidden: true
     post:
       operationId: device-posture-integrations-create-device-posture-integration
-      summary: Create a device posture integration
+      summary: Create posture integration
       description: Create a new device posture integration.
       parameters:
         - name: account_id
@@ -117646,7 +117647,7 @@ paths:
   /accounts/{account_id}/devices/posture/integration/{integration_id}:
     delete:
       operationId: device-posture-integrations-delete-device-posture-integration
-      summary: Delete a device posture integration
+      summary: Delete posture integration
       description: Delete a configured device posture integration.
       parameters:
         - name: integration_id
@@ -117686,7 +117687,7 @@ paths:
       x-forge-hidden: true
     get:
       operationId: device-posture-integrations-device-posture-integration-details
-      summary: Get device posture integration details
+      summary: Get posture integration
       description: Fetches details for a single device posture integration.
       parameters:
         - name: integration_id
@@ -117724,7 +117725,7 @@ paths:
       x-forge-hidden: true
     patch:
       operationId: device-posture-integrations-update-device-posture-integration
-      summary: Update a device posture integration
+      summary: Update posture integration
       description: Updates a configured device posture integration.
       parameters:
         - name: integration_id
@@ -117775,7 +117776,7 @@ paths:
         - Zero Trust Write
       x-fern-availability: generally-available
       x-fern-sdk-group-name: zero-trust.devices.posture.integrations
-      x-fern-sdk-method-name: edit
+      x-fern-sdk-method-name: update
       x-forge-hidden: true
   /accounts/{account_id}/devices/registrations:
     delete:
@@ -118130,7 +118131,7 @@ paths:
     post:
       operationId: revoke-registrations
       summary: Revoke registrations
-      description: Revokes a list of WARP registrations.
+      description: Revokes a list of WARP registrations. Prefer "delete" operation instead, "revoke" does not release virtual IPs.
       parameters:
         - name: account_id
           in: path
@@ -118179,17 +118180,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/teams-devices_v4_error_response'
+      deprecated: true
       security:
         - api_token: []
       tags:
         - Registrations
       x-api-token-group:
         - Zero Trust Write
-      x-fern-availability: generally-available
+      x-fern-availability: deprecated
+      x-fern-ignore: true
       x-fern-sdk-group-name: zero-trust.devices.registrations
       x-fern-sdk-method-name: revoke
       x-forge-hidden: true
-      x-forge-require-confirmation: This operation revokes device registrations destructively.
   /accounts/{account_id}/devices/registrations/unrevoke:
     post:
       operationId: unrevoke-registrations
@@ -118243,21 +118245,23 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/teams-devices_v4_error_response'
+      deprecated: true
       security:
         - api_token: []
       tags:
         - Registrations
       x-api-token-group:
         - Zero Trust Write
-      x-fern-availability: generally-available
+      x-fern-availability: deprecated
+      x-fern-ignore: true
       x-fern-sdk-group-name: zero-trust.devices.registrations
       x-fern-sdk-method-name: unrevoke
       x-forge-hidden: true
   /accounts/{account_id}/devices/resilience/disconnect:
     get:
       operationId: devices-resilience-retrieve-global-warp-override
-      summary: Retrieve Global WARP override state
-      description: Fetch the Global WARP override state.
+      summary: Get Global Disconnect
+      description: Fetch the Global WARP disconnect state.
       parameters:
         - name: account_id
           in: path
@@ -118266,13 +118270,13 @@ paths:
             $ref: '#/components/schemas/teams-devices_identifier'
       responses:
         '200':
-          description: Fetch Global WARP override state response.
+          description: Get Global WARP disconnect state response.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/teams-devices_global_warp_override_response'
         4XX:
-          description: Fetch Global WARP override state failure.
+          description: Get Global WARP disconnect state failure.
           content:
             application/json:
               schema:
@@ -118289,13 +118293,13 @@ paths:
         - Zero Trust Read
         - Zero Trust Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.resilience.global-warp-override
-      x-fern-sdk-method-name: get
+      x-fern-sdk-group-name: zero-trust.devices.resilience
+      x-fern-sdk-method-name: get-global-disconnect
       x-forge-hidden: true
     post:
       operationId: devices-resilience-set-global-warp-override
-      summary: Set Global WARP override state
-      description: Sets the Global WARP override state.
+      summary: Set Global Disconnect
+      description: Sets the Global WARP disconnect state.
       parameters:
         - name: account_id
           in: path
@@ -118310,13 +118314,13 @@ paths:
               $ref: '#/components/schemas/teams-devices_global_warp_override_request'
       responses:
         '200':
-          description: Set Global WARP override state response.
+          description: Set Global WARP disconnect state response.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/teams-devices_global_warp_override_response'
         4XX:
-          description: Set Global WARP override state response failure.
+          description: Set Global WARP disconnect state response failure.
           content:
             application/json:
               schema:
@@ -118330,8 +118334,8 @@ paths:
       x-api-token-group:
         - Zero Trust Resilience Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.resilience.global-warp-override
-      x-fern-sdk-method-name: create
+      x-fern-sdk-group-name: zero-trust.devices.resilience
+      x-fern-sdk-method-name: set-global-disconnect
       x-forge-hidden: true
   /accounts/{account_id}/devices/revoke:
     post:
@@ -118380,11 +118384,10 @@ paths:
       x-fern-sdk-group-name: zero-trust.devices.v1
       x-fern-sdk-method-name: revoke
       x-forge-hidden: true
-      x-forge-require-confirmation: This operation revokes sessions for a batch of devices destructively.
   /accounts/{account_id}/devices/settings:
     delete:
       operationId: zero-trust-accounts-delete-device-settings-for-zero-trust-account
-      summary: Reset device settings for a Zero Trust account with defaults. This turns off all proxying.
+      summary: Reset device settings
       description: Resets the current device settings for a Zero Trust account.
       parameters:
         - name: account_id
@@ -118419,7 +118422,7 @@ paths:
       x-forge-hidden: true
     get:
       operationId: zero-trust-accounts-get-device-settings-for-zero-trust-account
-      summary: Get device settings for a Zero Trust account
+      summary: Get device settings
       description: Describes the current device settings for a Zero Trust account.
       parameters:
         - name: account_id
@@ -118452,49 +118455,8 @@ paths:
       x-forge-hidden: true
     patch:
       operationId: zero-trust-accounts-patch-device-settings-for-the-zero-trust-account
-      summary: Patch device settings for a Zero Trust account
-      description: Patches the current device settings for a Zero Trust account.
-      parameters:
-        - name: account_id
-          in: path
-          required: true
-          schema:
-            $ref: '#/components/schemas/teams-devices_identifier'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/teams-devices_zero-trust-account-device-settings'
-      responses:
-        '200':
-          description: Patch device settings for a Zero Trust account response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/teams-devices_zero-trust-account-device-settings-response'
-        4XX:
-          description: Patch device settings for a Zero Trust account response failure.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/teams-devices_api-response-common-failure'
-      security:
-        - api_email: []
-          api_key: []
-          api_token: []
-      tags:
-        - Zero Trust accounts
-      x-api-token-group:
-        - Zero Trust Write
-      x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.settings
-      x-fern-sdk-method-name: edit
-      x-forge-hidden: true
-    put:
-      operationId: zero-trust-accounts-update-device-settings-for-the-zero-trust-account
-      summary: Update device settings for a Zero Trust account
-      description: Updates the current device settings for a Zero Trust account.
+      summary: Update device settings
+      description: Updates the device settings for a Zero Trust account.
       parameters:
         - name: account_id
           in: path
@@ -118530,6 +118492,49 @@ paths:
         - Zero Trust Write
       x-fern-availability: generally-available
       x-fern-sdk-group-name: zero-trust.devices.settings
+      x-fern-sdk-method-name: update
+      x-forge-hidden: true
+    put:
+      operationId: zero-trust-accounts-update-device-settings-for-the-zero-trust-account
+      summary: Update device settings (deprecated)
+      description: 'Deprecated: use "PATCH /accounts/{account_id}/devices/settings" instead'
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/teams-devices_identifier'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/teams-devices_zero-trust-account-device-settings'
+      responses:
+        '200':
+          description: Update device settings for a Zero Trust account response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/teams-devices_zero-trust-account-device-settings-response'
+        4XX:
+          description: Update device settings for a Zero Trust account response failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/teams-devices_api-response-common-failure'
+      deprecated: true
+      security:
+        - api_email: []
+          api_key: []
+          api_token: []
+      tags:
+        - Zero Trust accounts
+      x-api-token-group:
+        - Zero Trust Write
+      x-fern-availability: deprecated
+      x-fern-ignore: true
+      x-fern-sdk-group-name: zero-trust.devices.v1.settings
       x-fern-sdk-method-name: update
       x-forge-hidden: true
   /accounts/{account_id}/devices/unrevoke:
@@ -346959,7 +346964,7 @@ paths:
         - SSL and Certificates Write
       x-fern-availability: generally-available
       x-fern-sdk-group-name: zero-trust.devices.policies.default.certificates
-      x-fern-sdk-method-name: edit
+      x-fern-sdk-method-name: update
       x-forge-hidden: true
   /zones/{zone_id}/dns_analytics/report:
     get:
@@ -471515,6 +471520,12 @@ components:
           example:
             - 198.51.100.1:443
           maxItems: 5
+          x-auditable: true
+        autoswitch:
+          description: Automatically switch Global Acceleration regions based on device location. Defaults to false when not provided.
+          type: boolean
+          example: true
+          default: false
           x-auditable: true
         enabled:
           description: Global acceleration settings are used only when "enabled".
