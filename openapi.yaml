@@ -63035,12 +63035,16 @@ paths:
         filter are combined with OR. Filter values that do not match usage
         produce an empty result set.
 
-        Results can be grouped by up to two customer resource-tag keys. Grouped
-        values are returned in the `Tags` field. Usage without a requested tag
-        remains in an untagged group, with that key omitted from `Tags`.
+        Results can be grouped by up to two groups, in any combination of
+        dimension keys and resource-tag keys. Tag groups are returned in the
+        `Tags` field. Usage without a requested tag remains in an untagged
+        group, with that key omitted from `Tags`.
 
-        Requests using tag filtering or grouping return HTTP 400 when tag-aware
-        usage data is unavailable.
+        Requests that use tag filtering or tag grouping return HTTP 400 when the
+        underlying usage data source does not support tags.
+
+        Requests that use dimension grouping return HTTP 400 when the
+        underlying usage data source does not support dimensions.
       parameters:
         - $ref: '#/components/parameters/billable-usage-api_account_id'
       requestBody:
@@ -76412,18 +76416,17 @@ paths:
       security:
         - api_token: []
       tags:
-        - Calls Apps
+        - Realtime SFU Apps
       x-api-token-group:
         - Calls Write
         - Calls Read
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: calls.sfu
+      x-fern-sdk-group-name: realtime.sfu.apps
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
     post:
       operationId: calls-apps-create-a-new-app
-      summary: Create a new app
-      description: Creates a new Cloudflare calls app. An app is an unique enviroment where each Session can access all Tracks within the app.
+      summary: Create an SFU app
+      description: Creates a Realtime SFU app. An app is an isolated namespace in which sessions can access the app's tracks.
       parameters:
         - name: account_id
           in: path
@@ -76452,18 +76455,17 @@ paths:
       security:
         - api_token: []
       tags:
-        - Calls Apps
+        - Realtime SFU Apps
       x-api-token-group:
         - Calls Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: calls.sfu
+      x-fern-sdk-group-name: realtime.sfu.apps
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
   /accounts/{account_id}/calls/apps/{app_id}:
     delete:
       operationId: calls-apps-delete-app
-      summary: Delete app
-      description: Deletes an app from Cloudflare Calls
+      summary: Delete an SFU app
+      description: Deletes a Realtime SFU app.
       parameters:
         - name: app_id
           in: path
@@ -76489,17 +76491,17 @@ paths:
       security:
         - api_token: []
       tags:
-        - Calls Apps
+        - Realtime SFU Apps
       x-api-token-group:
         - Calls Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: calls.sfu
+      x-fern-sdk-group-name: realtime.sfu.apps
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
+      x-forge-require-confirmation: This operation permanently deletes the SFU app.
     get:
       operationId: calls-apps-retrieve-app-details
-      summary: Retrieve app details
-      description: Fetches details for a single Calls app.
+      summary: Retrieve SFU app details
+      description: Fetches details for a single Realtime SFU app.
       parameters:
         - name: app_id
           in: path
@@ -76527,18 +76529,17 @@ paths:
       security:
         - api_token: []
       tags:
-        - Calls Apps
+        - Realtime SFU Apps
       x-api-token-group:
         - Calls Write
         - Calls Read
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: calls.sfu
+      x-fern-sdk-group-name: realtime.sfu.apps
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
     put:
       operationId: calls-apps-update-app-details
-      summary: Edit app details
-      description: Edit details for a single app.
+      summary: Update SFU app details
+      description: Updates details for a single Realtime SFU app.
       parameters:
         - name: app_id
           in: path
@@ -76572,18 +76573,17 @@ paths:
       security:
         - api_token: []
       tags:
-        - Calls Apps
+        - Realtime SFU Apps
       x-api-token-group:
         - Calls Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: calls.sfu
+      x-fern-sdk-group-name: realtime.sfu.apps
       x-fern-sdk-method-name: update
-      x-forge-hidden: true
   /accounts/{account_id}/calls/turn_keys:
     get:
       operationId: calls-turn-key-list
-      summary: List TURN Keys
-      description: Lists all TURN keys in the Cloudflare account
+      summary: List TURN keys
+      description: Lists all TURN keys in the Cloudflare account.
       parameters:
         - name: account_id
           in: path
@@ -76592,13 +76592,13 @@ paths:
             $ref: '#/components/schemas/calls_account_identifier'
       responses:
         '200':
-          description: List TURN key response
+          description: List TURN keys response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/calls_turn_key_collection'
         4XX:
-          description: List TURN key response failure
+          description: List TURN keys response failure
           content:
             application/json:
               schema:
@@ -76606,18 +76606,17 @@ paths:
       security:
         - api_token: []
       tags:
-        - Calls TURN Keys
+        - Realtime TURN Keys
       x-api-token-group:
         - Calls Write
         - Calls Read
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: calls.turn
+      x-fern-sdk-group-name: realtime.turn.keys
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
     post:
       operationId: calls-turn-key-create
-      summary: Create a new TURN key
-      description: Creates a new Cloudflare Calls TURN key.
+      summary: Create a TURN key
+      description: Creates a new Realtime TURN key.
       parameters:
         - name: account_id
           in: path
@@ -76646,18 +76645,17 @@ paths:
       security:
         - api_token: []
       tags:
-        - Calls TURN Keys
+        - Realtime TURN Keys
       x-api-token-group:
         - Calls Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: calls.turn
+      x-fern-sdk-group-name: realtime.turn.keys
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
   /accounts/{account_id}/calls/turn_keys/{key_id}:
     delete:
       operationId: calls-delete-turn-key
       summary: Delete TURN key
-      description: Deletes a TURN key from Cloudflare Calls
+      description: Deletes a Realtime TURN key.
       parameters:
         - name: key_id
           in: path
@@ -76683,13 +76681,13 @@ paths:
       security:
         - api_token: []
       tags:
-        - Calls TURN Keys
+        - Realtime TURN Keys
       x-api-token-group:
         - Calls Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: calls.turn
+      x-fern-sdk-group-name: realtime.turn.keys
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
+      x-forge-require-confirmation: This operation permanently deletes the TURN key. Clients using it can no longer generate credentials.
     get:
       operationId: calls-retrieve-turn-key-details
       summary: Retrieve TURN key details
@@ -76721,18 +76719,17 @@ paths:
       security:
         - api_token: []
       tags:
-        - Calls TURN Keys
+        - Realtime TURN Keys
       x-api-token-group:
         - Calls Write
         - Calls Read
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: calls.turn
+      x-fern-sdk-group-name: realtime.turn.keys
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
     put:
       operationId: calls-update-turn-key
-      summary: Edit TURN key details
-      description: Edit details for a single TURN key.
+      summary: Update TURN key details
+      description: Updates details for a single TURN key.
       parameters:
         - name: key_id
           in: path
@@ -76752,13 +76749,13 @@ paths:
               $ref: '#/components/schemas/calls_turn_key_editable_fields'
       responses:
         '200':
-          description: Edit TURN key details response
+          description: Update TURN key details response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/calls_turn_key_response_single'
         4XX:
-          description: Edit TURN key details response failure
+          description: Update TURN key details response failure
           content:
             application/json:
               schema:
@@ -76766,13 +76763,12 @@ paths:
       security:
         - api_token: []
       tags:
-        - Calls TURN Keys
+        - Realtime TURN Keys
       x-api-token-group:
         - Calls Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: calls.turn
+      x-fern-sdk-group-name: realtime.turn.keys
       x-fern-sdk-method-name: update
-      x-forge-hidden: true
   /accounts/{account_id}/cfd_tunnel:
     get:
       operationId: cloudflare-tunnel-list-cloudflare-tunnels
@@ -156782,6 +156778,7 @@ paths:
           description: Filter by event kind
           schema:
             type: string
+          x-fern-parameter-name: kind
       responses:
         '200':
           description: OK
@@ -161531,7 +161528,7 @@ paths:
       tags:
         - MoQ Relays
       x-fern-availability: beta
-      x-fern-sdk-group-name: moq.relays
+      x-fern-sdk-group-name: realtime.moq.relays
       x-fern-sdk-method-name: list
       x-stability: beta
     post:
@@ -161606,7 +161603,7 @@ paths:
       tags:
         - MoQ Relays
       x-fern-availability: beta
-      x-fern-sdk-group-name: moq.relays
+      x-fern-sdk-group-name: realtime.moq.relays
       x-fern-sdk-method-name: create
       x-stability: beta
   /accounts/{account_id}/moq/relays/{relay_id}:
@@ -161656,7 +161653,7 @@ paths:
       tags:
         - MoQ Relays
       x-fern-availability: beta
-      x-fern-sdk-group-name: moq.relays
+      x-fern-sdk-group-name: realtime.moq.relays
       x-fern-sdk-method-name: delete
       x-forge-require-confirmation: Deleting this relay revokes every token issued for it, so publishers and subscribers can no longer connect. This cannot be undone.
       x-stability: beta
@@ -161704,7 +161701,7 @@ paths:
       tags:
         - MoQ Relays
       x-fern-availability: beta
-      x-fern-sdk-group-name: moq.relays
+      x-fern-sdk-group-name: realtime.moq.relays
       x-fern-sdk-method-name: get
       x-stability: beta
     put:
@@ -161766,7 +161763,7 @@ paths:
       tags:
         - MoQ Relays
       x-fern-availability: beta
-      x-fern-sdk-group-name: moq.relays
+      x-fern-sdk-group-name: realtime.moq.relays
       x-fern-sdk-method-name: update
       x-stability: beta
   /accounts/{account_id}/moq/relays/{relay_id}/tokens:
@@ -161816,7 +161813,7 @@ paths:
       tags:
         - MoQ Relays
       x-fern-availability: beta
-      x-fern-sdk-group-name: moq.relays.tokens
+      x-fern-sdk-group-name: realtime.moq.relays.tokens
       x-fern-sdk-method-name: list
       x-stability: beta
     post:
@@ -161904,7 +161901,7 @@ paths:
       tags:
         - MoQ Relays
       x-fern-availability: beta
-      x-fern-sdk-group-name: moq.relays.tokens
+      x-fern-sdk-group-name: realtime.moq.relays.tokens
       x-fern-sdk-method-name: create
       x-stability: beta
   /accounts/{account_id}/moq/relays/{relay_id}/tokens/{jti}:
@@ -161950,7 +161947,7 @@ paths:
       tags:
         - MoQ Relays
       x-fern-availability: beta
-      x-fern-sdk-group-name: moq.relays.tokens
+      x-fern-sdk-group-name: realtime.moq.relays.tokens
       x-fern-sdk-method-name: delete
       x-forge-require-confirmation: Revoking this token blocks new connections that present it. Sessions already connected with it stay up.
       x-stability: beta
@@ -335744,6 +335741,10 @@ paths:
       x-api-token-group:
         - User Details Write
         - User Details Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: spectrum.analytics.zones.report
+      x-fern-sdk-method-name: get
+      x-forge-hidden: true
   /user/subscriptions:
     get:
       operationId: user-subscription-get-user-subscriptions
@@ -369132,7 +369133,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/spectrum-analytics_query-response-aggregate'
-        4xx:
+        4XX:
           description: Get current aggregated analytics response failure.
           content:
             application/json:
@@ -369146,6 +369147,10 @@ paths:
         - Spectrum Analytics
       x-api-token-group:
         - Analytics Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: spectrum.analytics.aggregates.currents
+      x-fern-sdk-method-name: get
+      x-forge-hidden: true
   /zones/{zone_id}/spectrum/analytics/events/bytime:
     get:
       operationId: spectrum-analytics-(-by-time)-get-analytics-by-time
@@ -369204,7 +369209,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/spectrum-analytics_query-response-single'
-        4xx:
+        4XX:
           description: Get analytics by time response failure.
           content:
             application/json:
@@ -369218,6 +369223,10 @@ paths:
         - Spectrum Analytics
       x-api-token-group:
         - Analytics Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: spectrum.analytics.events.bytimes
+      x-fern-sdk-method-name: get
+      x-forge-hidden: true
   /zones/{zone_id}/spectrum/analytics/events/summary:
     get:
       operationId: spectrum-analytics-(-summary)-get-analytics-summary
@@ -369260,7 +369269,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/spectrum-analytics_query-response-single'
-        4xx:
+        4XX:
           description: Get analytics summary response failure.
           content:
             application/json:
@@ -369274,6 +369283,10 @@ paths:
         - Spectrum Analytics
       x-api-token-group:
         - Analytics Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: spectrum.analytics.events.summaries
+      x-fern-sdk-method-name: get
+      x-forge-hidden: true
   /zones/{zone_id}/spectrum/apps:
     get:
       operationId: spectrum-applications-list-spectrum-applications
@@ -394503,7 +394516,7 @@ components:
           maxItems: 10
           uniqueItems: true
         Tags:
-          description: Restrict results by customer resource tags. Filters for different keys are combined with AND, while values within one filter are combined with OR. Keys must be unique and are case-sensitive.
+          description: Restrict results by resource tags. Filters for different keys are combined with AND, while values within one filter are combined with OR. Keys must be unique and are case-sensitive.
           type: array
           items:
             $ref: '#/components/schemas/billable-usage-api_v2_tag_filter'
@@ -394511,21 +394524,22 @@ components:
           uniqueItems: true
       additionalProperties: false
     billable-usage-api_v2_group_by:
-      description: A customer resource-tag key used to split result rows.
+      description: A definition used to split result rows. TAG groups by a case-sensitive resource-tag key. DIMENSION groups by a usage dimension key — account_id, zone_id and region are the documented keys, and any other dimension key carried by the usage data is accepted and returned under that same key.
       type: object
       properties:
         Key:
-          description: Case-sensitive customer resource-tag key.
+          description: Case-sensitive resource-tag key (for TAG) or dimension key (for DIMENSION), e.g. team, region, account_id or zone_id.
           type: string
-          example: team
+          example: region
           maxLength: 256
           minLength: 1
         Type:
-          description: Dimension category. Currently only customer resource tags are supported.
+          description: Group category.
           type: string
-          example: TAG
+          example: DIMENSION
           enum:
             - TAG
+            - DIMENSION
       additionalProperties: false
       required:
         - Type
@@ -394551,11 +394565,11 @@ components:
         - Id
         - Name
     billable-usage-api_v2_tag_filter:
-      description: Values accepted for one customer resource-tag key.
+      description: Values accepted for one resource-tag key.
       type: object
       properties:
         Key:
-          description: Case-sensitive customer resource-tag key.
+          description: Case-sensitive resource-tag key.
           type: string
           example: team
           maxLength: 256
@@ -394597,7 +394611,7 @@ components:
         FilterBy:
           $ref: '#/components/schemas/billable-usage-api_v2_filter_by'
         GroupBy:
-          description: Customer resource tags used to split result rows. At most two unique tag keys may be supplied.
+          description: Grouping definitions used to split result rows. At most two unique keys may be supplied.
           type: array
           items:
             $ref: '#/components/schemas/billable-usage-api_v2_group_by'
@@ -398487,7 +398501,7 @@ components:
       format: date-time
       example: 2014-01-02T02:20:00Z
     calls_name:
-      description: A short description of Calls app, not shown to end users.
+      description: A short description of a Realtime SFU app, not shown to end users.
       type: string
       example: production-realtime-app
       default: ''
@@ -438652,6 +438666,12 @@ components:
       description: Snapshot Interface
       type: object
       properties:
+        health_reason:
+          description: Comma-separated list of reasons for health score
+          type: string
+        health_score:
+          description: Aggregate health score (0-100)
+          type: number
         ip_addresses:
           type: array
           items:
@@ -465763,6 +465783,7 @@ components:
                   appID:
                     allOf:
                       - description: Application identifier.
+                        type: string
                       - $ref: '#/components/schemas/spectrum-analytics_identifier'
                   bytesEgress:
                     description: Number of bytes sent.
@@ -465783,6 +465804,7 @@ components:
                   - connections
                   - durationAvg
                 type: object
+          type: object
     spectrum-analytics_query-response-single:
       allOf:
         - $ref: '#/components/schemas/spectrum-analytics_api-response-single'
@@ -465801,12 +465823,12 @@ components:
                   example: 3
                   minimum: 0
                 max:
+                  description: Maximum result for each selected metrics across all data.
                   allOf:
-                    - description: Maximum result for each selected metrics across all data.
                     - $ref: '#/components/schemas/spectrum-analytics_stat'
                 min:
+                  description: Minimum result for each selected metrics across all data.
                   allOf:
-                    - description: Minimum result for each selected metrics across all data.
                     - $ref: '#/components/schemas/spectrum-analytics_stat'
                 query:
                   $ref: '#/components/schemas/spectrum-analytics_query'
@@ -465823,8 +465845,8 @@ components:
                       $ref: '#/components/schemas/spectrum-analytics_timestamp'
                     type: array
                 totals:
+                  description: Total result for each selected metrics across all data.
                   allOf:
-                    - description: Total result for each selected metrics across all data.
                     - $ref: '#/components/schemas/spectrum-analytics_stat'
               required:
                 - rows
@@ -465834,9 +465856,11 @@ components:
                 - max
                 - totals
                 - query
+          type: object
     spectrum-analytics_since:
       allOf:
         - description: Start of time interval to query, defaults to `until` - 6 hours. Timestamp must be in RFC3339 format and uses UTC unless otherwise specified.
+          type: string
         - $ref: '#/components/schemas/spectrum-analytics_timestamp'
     spectrum-analytics_sort:
       description: The sort order for the result set; sort fields must be included in `metrics` or `dimensions`.
@@ -465861,6 +465885,7 @@ components:
     spectrum-analytics_until:
       allOf:
         - description: End of time interval to query, defaults to current time. Timestamp must be in RFC3339 format and uses UTC unless otherwise specified.
+          type: string
         - $ref: '#/components/schemas/spectrum-analytics_timestamp'
     spectrum-analytics_zone_report:
       type: object
@@ -465912,6 +465937,7 @@ components:
           required:
             - query
             - result
+          type: object
     spectrum-config_api-response-collection:
       type: object
       allOf:
@@ -498636,13 +498662,6 @@ x-forge-commands:
         description: Automatically determine the best upper-tier data centers for tiered cache topology
       settings.variants:
         description: Serve different cached versions of an image based on the Accept header (WebP, AVIF, etc.)
-  calls:
-    description: Real-time audio/video communication infrastructure — SFU apps for WebRTC and TURN relay keys
-    groups:
-      sfu:
-        description: Selective Forwarding Unit apps that route WebRTC media between participants
-      turn:
-        description: TURN relay keys that help clients traverse NATs and firewalls for peer-to-peer connectivity
   client-side-security:
     description: Client-Side Security — monitor JavaScript, connections, and cookies on your pages for supply-chain attacks
     groups:
@@ -498903,11 +498922,6 @@ x-forge-commands:
         description: Static routes that direct IP prefix traffic through specific GRE/IPsec tunnels
       sites:
         description: Magic WAN branch sites — base CRUD, LAN/WAN interface configuration, ACLs, connectors, app configuration, and NetFlow config
-  moq:
-    description: 'MoQ relays: provision a relay, then issue tokens for publishers and subscribers'
-    groups:
-      relays:
-        description: Relays are isolated MoQ scopes that carry media between publishers and subscribers
   network-interconnects:
     description: Physical and virtual private interconnects between your infrastructure and Cloudflare's network
     groups:
@@ -499097,6 +499111,20 @@ x-forge-commands:
         description: Webhook endpoints and supported events for RealtimeKit notifications
       kit.webhooks.events:
         description: Supported events for RealtimeKit webhooks
+      moq:
+        description: MoQ relays for publishing and subscribing to media streams
+      moq.relays:
+        description: Relays are isolated MoQ scopes that carry media between publishers and subscribers
+      moq.relays.tokens:
+        description: Tokens that authorize publishers and subscribers to connect to a relay
+      sfu:
+        description: SFU apps that route WebRTC media and data between participants
+      sfu.apps:
+        description: SFU application namespaces for sessions and tracks
+      turn:
+        description: TURN keys that help clients traverse NATs and firewalls
+      turn.keys:
+        description: Keys used to generate short-lived TURN credentials
   request-tracers:
     description: Trace how a request would be processed through Cloudflare's rules and configuration pipeline
     groups:
@@ -499162,6 +499190,8 @@ x-forge-commands:
   spectrum:
     description: Proxy and protect arbitrary TCP/UDP applications through Cloudflare's network with DDoS mitigation
     groups:
+      analytics:
+        description: Real-time and historical connection analytics for Spectrum applications
       apps:
         description: Spectrum application configurations that map protocols and ports to origin servers
   speed:
