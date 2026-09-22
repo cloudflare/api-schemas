@@ -482330,6 +482330,14 @@ components:
               description: Configuration for assets within a Worker.
               type: object
               properties:
+                base_path:
+                  description: The public URL path prefix under which assets are served. A null request value resets it to `/`; responses represent the root as `/`. All versions in a gradual deployment must use the same canonical value. To change it, first deploy the version containing the change at 100%.
+                  type: string
+                  example: /docs/
+                  default: /
+                  nullable: true
+                  x-auditable: true
+                  x-stainless-terraform-configurability: computed_optional
                 html_handling:
                   description: Determines the redirects and rewrites of requests for HTML content.
                   type: string
@@ -482998,6 +483006,14 @@ components:
           description: Configuration for assets within a Worker.
           type: object
           properties:
+            base_path:
+              description: The public URL path prefix under which assets are served. A null request value resets it to `/`; responses represent the root as `/`. All versions in a gradual deployment must use the same canonical value. To change it, first deploy the version containing the change at 100%.
+              type: string
+              example: /docs/
+              default: /
+              nullable: true
+              x-auditable: true
+              x-stainless-terraform-configurability: computed_optional
             html_handling:
               description: Determines the redirects and rewrites of requests for HTML content.
               type: string
@@ -483057,6 +483073,14 @@ components:
               example: |-
                 /foo /bar 301
                 /news/* /blog/:splat
+            base_path:
+              description: The public URL path prefix under which assets are served. A null request value resets it to `/`; responses represent the root as `/`. All versions in a gradual deployment must use the same canonical value. To change it, first deploy the version containing the change at 100%.
+              type: string
+              example: /docs/
+              default: /
+              nullable: true
+              x-auditable: true
+              x-stainless-terraform-configurability: computed_optional
             html_handling:
               description: Determines the redirects and rewrites of requests for HTML content.
               type: string
@@ -484263,16 +484287,19 @@ components:
             - percentage
           x-auditable: true
         versions:
+          description: Worker versions included in this deployment. Each object must contain a `version_id` UUID and a `percentage`; percentages across all objects must total 100. In the `cf` CLI, pass the entire array as one JSON value to `--versions`, either inline, for example `--versions '[{"version_id":"023e105f-2a42-4f8b-a1c1-73f6a2a30c0f","percentage":100}]'`, or from a JSON file with `--versions @versions.json`.
           type: array
           items:
             properties:
               percentage:
+                description: Percentage of traffic served by this version.
                 type: number
                 example: 100
                 maximum: 100
                 minimum: 0.01
                 x-auditable: true
               version_id:
+                description: Identifier of the Worker Version.
                 type: string
                 format: uuid
                 x-auditable: true
@@ -484280,6 +484307,9 @@ components:
               - version_id
               - percentage
             type: object
+          example:
+            - percentage: 100
+              version_id: 023e105f-2a42-4f8b-a1c1-73f6a2a30c0f
           x-auditable: true
       required:
         - id
