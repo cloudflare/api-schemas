@@ -171066,6 +171066,7 @@ paths:
           schema:
             type: boolean
             default: false
+          x-fern-parameter-name: cascade
       responses:
         '204':
           description: Catalog metadata deleted successfully.
@@ -448256,6 +448257,11 @@ components:
         primary_error_code:
           type: integer
           format: int32
+          nullable: true
+        request_id:
+          description: The request ID supplied when this run was queued via the manual queue endpoint, so customers can locate their manually-triggered run in this history listing. Absent for runs picked up by normal polling.
+          type: string
+          format: uuid
           nullable: true
         run_id:
           type: integer
