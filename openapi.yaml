@@ -160418,6 +160418,274 @@ paths:
       x-fern-sdk-group-name: magic-transit.sites.wans
       x-fern-sdk-method-name: update
       x-forge-hidden: true
+  /accounts/{account_id}/managed-defense/vulnerability-discovery/repos:
+    get:
+      operationId: listAccountVulnerabilityDiscoveryRepositories
+      summary: List repositories
+      description: Lists repositories available for vulnerability discovery in an account.
+      parameters:
+        - $ref: '#/components/parameters/managed-defense-vulnerability-discovery_Limit'
+        - $ref: '#/components/parameters/managed-defense-vulnerability-discovery_Cursor'
+      responses:
+        '200':
+          description: Repository page.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/managed-defense-vulnerability-discovery_RepositoryListResponse'
+        '404':
+          $ref: '#/components/responses/managed-defense-vulnerability-discovery_NotFound'
+        4XX:
+          $ref: '#/components/responses/managed-defense-vulnerability-discovery_Failure'
+        5XX:
+          $ref: '#/components/responses/managed-defense-vulnerability-discovery_Failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Vulnerability Discovery
+      x-fern-sdk-group-name: managed-defense.vulnerability-discovery.repositories
+      x-fern-sdk-method-name: list
+    parameters:
+      - $ref: '#/components/parameters/managed-defense-vulnerability-discovery_AccountId'
+    post:
+      operationId: createAccountVulnerabilityDiscoveryRepository
+      summary: Create repository
+      description: Creates an upload repository or reserves an asynchronous deployed Worker import by name. Worker imports require Idempotency-Key.
+      parameters:
+        - $ref: '#/components/parameters/managed-defense-vulnerability-discovery_OptionalIdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/managed-defense-vulnerability-discovery_CreateRepositoryRequest'
+      responses:
+        '201':
+          description: Upload repository created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/managed-defense-vulnerability-discovery_CreateRepositoryResponse'
+        '202':
+          description: Worker import reserved and processing.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/managed-defense-vulnerability-discovery_CreateRepositoryResponse'
+        '404':
+          $ref: '#/components/responses/managed-defense-vulnerability-discovery_NotFound'
+        4XX:
+          $ref: '#/components/responses/managed-defense-vulnerability-discovery_Failure'
+        5XX:
+          $ref: '#/components/responses/managed-defense-vulnerability-discovery_Failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Vulnerability Discovery
+      x-fern-sdk-group-name: managed-defense.vulnerability-discovery.repositories
+      x-fern-sdk-method-name: create
+  /accounts/{account_id}/managed-defense/vulnerability-discovery/repos/{repo_id}:
+    get:
+      operationId: getAccountVulnerabilityDiscoveryRepository
+      summary: Get repository
+      description: Gets repository metadata, source readiness, and customer scan history.
+      parameters:
+        - $ref: '#/components/parameters/managed-defense-vulnerability-discovery_ScanLimit'
+        - $ref: '#/components/parameters/managed-defense-vulnerability-discovery_ScanCursor'
+      responses:
+        '200':
+          description: Repository.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/managed-defense-vulnerability-discovery_RepositoryResponse'
+        '404':
+          $ref: '#/components/responses/managed-defense-vulnerability-discovery_NotFound'
+        4XX:
+          $ref: '#/components/responses/managed-defense-vulnerability-discovery_Failure'
+        5XX:
+          $ref: '#/components/responses/managed-defense-vulnerability-discovery_Failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Vulnerability Discovery
+      x-fern-sdk-group-name: managed-defense.vulnerability-discovery.repositories
+      x-fern-sdk-method-name: get
+    parameters:
+      - $ref: '#/components/parameters/managed-defense-vulnerability-discovery_AccountId'
+      - $ref: '#/components/parameters/managed-defense-vulnerability-discovery_RepositoryId'
+  /accounts/{account_id}/managed-defense/vulnerability-discovery/repos/{repo_id}/scans/{scan_id}/report:
+    get:
+      operationId: getAccountRepositoryVulnerabilityDiscoveryReport
+      summary: Get reviewed vulnerability report
+      description: Gets the repository projection of the active operator-reviewed scan report. `scan_id` is the customer scan's stable request ID.
+      responses:
+        '200':
+          description: Active reviewed report publication projected to the repository.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/managed-defense-vulnerability-discovery_CuratedReportResponse'
+        '404':
+          $ref: '#/components/responses/managed-defense-vulnerability-discovery_NotFound'
+        4XX:
+          $ref: '#/components/responses/managed-defense-vulnerability-discovery_Failure'
+        5XX:
+          $ref: '#/components/responses/managed-defense-vulnerability-discovery_Failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Vulnerability Discovery
+      x-fern-sdk-group-name: managed-defense.vulnerability-discovery.reports
+      x-fern-sdk-method-name: get
+    parameters:
+      - $ref: '#/components/parameters/managed-defense-vulnerability-discovery_AccountId'
+      - $ref: '#/components/parameters/managed-defense-vulnerability-discovery_RepositoryId'
+      - $ref: '#/components/parameters/managed-defense-vulnerability-discovery_ScanId'
+  /accounts/{account_id}/managed-defense/vulnerability-discovery/scans:
+    get:
+      operationId: listAccountVulnerabilityDiscoveryScans
+      summary: List scans
+      description: Lists customer-requested scans across review and execution lifecycle states.
+      parameters:
+        - $ref: '#/components/parameters/managed-defense-vulnerability-discovery_Limit'
+        - $ref: '#/components/parameters/managed-defense-vulnerability-discovery_Cursor'
+        - $ref: '#/components/parameters/managed-defense-vulnerability-discovery_ScanStatus'
+        - $ref: '#/components/parameters/managed-defense-vulnerability-discovery_RepositoryFilter'
+      responses:
+        '200':
+          description: Scan page.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/managed-defense-vulnerability-discovery_ScanListResponse'
+        '404':
+          $ref: '#/components/responses/managed-defense-vulnerability-discovery_NotFound'
+        4XX:
+          $ref: '#/components/responses/managed-defense-vulnerability-discovery_Failure'
+        5XX:
+          $ref: '#/components/responses/managed-defense-vulnerability-discovery_Failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Vulnerability Discovery
+      x-fern-sdk-group-name: managed-defense.vulnerability-discovery.scans
+      x-fern-sdk-method-name: list
+    parameters:
+      - $ref: '#/components/parameters/managed-defense-vulnerability-discovery_AccountId'
+    post:
+      operationId: createAccountVulnerabilityDiscoveryScan
+      summary: Create scan
+      description: Submits repository intent for operator review. This endpoint does not immediately start execution. Worker-imported repositories must be ready; explicit `repo_hosts` must be authorized before the request is persisted.
+      parameters:
+        - $ref: '#/components/parameters/managed-defense-vulnerability-discovery_OptionalIdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/managed-defense-vulnerability-discovery_CreateScan'
+      responses:
+        '202':
+          description: Requested scan accepted or idempotently replayed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/managed-defense-vulnerability-discovery_ScanResponse'
+        '404':
+          $ref: '#/components/responses/managed-defense-vulnerability-discovery_NotFound'
+        '409':
+          description: One or more repositories are not ready for scanning (`repository_not_ready`, code 10019).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/managed-defense-vulnerability-discovery_FailureResponse'
+        '422':
+          description: An explicit repository hostname scope is invalid or unauthorized (`invalid_request`); no scan request is persisted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/managed-defense-vulnerability-discovery_FailureResponse'
+        4XX:
+          $ref: '#/components/responses/managed-defense-vulnerability-discovery_Failure'
+        5XX:
+          $ref: '#/components/responses/managed-defense-vulnerability-discovery_Failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Vulnerability Discovery
+      x-fern-sdk-group-name: managed-defense.vulnerability-discovery.scans
+      x-fern-sdk-method-name: create
+  /accounts/{account_id}/managed-defense/vulnerability-discovery/scans/{scan_id}:
+    get:
+      operationId: getAccountVulnerabilityDiscoveryScan
+      summary: Get scan
+      description: Gets one customer-requested scan across its review and execution lifecycle.
+      responses:
+        '200':
+          description: Scan.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/managed-defense-vulnerability-discovery_ScanResponse'
+        '404':
+          $ref: '#/components/responses/managed-defense-vulnerability-discovery_NotFound'
+        4XX:
+          $ref: '#/components/responses/managed-defense-vulnerability-discovery_Failure'
+        5XX:
+          $ref: '#/components/responses/managed-defense-vulnerability-discovery_Failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Vulnerability Discovery
+      x-fern-sdk-group-name: managed-defense.vulnerability-discovery.scans
+      x-fern-sdk-method-name: get
+    parameters:
+      - $ref: '#/components/parameters/managed-defense-vulnerability-discovery_AccountId'
+      - $ref: '#/components/parameters/managed-defense-vulnerability-discovery_ScanId'
+  /accounts/{account_id}/managed-defense/vulnerability-discovery/scans/{scan_id}/report:
+    get:
+      operationId: getAccountVulnerabilityDiscoveryConsolidatedReport
+      summary: Get reviewed vulnerability report
+      description: Gets the active operator-reviewed scan report. Repository metadata records report readiness even when no publication is available.
+      responses:
+        '200':
+          description: Active reviewed scan report and repository status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/managed-defense-vulnerability-discovery_ConsolidatedCuratedReportResponse'
+        '404':
+          $ref: '#/components/responses/managed-defense-vulnerability-discovery_NotFound'
+        4XX:
+          $ref: '#/components/responses/managed-defense-vulnerability-discovery_Failure'
+        5XX:
+          $ref: '#/components/responses/managed-defense-vulnerability-discovery_Failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Vulnerability Discovery
+      x-fern-sdk-group-name: managed-defense.vulnerability-discovery.scans
+      x-fern-sdk-method-name: getReport
+    parameters:
+      - $ref: '#/components/parameters/managed-defense-vulnerability-discovery_AccountId'
+      - $ref: '#/components/parameters/managed-defense-vulnerability-discovery_ScanId'
   /accounts/{account_id}/media/usage:
     get:
       operationId: usage-analytics-get-account-media-usage
@@ -375586,6 +375854,103 @@ components:
       required: true
       schema:
         $ref: '#/components/schemas/logpull_TimestampRFC3339'
+    managed-defense-vulnerability-discovery_AccountId:
+      example: 023e105f4ecef8ad9ca31a8372d0c353
+      in: path
+      name: account_id
+      required: true
+      schema:
+        type: string
+        pattern: ^[a-f0-9]{32}$
+    managed-defense-vulnerability-discovery_Cursor:
+      in: query
+      name: cursor
+      schema:
+        type: string
+        maxLength: 1024
+        minLength: 1
+        pattern: ^[A-Za-z0-9_-]+$
+    managed-defense-vulnerability-discovery_Limit:
+      in: query
+      name: limit
+      schema:
+        type: integer
+        default: 50
+        maximum: 100
+        minimum: 1
+    managed-defense-vulnerability-discovery_OptionalIdempotencyKey:
+      description: Optional. Supply this header to safely retry a request. Required when `worker_script_name` is supplied.
+      in: header
+      name: Idempotency-Key
+      schema:
+        type: string
+        maxLength: 128
+        minLength: 1
+        pattern: ^[!-~]+$
+    managed-defense-vulnerability-discovery_RepositoryFilter:
+      in: query
+      name: repo
+      schema:
+        type: string
+        format: uuid
+    managed-defense-vulnerability-discovery_RepositoryId:
+      in: path
+      name: repo_id
+      required: true
+      schema:
+        type: string
+        format: uuid
+    managed-defense-vulnerability-discovery_ScanCursor:
+      in: query
+      name: scan_cursor
+      schema:
+        type: string
+        maxLength: 1024
+        minLength: 1
+        pattern: ^[A-Za-z0-9_-]+$
+    managed-defense-vulnerability-discovery_ScanId:
+      in: path
+      name: scan_id
+      required: true
+      schema:
+        type: string
+        format: uuid
+    managed-defense-vulnerability-discovery_ScanLimit:
+      in: query
+      name: scan_limit
+      schema:
+        type: integer
+        default: 50
+        maximum: 100
+        minimum: 1
+    managed-defense-vulnerability-discovery_ScanStatus:
+      description: Repeat parameter or provide comma-separated values.
+      explode: true
+      in: query
+      name: status
+      schema:
+        oneOf:
+          - enum:
+              - requested
+              - accepted
+              - running
+              - completed
+              - failed
+              - rejected
+              - cancelled
+            type: string
+          - items:
+              enum:
+                - requested
+                - accepted
+                - running
+                - completed
+                - failed
+                - rejected
+                - cancelled
+              type: string
+            type: array
+      style: form
     moq_account_id:
       description: Cloudflare account identifier.
       in: path
@@ -436162,6 +436527,1204 @@ components:
       description: Optional weight of the ECMP scope - if provided.
       type: integer
       x-auditable: true
+    managed-defense-vulnerability-discovery_ConsolidatedCuratedReportResponse:
+      allOf:
+        - $ref: '#/components/schemas/managed-defense-vulnerability-discovery_SuccessResponse'
+        - properties:
+            result:
+              $ref: '#/components/schemas/managed-defense-vulnerability-discovery_ConsolidatedCuratedReportResult'
+          required:
+            - result
+          type: object
+    managed-defense-vulnerability-discovery_ConsolidatedCuratedReportResult:
+      type: object
+      properties:
+        publication:
+          type: object
+          allOf:
+            - $ref: '#/components/schemas/managed-defense-vulnerability-discovery_CuratedReportPublication'
+          nullable: true
+        report:
+          type: object
+          allOf:
+            - $ref: '#/components/schemas/managed-defense-vulnerability-discovery_ReportDocumentV2'
+          nullable: true
+        repositories:
+          type: array
+          items:
+            $ref: '#/components/schemas/managed-defense-vulnerability-discovery_ConsolidatedReportRepository'
+          maxItems: 100
+        scan_id:
+          type: string
+          format: uuid
+      required:
+        - scan_id
+        - repositories
+        - publication
+        - report
+    managed-defense-vulnerability-discovery_ConsolidatedReportRepository:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        report_status:
+          type: string
+          enum:
+            - not_ready
+            - pending_review
+            - published
+            - withdrawn
+        scan_status:
+          type: string
+          enum:
+            - requested
+            - accepted
+            - running
+            - completed
+            - failed
+            - rejected
+            - cancelled
+      required:
+        - id
+        - name
+        - scan_status
+        - report_status
+    managed-defense-vulnerability-discovery_CreateRepositoryRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          minLength: 1
+          pattern: ^[A-Za-z0-9_.-]+$
+        worker_script_name:
+          type: string
+          maxLength: 255
+          minLength: 1
+          pattern: ^[A-Za-z0-9][A-Za-z0-9._-]*$
+      additionalProperties: false
+      required:
+        - name
+    managed-defense-vulnerability-discovery_CreateRepositoryResponse:
+      allOf:
+        - $ref: '#/components/schemas/managed-defense-vulnerability-discovery_SuccessResponse'
+        - properties:
+            result:
+              $ref: '#/components/schemas/managed-defense-vulnerability-discovery_CreateRepositoryResult'
+          required:
+            - result
+          type: object
+    managed-defense-vulnerability-discovery_CreateRepositoryResult:
+      oneOf:
+        - additionalProperties: false
+          properties:
+            repository:
+              $ref: '#/components/schemas/managed-defense-vulnerability-discovery_CreatedRepository'
+            upload:
+              $ref: '#/components/schemas/managed-defense-vulnerability-discovery_UploadCredentials'
+          required:
+            - repository
+            - upload
+          type: object
+        - additionalProperties: false
+          properties:
+            repository:
+              $ref: '#/components/schemas/managed-defense-vulnerability-discovery_CreatedRepository'
+          required:
+            - repository
+          type: object
+    managed-defense-vulnerability-discovery_CreateScan:
+      type: object
+      properties:
+        repo_hosts:
+          description: Explicit hostname scopes. Every hostname must be authorized for its repository before review admission; rejected scopes return 422 and do not persist a scan request.
+          type: object
+          additionalProperties:
+            items:
+              maxLength: 253
+              minLength: 1
+              pattern: ^[A-Za-z0-9][A-Za-z0-9.-]*[A-Za-z0-9]$
+              type: string
+            maxItems: 20
+            minItems: 1
+            type: array
+            uniqueItems: true
+        repos:
+          type: array
+          items:
+            format: uuid
+            type: string
+          maxItems: 100
+          minItems: 1
+          uniqueItems: true
+        telemetry_window:
+          $ref: '#/components/schemas/managed-defense-vulnerability-discovery_TelemetryWindow'
+      additionalProperties: false
+      required:
+        - repos
+    managed-defense-vulnerability-discovery_CreatedRepository:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        import_error:
+          type: object
+          properties:
+            code:
+              type: string
+              enum:
+                - worker_import_failed
+            message:
+              type: string
+              enum:
+                - Worker import failed.
+          required:
+            - code
+            - message
+        name:
+          type: string
+          maxLength: 255
+          minLength: 1
+          pattern: ^[A-Za-z0-9_.-]+$
+        readiness:
+          type: string
+          enum:
+            - awaiting_source
+            - processing
+            - ready
+            - failed
+          readOnly: true
+        source:
+          type: string
+          enum:
+            - upload
+            - worker
+          readOnly: true
+      required:
+        - id
+        - name
+        - source
+        - readiness
+    managed-defense-vulnerability-discovery_CuratedReportPublication:
+      type: object
+      properties:
+        published_at:
+          type: string
+          format: date-time
+          readOnly: true
+        revision_id:
+          type: string
+          format: uuid
+        version:
+          type: integer
+          minimum: 1
+      required:
+        - revision_id
+        - version
+        - published_at
+    managed-defense-vulnerability-discovery_CuratedReportResponse:
+      allOf:
+        - $ref: '#/components/schemas/managed-defense-vulnerability-discovery_SuccessResponse'
+        - properties:
+            result:
+              $ref: '#/components/schemas/managed-defense-vulnerability-discovery_CuratedReportResult'
+          required:
+            - result
+          type: object
+    managed-defense-vulnerability-discovery_CuratedReportResult:
+      type: object
+      properties:
+        publication:
+          $ref: '#/components/schemas/managed-defense-vulnerability-discovery_CuratedReportPublication'
+        report:
+          $ref: '#/components/schemas/managed-defense-vulnerability-discovery_RepositoryReport'
+        repository_id:
+          type: string
+          format: uuid
+        scan_id:
+          type: string
+          maxLength: 128
+          minLength: 1
+      required:
+        - repository_id
+        - scan_id
+        - publication
+        - report
+    managed-defense-vulnerability-discovery_FailureResponse:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/managed-defense-vulnerability-discovery_Message'
+          minItems: 1
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/managed-defense-vulnerability-discovery_Message'
+        result:
+          type: object
+          enum:
+            - null
+          nullable: true
+        success:
+          type: boolean
+          enum:
+            - false
+      required:
+        - success
+        - errors
+        - messages
+        - result
+    managed-defense-vulnerability-discovery_Message:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 10005
+          minimum: 1000
+        message:
+          type: string
+          example: The request is invalid.
+      required:
+        - code
+        - message
+    managed-defense-vulnerability-discovery_PaginatedResponse:
+      allOf:
+        - $ref: '#/components/schemas/managed-defense-vulnerability-discovery_SuccessResponse'
+        - properties:
+            result_info:
+              $ref: '#/components/schemas/managed-defense-vulnerability-discovery_ResultInfo'
+          required:
+            - result
+            - result_info
+          type: object
+    managed-defense-vulnerability-discovery_ReportDocumentV2:
+      type: object
+      properties:
+        executive_summary:
+          type: string
+          maxLength: 10000
+          minLength: 1
+        generated_at:
+          description: Revision requests must echo the existing generation timestamp unchanged.
+          type: string
+          format: date-time
+        overall_severity:
+          type: string
+          enum:
+            - critical
+            - high
+            - medium
+            - low
+            - info
+        repositories:
+          type: array
+          items:
+            $ref: '#/components/schemas/managed-defense-vulnerability-discovery_RepositoryReport'
+          maxItems: 100
+        schema_version:
+          type: integer
+          enum:
+            - 2
+        title:
+          type: string
+          maxLength: 200
+          minLength: 1
+      additionalProperties: false
+      required:
+        - schema_version
+        - title
+        - executive_summary
+        - overall_severity
+        - repositories
+        - generated_at
+    managed-defense-vulnerability-discovery_ReportErrorPath:
+      type: object
+      properties:
+        hits:
+          type: number
+          minimum: 0
+        host:
+          type: string
+          minLength: 1
+        id:
+          type: string
+          minLength: 1
+        path:
+          type: string
+          minLength: 1
+        status:
+          type: integer
+          maximum: 599
+          minimum: 100
+      additionalProperties: false
+      required:
+        - id
+        - host
+        - path
+        - status
+        - hits
+    managed-defense-vulnerability-discovery_ReportExternalLink:
+      type: object
+      properties:
+        title:
+          type: string
+          maxLength: 200
+          minLength: 1
+        url:
+          type: string
+          format: uri
+          maxLength: 2048
+      additionalProperties: false
+      required:
+        - title
+        - url
+    managed-defense-vulnerability-discovery_ReportFinding:
+      type: object
+      properties:
+        attacker_position:
+          description: Least-privileged position required to trigger the finding. Optional on legacy report revisions.
+          type: string
+          enum:
+            - external
+            - authenticated
+            - internal
+            - post_compromise
+          nullable: true
+        conditions:
+          type: array
+          items:
+            type: string
+        cwe:
+          type: string
+          minLength: 1
+        external_links:
+          type: array
+          items:
+            $ref: '#/components/schemas/managed-defense-vulnerability-discovery_ReportExternalLink'
+          maxItems: 50
+        id:
+          type: string
+          maxLength: 128
+          minLength: 1
+        impact:
+          type: string
+          maxLength: 4000
+          minLength: 1
+        location:
+          type: object
+          additionalProperties: false
+          properties:
+            file:
+              type: string
+              minLength: 1
+            line:
+              type: integer
+              minimum: 1
+            route:
+              type: string
+              nullable: true
+          required:
+            - file
+            - line
+            - route
+        open_question:
+          description: One bounded unresolved proof question. Optional on legacy report revisions.
+          type: string
+          maxLength: 500
+          nullable: true
+        proof_method:
+          description: Method used or needed to close the proof. Optional on legacy report revisions.
+          type: string
+          enum:
+            - structural
+            - experimental
+            - acquired_source
+            - public_knowledge
+            - team_question
+          nullable: true
+        proof_state:
+          description: Current proof lifecycle state. Optional on legacy report revisions.
+          type: string
+          enum:
+            - closed
+            - pending_source
+            - pending_public
+            - pending_experiment
+            - pending_team
+          nullable: true
+        reachability:
+          type: array
+          items:
+            $ref: '#/components/schemas/managed-defense-vulnerability-discovery_ReportReachability'
+        remediation:
+          type: object
+          additionalProperties: false
+          properties:
+            code_changes:
+              type: string
+              nullable: true
+            strategy:
+              type: string
+              minLength: 1
+          required:
+            - strategy
+            - code_changes
+        root_cause:
+          type: string
+          maxLength: 4000
+          minLength: 1
+        severity:
+          type: string
+          enum:
+            - critical
+            - high
+            - medium
+            - low
+            - info
+        severity_basis:
+          type: string
+          minLength: 1
+        summary:
+          type: string
+          maxLength: 4000
+          minLength: 1
+        telemetry:
+          type: object
+          additionalProperties: false
+          properties:
+            references:
+              type: array
+              items:
+                minLength: 1
+                type: string
+            state:
+              type: string
+              enum:
+                - no_route
+                - no_telemetry
+                - no_match
+                - matched
+          required:
+            - state
+            - references
+        title:
+          type: string
+          maxLength: 200
+          minLength: 1
+        trace:
+          type: array
+          items:
+            $ref: '#/components/schemas/managed-defense-vulnerability-discovery_ReportTraceStep'
+        waf_rules:
+          $ref: '#/components/schemas/managed-defense-vulnerability-discovery_ReportWafRules'
+      additionalProperties: false
+      required:
+        - id
+        - title
+        - severity
+        - severity_basis
+        - cwe
+        - location
+        - summary
+        - root_cause
+        - trace
+        - conditions
+        - impact
+        - remediation
+        - waf_rules
+        - reachability
+        - telemetry
+    managed-defense-vulnerability-discovery_ReportHotPath:
+      type: object
+      properties:
+        hits:
+          type: number
+          minimum: 0
+        host:
+          type: string
+          minLength: 1
+        id:
+          type: string
+          minLength: 1
+        path:
+          type: string
+          minLength: 1
+        top_status:
+          type: integer
+          maximum: 599
+          minimum: 100
+      additionalProperties: false
+      required:
+        - id
+        - host
+        - path
+        - hits
+        - top_status
+    managed-defense-vulnerability-discovery_ReportObservedPath:
+      type: object
+      properties:
+        hit_volume:
+          type: number
+          minimum: 0
+        host:
+          type: string
+          minLength: 1
+        id:
+          type: string
+          minLength: 1
+        path:
+          type: string
+          minLength: 1
+      additionalProperties: false
+      required:
+        - id
+        - host
+        - path
+        - hit_volume
+    managed-defense-vulnerability-discovery_ReportObservedWafRule:
+      type: object
+      properties:
+        hit_volume:
+          type: number
+          minimum: 0
+        id:
+          type: string
+          minLength: 1
+        paths:
+          type: array
+          items:
+            $ref: '#/components/schemas/managed-defense-vulnerability-discovery_ReportObservedPath'
+        rule_id:
+          type: string
+          minLength: 1
+        rule_version:
+          type: integer
+          minimum: 0
+          nullable: true
+      additionalProperties: false
+      required:
+        - id
+        - rule_id
+        - rule_version
+        - hit_volume
+        - paths
+    managed-defense-vulnerability-discovery_ReportReachability:
+      type: object
+      properties:
+        consumer:
+          type: string
+          minLength: 1
+        reachable:
+          type: boolean
+        via:
+          type: string
+      additionalProperties: false
+      required:
+        - consumer
+        - reachable
+        - via
+    managed-defense-vulnerability-discovery_ReportTelemetryTarget:
+      type: object
+      properties:
+        hosts:
+          type: array
+          items:
+            minLength: 1
+            type: string
+        kind:
+          type: string
+          enum:
+            - worker
+            - origin
+        telemetry_window:
+          $ref: '#/components/schemas/managed-defense-vulnerability-discovery_TelemetryWindow'
+      additionalProperties: false
+      required:
+        - kind
+        - hosts
+    managed-defense-vulnerability-discovery_ReportTraceStep:
+      type: object
+      properties:
+        line:
+          type: integer
+          minimum: 1
+        path:
+          type: string
+          minLength: 1
+        scope:
+          type: string
+        why:
+          type: string
+      additionalProperties: false
+      required:
+        - path
+        - line
+        - scope
+        - why
+    managed-defense-vulnerability-discovery_ReportTrafficContext:
+      type: object
+      properties:
+        http:
+          type: object
+          additionalProperties: false
+          nullable: true
+          properties:
+            error_paths:
+              type: array
+              items:
+                $ref: '#/components/schemas/managed-defense-vulnerability-discovery_ReportErrorPath'
+            hot_paths:
+              type: array
+              items:
+                $ref: '#/components/schemas/managed-defense-vulnerability-discovery_ReportHotPath'
+            request_volume:
+              type: number
+              minimum: 0
+          required:
+            - request_volume
+            - hot_paths
+            - error_paths
+        target:
+          type: object
+          allOf:
+            - $ref: '#/components/schemas/managed-defense-vulnerability-discovery_ReportTelemetryTarget'
+          nullable: true
+        waf:
+          type: object
+          additionalProperties: false
+          nullable: true
+          properties:
+            hit_volume:
+              type: number
+              minimum: 0
+            rules:
+              type: array
+              items:
+                $ref: '#/components/schemas/managed-defense-vulnerability-discovery_ReportObservedWafRule'
+          required:
+            - hit_volume
+            - rules
+        web_assets:
+          type: object
+          additionalProperties: false
+          nullable: true
+          properties:
+            operations:
+              type: array
+              items:
+                $ref: '#/components/schemas/managed-defense-vulnerability-discovery_ReportWebAssetsOperation'
+            paths:
+              type: array
+              items:
+                $ref: '#/components/schemas/managed-defense-vulnerability-discovery_ReportWebAssetsPath'
+            risk_types:
+              type: array
+              items:
+                additionalProperties: false
+                properties:
+                  description:
+                    type: string
+                    nullable: true
+                  name:
+                    type: string
+                    minLength: 1
+                  operation_count:
+                    type: integer
+                    minimum: 0
+                required:
+                  - name
+                  - description
+                  - operation_count
+                type: object
+          required:
+            - risk_types
+            - operations
+            - paths
+      additionalProperties: false
+      required:
+        - target
+        - waf
+        - http
+        - web_assets
+    managed-defense-vulnerability-discovery_ReportWafRule:
+      type: object
+      properties:
+        action:
+          type: string
+          enum:
+            - block
+            - managed_challenge
+            - js_challenge
+            - log
+        confidence:
+          type: string
+          enum:
+            - low
+            - medium
+            - high
+        description:
+          type: string
+          minLength: 1
+        expression:
+          type: string
+          maxLength: 4096
+          minLength: 1
+        false_positive_risk:
+          type: string
+          minLength: 1
+        name:
+          type: string
+          maxLength: 25
+          minLength: 1
+        rationale:
+          type: string
+          minLength: 1
+      additionalProperties: false
+      required:
+        - name
+        - expression
+        - action
+        - description
+        - rationale
+        - confidence
+        - false_positive_risk
+    managed-defense-vulnerability-discovery_ReportWafRules:
+      type: object
+      properties:
+        broad:
+          type: object
+          allOf:
+            - $ref: '#/components/schemas/managed-defense-vulnerability-discovery_ReportWafRule'
+          nullable: true
+        targeted:
+          type: object
+          allOf:
+            - $ref: '#/components/schemas/managed-defense-vulnerability-discovery_ReportWafRule'
+          nullable: true
+      additionalProperties: false
+      nullable: true
+      required:
+        - targeted
+        - broad
+    managed-defense-vulnerability-discovery_ReportWebAssetsOperation:
+      type: object
+      properties:
+        endpoint:
+          type: string
+          minLength: 1
+        host:
+          type: string
+          minLength: 1
+        id:
+          type: string
+          minLength: 1
+        method:
+          type: string
+          minLength: 1
+        performance:
+          $ref: '#/components/schemas/managed-defense-vulnerability-discovery_ReportWebAssetsPerformance'
+        risk_labels:
+          type: array
+          items:
+            $ref: '#/components/schemas/managed-defense-vulnerability-discovery_ReportWebAssetsRisk'
+      additionalProperties: false
+      required:
+        - id
+        - method
+        - host
+        - endpoint
+        - risk_labels
+    managed-defense-vulnerability-discovery_ReportWebAssetsPath:
+      type: object
+      properties:
+        avg_origin_latency_ms:
+          type: number
+          minimum: 0
+          nullable: true
+        error_rate:
+          type: number
+          maximum: 1
+          minimum: 0
+        estimated_requests:
+          type: number
+          minimum: 0
+        host:
+          type: string
+          minLength: 1
+        id:
+          type: string
+          minLength: 1
+        path:
+          type: string
+          minLength: 1
+      additionalProperties: false
+      required:
+        - id
+        - host
+        - path
+        - estimated_requests
+        - error_rate
+        - avg_origin_latency_ms
+    managed-defense-vulnerability-discovery_ReportWebAssetsPerformance:
+      type: object
+      properties:
+        avg_origin_latency_ms:
+          type: number
+          minimum: 0
+          nullable: true
+        error_rate:
+          type: number
+          maximum: 1
+          minimum: 0
+        estimated_requests:
+          type: number
+          minimum: 0
+      additionalProperties: false
+      required:
+        - estimated_requests
+        - error_rate
+        - avg_origin_latency_ms
+    managed-defense-vulnerability-discovery_ReportWebAssetsRisk:
+      type: object
+      properties:
+        description:
+          type: string
+          nullable: true
+        name:
+          type: string
+          minLength: 1
+      additionalProperties: false
+      required:
+        - name
+        - description
+    managed-defense-vulnerability-discovery_Repository:
+      type: object
+      properties:
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        id:
+          type: string
+          format: uuid
+        import_error:
+          type: object
+          properties:
+            code:
+              type: string
+              enum:
+                - worker_import_failed
+            message:
+              type: string
+              enum:
+                - Worker import failed.
+          required:
+            - code
+            - message
+        name:
+          type: string
+          maxLength: 255
+          minLength: 1
+          pattern: ^[A-Za-z0-9_.-]+$
+        readiness:
+          type: string
+          enum:
+            - awaiting_source
+            - processing
+            - ready
+            - failed
+        source:
+          type: string
+          enum:
+            - upload
+            - worker
+      required:
+        - id
+        - name
+        - source
+        - readiness
+        - created_at
+    managed-defense-vulnerability-discovery_RepositoryDetail:
+      type: object
+      properties:
+        repository:
+          $ref: '#/components/schemas/managed-defense-vulnerability-discovery_Repository'
+        scans:
+          type: array
+          items:
+            $ref: '#/components/schemas/managed-defense-vulnerability-discovery_Scan'
+          maxItems: 100
+      required:
+        - repository
+        - scans
+    managed-defense-vulnerability-discovery_RepositoryListResponse:
+      allOf:
+        - $ref: '#/components/schemas/managed-defense-vulnerability-discovery_PaginatedResponse'
+        - properties:
+            result:
+              type: array
+              items:
+                $ref: '#/components/schemas/managed-defense-vulnerability-discovery_Repository'
+          required:
+            - result
+          type: object
+    managed-defense-vulnerability-discovery_RepositoryReport:
+      type: object
+      properties:
+        external_links:
+          type: array
+          items:
+            $ref: '#/components/schemas/managed-defense-vulnerability-discovery_ReportExternalLink'
+          maxItems: 50
+        findings:
+          type: array
+          items:
+            $ref: '#/components/schemas/managed-defense-vulnerability-discovery_ReportFinding'
+          maxItems: 500
+        limitations:
+          type: array
+          items:
+            maxLength: 2000
+            minLength: 1
+            type: string
+          maxItems: 50
+        overall_severity:
+          type: string
+          enum:
+            - critical
+            - high
+            - medium
+            - low
+            - info
+        repository_id:
+          type: string
+          format: uuid
+        repository_name:
+          type: string
+          minLength: 1
+        summary:
+          type: string
+          maxLength: 4000
+          minLength: 1
+        traffic_context:
+          $ref: '#/components/schemas/managed-defense-vulnerability-discovery_ReportTrafficContext'
+      additionalProperties: false
+      required:
+        - repository_id
+        - repository_name
+        - summary
+        - overall_severity
+        - traffic_context
+        - findings
+    managed-defense-vulnerability-discovery_RepositoryResponse:
+      allOf:
+        - $ref: '#/components/schemas/managed-defense-vulnerability-discovery_SuccessResponse'
+        - properties:
+            result:
+              $ref: '#/components/schemas/managed-defense-vulnerability-discovery_RepositoryDetail'
+          required:
+            - result
+          type: object
+        - properties:
+            result_info:
+              $ref: '#/components/schemas/managed-defense-vulnerability-discovery_ResultInfo'
+          required:
+            - result_info
+          type: object
+    managed-defense-vulnerability-discovery_ResultInfo:
+      type: object
+      properties:
+        count:
+          type: integer
+          maximum: 100
+          minimum: 0
+        cursor:
+          description: Opaque continuation cursor. Empty when no further page exists.
+          type: string
+        per_page:
+          type: integer
+          maximum: 100
+          minimum: 1
+      required:
+        - count
+        - per_page
+        - cursor
+    managed-defense-vulnerability-discovery_Scan:
+      type: object
+      properties:
+        completed_at:
+          type: string
+          format: date-time
+          nullable: true
+          readOnly: true
+        id:
+          type: string
+          format: uuid
+        message:
+          type: string
+          maxLength: 1024
+          nullable: true
+        phase:
+          type: string
+          enum:
+            - provisioning
+            - indexing
+            - analyzing
+            - reporting
+            - finalizing
+          nullable: true
+        repositories:
+          type: array
+          items:
+            $ref: '#/components/schemas/managed-defense-vulnerability-discovery_ScanRepository'
+        started_at:
+          type: string
+          format: date-time
+          nullable: true
+          readOnly: true
+        status:
+          type: string
+          enum:
+            - requested
+            - accepted
+            - running
+            - completed
+            - failed
+            - rejected
+            - cancelled
+        submitted_at:
+          type: string
+          format: date-time
+          readOnly: true
+        telemetry_window:
+          $ref: '#/components/schemas/managed-defense-vulnerability-discovery_TelemetryWindow'
+      required:
+        - id
+        - status
+        - phase
+        - submitted_at
+        - started_at
+        - completed_at
+        - repositories
+        - message
+    managed-defense-vulnerability-discovery_ScanListResponse:
+      allOf:
+        - $ref: '#/components/schemas/managed-defense-vulnerability-discovery_PaginatedResponse'
+        - properties:
+            result:
+              type: array
+              items:
+                $ref: '#/components/schemas/managed-defense-vulnerability-discovery_Scan'
+          required:
+            - result
+          type: object
+    managed-defense-vulnerability-discovery_ScanRepository:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        phase:
+          type: string
+          enum:
+            - provisioning
+            - indexing
+            - analyzing
+            - reporting
+            - finalizing
+          nullable: true
+        report_status:
+          type: string
+          enum:
+            - not_ready
+            - pending_review
+            - published
+            - withdrawn
+        status:
+          type: string
+          enum:
+            - requested
+            - accepted
+            - running
+            - completed
+            - failed
+            - rejected
+            - cancelled
+      required:
+        - id
+        - name
+        - status
+        - phase
+        - report_status
+    managed-defense-vulnerability-discovery_ScanResponse:
+      allOf:
+        - $ref: '#/components/schemas/managed-defense-vulnerability-discovery_SuccessResponse'
+        - properties:
+            result:
+              $ref: '#/components/schemas/managed-defense-vulnerability-discovery_Scan'
+          required:
+            - result
+          type: object
+    managed-defense-vulnerability-discovery_SuccessResponse:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/managed-defense-vulnerability-discovery_Message'
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/managed-defense-vulnerability-discovery_Message'
+        success:
+          type: boolean
+          enum:
+            - true
+      required:
+        - success
+        - errors
+        - messages
+    managed-defense-vulnerability-discovery_TelemetryWindow:
+      description: UTC ISO-8601 interval. Start is inclusive, end is exclusive, and the interval must be positive and at most seven days.
+      type: object
+      properties:
+        end:
+          type: string
+          format: date-time
+        start:
+          type: string
+          format: date-time
+      required:
+        - start
+        - end
+    managed-defense-vulnerability-discovery_UploadCredentials:
+      type: object
+      properties:
+        expires_in:
+          type: integer
+          enum:
+            - 3600
+        remote:
+          type: string
+          format: uri
+          maxLength: 2048
+        token:
+          type: string
+          maxLength: 8192
+          minLength: 1
+      required:
+        - remote
+        - token
+        - expires_in
     mcn_account_id:
       type: string
       x-auditable: true
@@ -497562,6 +499125,14 @@ components:
               success:
                 type: boolean
                 example: false
+    managed-defense-vulnerability-discovery_Failure:
+      description: Request failed.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/managed-defense-vulnerability-discovery_FailureResponse'
+    managed-defense-vulnerability-discovery_NotFound:
+      description: Requested resource was not found.
     realtimekit_AddParticipant:
       description: Success response
       content:
