@@ -8947,6 +8947,8 @@ paths:
                   $ref: '#/components/schemas/access_mfa_required_for_all_apps'
                 name:
                   $ref: '#/components/schemas/access_name'
+                service_token_inactivity:
+                  $ref: '#/components/schemas/access_service_token_inactivity'
                 session_duration:
                   $ref: '#/components/schemas/access_session_duration'
                 ui_read_only_toggle_reason:
@@ -9026,6 +9028,8 @@ paths:
                   $ref: '#/components/schemas/access_mfa_required_for_all_apps'
                 name:
                   $ref: '#/components/schemas/access_name'
+                service_token_inactivity:
+                  $ref: '#/components/schemas/access_service_token_inactivity'
                 session_duration:
                   $ref: '#/components/schemas/access_session_duration'
                 ui_read_only_toggle_reason:
@@ -383686,6 +383690,29 @@ components:
       example:
         - example.com
       x-auditable: true
+    access_destination_overrides:
+      description: |
+        Rules that override how Access handles requests to this destination. Each rule can make a matching path public, bypassing Access authentication. Overrides are supported for public destinations and Worker destinations.
+      type: array
+      items:
+        properties:
+          behavior:
+            description: The behavior to apply to matching requests.
+            type: string
+            enum:
+              - public
+          path_pattern:
+            description: |
+              The request path pattern to match. Wildcards (`*`) are supported, but each path segment may have at most one wildcard. Unlike the `uri` in public destinations, override path patterns do not implicitly cover subpaths; to do that, use a wildcard.
+            type: string
+            example: /health/*
+            maxLength: 512
+            pattern: ^/
+        required:
+          - path_pattern
+          - behavior
+        type: object
+      maxItems: 25
     access_destinations:
       description: |
         List of destinations secured by Access. This supersedes `self_hosted_domains` to allow for more flexibility in defining different types of domains. If `destinations` are provided, then `self_hosted_domains` will be ignored.
@@ -383695,6 +383722,8 @@ components:
           - description: |
               A public hostname that Access will secure. Public destinations support sub-domain and path. Wildcard '*' can be used in the definition.
             properties:
+              overrides:
+                $ref: '#/components/schemas/access_destination_overrides'
               type:
                 type: string
                 enum:
@@ -383746,6 +383775,8 @@ components:
           - description: |
               A specific Cloudflare Worker that Access will secure. All requests routed to the specified Worker, including its preview deployments, will be protected. The `preview_worker` and `public` destination types takes precedence, so you can create separate applications to override the policies for the Worker's previews or specific paths.
             properties:
+              overrides:
+                $ref: '#/components/schemas/access_destination_overrides'
               type:
                 type: string
                 enum:
@@ -383761,6 +383792,8 @@ components:
           - description: |
               A specific Cloudflare Worker whose preview deployments Access will secure. Only requests routed to the preview deployments of the specified Worker will be protected. The `public` destination type takes precedence, so you can create separate applications to override the policies for specific paths.
             properties:
+              overrides:
+                $ref: '#/components/schemas/access_destination_overrides'
               type:
                 type: string
                 enum:
@@ -383776,6 +383809,8 @@ components:
           - description: |
               Protects all Cloudflare Workers on the account with Access, including their preview deployments. At most one destination of this type can exist per account. The `worker`, `preview_worker`, `all_preview_workers`, and `public` destination types take precedence, so you can create separate applications to override the policies for specific Workers, their previews, or specific paths.
             properties:
+              overrides:
+                $ref: '#/components/schemas/access_destination_overrides'
               type:
                 type: string
                 enum:
@@ -383787,6 +383822,8 @@ components:
           - description: |
               Protects the preview deployments of all Cloudflare Workers on the account with Access. At most one destination of this type can exist per account. The `worker`, `preview_worker`, and `public` destination types take precedence, so you can create separate applications to override the policies for specific Workers, their previews, or specific paths.
             properties:
+              overrides:
+                $ref: '#/components/schemas/access_destination_overrides'
               type:
                 type: string
                 enum:
@@ -383810,7 +383847,10 @@ components:
           type: private
         - mcp_server_id: mcp-server-1
           type: via_mcp_server_portal
-        - type: worker
+        - overrides:
+            - behavior: public
+              path_pattern: /health/*
+          type: worker
           worker_id: 617f1d0431a98306ff61e336d79fce86
         - type: preview_worker
           worker_id: 617f1d0431a98306ff61e336d79fce86
@@ -386248,6 +386288,8 @@ components:
           $ref: '#/components/schemas/access_mfa_required_for_all_apps'
         name:
           $ref: '#/components/schemas/access_name'
+        service_token_inactivity:
+          $ref: '#/components/schemas/access_service_token_inactivity'
         session_duration:
           $ref: '#/components/schemas/access_session_duration'
         ui_read_only_toggle_reason:
@@ -388263,6 +388305,32 @@ components:
       description: Returns a 401 status code when the request is blocked by a Service Auth policy.
       type: boolean
       example: true
+    access_service_token_inactivity:
+      description: Configures automatic enforcement for inactive service tokens. A service token is inactive if no policy references it, and it has not successfully authenticated with an Access application during the selected inactivity period. This setting applies to every service token in your Zero Trust account.
+      type: object
+      properties:
+        action:
+          description: The action applied to an inactive service token.
+          type: string
+          example: disable
+          enum:
+            - disable
+            - delete
+        enabled:
+          description: Whether automatic enforcement for inactive service tokens is enabled.
+          type: boolean
+          example: true
+        inactivity_threshold_days:
+          description: The number of days a service token must be inactive before the configured action is applied.
+          type: integer
+          example: 30
+          maximum: 365
+          minimum: 30
+      required:
+        - enabled
+        - inactivity_threshold_days
+        - action
+      x-auditable: true
     access_service_token_rule:
       description: Matches a specific Access Service Token
       type: object
