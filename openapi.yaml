@@ -111910,6 +111910,469 @@ paths:
       x-fern-sdk-group-name: custom-nameservers
       x-fern-sdk-method-name: delete
       x-forge-hidden: true
+  /accounts/{account_id}/custom_pages:
+    get:
+      operationId: custom-pages-for-an-account-list-custom-pages
+      summary: List custom pages
+      description: Lists all custom page configurations for an account.
+      parameters:
+        - name: account_id
+          in: path
+          description: Identifier of the Cloudflare account.
+          required: true
+          schema:
+            $ref: '#/components/schemas/custom-pages_identifier'
+      responses:
+        '200':
+          description: List custom pages response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/custom-pages_custom_page_result_list'
+        4XX:
+          description: List custom pages response failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/custom-pages_api-response-common-failure'
+      security:
+        - api_email: []
+          api_key: []
+      tags:
+        - Custom pages for an account
+      x-api-token-group:
+        - 'Zero Trust: PII Read'
+        - Account Custom Pages Write
+        - Account Custom Pages Read
+        - Account Settings Write
+        - Account Settings Read
+      x-cfPermissionsRequired:
+        enum:
+          - '#organization:read'
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: false
+        pro: true
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: custom-pages
+      x-fern-sdk-method-name: list
+      x-forge-hidden: true
+  /accounts/{account_id}/custom_pages/{identifier}:
+    get:
+      operationId: custom-pages-for-an-account-get-a-custom-page
+      summary: Get a custom page
+      description: Returns the configuration for a custom page type at the account level.
+      parameters:
+        - name: identifier
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/custom-pages_error_page_type'
+        - name: account_id
+          in: path
+          description: Identifier of the Cloudflare account.
+          required: true
+          schema:
+            $ref: '#/components/schemas/custom-pages_identifier'
+      responses:
+        '200':
+          description: Get a custom page response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/custom-pages_custom_page_result'
+        4XX:
+          description: Get a custom page response failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/custom-pages_api-response-common-failure'
+      security:
+        - api_email: []
+          api_key: []
+      tags:
+        - Custom pages for an account
+      x-api-token-group:
+        - 'Zero Trust: PII Read'
+        - Account Custom Pages Write
+        - Account Custom Pages Read
+        - Account Settings Write
+        - Account Settings Read
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: false
+        pro: true
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: custom-pages
+      x-fern-sdk-method-name: get
+      x-forge-hidden: true
+    put:
+      operationId: custom-pages-for-an-account-update-a-custom-page
+      summary: Update a custom page
+      description: Updates the configuration for a custom page type at the account level.
+      parameters:
+        - name: identifier
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/custom-pages_error_page_type'
+        - name: account_id
+          in: path
+          description: Identifier of the Cloudflare account.
+          required: true
+          schema:
+            $ref: '#/components/schemas/custom-pages_identifier'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                state:
+                  $ref: '#/components/schemas/custom-pages_state'
+                url:
+                  $ref: '#/components/schemas/custom-pages_url'
+              required:
+                - url
+                - state
+      responses:
+        '200':
+          description: Update a custom page response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/custom-pages_custom_page_result'
+        4XX:
+          description: Update a custom page response failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/custom-pages_api-response-common-failure'
+      security:
+        - api_email: []
+          api_key: []
+      tags:
+        - Custom pages for an account
+      x-api-token-group:
+        - Account Custom Pages Write
+        - Account Settings Write
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: false
+        pro: true
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: custom-pages.account-custom-pages
+      x-fern-sdk-method-name: update
+      x-forge-hidden: true
+  /accounts/{account_id}/custom_pages/assets:
+    get:
+      operationId: custom-assets-for-an-account-list-custom-assets
+      summary: List custom assets
+      description: Lists custom assets for an account.
+      parameters:
+        - name: account_id
+          in: path
+          description: Identifier of the Cloudflare account.
+          required: true
+          schema:
+            $ref: '#/components/schemas/custom-pages_identifier'
+        - name: page
+          in: query
+          description: Page number of paginated results.
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+        - name: per_page
+          in: query
+          description: Number of custom assets per page.
+          schema:
+            type: integer
+            default: 20
+            maximum: 200
+            minimum: 1
+      responses:
+        '200':
+          description: List custom assets response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/custom-pages_custom_asset_result_list'
+        4XX:
+          description: List custom assets response failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/custom-pages_api-response-common-failure'
+      security:
+        - api_email: []
+          api_key: []
+      tags:
+        - Custom assets for an account
+      x-api-token-group: null
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: false
+        pro: true
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: custom-pages.assets.list.custom
+      x-fern-sdk-method-name: assets
+      x-forge-hidden: true
+    post:
+      operationId: custom-assets-for-an-account-create-a-custom-asset
+      summary: Create a custom asset
+      description: Creates a custom asset for an account.
+      parameters:
+        - name: account_id
+          in: path
+          description: Identifier of the Cloudflare account.
+          required: true
+          schema:
+            $ref: '#/components/schemas/custom-pages_identifier'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                description:
+                  $ref: '#/components/schemas/custom-pages_asset_description'
+                name:
+                  $ref: '#/components/schemas/custom-pages_asset_name'
+                url:
+                  $ref: '#/components/schemas/custom-pages_asset_url'
+              required:
+                - name
+                - description
+                - url
+      responses:
+        '200':
+          description: Create custom asset response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/custom-pages_custom_asset_result'
+        4XX:
+          description: Create custom asset response failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/custom-pages_api-response-common-failure'
+      security:
+        - api_email: []
+          api_key: []
+      tags:
+        - Custom assets for an account
+      x-api-token-group: null
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: false
+        pro: true
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: custom-pages.assets.create.custom
+      x-fern-sdk-method-name: asset
+      x-forge-hidden: true
+  /accounts/{account_id}/custom_pages/assets/{asset_name}:
+    delete:
+      operationId: custom-assets-for-an-account-delete-a-custom-asset
+      summary: Delete a custom asset
+      description: Deletes a custom asset from an account.
+      parameters:
+        - name: asset_name
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/custom-pages_asset_name'
+        - name: account_id
+          in: path
+          description: Identifier of the Cloudflare account.
+          required: true
+          schema:
+            $ref: '#/components/schemas/custom-pages_identifier'
+      responses:
+        '204':
+          description: Delete a custom asset response
+        4XX:
+          description: Delete a custom asset response failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/custom-pages_api-response-common-failure'
+      security:
+        - api_email: []
+          api_key: []
+      tags:
+        - Custom assets for an account
+      x-api-token-group: null
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: false
+        pro: true
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: custom-pages.assets.delete.custom
+      x-fern-sdk-method-name: asset
+      x-forge-hidden: true
+    get:
+      operationId: custom-assets-for-an-account-get-a-custom-asset
+      summary: Get a custom asset
+      description: Returns a custom asset for an account.
+      parameters:
+        - name: asset_name
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/custom-pages_asset_name'
+        - name: account_id
+          in: path
+          description: Identifier of the Cloudflare account.
+          required: true
+          schema:
+            $ref: '#/components/schemas/custom-pages_identifier'
+      responses:
+        '200':
+          description: Get a custom asset response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/custom-pages_custom_asset_result'
+        4XX:
+          description: Get a custom asset response failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/custom-pages_api-response-common-failure'
+      security:
+        - api_email: []
+          api_key: []
+      tags:
+        - Custom assets for an account
+      x-api-token-group: null
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: false
+        pro: true
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: custom-pages.assets.get.custom
+      x-fern-sdk-method-name: asset
+      x-forge-hidden: true
+    put:
+      operationId: custom-assets-for-an-account-update-a-custom-asset
+      summary: Update a custom asset
+      description: Updates a custom asset for an account.
+      parameters:
+        - name: asset_name
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/custom-pages_asset_name'
+        - name: account_id
+          in: path
+          description: Identifier of the Cloudflare account.
+          required: true
+          schema:
+            $ref: '#/components/schemas/custom-pages_identifier'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                description:
+                  $ref: '#/components/schemas/custom-pages_asset_description'
+                url:
+                  $ref: '#/components/schemas/custom-pages_asset_url'
+              required:
+                - description
+                - url
+      responses:
+        '200':
+          description: Update a custom asset response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/custom-pages_custom_asset_result'
+        4XX:
+          description: Update a custom asset response failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/custom-pages_api-response-common-failure'
+      security:
+        - api_email: []
+          api_key: []
+      tags:
+        - Custom assets for an account
+      x-api-token-group: null
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: false
+        pro: true
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: custom-pages.assets.update.custom
+      x-fern-sdk-method-name: asset
+      x-forge-hidden: true
+  /accounts/{account_id}/custom_pages/preview_tokens:
+    post:
+      operationId: custom-pages-for-an-account-create-preview-token
+      summary: Create a preview token
+      description: Creates a signed JWT for previewing an account-level custom page before it is published.
+      parameters:
+        - name: account_id
+          in: path
+          description: Identifier of the Cloudflare account.
+          required: true
+          schema:
+            $ref: '#/components/schemas/custom-pages_identifier'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/custom-pages_preview_request'
+      responses:
+        '200':
+          description: Create preview token response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/custom-pages_preview_token_result'
+        4XX:
+          description: Create preview token response failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/custom-pages_api-response-common-failure'
+      security:
+        - api_email: []
+          api_key: []
+      tags:
+        - Custom pages for an account
+      x-api-token-group:
+        - 'Zero Trust: PII Read'
+        - Account Custom Pages Write
+        - Account Custom Pages Read
+        - Account Settings Write
+        - Account Settings Read
+      x-cfPermissionsRequired:
+        enum:
+          - '#organization:edit'
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: false
+        pro: true
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: custom-pages.account-custom-pages.preview-tokens
+      x-fern-sdk-method-name: create
+      x-forge-hidden: true
   /accounts/{account_id}/d1/database:
     get:
       operationId: d1-list-databases
@@ -232301,458 +232764,6 @@ paths:
       x-fern-sdk-group-name: zero-trust.risk-scoring.summary
       x-fern-sdk-method-name: get
       x-forge-hidden: true
-  /accounts/{account_identifier}/custom_pages:
-    get:
-      operationId: custom-pages-for-an-account-list-custom-pages
-      summary: List custom pages
-      description: Fetches all the custom pages at the account level.
-      parameters:
-        - name: account_identifier
-          in: path
-          required: true
-          schema:
-            $ref: '#/components/schemas/custom-pages_identifier'
-      responses:
-        '200':
-          description: List custom pages response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/custom-pages_custom_page_result_list'
-        4XX:
-          description: List custom pages response failure
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/custom-pages_api-response-common-failure'
-      security:
-        - api_email: []
-          api_key: []
-      tags:
-        - Custom pages for an account
-      x-api-token-group:
-        - 'Zero Trust: PII Read'
-        - Account Custom Pages Write
-        - Account Custom Pages Read
-        - Account Settings Write
-        - Account Settings Read
-      x-cfPermissionsRequired:
-        enum:
-          - '#organization:read'
-      x-cfPlanAvailability:
-        business: true
-        enterprise: true
-        free: false
-        pro: true
-      x-fern-availability: generally-available
-      x-fern-sdk-group-name: custom-pages
-      x-fern-sdk-method-name: list
-      x-forge-hidden: true
-  /accounts/{account_identifier}/custom_pages/{identifier}:
-    get:
-      operationId: custom-pages-for-an-account-get-a-custom-page
-      summary: Get a custom page
-      description: Fetches the details of a custom page.
-      parameters:
-        - name: identifier
-          in: path
-          required: true
-          schema:
-            $ref: '#/components/schemas/custom-pages_error_page_type'
-        - name: account_identifier
-          in: path
-          required: true
-          schema:
-            $ref: '#/components/schemas/custom-pages_identifier'
-      responses:
-        '200':
-          description: Get a custom page response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/custom-pages_custom_page_result'
-        4XX:
-          description: Get a custom page response failure
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/custom-pages_api-response-common-failure'
-      security:
-        - api_email: []
-          api_key: []
-      tags:
-        - Custom pages for an account
-      x-api-token-group:
-        - 'Zero Trust: PII Read'
-        - Account Custom Pages Write
-        - Account Custom Pages Read
-        - Account Settings Write
-        - Account Settings Read
-      x-cfPlanAvailability:
-        business: true
-        enterprise: true
-        free: false
-        pro: true
-      x-fern-availability: generally-available
-      x-fern-sdk-group-name: custom-pages
-      x-fern-sdk-method-name: get
-      x-forge-hidden: true
-    put:
-      operationId: custom-pages-for-an-account-update-a-custom-page
-      summary: Update a custom page
-      description: Updates the configuration of an existing custom page.
-      parameters:
-        - name: identifier
-          in: path
-          required: true
-          schema:
-            $ref: '#/components/schemas/custom-pages_error_page_type'
-        - name: account_identifier
-          in: path
-          required: true
-          schema:
-            $ref: '#/components/schemas/custom-pages_identifier'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              properties:
-                state:
-                  $ref: '#/components/schemas/custom-pages_state'
-                url:
-                  $ref: '#/components/schemas/custom-pages_url'
-              required:
-                - url
-                - state
-      responses:
-        '200':
-          description: Update a custom page response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/custom-pages_custom_page_result'
-        4XX:
-          description: Update a custom page response failure
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/custom-pages_api-response-common-failure'
-      security:
-        - api_email: []
-          api_key: []
-      tags:
-        - Custom pages for an account
-      x-api-token-group:
-        - Account Custom Pages Write
-        - Account Settings Write
-      x-cfPlanAvailability:
-        business: true
-        enterprise: true
-        free: false
-        pro: true
-      x-fern-availability: generally-available
-      x-fern-sdk-group-name: custom-pages.account-custom-pages
-      x-fern-sdk-method-name: update
-      x-forge-hidden: true
-  /accounts/{account_identifier}/custom_pages/assets:
-    get:
-      operationId: custom-assets-for-an-account-list-custom-assets
-      summary: List custom assets
-      description: Fetches all the custom assets at the account level.
-      parameters:
-        - name: account_identifier
-          in: path
-          required: true
-          schema:
-            $ref: '#/components/schemas/custom-pages_identifier'
-        - name: page
-          in: query
-          schema:
-            type: integer
-            default: 1
-            minimum: 1
-        - name: per_page
-          in: query
-          schema:
-            type: integer
-            default: 20
-            maximum: 200
-            minimum: 1
-      responses:
-        '200':
-          description: List custom assets response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/custom-pages_custom_asset_result_list'
-        4XX:
-          description: List custom assets response failure
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/custom-pages_api-response-common-failure'
-      security:
-        - api_email: []
-          api_key: []
-      tags:
-        - Custom assets for an account
-      x-api-token-group: null
-      x-cfPlanAvailability:
-        business: true
-        enterprise: true
-        free: false
-        pro: true
-      x-fern-availability: generally-available
-      x-fern-sdk-group-name: custom-pages.assets.list.custom
-      x-fern-sdk-method-name: assets
-      x-forge-hidden: true
-    post:
-      operationId: custom-assets-for-an-account-create-a-custom-asset
-      summary: Create a custom asset
-      description: Creates a new custom asset at the account level.
-      parameters:
-        - name: account_identifier
-          in: path
-          required: true
-          schema:
-            $ref: '#/components/schemas/custom-pages_identifier'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              properties:
-                description:
-                  $ref: '#/components/schemas/custom-pages_asset_description'
-                name:
-                  $ref: '#/components/schemas/custom-pages_asset_name'
-                url:
-                  $ref: '#/components/schemas/custom-pages_asset_url'
-              required:
-                - name
-                - description
-                - url
-      responses:
-        '200':
-          description: Create custom asset response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/custom-pages_custom_asset_result'
-        4XX:
-          description: Create custom asset response failure
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/custom-pages_api-response-common-failure'
-      security:
-        - api_email: []
-          api_key: []
-      tags:
-        - Custom assets for an account
-      x-api-token-group: null
-      x-cfPlanAvailability:
-        business: true
-        enterprise: true
-        free: false
-        pro: true
-      x-fern-availability: generally-available
-      x-fern-sdk-group-name: custom-pages.assets.create.custom
-      x-fern-sdk-method-name: asset
-      x-forge-hidden: true
-  /accounts/{account_identifier}/custom_pages/assets/{asset_name}:
-    delete:
-      operationId: custom-assets-for-an-account-delete-a-custom-asset
-      summary: Delete a custom asset
-      description: Deletes an existing custom asset.
-      parameters:
-        - name: asset_name
-          in: path
-          required: true
-          schema:
-            $ref: '#/components/schemas/custom-pages_asset_name'
-        - name: account_identifier
-          in: path
-          required: true
-          schema:
-            $ref: '#/components/schemas/custom-pages_identifier'
-      responses:
-        '204':
-          description: Delete a custom asset response
-        4XX:
-          description: Delete a custom asset response failure
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/custom-pages_api-response-common-failure'
-      security:
-        - api_email: []
-          api_key: []
-      tags:
-        - Custom assets for an account
-      x-api-token-group: null
-      x-cfPlanAvailability:
-        business: true
-        enterprise: true
-        free: false
-        pro: true
-      x-fern-availability: generally-available
-      x-fern-sdk-group-name: custom-pages.assets.delete.custom
-      x-fern-sdk-method-name: asset
-      x-forge-hidden: true
-    get:
-      operationId: custom-assets-for-an-account-get-a-custom-asset
-      summary: Get a custom asset
-      description: Fetches the details of a custom asset.
-      parameters:
-        - name: asset_name
-          in: path
-          required: true
-          schema:
-            $ref: '#/components/schemas/custom-pages_asset_name'
-        - name: account_identifier
-          in: path
-          required: true
-          schema:
-            $ref: '#/components/schemas/custom-pages_identifier'
-      responses:
-        '200':
-          description: Get a custom asset response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/custom-pages_custom_asset_result'
-        4XX:
-          description: Get a custom asset response failure
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/custom-pages_api-response-common-failure'
-      security:
-        - api_email: []
-          api_key: []
-      tags:
-        - Custom assets for an account
-      x-api-token-group: null
-      x-cfPlanAvailability:
-        business: true
-        enterprise: true
-        free: false
-        pro: true
-      x-fern-availability: generally-available
-      x-fern-sdk-group-name: custom-pages.assets.get.custom
-      x-fern-sdk-method-name: asset
-      x-forge-hidden: true
-    put:
-      operationId: custom-assets-for-an-account-update-a-custom-asset
-      summary: Update a custom asset
-      description: Updates the configuration of an existing custom asset.
-      parameters:
-        - name: asset_name
-          in: path
-          required: true
-          schema:
-            $ref: '#/components/schemas/custom-pages_asset_name'
-        - name: account_identifier
-          in: path
-          required: true
-          schema:
-            $ref: '#/components/schemas/custom-pages_identifier'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              properties:
-                description:
-                  $ref: '#/components/schemas/custom-pages_asset_description'
-                url:
-                  $ref: '#/components/schemas/custom-pages_asset_url'
-              required:
-                - description
-                - url
-      responses:
-        '200':
-          description: Update a custom asset response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/custom-pages_custom_asset_result'
-        4XX:
-          description: Update a custom asset response failure
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/custom-pages_api-response-common-failure'
-      security:
-        - api_email: []
-          api_key: []
-      tags:
-        - Custom assets for an account
-      x-api-token-group: null
-      x-cfPlanAvailability:
-        business: true
-        enterprise: true
-        free: false
-        pro: true
-      x-fern-availability: generally-available
-      x-fern-sdk-group-name: custom-pages.assets.update.custom
-      x-fern-sdk-method-name: asset
-      x-forge-hidden: true
-  /accounts/{account_identifier}/custom_pages/preview_tokens:
-    post:
-      operationId: custom-pages-for-an-account-create-preview-token
-      summary: Create a preview token
-      description: Creates a signed JWT token used to preview custom pages before they are published.
-      parameters:
-        - name: account_identifier
-          in: path
-          required: true
-          schema:
-            $ref: '#/components/schemas/custom-pages_identifier'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/custom-pages_preview_request'
-      responses:
-        '200':
-          description: Create preview token response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/custom-pages_preview_token_result'
-        4XX:
-          description: Create preview token response failure
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/custom-pages_api-response-common-failure'
-      security:
-        - api_email: []
-          api_key: []
-      tags:
-        - Custom pages for an account
-      x-api-token-group:
-        - 'Zero Trust: PII Read'
-        - Account Custom Pages Write
-        - Account Custom Pages Read
-        - Account Settings Write
-        - Account Settings Read
-      x-cfPermissionsRequired:
-        enum:
-          - '#organization:edit'
-      x-cfPlanAvailability:
-        business: true
-        enterprise: true
-        free: false
-        pro: true
-      x-fern-availability: generally-available
-      x-fern-sdk-group-name: custom-pages.account-custom-pages.preview-tokens
-      x-fern-sdk-method-name: create
-      x-forge-hidden: true
   /accounts/{accountId}/v1/images:
     get:
       operationId: get_ImageList
@@ -347983,6 +347994,488 @@ paths:
       x-fern-sdk-method-name: update
       x-forge-sunset:
         date: 2030-01-01T00:00:00Z
+  /zones/{zone_id}/custom_pages:
+    get:
+      operationId: custom-pages-for-a-zone-list-custom-pages
+      summary: List custom pages
+      description: Lists all custom page configurations for a zone.
+      parameters:
+        - name: zone_id
+          in: path
+          description: Identifier of the Cloudflare zone.
+          required: true
+          schema:
+            $ref: '#/components/schemas/custom-pages_identifier'
+      responses:
+        '200':
+          description: List custom pages response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/custom-pages_custom_page_result_list'
+        4XX:
+          description: List custom pages response failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/custom-pages_api-response-common-failure'
+      security:
+        - api_email: []
+          api_key: []
+      tags:
+        - Custom pages for a zone
+      x-api-token-group:
+        - Custom Pages Write
+        - Custom Pages Read
+        - Zone Settings Write
+        - Zone Settings Read
+      x-cfPermissionsRequired:
+        enum:
+          - '#zone_settings:read'
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: false
+        pro: true
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: custom-pages.zone-custom-pages
+      x-fern-sdk-method-name: list
+      x-forge-hidden: true
+  /zones/{zone_id}/custom_pages/{identifier}:
+    get:
+      operationId: custom-pages-for-a-zone-get-a-custom-page
+      summary: Get a custom page
+      description: Returns the configuration for a custom page type at the zone level.
+      parameters:
+        - name: identifier
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/custom-pages_error_page_type'
+        - name: zone_id
+          in: path
+          description: Identifier of the Cloudflare zone.
+          required: true
+          schema:
+            $ref: '#/components/schemas/custom-pages_identifier'
+      responses:
+        '200':
+          description: Get a custom page response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/custom-pages_custom_page'
+        4XX:
+          description: Get a custom page response failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/custom-pages_api-response-common-failure'
+      security:
+        - api_email: []
+          api_key: []
+      tags:
+        - Custom pages for a zone
+      x-api-token-group:
+        - Custom Pages Write
+        - Custom Pages Read
+        - Zone Settings Write
+        - Zone Settings Read
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: false
+        pro: true
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: custom-pages.zone-custom-pages
+      x-fern-sdk-method-name: get
+      x-forge-hidden: true
+    put:
+      operationId: custom-pages-for-a-zone-update-a-custom-page
+      summary: Update a custom page
+      description: Updates the configuration for a custom page type at the zone level.
+      parameters:
+        - name: identifier
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/custom-pages_error_page_type'
+        - name: zone_id
+          in: path
+          description: Identifier of the Cloudflare zone.
+          required: true
+          schema:
+            $ref: '#/components/schemas/custom-pages_identifier'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                state:
+                  $ref: '#/components/schemas/custom-pages_state'
+                url:
+                  $ref: '#/components/schemas/custom-pages_url'
+              required:
+                - url
+                - state
+      responses:
+        '200':
+          description: Update a custom page response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/custom-pages_custom_page_result'
+        4XX:
+          description: Update a custom page response failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/custom-pages_api-response-common-failure'
+      security:
+        - api_email: []
+          api_key: []
+      tags:
+        - Custom pages for a zone
+      x-api-token-group:
+        - Custom Pages Write
+        - Zone Settings Write
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: false
+        pro: true
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: custom-pages
+      x-fern-sdk-method-name: update
+      x-forge-hidden: true
+  /zones/{zone_id}/custom_pages/assets:
+    get:
+      operationId: custom-assets-for-a-zone-list-custom-assets
+      summary: List custom assets
+      description: Lists custom assets for a zone.
+      parameters:
+        - name: zone_id
+          in: path
+          description: Identifier of the Cloudflare zone.
+          required: true
+          schema:
+            $ref: '#/components/schemas/custom-pages_identifier'
+        - name: page
+          in: query
+          description: Page number of paginated results.
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+        - name: per_page
+          in: query
+          description: Number of custom assets per page.
+          schema:
+            type: integer
+            default: 20
+            maximum: 200
+            minimum: 1
+      responses:
+        '200':
+          description: List custom assets response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/custom-pages_custom_asset_result_list'
+        4XX:
+          description: List custom assets response failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/custom-pages_api-response-common-failure'
+      security:
+        - api_email: []
+          api_key: []
+      tags:
+        - Custom assets for a zone
+      x-api-token-group:
+        - Custom Errors Write
+        - Custom Errors Read
+      x-cfPermissionsRequired:
+        enum:
+          - '#zone_settings:read'
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: false
+        pro: true
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: custom-pages.assets.list
+      x-fern-sdk-method-name: v2
+      x-forge-hidden: true
+    post:
+      operationId: custom-assets-for-a-zone-create-a-custom-asset
+      summary: Create a custom asset
+      description: Creates a custom asset for a zone.
+      parameters:
+        - name: zone_id
+          in: path
+          description: Identifier of the Cloudflare zone.
+          required: true
+          schema:
+            $ref: '#/components/schemas/custom-pages_identifier'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                description:
+                  $ref: '#/components/schemas/custom-pages_asset_description'
+                name:
+                  $ref: '#/components/schemas/custom-pages_asset_name'
+                url:
+                  $ref: '#/components/schemas/custom-pages_asset_url'
+              required:
+                - name
+                - description
+                - url
+      responses:
+        '200':
+          description: Create custom asset response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/custom-pages_custom_asset_result'
+        4XX:
+          description: Create custom asset response failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/custom-pages_api-response-common-failure'
+      security:
+        - api_email: []
+          api_key: []
+      tags:
+        - Custom assets for a zone
+      x-api-token-group:
+        - Custom Errors Write
+      x-cfPermissionsRequired:
+        enum:
+          - '#zone_settings:edit'
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: false
+        pro: true
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: custom-pages.assets.create
+      x-fern-sdk-method-name: v2
+      x-forge-hidden: true
+  /zones/{zone_id}/custom_pages/assets/{asset_name}:
+    delete:
+      operationId: custom-assets-for-a-zone-delete-a-custom-asset
+      summary: Delete a custom asset
+      description: Deletes a custom asset from a zone.
+      parameters:
+        - name: asset_name
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/custom-pages_asset_name'
+        - name: zone_id
+          in: path
+          description: Identifier of the Cloudflare zone.
+          required: true
+          schema:
+            $ref: '#/components/schemas/custom-pages_identifier'
+      responses:
+        '204':
+          description: Delete a custom asset response
+        4XX:
+          description: Delete a custom asset response failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/custom-pages_api-response-common-failure'
+      security:
+        - api_email: []
+          api_key: []
+      tags:
+        - Custom assets for a zone
+      x-api-token-group:
+        - Custom Errors Write
+      x-cfPermissionsRequired:
+        enum:
+          - '#zone_settings:edit'
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: false
+        pro: true
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: custom-pages.assets.delete
+      x-fern-sdk-method-name: v2
+      x-forge-hidden: true
+    get:
+      operationId: custom-assets-for-a-zone-get-a-custom-asset
+      summary: Get a custom asset
+      description: Returns a custom asset for a zone.
+      parameters:
+        - name: asset_name
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/custom-pages_asset_name'
+        - name: zone_id
+          in: path
+          description: Identifier of the Cloudflare zone.
+          required: true
+          schema:
+            $ref: '#/components/schemas/custom-pages_identifier'
+      responses:
+        '200':
+          description: Get a custom asset response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/custom-pages_custom_asset_result'
+        4XX:
+          description: Get a custom asset response failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/custom-pages_api-response-common-failure'
+      security:
+        - api_email: []
+          api_key: []
+      tags:
+        - Custom assets for a zone
+      x-api-token-group:
+        - Custom Errors Write
+        - Custom Errors Read
+      x-cfPermissionsRequired:
+        enum:
+          - '#zone_settings:read'
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: false
+        pro: true
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: custom-pages.assets.get
+      x-fern-sdk-method-name: v2
+      x-forge-hidden: true
+    put:
+      operationId: custom-assets-for-a-zone-update-a-custom-asset
+      summary: Update a custom asset
+      description: Updates a custom asset for a zone.
+      parameters:
+        - name: asset_name
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/custom-pages_asset_name'
+        - name: zone_id
+          in: path
+          description: Identifier of the Cloudflare zone.
+          required: true
+          schema:
+            $ref: '#/components/schemas/custom-pages_identifier'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                description:
+                  $ref: '#/components/schemas/custom-pages_asset_description'
+                url:
+                  $ref: '#/components/schemas/custom-pages_asset_url'
+              required:
+                - description
+                - url
+      responses:
+        '200':
+          description: Update a custom asset response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/custom-pages_custom_asset_result'
+        4XX:
+          description: Update a custom asset response failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/custom-pages_api-response-common-failure'
+      security:
+        - api_email: []
+          api_key: []
+      tags:
+        - Custom assets for a zone
+      x-api-token-group:
+        - Custom Errors Write
+      x-cfPermissionsRequired:
+        enum:
+          - '#zone_settings:edit'
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: false
+        pro: true
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: custom-pages.assets.update
+      x-fern-sdk-method-name: v2
+      x-forge-hidden: true
+  /zones/{zone_id}/custom_pages/preview_tokens:
+    post:
+      operationId: custom-pages-for-a-zone-create-preview-token
+      summary: Create a preview token
+      description: Creates a signed JWT for previewing a zone-level custom page before it is published.
+      parameters:
+        - name: zone_id
+          in: path
+          description: Identifier of the Cloudflare zone.
+          required: true
+          schema:
+            $ref: '#/components/schemas/custom-pages_identifier'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/custom-pages_preview_request'
+      responses:
+        '200':
+          description: Create preview token response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/custom-pages_preview_token_result'
+        4XX:
+          description: Create preview token response failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/custom-pages_api-response-common-failure'
+      security:
+        - api_email: []
+          api_key: []
+      tags:
+        - Custom pages for a zone
+      x-api-token-group:
+        - Custom Pages Write
+        - Custom Pages Read
+        - Zone Settings Write
+        - Zone Settings Read
+      x-cfPermissionsRequired:
+        enum:
+          - '#zone_settings:edit'
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: false
+        pro: true
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: custom-pages.zone-custom-pages.preview-tokens
+      x-fern-sdk-method-name: create
+      x-forge-hidden: true
   /zones/{zone_id}/dcv_delegation/uuid:
     get:
       operationId: dcv-delegation-uuid-get
@@ -376352,477 +376845,6 @@ paths:
       x-fern-availability: deprecated
       x-fern-sdk-group-name: analytics.dashboard
       x-fern-sdk-method-name: get
-  /zones/{zone_identifier}/custom_pages:
-    get:
-      operationId: custom-pages-for-a-zone-list-custom-pages
-      summary: List custom pages
-      description: Fetches all the custom pages at the zone level.
-      parameters:
-        - name: zone_identifier
-          in: path
-          required: true
-          schema:
-            $ref: '#/components/schemas/custom-pages_identifier'
-      responses:
-        '200':
-          description: List custom pages response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/custom-pages_custom_page_result_list'
-        4XX:
-          description: List custom pages response failure
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/custom-pages_api-response-common-failure'
-      security:
-        - api_email: []
-          api_key: []
-      tags:
-        - Custom pages for a zone
-      x-api-token-group:
-        - Custom Pages Write
-        - Custom Pages Read
-        - Zone Settings Write
-        - Zone Settings Read
-      x-cfPermissionsRequired:
-        enum:
-          - '#zone_settings:read'
-      x-cfPlanAvailability:
-        business: true
-        enterprise: true
-        free: false
-        pro: true
-      x-fern-availability: generally-available
-      x-fern-sdk-group-name: custom-pages.zone-custom-pages
-      x-fern-sdk-method-name: list
-      x-forge-hidden: true
-  /zones/{zone_identifier}/custom_pages/{identifier}:
-    get:
-      operationId: custom-pages-for-a-zone-get-a-custom-page
-      summary: Get a custom page
-      description: Fetches the details of a custom page.
-      parameters:
-        - name: identifier
-          in: path
-          required: true
-          schema:
-            $ref: '#/components/schemas/custom-pages_error_page_type'
-        - name: zone_identifier
-          in: path
-          required: true
-          schema:
-            $ref: '#/components/schemas/custom-pages_identifier'
-      responses:
-        '200':
-          description: Get a custom page response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/custom-pages_custom_page'
-        4XX:
-          description: Get a custom page response failure
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/custom-pages_api-response-common-failure'
-      security:
-        - api_email: []
-          api_key: []
-      tags:
-        - Custom pages for a zone
-      x-api-token-group:
-        - Custom Pages Write
-        - Custom Pages Read
-        - Zone Settings Write
-        - Zone Settings Read
-      x-cfPlanAvailability:
-        business: true
-        enterprise: true
-        free: false
-        pro: true
-      x-fern-availability: generally-available
-      x-fern-sdk-group-name: custom-pages.zone-custom-pages
-      x-fern-sdk-method-name: get
-      x-forge-hidden: true
-    put:
-      operationId: custom-pages-for-a-zone-update-a-custom-page
-      summary: Update a custom page
-      description: Updates the configuration of an existing custom page.
-      parameters:
-        - name: identifier
-          in: path
-          required: true
-          schema:
-            $ref: '#/components/schemas/custom-pages_error_page_type'
-        - name: zone_identifier
-          in: path
-          required: true
-          schema:
-            $ref: '#/components/schemas/custom-pages_identifier'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              properties:
-                state:
-                  $ref: '#/components/schemas/custom-pages_state'
-                url:
-                  $ref: '#/components/schemas/custom-pages_url'
-              required:
-                - url
-                - state
-      responses:
-        '200':
-          description: Update a custom page response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/custom-pages_custom_page_result'
-        4XX:
-          description: Update a custom page response failure
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/custom-pages_api-response-common-failure'
-      security:
-        - api_email: []
-          api_key: []
-      tags:
-        - Custom pages for a zone
-      x-api-token-group:
-        - Custom Pages Write
-        - Zone Settings Write
-      x-cfPlanAvailability:
-        business: true
-        enterprise: true
-        free: false
-        pro: true
-      x-fern-availability: generally-available
-      x-fern-sdk-group-name: custom-pages
-      x-fern-sdk-method-name: update
-      x-forge-hidden: true
-  /zones/{zone_identifier}/custom_pages/assets:
-    get:
-      operationId: custom-assets-for-a-zone-list-custom-assets
-      summary: List custom assets
-      description: Fetches all the custom assets at the zone level.
-      parameters:
-        - name: zone_identifier
-          in: path
-          required: true
-          schema:
-            $ref: '#/components/schemas/custom-pages_identifier'
-        - name: page
-          in: query
-          schema:
-            type: integer
-            default: 1
-            minimum: 1
-        - name: per_page
-          in: query
-          schema:
-            type: integer
-            default: 20
-            maximum: 200
-            minimum: 1
-      responses:
-        '200':
-          description: List custom assets response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/custom-pages_custom_asset_result_list'
-        4XX:
-          description: List custom assets response failure
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/custom-pages_api-response-common-failure'
-      security:
-        - api_email: []
-          api_key: []
-      tags:
-        - Custom assets for a zone
-      x-api-token-group:
-        - Custom Errors Write
-        - Custom Errors Read
-      x-cfPermissionsRequired:
-        enum:
-          - '#zone_settings:read'
-      x-cfPlanAvailability:
-        business: true
-        enterprise: true
-        free: false
-        pro: true
-      x-fern-availability: generally-available
-      x-fern-sdk-group-name: custom-pages.assets.list
-      x-fern-sdk-method-name: v2
-      x-forge-hidden: true
-    post:
-      operationId: custom-assets-for-a-zone-create-a-custom-asset
-      summary: Create a custom asset
-      description: Creates a new custom asset at the zone level.
-      parameters:
-        - name: zone_identifier
-          in: path
-          required: true
-          schema:
-            $ref: '#/components/schemas/custom-pages_identifier'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              properties:
-                description:
-                  $ref: '#/components/schemas/custom-pages_asset_description'
-                name:
-                  $ref: '#/components/schemas/custom-pages_asset_name'
-                url:
-                  $ref: '#/components/schemas/custom-pages_asset_url'
-              required:
-                - name
-                - description
-                - url
-      responses:
-        '200':
-          description: Create custom asset response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/custom-pages_custom_asset_result'
-        4XX:
-          description: Create custom asset response failure
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/custom-pages_api-response-common-failure'
-      security:
-        - api_email: []
-          api_key: []
-      tags:
-        - Custom assets for a zone
-      x-api-token-group:
-        - Custom Errors Write
-      x-cfPermissionsRequired:
-        enum:
-          - '#zone_settings:edit'
-      x-cfPlanAvailability:
-        business: true
-        enterprise: true
-        free: false
-        pro: true
-      x-fern-availability: generally-available
-      x-fern-sdk-group-name: custom-pages.assets.create
-      x-fern-sdk-method-name: v2
-      x-forge-hidden: true
-  /zones/{zone_identifier}/custom_pages/assets/{asset_name}:
-    delete:
-      operationId: custom-assets-for-a-zone-delete-a-custom-asset
-      summary: Delete a custom asset
-      description: Deletes an existing custom asset.
-      parameters:
-        - name: asset_name
-          in: path
-          required: true
-          schema:
-            $ref: '#/components/schemas/custom-pages_asset_name'
-        - name: zone_identifier
-          in: path
-          required: true
-          schema:
-            $ref: '#/components/schemas/custom-pages_identifier'
-      responses:
-        '204':
-          description: Delete a custom asset response
-        4XX:
-          description: Delete a custom asset response failure
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/custom-pages_api-response-common-failure'
-      security:
-        - api_email: []
-          api_key: []
-      tags:
-        - Custom assets for a zone
-      x-api-token-group:
-        - Custom Errors Write
-      x-cfPermissionsRequired:
-        enum:
-          - '#zone_settings:edit'
-      x-cfPlanAvailability:
-        business: true
-        enterprise: true
-        free: false
-        pro: true
-      x-fern-availability: generally-available
-      x-fern-sdk-group-name: custom-pages.assets.delete
-      x-fern-sdk-method-name: v2
-      x-forge-hidden: true
-    get:
-      operationId: custom-assets-for-a-zone-get-a-custom-asset
-      summary: Get a custom asset
-      description: Fetches the details of a custom asset.
-      parameters:
-        - name: asset_name
-          in: path
-          required: true
-          schema:
-            $ref: '#/components/schemas/custom-pages_asset_name'
-        - name: zone_identifier
-          in: path
-          required: true
-          schema:
-            $ref: '#/components/schemas/custom-pages_identifier'
-      responses:
-        '200':
-          description: Get a custom asset response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/custom-pages_custom_asset_result'
-        4XX:
-          description: Get a custom asset response failure
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/custom-pages_api-response-common-failure'
-      security:
-        - api_email: []
-          api_key: []
-      tags:
-        - Custom assets for a zone
-      x-api-token-group:
-        - Custom Errors Write
-        - Custom Errors Read
-      x-cfPermissionsRequired:
-        enum:
-          - '#zone_settings:read'
-      x-cfPlanAvailability:
-        business: true
-        enterprise: true
-        free: false
-        pro: true
-      x-fern-availability: generally-available
-      x-fern-sdk-group-name: custom-pages.assets.get
-      x-fern-sdk-method-name: v2
-      x-forge-hidden: true
-    put:
-      operationId: custom-assets-for-a-zone-update-a-custom-asset
-      summary: Update a custom asset
-      description: Updates the configuration of an existing custom asset.
-      parameters:
-        - name: asset_name
-          in: path
-          required: true
-          schema:
-            $ref: '#/components/schemas/custom-pages_asset_name'
-        - name: zone_identifier
-          in: path
-          required: true
-          schema:
-            $ref: '#/components/schemas/custom-pages_identifier'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              properties:
-                description:
-                  $ref: '#/components/schemas/custom-pages_asset_description'
-                url:
-                  $ref: '#/components/schemas/custom-pages_asset_url'
-              required:
-                - description
-                - url
-      responses:
-        '200':
-          description: Update a custom asset response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/custom-pages_custom_asset_result'
-        4XX:
-          description: Update a custom asset response failure
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/custom-pages_api-response-common-failure'
-      security:
-        - api_email: []
-          api_key: []
-      tags:
-        - Custom assets for a zone
-      x-api-token-group:
-        - Custom Errors Write
-      x-cfPermissionsRequired:
-        enum:
-          - '#zone_settings:edit'
-      x-cfPlanAvailability:
-        business: true
-        enterprise: true
-        free: false
-        pro: true
-      x-fern-availability: generally-available
-      x-fern-sdk-group-name: custom-pages.assets.update
-      x-fern-sdk-method-name: v2
-      x-forge-hidden: true
-  /zones/{zone_identifier}/custom_pages/preview_tokens:
-    post:
-      operationId: custom-pages-for-a-zone-create-preview-token
-      summary: Create a preview token
-      description: Creates a signed JWT token used to preview custom pages before they are published. The API gateway rewrites zone-scoped requests to the account-level service endpoint.
-      parameters:
-        - name: zone_identifier
-          in: path
-          required: true
-          schema:
-            $ref: '#/components/schemas/custom-pages_identifier'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/custom-pages_preview_request'
-      responses:
-        '200':
-          description: Create preview token response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/custom-pages_preview_token_result'
-        4XX:
-          description: Create preview token response failure
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/custom-pages_api-response-common-failure'
-      security:
-        - api_email: []
-          api_key: []
-      tags:
-        - Custom pages for a zone
-      x-api-token-group:
-        - Custom Pages Write
-        - Custom Pages Read
-        - Zone Settings Write
-        - Zone Settings Read
-      x-cfPermissionsRequired:
-        enum:
-          - '#zone_settings:edit'
-      x-cfPlanAvailability:
-        business: true
-        enterprise: true
-        free: false
-        pro: true
-      x-fern-availability: generally-available
-      x-fern-sdk-group-name: custom-pages.zone-custom-pages.preview-tokens
-      x-fern-sdk-method-name: create
-      x-forge-hidden: true
 components:
   parameters:
     access_page:
@@ -407469,7 +407491,7 @@ components:
               items:
                 $ref: '#/components/schemas/custom-pages_custom_page'
     custom-pages_error_page_type:
-      description: Error Page Types
+      description: Custom page type.
       type: string
       example: ratelimit_block
       enum:
@@ -502986,18 +503008,18 @@ x-forge-commands:
       expressions:
         description: Custom expressions that tell the scanner how to reach content objects it cannot parse on its own
   custom-pages:
-    description: Custom error and challenge pages (1000s, WAF blocks, captchas) for zones and accounts
+    description: Manage custom error and challenge pages and their assets for accounts and zones
     groups:
       account-custom-pages:
-        description: Account-scoped custom page operations
+        description: Manage account-level custom pages
       account-custom-pages.preview-tokens:
-        description: Account preview tokens operations
+        description: Preview tokens for account-level custom pages
       assets:
-        description: Assets operations
+        description: Manage account- and zone-level custom assets
       zone-custom-pages:
-        description: Zone-scoped custom page operations
+        description: Manage zone-level custom pages
       zone-custom-pages.preview-tokens:
-        description: Zone preview tokens operations
+        description: Preview tokens for zone-level custom pages
   d1:
     description: D1 is Cloudflare's managed, serverless database with SQLite's SQL semantics, built-in disaster recovery, and Worker and HTTP API access.
     groups:
