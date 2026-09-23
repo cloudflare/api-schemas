@@ -449282,7 +449282,11 @@ components:
       type: object
       properties:
         category:
-          $ref: '#/components/schemas/posture-api_FindingCategory'
+          type: object
+          allOf:
+            - $ref: '#/components/schemas/posture-api_FindingCategory'
+            - readOnly: true
+              type: object
         description:
           description: Detailed description of the finding.
           type: string
@@ -449293,16 +449297,22 @@ components:
           type: string
           format: uuid
           example: a20895dd-9c3b-43bd-a608-71c98c6c2d94
+          readOnly: true
         name:
           description: The name of the finding.
           type: string
           example: Slack File Publicly Accessible
         severity:
-          $ref: '#/components/schemas/posture-api_SeverityEnum'
+          type: string
+          allOf:
+            - $ref: '#/components/schemas/posture-api_SeverityEnum'
+            - description: Default severity used when no integration-specific severity override exists.
+              type: string
         vendor:
           description: The SaaS/Cloud vendor of the platform with which the finding is associated.
           type: string
           example: Google Workspace
+          readOnly: true
       required:
         - id
         - name
@@ -451311,12 +451321,10 @@ components:
         - Jira
         - Microsoft
         - Microsoft Internal
-        - Okta
         - OpenAI
         - Slack
         - Salesforce
         - ServiceNow
-        - Workday
         - Zoom
     posture-api_VendorsEnum:
       description: Supported vendor types for integrations.
@@ -451339,6 +451347,7 @@ components:
         - SALESFORCE
         - SERVICENOW
         - SLACK
+        - ZOOM
     posture-api_Webhook:
       description: Webhook configuration for sending finding notifications.
       type: object
