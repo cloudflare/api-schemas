@@ -115238,7 +115238,7 @@ paths:
       tags:
         - Client Versions
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.client.versions
+      x-fern-sdk-group-name: zero-trust.devices.client-versions
       x-fern-sdk-method-name: list
       x-forge-hidden: true
   /accounts/{account_id}/devices/client-versions/target-environments:
@@ -115291,7 +115291,7 @@ paths:
       tags:
         - Client Versions
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.client.target.environments
+      x-fern-sdk-group-name: zero-trust.devices.client-versions.target-environments
       x-fern-sdk-method-name: list
       x-forge-hidden: true
   /accounts/{account_id}/devices/deployment-groups:
@@ -115362,7 +115362,7 @@ paths:
       tags:
         - Deployment Groups
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.deployment.groups
+      x-fern-sdk-group-name: zero-trust.devices.deployment-groups
       x-fern-sdk-method-name: list
       x-forge-hidden: true
     post:
@@ -115419,7 +115419,7 @@ paths:
         - Deployment Groups
       x-auditable: true
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.deployment.groups
+      x-fern-sdk-group-name: zero-trust.devices.deployment-groups
       x-fern-sdk-method-name: create
       x-forge-hidden: true
   /accounts/{account_id}/devices/deployment-groups/{group_id}:
@@ -115482,7 +115482,7 @@ paths:
         - Deployment Groups
       x-auditable: true
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.deployment.groups
+      x-fern-sdk-group-name: zero-trust.devices.deployment-groups
       x-fern-sdk-method-name: delete
       x-forge-hidden: true
     get:
@@ -115537,7 +115537,7 @@ paths:
       tags:
         - Deployment Groups
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.deployment.groups
+      x-fern-sdk-group-name: zero-trust.devices.deployment-groups
       x-fern-sdk-method-name: get
       x-forge-hidden: true
     patch:
@@ -115599,7 +115599,7 @@ paths:
         - Deployment Groups
       x-auditable: true
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.deployment.groups
+      x-fern-sdk-group-name: zero-trust.devices.deployment-groups
       x-fern-sdk-method-name: update
       x-forge-hidden: true
   /accounts/{account_id}/devices/ip-profiles:
@@ -116136,6 +116136,65 @@ paths:
       x-fern-sdk-group-name: zero-trust.devices.networks
       x-fern-sdk-method-name: update
       x-forge-hidden: true
+  /accounts/{account_id}/devices/override_codes:
+    post:
+      operationId: create-override-code
+      summary: Generate an uninstall protection override code
+      description: Generates an account-wide or device-specific uninstall protection override code.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: string
+          x-auditable: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/teams-devices_override_code_create_request'
+      responses:
+        '200':
+          description: Override code response.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/teams-devices_v4_response_message'
+                  messages:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/teams-devices_v4_response_message'
+                  result:
+                    $ref: '#/components/schemas/teams-devices_override_code'
+                  success:
+                    description: Whether the API call was successful.
+                    type: boolean
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        4XX:
+          description: Client error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/teams-devices_v4_error_response'
+      security:
+        - api_token: []
+      tags:
+        - Override Codes
+      x-auditable: true
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.devices.override-codes
+      x-fern-sdk-method-name: create
+      x-forge-hidden: true
   /accounts/{account_id}/devices/physical-devices:
     get:
       operationId: list-devices
@@ -116158,6 +116217,7 @@ paths:
         - $ref: '#/components/parameters/teams-devices_devices_list_devices_param_active_registrations'
         - $ref: '#/components/parameters/teams-devices_devices_list_devices_param_has_registration_type'
         - $ref: '#/components/parameters/teams-devices_devices_list_devices_param_id'
+        - $ref: '#/components/parameters/teams-devices_devices_list_devices_param_tag'
         - $ref: '#/components/parameters/teams-devices_devices_list_devices_param_last_seen_registration_policy_id'
         - $ref: '#/components/parameters/teams-devices_devices_list_devices_param_include'
       responses:
@@ -116319,6 +116379,68 @@ paths:
       x-fern-sdk-group-name: zero-trust.devices
       x-fern-sdk-method-name: get
       x-forge-hidden: true
+    patch:
+      operationId: patch-device
+      summary: Update device
+      description: Updates properties of a WARP device.
+      parameters:
+        - name: device_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/teams-devices_physical_device_update_request'
+      responses:
+        '200':
+          description: Returns the updated Device.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/teams-devices_v4_response_message'
+                  messages:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/teams-devices_v4_response_message'
+                  result:
+                    $ref: '#/components/schemas/teams-devices_physical_device'
+                  success:
+                    description: Whether the API call was successful.
+                    type: boolean
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        4XX:
+          description: Client error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/teams-devices_v4_error_response'
+      security:
+        - api_token: []
+      tags:
+        - Physical Devices
+      x-auditable: true
+      x-fern-availability: beta
+      x-fern-sdk-group-name: zero-trust.devices
+      x-fern-sdk-method-name: update
+      x-forge-hidden: true
   /accounts/{account_id}/devices/physical-devices/{device_id}/revoke:
     post:
       operationId: revoke-device
@@ -116414,7 +116536,7 @@ paths:
       tags:
         - Devices
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.policies.custom
+      x-fern-sdk-group-name: zero-trust.devices.profiles.custom
       x-fern-sdk-method-name: list
       x-forge-hidden: true
   /accounts/{account_id}/devices/policy:
@@ -116448,7 +116570,7 @@ paths:
       tags:
         - Devices
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.policies.default
+      x-fern-sdk-group-name: zero-trust.devices.profiles.default
       x-fern-sdk-method-name: get
       x-forge-hidden: true
     patch:
@@ -116532,7 +116654,7 @@ paths:
       x-api-token-group:
         - Zero Trust Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.policies.default
+      x-fern-sdk-group-name: zero-trust.devices.profiles.default
       x-fern-sdk-method-name: update
       x-forge-hidden: true
     post:
@@ -116643,7 +116765,7 @@ paths:
       x-api-token-group:
         - Zero Trust Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.policies.custom
+      x-fern-sdk-group-name: zero-trust.devices.profiles.custom
       x-fern-sdk-method-name: create
       x-forge-hidden: true
   /accounts/{account_id}/devices/policy/{policy_id}:
@@ -116684,7 +116806,7 @@ paths:
       x-api-token-group:
         - Zero Trust Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.policies.custom
+      x-fern-sdk-group-name: zero-trust.devices.profiles.custom
       x-fern-sdk-method-name: delete
       x-forge-hidden: true
     get:
@@ -116722,7 +116844,7 @@ paths:
       tags:
         - Devices
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.policies.custom
+      x-fern-sdk-group-name: zero-trust.devices.profiles.custom
       x-fern-sdk-method-name: get
       x-forge-hidden: true
     patch:
@@ -116832,10 +116954,59 @@ paths:
       x-api-token-group:
         - Zero Trust Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.policies.custom
+      x-fern-sdk-group-name: zero-trust.devices.profiles.custom
       x-fern-sdk-method-name: update
       x-forge-hidden: true
   /accounts/{account_id}/devices/policy/{policy_id}/exclude:
+    delete:
+      operationId: devices-delete-split-tunnel-exclude-list-for-a-device-settings-policy
+      summary: Reset Split Tunnel exclude list
+      description: Resets the Split Tunnel exclude list to the default value for the selected device profile.
+      parameters:
+        - name: policy_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/teams-devices_schemas-uuid'
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/teams-devices_identifier'
+        - name: reset_defaults
+          in: query
+          description: Deprecated and ignored. Deleting the list always restores the defaults.
+          schema:
+            type: boolean
+            default: true
+          deprecated: true
+      responses:
+        '200':
+          description: Reset the Split Tunnel exclude list for a device settings profile response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/teams-devices_split_tunnel_response_collection'
+        4XX:
+          description: Reset the Split Tunnel exclude list for a device settings profile response failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/teams-devices_api-response-common-failure'
+      security:
+        - api_email: []
+          api_key: []
+          api_token: []
+      tags:
+        - Devices
+      x-api-token-group:
+        - Zero Trust Write
+      x-auditable: true
+      x-fern-availability: generally-available
+      x-fern-ignore: true
+      x-fern-sdk-group-name: zero-trust.devices.profiles.custom.excludes
+      x-fern-sdk-method-name: delete
+      x-forge-hidden: true
     get:
       operationId: devices-get-split-tunnel-exclude-list-for-a-device-settings-policy
       summary: Get the Split Tunnel exclude list for a device settings profile
@@ -116871,7 +117042,8 @@ paths:
       tags:
         - Devices
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.policies.custom.excludes
+      x-fern-ignore: true
+      x-fern-sdk-group-name: zero-trust.devices.profiles.custom.excludes
       x-fern-sdk-method-name: get
       x-forge-hidden: true
     put:
@@ -116919,10 +117091,60 @@ paths:
       x-api-token-group:
         - Zero Trust Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.policies.custom.excludes
+      x-fern-ignore: true
+      x-fern-sdk-group-name: zero-trust.devices.profiles.custom.excludes
       x-fern-sdk-method-name: update
       x-forge-hidden: true
   /accounts/{account_id}/devices/policy/{policy_id}/fallback_domains:
+    delete:
+      operationId: devices-delete-local-domain-fallback-list-for-a-device-settings-policy
+      summary: Reset Local Domain Fallback
+      description: Restores the default Local Domain Fallback list for a specific device profile.
+      parameters:
+        - name: policy_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/teams-devices_schemas-uuid'
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/teams-devices_identifier'
+        - name: reset_defaults
+          in: query
+          description: Deprecated and ignored. Deleting the list always restores the defaults.
+          schema:
+            type: boolean
+            default: true
+          deprecated: true
+      responses:
+        '200':
+          description: Reset the Local Domain Fallback list for a device settings profile response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/teams-devices_fallback_domain_response_collection'
+        4XX:
+          description: Reset the Local Domain Fallback list for a device settings profile response failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/teams-devices_api-response-common-failure'
+      security:
+        - api_email: []
+          api_key: []
+          api_token: []
+      tags:
+        - Devices
+      x-api-token-group:
+        - Zero Trust Write
+      x-auditable: true
+      x-fern-availability: generally-available
+      x-fern-ignore: true
+      x-fern-sdk-group-name: zero-trust.devices.profiles.custom.fallback-domains
+      x-fern-sdk-method-name: delete
+      x-forge-hidden: true
     get:
       operationId: devices-get-local-domain-fallback-list-for-a-device-settings-policy
       summary: Get the Local Domain Fallback list for a device settings profile
@@ -116958,7 +117180,8 @@ paths:
       tags:
         - Devices
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.policies.custom.fallback-domains
+      x-fern-ignore: true
+      x-fern-sdk-group-name: zero-trust.devices.profiles.custom.fallback-domains
       x-fern-sdk-method-name: get
       x-forge-hidden: true
     put:
@@ -117006,7 +117229,8 @@ paths:
       x-api-token-group:
         - Zero Trust Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.policies.custom.fallback-domains
+      x-fern-ignore: true
+      x-fern-sdk-group-name: zero-trust.devices.profiles.custom.fallback-domains
       x-fern-sdk-method-name: update
       x-forge-hidden: true
   /accounts/{account_id}/devices/policy/{policy_id}/include:
@@ -117045,7 +117269,8 @@ paths:
       tags:
         - Devices
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.policies.custom.includes
+      x-fern-ignore: true
+      x-fern-sdk-group-name: zero-trust.devices.profiles.custom.includes
       x-fern-sdk-method-name: get
       x-forge-hidden: true
     put:
@@ -117093,10 +117318,55 @@ paths:
       x-api-token-group:
         - Zero Trust Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.policies.custom.includes
+      x-fern-ignore: true
+      x-fern-sdk-group-name: zero-trust.devices.profiles.custom.includes
       x-fern-sdk-method-name: update
       x-forge-hidden: true
   /accounts/{account_id}/devices/policy/exclude:
+    delete:
+      operationId: devices-delete-split-tunnel-exclude-list
+      summary: Reset Split Tunnel exclude list
+      description: Resets the Split Tunnel exclude list to the default value.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/teams-devices_identifier'
+        - name: reset_defaults
+          in: query
+          description: Deprecated and ignored. Deleting the list always restores the defaults.
+          schema:
+            type: boolean
+            default: true
+          deprecated: true
+      responses:
+        '200':
+          description: Reset the Split Tunnel exclude list response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/teams-devices_split_tunnel_response_collection'
+        4XX:
+          description: Reset the Split Tunnel exclude list response failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/teams-devices_api-response-common-failure'
+      security:
+        - api_email: []
+          api_key: []
+          api_token: []
+      tags:
+        - Devices
+      x-api-token-group:
+        - Zero Trust Write
+      x-auditable: true
+      x-fern-availability: generally-available
+      x-fern-ignore: true
+      x-fern-sdk-group-name: zero-trust.devices.profiles.default.excludes
+      x-fern-sdk-method-name: delete
+      x-forge-hidden: true
     get:
       operationId: devices-get-split-tunnel-exclude-list
       summary: Get the Split Tunnel exclude list
@@ -117127,7 +117397,8 @@ paths:
       tags:
         - Devices
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.policies.default.excludes
+      x-fern-ignore: true
+      x-fern-sdk-group-name: zero-trust.devices.profiles.default.excludes
       x-fern-sdk-method-name: get
       x-forge-hidden: true
     put:
@@ -117170,10 +117441,55 @@ paths:
       x-api-token-group:
         - Zero Trust Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.policies.default.excludes
+      x-fern-ignore: true
+      x-fern-sdk-group-name: zero-trust.devices.profiles.default.excludes
       x-fern-sdk-method-name: update
       x-forge-hidden: true
   /accounts/{account_id}/devices/policy/fallback_domains:
+    delete:
+      operationId: devices-delete-local-domain-fallback-list
+      summary: Reset Local Domain Fallback
+      description: Restores the default Local Domain Fallback list for the default device profile.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/teams-devices_identifier'
+        - name: reset_defaults
+          in: query
+          description: Deprecated and ignored. Deleting the list always restores the defaults.
+          schema:
+            type: boolean
+            default: true
+          deprecated: true
+      responses:
+        '200':
+          description: Reset your Local Domain Fallback list response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/teams-devices_fallback_domain_response_collection'
+        4XX:
+          description: Reset your Local Domain Fallback list response failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/teams-devices_api-response-common-failure'
+      security:
+        - api_email: []
+          api_key: []
+          api_token: []
+      tags:
+        - Devices
+      x-api-token-group:
+        - Zero Trust Write
+      x-auditable: true
+      x-fern-availability: generally-available
+      x-fern-ignore: true
+      x-fern-sdk-group-name: zero-trust.devices.profiles.default.fallback-domains
+      x-fern-sdk-method-name: delete
+      x-forge-hidden: true
     get:
       operationId: devices-get-local-domain-fallback-list
       summary: Get your Local Domain Fallback list
@@ -117204,7 +117520,8 @@ paths:
       tags:
         - Devices
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.policies.default.fallback-domains
+      x-fern-ignore: true
+      x-fern-sdk-group-name: zero-trust.devices.profiles.default.fallback-domains
       x-fern-sdk-method-name: get
       x-forge-hidden: true
     put:
@@ -117247,7 +117564,8 @@ paths:
       x-api-token-group:
         - Zero Trust Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.policies.default.fallback-domains
+      x-fern-ignore: true
+      x-fern-sdk-group-name: zero-trust.devices.profiles.default.fallback-domains
       x-fern-sdk-method-name: update
       x-forge-hidden: true
   /accounts/{account_id}/devices/policy/include:
@@ -117281,7 +117599,8 @@ paths:
       tags:
         - Devices
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.policies.default.includes
+      x-fern-ignore: true
+      x-fern-sdk-group-name: zero-trust.devices.profiles.default.includes
       x-fern-sdk-method-name: get
       x-forge-hidden: true
     put:
@@ -117324,7 +117643,8 @@ paths:
       x-api-token-group:
         - Zero Trust Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.policies.default.includes
+      x-fern-ignore: true
+      x-fern-sdk-group-name: zero-trust.devices.profiles.default.includes
       x-fern-sdk-method-name: update
       x-forge-hidden: true
   /accounts/{account_id}/devices/posture:
@@ -347737,7 +348057,8 @@ paths:
         - SSL and Certificates Write
         - SSL and Certificates Read
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.policies.default.certificates
+      x-fern-ignore: true
+      x-fern-sdk-group-name: zero-trust.devices.profiles.default.certificates
       x-fern-sdk-method-name: get
       x-forge-hidden: true
     patch:
@@ -347778,7 +348099,8 @@ paths:
       x-api-token-group:
         - SSL and Certificates Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.policies.default.certificates
+      x-fern-ignore: true
+      x-fern-sdk-group-name: zero-trust.devices.profiles.default.certificates
       x-fern-sdk-method-name: update
       x-forge-hidden: true
   /zones/{zone_id}/dns_analytics/report:
@@ -378467,6 +378789,19 @@ components:
         enum:
           - asc
           - desc
+    teams-devices_devices_list_devices_param_tag:
+      description: Filter by one or more device tags in key:value format. Devices must match all provided tags.
+      explode: true
+      in: query
+      name: tag
+      schema:
+        type: array
+        items:
+          type: string
+        example:
+          - environment:production
+          - fleet:warehouse
+        maxItems: 10
     teams-devices_devices_list_registrations_param_cursor:
       description: Opaque token indicating the starting position when requesting the next set of records. A cursor value can be obtained from the result_info.cursor field in the response.
       explode: false
@@ -473899,6 +474234,46 @@ components:
         - version
         - operator
       title: OS Version
+    teams-devices_override_code:
+      type: object
+      properties:
+        code:
+          description: Uninstall protection override code.
+          type: string
+          x-sensitive: true
+      required:
+        - code
+    teams-devices_override_code_create_request:
+      type: object
+      properties:
+        device_id:
+          description: Physical device ID. Required when scope is device and forbidden when scope is account.
+          type: string
+          format: uuid
+          x-auditable: true
+        duration_hours:
+          description: Number of hours for which the override code should remain valid.
+          type: integer
+          maximum: 24
+          minimum: 1
+          x-auditable: true
+        scope:
+          description: Whether the code applies to every device in the account or one physical device.
+          type: string
+          enum:
+            - account
+            - device
+          x-auditable: true
+        type:
+          description: The feature that the override code applies to.
+          type: string
+          enum:
+            - uninstall_protection
+          x-auditable: true
+      required:
+        - type
+        - scope
+        - duration_hours
     teams-devices_override_codes:
       properties:
         disable_for_time:
@@ -474059,6 +474434,15 @@ components:
           example: ABS765ASD8A
           nullable: true
           x-auditable: true
+        tags:
+          description: Tags assigned to the device. An empty object if the device has no tags.
+          type: object
+          example:
+            environment: production
+            fleet: warehouse
+          additionalProperties:
+            type: string
+          x-auditable: true
         updated_at:
           description: The RFC3339 timestamp when the device was last updated.
           type: string
@@ -474071,6 +474455,22 @@ components:
         - updated_at
         - last_seen_at
         - active_registrations
+        - tags
+    teams-devices_physical_device_update_request:
+      type: object
+      properties:
+        tags:
+          description: Replaces all tags assigned to the physical device. An empty object removes all tags.
+          type: object
+          example:
+            environment: production
+            fleet: warehouse
+          additionalProperties:
+            maxLength: 1024
+            type: string
+          maxProperties: 10
+          x-auditable: true
+      additionalProperties: false
     teams-devices_platform:
       type: string
       example: windows
