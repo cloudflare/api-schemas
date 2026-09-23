@@ -150119,7 +150119,7 @@ paths:
         - Logs Write
         - Logs Read
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: logexplorer.account.datasets
+      x-fern-sdk-group-name: logexplorer.datasets
       x-fern-sdk-method-name: list
       x-forge-hidden: true
     post:
@@ -150165,7 +150165,7 @@ paths:
       x-api-token-group:
         - Logs Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: logexplorer.account.datasets
+      x-fern-sdk-group-name: logexplorer.datasets
       x-fern-sdk-method-name: create
       x-forge-hidden: true
   /accounts/{account_id}/logs/explorer/datasets/{dataset_id}:
@@ -150198,7 +150198,7 @@ paths:
       tags:
         - Log Explorer Datasets
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: logexplorer.account.datasets
+      x-fern-sdk-group-name: logexplorer.datasets
       x-fern-sdk-method-name: delete
       x-forge-hidden: true
       x-forge-require-confirmation: This operation deletes a Log Explorer dataset for the account.
@@ -150229,7 +150229,7 @@ paths:
       x-api-token-group:
         - Logs Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: logexplorer.account.datasets
+      x-fern-sdk-group-name: logexplorer.datasets
       x-fern-sdk-method-name: get
       x-forge-hidden: true
     put:
@@ -150265,7 +150265,7 @@ paths:
       x-api-token-group:
         - Logs Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: logexplorer.account.datasets
+      x-fern-sdk-group-name: logexplorer.datasets
       x-fern-sdk-method-name: update
       x-forge-hidden: true
   /accounts/{account_id}/logs/explorer/datasets/available:
@@ -150303,7 +150303,7 @@ paths:
         - Logs Write
         - Logs Read
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: logexplorer.account.datasets
+      x-fern-sdk-group-name: logexplorer.datasets
       x-fern-sdk-method-name: available
       x-forge-hidden: true
   /accounts/{account_id}/logs/explorer/query/sql:
@@ -150345,7 +150345,7 @@ paths:
         - Logs Read
       x-auditable: false
       x-fern-ignore: true
-      x-fern-sdk-group-name: logexplorer.account
+      x-fern-sdk-group-name: logexplorer
       x-fern-sdk-method-name: query-get
     post:
       operationId: accounts-logs-explorer-query-post
@@ -150397,7 +150397,7 @@ paths:
         - Logs Read
       x-auditable: false
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: logexplorer.account
+      x-fern-sdk-group-name: logexplorer
       x-fern-sdk-method-name: query
       x-forge-hidden: true
       x-stability: beta
@@ -179586,7 +179586,7 @@ paths:
       summary: List extensions
       description: |
         Returns metadata and JSON Schema documents describing the expected input
-        structure for registration operations on each supported
+        structure for registration and transfer operations on each supported
         extension (TLD).
 
         This endpoint uses cursor-based pagination. Results are ordered by
@@ -179661,7 +179661,7 @@ paths:
       summary: Get extension
       description: |
         Returns metadata and JSON Schema documents describing the expected input
-        structure for registration operations on a specific
+        structure for registration and transfer operations on a specific
         extension (TLD).
 
         Supports HTTP conditional GET via `ETag`. Include the `ETag` value
@@ -181614,7 +181614,7 @@ paths:
       summary: List extensions
       description: |
         Returns metadata and JSON Schema documents describing the expected input
-        structure for registration operations on each supported
+        structure for registration and transfer operations on each supported
         extension (TLD).
 
         This endpoint uses cursor-based pagination. Results are ordered by
@@ -181689,7 +181689,7 @@ paths:
       summary: Get extension
       description: |
         Returns metadata and JSON Schema documents describing the expected input
-        structure for registration operations on a specific
+        structure for registration and transfer operations on a specific
         extension (TLD).
 
         Supports HTTP conditional GET via `ETag`. Include the `ETag` value
@@ -457292,7 +457292,7 @@ components:
       format: date-time
       example: 2019-08-28T23:59:59Z
     registrar-api-sandbox_extension-item:
-      description: Extension entry with metadata and JSON Schema documents for the registration operation.
+      description: Extension entry with metadata and JSON Schema documents for registration and transfer operations.
       type: object
       properties:
         metadata:
@@ -457311,9 +457311,13 @@ components:
         registration_schema:
           description: JSON Schema describing the expected input structure for registration operations on this extension.
           type: object
+        transfer_schema:
+          description: JSON Schema describing the expected input structure for transfer operations on this extension.
+          type: object
       required:
         - metadata
         - registration_schema
+        - transfer_schema
     registrar-api-sandbox_extension-response-collection:
       allOf:
         - $ref: '#/components/schemas/registrar-api-sandbox_api-response-common'
@@ -458381,7 +458385,7 @@ components:
       format: date-time
       example: 2019-08-28T23:59:59Z
     registrar-api_extension-item:
-      description: Extension entry with metadata and JSON Schema documents for the registration operation.
+      description: Extension entry with metadata and JSON Schema documents for registration and transfer operations.
       type: object
       properties:
         metadata:
@@ -458400,9 +458404,13 @@ components:
         registration_schema:
           description: JSON Schema describing the expected input structure for registration operations on this extension.
           type: object
+        transfer_schema:
+          description: JSON Schema describing the expected input structure for transfer operations on this extension.
+          type: object
       required:
         - metadata
         - registration_schema
+        - transfer_schema
     registrar-api_extension-response-collection:
       allOf:
         - $ref: '#/components/schemas/registrar-api_api-response-common'
