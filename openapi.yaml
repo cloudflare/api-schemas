@@ -233885,7 +233885,7 @@ paths:
       operationId: sql-api-introspection
       summary: List available analytics datasets
       description: |
-        Returns the analytics dataset catalogue. By default, the response contains dataset names and descriptions. Set `include_columns` to include each dataset's column names, descriptions, and data types. The caller must have Account Analytics Read permission on the account identified by `account_tag`. Dataset names, descriptions, and columns are the same for every authorized account. When `include_custom_attributes` is set, the response also includes custom attribute names and types discovered from that account's own data, which legitimately differs per caller.
+        Returns the analytics dataset catalogue. By default, the response contains dataset names, titles, descriptions, and kinds. Set `include_columns` to include each dataset's column names, descriptions, and data types. The caller must have Account Analytics Read permission on the account identified by `account_tag`. Dataset names, descriptions, and columns are the same for every authorized account. When `include_custom_attributes` is set, the response also includes a capped set of custom attribute names and types discovered from the preceding seven days of that account's own data, which legitimately differs per caller.
       parameters:
         - name: account_tag
           in: query
@@ -233893,6 +233893,7 @@ paths:
           required: true
           schema:
             type: string
+            pattern: ^[0-9a-f]{32}$
           example: 0123456789abcdef0123456789abcdef
         - name: include_columns
           in: query
@@ -233902,7 +233903,8 @@ paths:
             default: false
         - name: include_custom_attributes
           in: query
-          description: Include custom attribute names and types for each dataset that supports them.
+          description: |
+            Include a capped set of custom attribute names and types observed during the preceding seven days. Requires a nonempty dataset_name.
           schema:
             type: boolean
             default: false
@@ -233931,7 +233933,8 @@ paths:
               schema:
                 type: string
         '422':
-          description: The account tag is invalid or unknown.
+          description: |
+            The account tag is invalid or unknown, or the requested introspection options cannot be combined.
           content:
             text/plain:
               schema:
@@ -391480,6 +391483,31 @@ components:
       required:
         - name
         - data_type
+    analytics-sql_GatewayApiErrorResponse:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/analytics-sql_ApiErrorResponse'
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/analytics-sql_ApiErrorResponse'
+        result:
+          type: object
+          additionalProperties: true
+          nullable: true
+        success:
+          type: boolean
+          enum:
+            - false
+      additionalProperties: false
+      required:
+        - success
+        - errors
+        - messages
+        - result
     analytics-sql_IntrospectionColumn:
       type: object
       properties:
@@ -500305,11 +500333,14 @@ components:
           schema:
             type: string
     analytics-sql_MalformedRequest:
-      description: The request is malformed.
+      description: |
+        The request is malformed, or authentication was rejected by the API gateway before the request reached the SQL service.
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/analytics-sql_ApiErrorResponse'
+            oneOf:
+              - $ref: '#/components/schemas/analytics-sql_ApiErrorResponse'
+              - $ref: '#/components/schemas/analytics-sql_GatewayApiErrorResponse'
     analytics-sql_NotImplemented:
       description: The query uses a SQL feature that is not implemented.
       content:
