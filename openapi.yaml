@@ -16236,6 +16236,10 @@ paths:
                   type: integer
                   example: 5000
                   minimum: 1000
+                payment_method_id:
+                  description: Stripe PaymentMethod to charge instead of the customer's default payment method.
+                  type: string
+                  example: pm_123
               additionalProperties: false
               required:
                 - amount
@@ -208765,7 +208769,7 @@ paths:
             $ref: '#/components/schemas/workers_script_name'
         - name: force
           in: query
-          description: If set to true, delete will not be stopped by associated service binding, durable object, or other binding. Any of these associated bindings/durable objects will be deleted along with the script.
+          description: If true, delete the script even when other Workers still reference it. Service bindings in those Workers may be left broken. Durable Object namespaces implemented by the deleted script are deleted even if other Workers reference them.
           schema:
             type: boolean
       responses:
@@ -220836,7 +220840,7 @@ paths:
             $ref: '#/components/schemas/workers_script_name'
         - name: force
           in: query
-          description: If set to true, delete will not be stopped by associated service binding, durable object, or other binding. Any of these associated bindings/durable objects will be deleted along with the script.
+          description: If true, delete the Worker even when other Workers still reference it. Service bindings in those Workers may be left broken. Durable Object namespaces implemented by the deleted Worker are deleted even if other Workers reference them.
           schema:
             type: boolean
       responses:
@@ -223241,6 +223245,11 @@ paths:
           schema:
             description: Identifier for the Worker, which can be ID or name.
             type: string
+        - name: force
+          in: query
+          description: If true, delete the Worker even when other Workers still reference it. Service bindings in those Workers may be left broken. Durable Object namespaces implemented by the deleted Worker are deleted even if other Workers reference them.
+          schema:
+            type: boolean
       responses:
         '200':
           description: Delete Worker success.
@@ -223827,7 +223836,7 @@ paths:
             type: string
         - name: force
           in: query
-          description: If true, delete the Preview even when a service binding, Durable Object, or other binding still references it. The delete also removes those bindings and Durable Objects.
+          description: If true, delete the Preview even when other Workers still reference it. Service bindings in those Workers may be left broken. Durable Object namespaces implemented by the deleted Preview are deleted even if other Workers reference them.
           schema:
             type: boolean
       responses:
@@ -391092,13 +391101,13 @@ components:
       maximum: 4294967295
       minimum: 0
     alexandria_application_ip_subnets:
-      description: IP subnets matched by the application.
+      description: IP subnets for this application. Custom application create and update requests accept IPv4 prefix lengths /8 through /32 and IPv6 prefix lengths /32 through /128.
       type: array
       items:
         type: string
       example:
         - 192.168.1.0/24
-        - 10.0.0.0/8
+        - 2001:db8::/48
       x-stainless-collection-type: set
     alexandria_application_list_item:
       description: Describes one application in a list response. This endpoint returns every property below unless the `fields` query parameter narrows the response, so treat all of them except `id` as optional.
@@ -391279,6 +391288,9 @@ components:
       type: string
       example: Category name
     alexandria_create_application_request:
+      description: |
+        Defines a custom application. At least one hostname or IP subnet is required.
+        Support domains and port/protocol pairs do not satisfy this requirement.
       type: object
       properties:
         category_id:
@@ -391295,6 +391307,31 @@ components:
           $ref: '#/components/schemas/alexandria_application_port_protocols'
         support_domains:
           $ref: '#/components/schemas/alexandria_application_support_domains'
+      anyOf:
+        - properties:
+            hostnames:
+              allOf:
+                - $ref: '#/components/schemas/alexandria_application_hostnames'
+                - items:
+                    minLength: 1
+                    pattern: .*\S.*
+                    type: string
+                  minItems: 1
+                  type: array
+          required:
+            - hostnames
+          type: object
+        - properties:
+            ip_subnets:
+              allOf:
+                - $ref: '#/components/schemas/alexandria_application_ip_subnets'
+                - items:
+                    type: string
+                  minItems: 1
+                  type: array
+          required:
+            - ip_subnets
+          type: object
       required:
         - name
         - human_id
@@ -391409,7 +391446,11 @@ components:
         uniqueItems: true
       example: []
     alexandria_update_application_request:
-      description: Updates the network matchers for the application. Omitted matcher lists are left unchanged; send an empty array to clear a list.
+      description: |
+        Update the network matchers for the application. The service preserves omitted
+        matcher lists; send an empty array to clear a list. The resulting application must
+        contain at least one hostname or IP subnet. Support domains and port/protocol pairs
+        do not satisfy this requirement.
       type: object
       properties:
         hostnames:
@@ -469681,6 +469722,8 @@ components:
               $ref: '#/components/schemas/spectrum-config_origin_dns'
             origin_port:
               $ref: '#/components/schemas/spectrum-config_origin_port'
+            origin_worker_id:
+              $ref: '#/components/schemas/spectrum-config_origin_worker_id'
             protocol:
               $ref: '#/components/schemas/spectrum-config_protocol'
             proxy_protocol:
@@ -469924,6 +469967,11 @@ components:
         - type: string
       maximum: 65535
       minimum: 1
+    spectrum-config_origin_worker_id:
+      description: Optional Worker script tag (worker ID) to use as the application's origin. Only supported for TCP applications with traffic_type "worker"; mutually exclusive with origin_direct, origin_dns, origin_port, proxy_protocol, and argo_smart_routing. tls may only be "off" or "flexible".
+      type: string
+      example: 277b7815c871434b960b60729659000a
+      pattern: ^[0-9a-f]{32}$
     spectrum-config_paygo_app_config:
       allOf:
         - $ref: '#/components/schemas/spectrum-config_base_app_config'
@@ -469977,7 +470025,7 @@ components:
         - full
         - strict
     spectrum-config_traffic_type:
-      description: Determines how data travels from the edge to your origin. When set to "direct", Spectrum will send traffic directly to your origin, and the application's type is derived from the `protocol`. When set to "http" or "https", Spectrum will apply Cloudflare's HTTP/HTTPS features as it sends traffic to your origin, and the application type matches this property exactly.
+      description: Determines how data travels from the edge to your origin. When set to "direct", Spectrum will send traffic directly to your origin, and the application's type is derived from the `protocol`. When set to "http" or "https", Spectrum will apply Cloudflare's HTTP/HTTPS features as it sends traffic to your origin, and the application type matches this property exactly. When set to "worker", traffic is sent to the Worker specified by `origin_worker_id`.
       type: string
       example: direct
       default: direct
@@ -469985,6 +470033,7 @@ components:
         - direct
         - http
         - https
+        - worker
     spectrum-config_update_app_config:
       oneOf:
         - $ref: '#/components/schemas/spectrum-config_app_config'
