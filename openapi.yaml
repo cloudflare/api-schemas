@@ -234234,7 +234234,9 @@ paths:
       operationId: sql-api-introspection
       summary: List available analytics datasets
       description: |
-        Returns the analytics dataset catalogue. By default, the response contains dataset names, titles, descriptions, and kinds. Set `include_columns` to include each dataset's column names, descriptions, and data types. The caller must have Account Analytics Read permission on the account identified by `account_tag`. Dataset names, descriptions, and columns are the same for every authorized account. When `include_custom_attributes` is set, the response also includes a capped set of custom attribute names and types discovered from the preceding seven days of that account's own data, which legitimately differs per caller.
+        Returns the analytics dataset catalogue. By default, the response contains dataset names, titles, descriptions, and kinds. Set `include_columns` to include each dataset's column names, descriptions, and data types. The caller must have Account Analytics Read permission on the account identified by `account_tag`. Dataset names, descriptions, and columns are the same for every authorized account. When `include_custom_attributes` is set, the response also includes custom attribute names and types discovered from that account's own data, which legitimately differs per caller.
+
+        The catalogue lists the datasets this deployment is able to describe, which is not a fixed list. Some datasets are described by the service that owns them and are listed only where that service is available, so the same account may see a different catalogue in different environments, and datasets may appear or disappear without a change to this API. Clients should query the catalogue rather than hard-coding it, and should not treat a dataset's absence as proof that it does not exist.
       parameters:
         - name: account_tag
           in: query
@@ -234260,7 +234262,7 @@ paths:
         - name: dataset_name
           in: query
           description: |
-            Return only the dataset with this exact name. An empty value does not filter the catalogue. An unknown name returns a successful response with an empty `datasets` array.
+            Return only the dataset with this exact name. An empty value is treated as if the parameter had been omitted, and does not filter the catalogue. A name that matches no dataset in this deployment's catalogue is rejected with `422`; a dataset that exists but is not describable here is rejected identically, so the two cases cannot be told apart.
           schema:
             type: string
           example: events.httpRequests
@@ -234283,9 +234285,10 @@ paths:
                 type: string
         '422':
           description: |
-            The account tag is invalid or unknown, or the requested introspection options cannot be combined.
+            The request could not be processed. This is returned when the account tag is invalid or unknown, when `include_custom_attributes` is set without a `dataset_name`, or when the supplied criteria match no dataset that this deployment can describe — either because no such dataset exists or because it is not describable here. The message names the criteria that matched nothing.
           content:
             text/plain:
+              example: 'Input was invalid: There are no introspectable datasets matching the provided criteria (dataset_name=`events.nonexistent`)'
               schema:
                 type: string
         '500':
