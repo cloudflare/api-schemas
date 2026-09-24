@@ -30110,6 +30110,14 @@ paths:
             description: Filter instances whose id contains this string (case-insensitive).
             type: string
             maxLength: 64
+        - name: hostname
+          in: query
+          description: Filter by exact Search for Agents hostname (case-insensitive).
+          schema:
+            description: Filter by exact Search for Agents hostname (case-insensitive).
+            type: string
+            maxLength: 253
+            minLength: 1
         - name: namespace
           in: query
           description: Filter by namespace.
@@ -30677,9 +30685,9 @@ paths:
       x-fern-sdk-method-name: list
     post:
       operationId: ai-search-create-instance
-      summary: Create an AI Search instance.
+      summary: Create an AI Search instance (Search for Agents requires the default namespace).
       description: |-
-        Create a new AI Search instance with the given configuration.
+        Create a new AI Search instance with the given configuration. If type is omitted or null, a non-blank HTTP(S) source infers web-crawler and an existing R2 bucket source infers r2. A missing or blank source without a type creates a managed upload-only instance. Search for Agents instances require the default namespace.
 
         Deprecated: use /accounts/{account_id}/ai-search/namespaces/{name}/instances (and descendant paths) instead.
       parameters:
@@ -30799,9 +30807,9 @@ paths:
                     - rrf
                   x-auditable: true
                 hybrid_search_enabled:
-                  description: Deprecated — use index_method instead.
+                  description: Deprecated — use index_method instead. Defaults to true for new instances; set false to create a vector-only instance.
                   type: boolean
-                  default: false
+                  default: true
                   deprecated: true
                   x-auditable: true
                 id:
@@ -30813,10 +30821,10 @@ paths:
                   pattern: ^[a-z0-9_]+(?:-[a-z0-9_]+)*$
                   x-auditable: true
                 index_method:
-                  description: Controls which storage backends are used during indexing. Defaults to vector-only.
+                  description: Controls which storage backends are used during indexing. Defaults to vector and keyword indexing for new instances.
                   type: object
                   default:
-                    keyword: false
+                    keyword: true
                     vector: true
                   properties:
                     keyword:
@@ -31171,6 +31179,7 @@ paths:
                   format: uuid
                   x-auditable: true
                 type:
+                  description: Source type. When omitted or null with a non-blank source, HTTP(S) URLs infer web-crawler and existing R2 bucket names infer r2. A missing or blank source without a type uses managed upload-only storage.
                   type: string
                   enum:
                     - r2
@@ -31307,9 +31316,9 @@ paths:
                           - rrf
                         x-auditable: true
                       hybrid_search_enabled:
-                        description: Deprecated — use index_method instead.
+                        description: Deprecated — use index_method instead. Defaults to true for new instances; set false to create a vector-only instance.
                         type: boolean
-                        default: false
+                        default: true
                         deprecated: true
                         x-auditable: true
                       id:
@@ -31321,10 +31330,10 @@ paths:
                         pattern: ^[a-z0-9_]+(?:-[a-z0-9_]+)*$
                         x-auditable: true
                       index_method:
-                        description: Controls which storage backends are used during indexing. Defaults to vector-only.
+                        description: Controls which storage backends are used during indexing. Defaults to vector and keyword indexing for new instances.
                         type: object
                         default:
-                          keyword: false
+                          keyword: true
                           vector: true
                         properties:
                           keyword:
@@ -31709,6 +31718,7 @@ paths:
                         format: uuid
                         x-auditable: true
                       type:
+                        description: Source type. When omitted or null with a non-blank source, HTTP(S) URLs infer web-crawler and existing R2 bucket names infer r2. A missing or blank source without a type uses managed upload-only storage.
                         type: string
                         enum:
                           - r2
@@ -31753,6 +31763,32 @@ paths:
                   - errors
         '403':
           description: Max instances reached.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                      required:
+                        - code
+                        - message
+                      type: object
+                  success:
+                    type: boolean
+                    enum:
+                      - false
+                required:
+                  - success
+                  - errors
+        '409':
+          description: Search for Agents hostname belongs to another namespace (7106) or Search for Agents metadata requires the default namespace (7109).
           content:
             application/json:
               schema:
@@ -31944,9 +31980,9 @@ paths:
                           - rrf
                         x-auditable: true
                       hybrid_search_enabled:
-                        description: Deprecated — use index_method instead.
+                        description: Deprecated — use index_method instead. Defaults to true for new instances; set false to create a vector-only instance.
                         type: boolean
-                        default: false
+                        default: true
                         deprecated: true
                         x-auditable: true
                       id:
@@ -31958,10 +31994,10 @@ paths:
                         pattern: ^[a-z0-9_]+(?:-[a-z0-9_]+)*$
                         x-auditable: true
                       index_method:
-                        description: Controls which storage backends are used during indexing. Defaults to vector-only.
+                        description: Controls which storage backends are used during indexing. Defaults to vector and keyword indexing for new instances.
                         type: object
                         default:
-                          keyword: false
+                          keyword: true
                           vector: true
                         properties:
                           keyword:
@@ -32346,6 +32382,7 @@ paths:
                         format: uuid
                         x-auditable: true
                       type:
+                        description: Source type. When omitted or null with a non-blank source, HTTP(S) URLs infer web-crawler and existing R2 bucket names infer r2. A missing or blank source without a type uses managed upload-only storage.
                         type: string
                         enum:
                           - r2
@@ -32581,9 +32618,9 @@ paths:
                           - rrf
                         x-auditable: true
                       hybrid_search_enabled:
-                        description: Deprecated — use index_method instead.
+                        description: Deprecated — use index_method instead. Defaults to true for new instances; set false to create a vector-only instance.
                         type: boolean
-                        default: false
+                        default: true
                         deprecated: true
                         x-auditable: true
                       id:
@@ -32595,10 +32632,10 @@ paths:
                         pattern: ^[a-z0-9_]+(?:-[a-z0-9_]+)*$
                         x-auditable: true
                       index_method:
-                        description: Controls which storage backends are used during indexing. Defaults to vector-only.
+                        description: Controls which storage backends are used during indexing. Defaults to vector and keyword indexing for new instances.
                         type: object
                         default:
-                          keyword: false
+                          keyword: true
                           vector: true
                         properties:
                           keyword:
@@ -32983,6 +33020,7 @@ paths:
                         format: uuid
                         x-auditable: true
                       type:
+                        description: Source type. When omitted or null with a non-blank source, HTTP(S) URLs infer web-crawler and existing R2 bucket names infer r2. A missing or blank source without a type uses managed upload-only storage.
                         type: string
                         enum:
                           - r2
@@ -33046,9 +33084,9 @@ paths:
       x-fern-sdk-method-name: get
     put:
       operationId: ai-search-update-instance
-      summary: Update an AI Search instance.
+      summary: Update an AI Search instance (Search for Agents metadata requires the default namespace).
       description: |-
-        Update the configuration of an AI Search instance.
+        Update an AI Search instance. Submitting Search for Agents metadata requires the default namespace; omitting or removing it is allowed elsewhere. Submit Search for Agents metadata and restrictive or unknown public endpoint changes or custom domains in separate PUT requests, even when resubmitting unchanged metadata.
 
         Deprecated: use /accounts/{account_id}/ai-search/namespaces/{name}/instances (and descendant paths) instead.
       parameters:
@@ -33174,10 +33212,10 @@ paths:
                     - rrf
                   x-auditable: true
                 index_method:
-                  description: Controls which storage backends are used during indexing. Defaults to vector-only.
+                  description: Controls which storage backends are used during indexing. Defaults to vector and keyword indexing for new instances.
                   type: object
                   default:
-                    keyword: false
+                    keyword: true
                     vector: true
                   properties:
                     keyword:
@@ -33682,9 +33720,9 @@ paths:
                           - rrf
                         x-auditable: true
                       hybrid_search_enabled:
-                        description: Deprecated — use index_method instead.
+                        description: Deprecated — use index_method instead. Defaults to true for new instances; set false to create a vector-only instance.
                         type: boolean
-                        default: false
+                        default: true
                         deprecated: true
                         x-auditable: true
                       id:
@@ -33696,10 +33734,10 @@ paths:
                         pattern: ^[a-z0-9_]+(?:-[a-z0-9_]+)*$
                         x-auditable: true
                       index_method:
-                        description: Controls which storage backends are used during indexing. Defaults to vector-only.
+                        description: Controls which storage backends are used during indexing. Defaults to vector and keyword indexing for new instances.
                         type: object
                         default:
-                          keyword: false
+                          keyword: true
                           vector: true
                         properties:
                           keyword:
@@ -34084,6 +34122,7 @@ paths:
                         format: uuid
                         x-auditable: true
                       type:
+                        description: Source type. When omitted or null with a non-blank source, HTTP(S) URLs infer web-crawler and existing R2 bucket names infer r2. A missing or blank source without a type uses managed upload-only storage.
                         type: string
                         enum:
                           - r2
@@ -34153,7 +34192,7 @@ paths:
                   - success
                   - errors
         '409':
-          description: Instance status modified concurrently please retry.
+          description: Instance status modified concurrently, Search for Agents hostname used by another namespace, Search for Agents metadata submitted outside the default namespace (7109), or Search for Agents metadata combined with a pre-commit public endpoint or custom domain change (7110; split into separate PUT requests).
           content:
             application/json:
               schema:
@@ -34627,6 +34666,32 @@ paths:
                   - errors
         '404':
           description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                      required:
+                        - code
+                        - message
+                      type: object
+                  success:
+                    type: boolean
+                    enum:
+                      - false
+                required:
+                  - success
+                  - errors
+        '429':
+          description: Monthly query quota exceeded.
           content:
             application/json:
               schema:
@@ -35931,6 +35996,32 @@ paths:
                   - errors
         '404':
           description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                      required:
+                        - code
+                        - message
+                      type: object
+                  success:
+                    type: boolean
+                    enum:
+                      - false
+                required:
+                  - success
+                  - errors
+        '429':
+          description: Monthly query quota exceeded.
           content:
             application/json:
               schema:
@@ -37793,6 +37884,32 @@ paths:
                 required:
                   - success
                   - errors
+        '429':
+          description: Monthly query quota exceeded.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                      required:
+                        - code
+                        - message
+                      type: object
+                  success:
+                    type: boolean
+                    enum:
+                      - false
+                required:
+                  - success
+                  - errors
       security:
         - api_token: []
         - api_email: []
@@ -37853,6 +37970,14 @@ paths:
             description: Filter instances whose id contains this string (case-insensitive).
             type: string
             maxLength: 64
+        - name: hostname
+          in: query
+          description: Filter by exact Search for Agents hostname (case-insensitive).
+          schema:
+            description: Filter by exact Search for Agents hostname (case-insensitive).
+            type: string
+            maxLength: 253
+            minLength: 1
         - name: namespace
           in: query
           description: Filter by namespace.
@@ -38432,8 +38557,8 @@ paths:
           hidden: true
     post:
       operationId: ai-search-namespace-create-instance
-      summary: Create an AI Search instance.
-      description: Create a new AI Search instance with the given configuration.
+      summary: Create an AI Search instance (Search for Agents requires the default namespace).
+      description: Create a new AI Search instance with the given configuration. If type is omitted or null, a non-blank HTTP(S) source infers web-crawler and an existing R2 bucket source infers r2. A missing or blank source without a type creates a managed upload-only instance. Search for Agents instances require the default namespace.
       parameters:
         - name: account_id
           in: path
@@ -38558,9 +38683,9 @@ paths:
                     - rrf
                   x-auditable: true
                 hybrid_search_enabled:
-                  description: Deprecated — use index_method instead.
+                  description: Deprecated — use index_method instead. Defaults to true for new instances; set false to create a vector-only instance.
                   type: boolean
-                  default: false
+                  default: true
                   deprecated: true
                   x-auditable: true
                 id:
@@ -38572,10 +38697,10 @@ paths:
                   pattern: ^[a-z0-9_]+(?:-[a-z0-9_]+)*$
                   x-auditable: true
                 index_method:
-                  description: Controls which storage backends are used during indexing. Defaults to vector-only.
+                  description: Controls which storage backends are used during indexing. Defaults to vector and keyword indexing for new instances.
                   type: object
                   default:
-                    keyword: false
+                    keyword: true
                     vector: true
                   properties:
                     keyword:
@@ -38930,6 +39055,7 @@ paths:
                   format: uuid
                   x-auditable: true
                 type:
+                  description: Source type. When omitted or null with a non-blank source, HTTP(S) URLs infer web-crawler and existing R2 bucket names infer r2. A missing or blank source without a type uses managed upload-only storage.
                   type: string
                   enum:
                     - r2
@@ -39066,9 +39192,9 @@ paths:
                           - rrf
                         x-auditable: true
                       hybrid_search_enabled:
-                        description: Deprecated — use index_method instead.
+                        description: Deprecated — use index_method instead. Defaults to true for new instances; set false to create a vector-only instance.
                         type: boolean
-                        default: false
+                        default: true
                         deprecated: true
                         x-auditable: true
                       id:
@@ -39080,10 +39206,10 @@ paths:
                         pattern: ^[a-z0-9_]+(?:-[a-z0-9_]+)*$
                         x-auditable: true
                       index_method:
-                        description: Controls which storage backends are used during indexing. Defaults to vector-only.
+                        description: Controls which storage backends are used during indexing. Defaults to vector and keyword indexing for new instances.
                         type: object
                         default:
-                          keyword: false
+                          keyword: true
                           vector: true
                         properties:
                           keyword:
@@ -39468,6 +39594,7 @@ paths:
                         format: uuid
                         x-auditable: true
                       type:
+                        description: Source type. When omitted or null with a non-blank source, HTTP(S) URLs infer web-crawler and existing R2 bucket names infer r2. A missing or blank source without a type uses managed upload-only storage.
                         type: string
                         enum:
                           - r2
@@ -39536,6 +39663,32 @@ paths:
                 required:
                   - success
                   - errors
+        '409':
+          description: Search for Agents hostname belongs to another namespace (7106) or Search for Agents metadata requires the default namespace (7109).
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                      required:
+                        - code
+                        - message
+                      type: object
+                  success:
+                    type: boolean
+                    enum:
+                      - false
+                required:
+                  - success
+                  - errors
       security:
         - api_token: []
         - api_email: []
@@ -39562,7 +39715,7 @@ paths:
           description: Namespace to use for this operation.
           flagName: namespace
         source:
-          description: R2 bucket name or root website URL to index.
+          description: R2 bucket name or HTTP(S) root website URL to index. When type is omitted, the source determines it.
         source_params:
           description: Optional data source settings as a JSON object.
         type:
@@ -39719,9 +39872,9 @@ paths:
                           - rrf
                         x-auditable: true
                       hybrid_search_enabled:
-                        description: Deprecated — use index_method instead.
+                        description: Deprecated — use index_method instead. Defaults to true for new instances; set false to create a vector-only instance.
                         type: boolean
-                        default: false
+                        default: true
                         deprecated: true
                         x-auditable: true
                       id:
@@ -39733,10 +39886,10 @@ paths:
                         pattern: ^[a-z0-9_]+(?:-[a-z0-9_]+)*$
                         x-auditable: true
                       index_method:
-                        description: Controls which storage backends are used during indexing. Defaults to vector-only.
+                        description: Controls which storage backends are used during indexing. Defaults to vector and keyword indexing for new instances.
                         type: object
                         default:
-                          keyword: false
+                          keyword: true
                           vector: true
                         properties:
                           keyword:
@@ -40121,6 +40274,7 @@ paths:
                         format: uuid
                         x-auditable: true
                       type:
+                        description: Source type. When omitted or null with a non-blank source, HTTP(S) URLs infer web-crawler and existing R2 bucket names infer r2. A missing or blank source without a type uses managed upload-only storage.
                         type: string
                         enum:
                           - r2
@@ -40366,9 +40520,9 @@ paths:
                           - rrf
                         x-auditable: true
                       hybrid_search_enabled:
-                        description: Deprecated — use index_method instead.
+                        description: Deprecated — use index_method instead. Defaults to true for new instances; set false to create a vector-only instance.
                         type: boolean
-                        default: false
+                        default: true
                         deprecated: true
                         x-auditable: true
                       id:
@@ -40380,10 +40534,10 @@ paths:
                         pattern: ^[a-z0-9_]+(?:-[a-z0-9_]+)*$
                         x-auditable: true
                       index_method:
-                        description: Controls which storage backends are used during indexing. Defaults to vector-only.
+                        description: Controls which storage backends are used during indexing. Defaults to vector and keyword indexing for new instances.
                         type: object
                         default:
-                          keyword: false
+                          keyword: true
                           vector: true
                         properties:
                           keyword:
@@ -40768,6 +40922,7 @@ paths:
                         format: uuid
                         x-auditable: true
                       type:
+                        description: Source type. When omitted or null with a non-blank source, HTTP(S) URLs infer web-crawler and existing R2 bucket names infer r2. A missing or blank source without a type uses managed upload-only storage.
                         type: string
                         enum:
                           - r2
@@ -40838,7 +40993,7 @@ paths:
     patch:
       operationId: ai-search-move-instance
       summary: Move an instance to a different namespace.
-      description: Moves an instance from its current namespace to the specified target namespace. Use 'default' with --destination-namespace to move the instance back to the default namespace. Fails with 400 if the target namespace already has an instance with the same id (ids must be unique within a namespace — the same id can exist in different namespaces).
+      description: Moves an instance from its current namespace to the specified target namespace. Use 'default' with --destination-namespace to move the instance back to the default namespace. Fails with 400 if the target namespace already has an instance with the same id (ids must be unique within a namespace — the same id can exist in different namespaces). Search for Agents instances cannot move to another namespace.
       parameters:
         - name: account_id
           in: path
@@ -40945,6 +41100,32 @@ paths:
                 required:
                   - success
                   - errors
+        '409':
+          description: Search for agents instance cannot move namespace. Instance modified concurrently please retry move.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                      required:
+                        - code
+                        - message
+                      type: object
+                  success:
+                    type: boolean
+                    enum:
+                      - false
+                required:
+                  - success
+                  - errors
       security:
         - api_token: []
         - api_email: []
@@ -40975,8 +41156,8 @@ paths:
           flagName: destination-namespace
     put:
       operationId: ai-search-namespace-update-instance
-      summary: Update an AI Search instance.
-      description: Update the configuration of an AI Search instance.
+      summary: Update an AI Search instance (Search for Agents metadata requires the default namespace).
+      description: Update an AI Search instance. Submitting Search for Agents metadata requires the default namespace; omitting or removing it is allowed elsewhere. Submit Search for Agents metadata and restrictive or unknown public endpoint changes or custom domains in separate PUT requests, even when resubmitting unchanged metadata.
       parameters:
         - name: account_id
           in: path
@@ -41107,10 +41288,10 @@ paths:
                     - rrf
                   x-auditable: true
                 index_method:
-                  description: Controls which storage backends are used during indexing. Defaults to vector-only.
+                  description: Controls which storage backends are used during indexing. Defaults to vector and keyword indexing for new instances.
                   type: object
                   default:
-                    keyword: false
+                    keyword: true
                     vector: true
                   properties:
                     keyword:
@@ -41615,9 +41796,9 @@ paths:
                           - rrf
                         x-auditable: true
                       hybrid_search_enabled:
-                        description: Deprecated — use index_method instead.
+                        description: Deprecated — use index_method instead. Defaults to true for new instances; set false to create a vector-only instance.
                         type: boolean
-                        default: false
+                        default: true
                         deprecated: true
                         x-auditable: true
                       id:
@@ -41629,10 +41810,10 @@ paths:
                         pattern: ^[a-z0-9_]+(?:-[a-z0-9_]+)*$
                         x-auditable: true
                       index_method:
-                        description: Controls which storage backends are used during indexing. Defaults to vector-only.
+                        description: Controls which storage backends are used during indexing. Defaults to vector and keyword indexing for new instances.
                         type: object
                         default:
-                          keyword: false
+                          keyword: true
                           vector: true
                         properties:
                           keyword:
@@ -42017,6 +42198,7 @@ paths:
                         format: uuid
                         x-auditable: true
                       type:
+                        description: Source type. When omitted or null with a non-blank source, HTTP(S) URLs infer web-crawler and existing R2 bucket names infer r2. A missing or blank source without a type uses managed upload-only storage.
                         type: string
                         enum:
                           - r2
@@ -42086,7 +42268,7 @@ paths:
                   - success
                   - errors
         '409':
-          description: Instance status modified concurrently please retry.
+          description: Instance status modified concurrently, Search for Agents hostname used by another namespace, Search for Agents metadata submitted outside the default namespace (7109), or Search for Agents metadata combined with a pre-commit public endpoint or custom domain change (7110; split into separate PUT requests).
           content:
             application/json:
               schema:
@@ -42137,7 +42319,7 @@ paths:
           description: Namespace to use for this operation.
           flagName: namespace
         source:
-          description: R2 bucket name or root website URL to index.
+          description: R2 bucket name or HTTP(S) root website URL to index.
         source_params:
           description: Optional data source settings as a JSON object.
   /accounts/{account_id}/ai-search/namespaces/{name}/instances/{id}/chat/completions:
@@ -42574,6 +42756,32 @@ paths:
                   - errors
         '404':
           description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                      required:
+                        - code
+                        - message
+                      type: object
+                  success:
+                    type: boolean
+                    enum:
+                      - false
+                required:
+                  - success
+                  - errors
+        '429':
+          description: Monthly query quota exceeded.
           content:
             application/json:
               schema:
@@ -43226,7 +43434,7 @@ paths:
                   - success
                   - errors
         '429':
-          description: Item write rate limited.
+          description: Monthly storage quota exceeded.
           content:
             application/json:
               schema:
@@ -43475,6 +43683,32 @@ paths:
                   - errors
         '409':
           description: Item key already exist.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                      required:
+                        - code
+                        - message
+                      type: object
+                  success:
+                    type: boolean
+                    enum:
+                      - false
+                required:
+                  - success
+                  - errors
+        '429':
+          description: Monthly storage quota exceeded.
           content:
             application/json:
               schema:
@@ -44078,6 +44312,32 @@ paths:
                   - errors
         '404':
           description: Ai search not found.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                      required:
+                        - code
+                        - message
+                      type: object
+                  success:
+                    type: boolean
+                    enum:
+                      - false
+                required:
+                  - success
+                  - errors
+        '429':
+          description: Monthly storage quota exceeded.
           content:
             application/json:
               schema:
@@ -46223,6 +46483,32 @@ paths:
                 required:
                   - success
                   - errors
+        '429':
+          description: Monthly query quota exceeded.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                      required:
+                        - code
+                        - message
+                      type: object
+                  success:
+                    type: boolean
+                    enum:
+                      - false
+                required:
+                  - success
+                  - errors
       security:
         - api_token: []
         - api_email: []
@@ -46771,6 +47057,32 @@ paths:
                   - errors
         '404':
           description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                      required:
+                        - code
+                        - message
+                      type: object
+                  success:
+                    type: boolean
+                    enum:
+                      - false
+                required:
+                  - success
+                  - errors
+        '429':
+          description: Monthly query quota exceeded.
           content:
             application/json:
               schema:
