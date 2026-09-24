@@ -234237,6 +234237,8 @@ paths:
         Returns the analytics dataset catalogue. By default, the response contains dataset names, titles, descriptions, and kinds. Set `include_columns` to include each dataset's column names, descriptions, and data types. The caller must have Account Analytics Read permission on the account identified by `account_tag`. Dataset names, descriptions, and columns are the same for every authorized account. When `include_custom_attributes` is set, the response also includes custom attribute names and types discovered from that account's own data, which legitimately differs per caller.
 
         The catalogue lists the datasets this deployment is able to describe, which is not a fixed list. Some datasets are described by the service that owns them and are listed only where that service is available, so the same account may see a different catalogue in different environments, and datasets may appear or disappear without a change to this API. Clients should query the catalogue rather than hard-coding it, and should not treat a dataset's absence as proof that it does not exist.
+
+        Workers Analytics Engine datasets are named by the account that writes them, so they are discovered from that account's own data rather than from a fixed list. They appear as `events.analyticsEngine.<dataset_name>` and differ per account. A dataset is listed for as long as any of its data is retained, so it does not disappear from the catalogue merely because writes have stopped. An account with a very large number of datasets may receive a truncated list. Set `include_wae=false` to omit them.
       parameters:
         - name: account_tag
           in: query
@@ -234259,10 +234261,19 @@ paths:
           schema:
             type: boolean
             default: false
+        - name: include_wae
+          in: query
+          description: |
+            Include Workers Analytics Engine datasets, which are discovered from the account's own data. Set to `false` to return only datasets described from the static catalogue, which avoids that lookup.
+          schema:
+            type: boolean
+            default: true
         - name: dataset_name
           in: query
           description: |
             Return only the dataset with this exact name. An empty value is treated as if the parameter had been omitted, and does not filter the catalogue. A name that matches no dataset in this deployment's catalogue is rejected with `422`; a dataset that exists but is not describable here is rejected identically, so the two cases cannot be told apart.
+
+            A Workers Analytics Engine dataset is named in full, as `events.analyticsEngine.<dataset_name>`; the namespace on its own returns every such dataset the account has. A `dataset_name` the account does not have is rejected with `422` like any other unknown name.
           schema:
             type: string
           example: events.httpRequests
@@ -234285,7 +234296,7 @@ paths:
                 type: string
         '422':
           description: |
-            The request could not be processed. This is returned when the account tag is invalid or unknown, when `include_custom_attributes` is set without a `dataset_name`, or when the supplied criteria match no dataset that this deployment can describe — either because no such dataset exists or because it is not describable here. The message names the criteria that matched nothing.
+            The request could not be processed. This is returned when the account tag is invalid or unknown, when `include_custom_attributes` is set without a `dataset_name`, when a Workers Analytics Engine `dataset_name` is supplied alongside `include_wae=false` or contains characters a dataset name cannot contain, or when the supplied criteria match no dataset that this deployment can describe — either because no such dataset exists or because it is not describable here. The message names the criteria that matched nothing.
           content:
             text/plain:
               example: 'Input was invalid: There are no introspectable datasets matching the provided criteria (dataset_name=`events.nonexistent`)'
