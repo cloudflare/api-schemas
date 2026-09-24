@@ -189402,7 +189402,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: secrets-store.quota
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
       x-stability: beta
   /accounts/{account_id}/secrets_store/stores:
     get:
@@ -189445,7 +189444,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: secrets-store.stores
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
       x-stability: beta
     post:
       operationId: secrets-store-create
@@ -189486,9 +189484,9 @@ paths:
         free: true
         pro: true
       x-fern-availability: beta
+      x-fern-ignore: true
       x-fern-sdk-group-name: secrets-store.stores
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
       x-stability: beta
   /accounts/{account_id}/secrets_store/stores/{store_id}:
     delete:
@@ -189537,9 +189535,9 @@ paths:
         free: true
         pro: true
       x-fern-availability: beta
+      x-fern-ignore: true
       x-fern-sdk-group-name: secrets-store.stores
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
       x-stability: beta
     get:
       operationId: secrets-store-get-store-by-id
@@ -189576,9 +189574,8 @@ paths:
         free: true
         pro: true
       x-fern-availability: beta
-      x-fern-sdk-group-name: secrets-store.system-stores.get.by
-      x-fern-sdk-method-name: id
-      x-forge-hidden: true
+      x-fern-sdk-group-name: secrets-store.stores
+      x-fern-sdk-method-name: get
       x-stability: beta
   /accounts/{account_id}/secrets_store/stores/{store_id}/secrets:
     delete:
@@ -189621,9 +189618,9 @@ paths:
         free: true
         pro: true
       x-fern-availability: beta
-      x-fern-sdk-group-name: secrets-store.secrets.bulk
-      x-fern-sdk-method-name: delete
-      x-forge-hidden: true
+      x-fern-sdk-group-name: secrets-store.secrets
+      x-fern-sdk-method-name: bulk-delete
+      x-forge-require-confirmation: This operation permanently deletes the specified secrets and cannot be undone.
       x-stability: beta
     get:
       operationId: secrets-store-secrets-list
@@ -189668,7 +189665,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: secrets-store.secrets
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
       x-stability: beta
     post:
       operationId: secrets-store-secret-create
@@ -189714,9 +189710,8 @@ paths:
         free: true
         pro: true
       x-fern-availability: beta
-      x-fern-sdk-group-name: secrets-store.secrets.bulk
+      x-fern-sdk-group-name: secrets-store.secrets
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
       x-stability: beta
   /accounts/{account_id}/secrets_store/stores/{store_id}/secrets/{secret_id}:
     delete:
@@ -189756,7 +189751,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: secrets-store.secrets
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
       x-stability: beta
     get:
       operationId: secrets-store-get-by-id
@@ -189796,7 +189790,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: secrets-store.secrets
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
       x-stability: beta
     patch:
       operationId: secrets-store-patch-by-id
@@ -189841,7 +189834,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: secrets-store.secrets
       x-fern-sdk-method-name: edit
-      x-forge-hidden: true
       x-stability: beta
   /accounts/{account_id}/secrets_store/stores/{store_id}/secrets/{secret_id}/duplicate:
     post:
@@ -189887,7 +189879,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: secrets-store.secrets
       x-fern-sdk-method-name: duplicate
-      x-forge-hidden: true
       x-stability: beta
   /accounts/{account_id}/security-center/insights:
     get:
@@ -378154,6 +378145,7 @@ components:
       schema:
         type: boolean
         default: false
+      x-fern-parameter-name: cascade
     secrets-store_order:
       description: Order secrets by values in the given field.
       in: query
@@ -467899,6 +467891,7 @@ components:
         - properties:
             result:
               $ref: '#/components/schemas/secrets-store_secretsUsageObject'
+          type: object
     secrets-store_scopes:
       description: The list of services that can use this secret.
       type: array
@@ -467927,6 +467920,7 @@ components:
         - properties:
             result:
               $ref: '#/components/schemas/secrets-store_secretObject'
+          type: object
     secrets-store_secretObject:
       properties:
         comment:
@@ -467960,6 +467954,7 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/secrets-store_secretObject'
+          type: object
     secrets-store_secretsUsageObject:
       properties:
         secrets:
