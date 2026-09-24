@@ -167971,7 +167971,7 @@ paths:
     get:
       operationId: pay-per-crawl.getPPUOperatorConfiguration
       summary: Get pay-per-use operator configuration
-      description: Gets the pay-per-use operator configuration for an account, including its read-only non-billable classification.
+      description: Gets the pay-per-use operator configuration for an account, including its read-only non-billable classification timestamp.
       parameters:
         - $ref: '#/components/parameters/pay-per-crawl_AccountID'
       responses:
@@ -167980,7 +167980,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/pay-per-crawl_PPUOperatorConfigurationResponse'
+                $ref: '#/components/schemas/pay-per-crawl_PPUOperatorConfigurationResultResponse'
         '403':
           $ref: '#/components/responses/pay-per-crawl_PPUForbidden'
         '404':
@@ -363453,7 +363453,7 @@ paths:
     get:
       operationId: pay-per-crawl.getPPUZoneConfiguration
       summary: Get pay-per-use zone configuration
-      description: Gets the pay-per-use configuration and zone-level grace period for a zone.
+      description: Gets the pay-per-use configuration, zone-level grace period, and read-only non-billable classification timestamp for a zone.
       parameters:
         - $ref: '#/components/parameters/pay-per-crawl_ZoneID'
       responses:
@@ -363462,7 +363462,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/pay-per-crawl_PPUZoneConfigurationResponse'
+                $ref: '#/components/schemas/pay-per-crawl_PPUZoneConfigurationResultResponse'
         '403':
           $ref: '#/components/responses/pay-per-crawl_PPUForbidden'
       security:
@@ -447910,10 +447910,21 @@ components:
           enum:
             - active
             - expired
+        non_billable_since:
+          description: When the publisher zone was classified for local-only, non-billable settlement. Null for billable zones.
+          type: string
+          format: date-time
+          nullable: true
+        price_usd_microcents:
+          description: Price of the selected accepted agreement in microcents. For an active license this is the price currently in effect; for an expired license it is the last accepted price.
+          type: integer
+          format: int64
       required:
         - domain
         - license_status
         - license_expires_at
+        - price_usd_microcents
+        - non_billable_since
     pay-per-crawl_EnabledDomainsResponse:
       type: object
       properties:
@@ -448000,7 +448011,7 @@ components:
           items:
             $ref: '#/components/schemas/pay-per-crawl_Msg'
         result:
-          $ref: '#/components/schemas/pay-per-crawl_PPUOperatorConfigurationResult'
+          $ref: '#/components/schemas/pay-per-crawl_PPUOperatorConfiguration'
         result_info:
           $ref: '#/components/schemas/pay-per-crawl_ResultInfo'
         success:
@@ -448018,15 +448029,34 @@ components:
           type: boolean
         name:
           type: string
-        non_billable:
-          description: Whether this operator is classified for local-only, non-billable settlement.
-          type: boolean
+        non_billable_since:
+          description: When this operator was classified for local-only, non-billable settlement. Null for billable operators. Immutable.
+          type: string
+          format: date-time
+          nullable: true
           readOnly: true
       required:
         - name
         - enabled
         - default_price_usd_microcents
-        - non_billable
+        - non_billable_since
+    pay-per-crawl_PPUOperatorConfigurationResultResponse:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/pay-per-crawl_Msg'
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/pay-per-crawl_Msg'
+        result:
+          $ref: '#/components/schemas/pay-per-crawl_PPUOperatorConfigurationResult'
+        result_info:
+          $ref: '#/components/schemas/pay-per-crawl_ResultInfo'
+        success:
+          type: boolean
     pay-per-crawl_PPUOperatorConfigurationUpdate:
       type: object
       properties:
@@ -448052,6 +448082,12 @@ components:
           type: integer
         name:
           type: string
+        non_billable_since:
+          description: When this operator was classified for local-only, non-billable settlement. Null for billable operators. Always matches the requesting zone's classification.
+          type: string
+          format: date-time
+          nullable: true
+          readOnly: true
         operator_id:
           description: Stable pay-per-use operator identifier.
           type: string
@@ -448070,6 +448106,7 @@ components:
         - operator_id
         - name
         - default_price_usd_microcents
+        - non_billable_since
     pay-per-crawl_PPUOperatorPrices:
       type: object
       properties:
@@ -448164,6 +448201,12 @@ components:
         created_at:
           type: string
           format: date-time
+        non_billable_since:
+          description: When the proposing publisher zone was classified for local-only, non-billable settlement. Null for billable zones.
+          type: string
+          format: date-time
+          nullable: true
+          readOnly: true
         price_id:
           description: Use this value to accept or reject this specific pending proposal.
           type: integer
@@ -448176,6 +448219,7 @@ components:
       required:
         - price_id
         - price_usd_microcents
+        - non_billable_since
         - created_at
     pay-per-crawl_PPUProposals:
       type: object
@@ -448417,12 +448461,19 @@ components:
           nullable: true
         id:
           type: string
+        non_billable_since:
+          description: When this zone was classified for local-only, non-billable settlement. Null for billable or unconfigured zones. Immutable.
+          type: string
+          format: date-time
+          nullable: true
+          readOnly: true
       required:
         - id
         - can_be_enabled
         - disabled_at
         - expires_at
         - enabled
+        - non_billable_since
     pay-per-crawl_PPUZoneCanBeEnabledResponse:
       type: object
       properties:
@@ -448484,6 +448535,36 @@ components:
             $ref: '#/components/schemas/pay-per-crawl_Msg'
         result:
           $ref: '#/components/schemas/pay-per-crawl_PPUZoneConfiguration'
+        result_info:
+          $ref: '#/components/schemas/pay-per-crawl_ResultInfo'
+        success:
+          type: boolean
+    pay-per-crawl_PPUZoneConfigurationResult:
+      allOf:
+        - $ref: '#/components/schemas/pay-per-crawl_PPUZoneConfiguration'
+        - properties:
+            non_billable_since:
+              description: When this zone was classified for local-only, non-billable settlement. Null for billable or unconfigured zones. Immutable.
+              type: string
+              format: date-time
+              nullable: true
+              readOnly: true
+          required:
+            - non_billable_since
+          type: object
+    pay-per-crawl_PPUZoneConfigurationResultResponse:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/pay-per-crawl_Msg'
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/pay-per-crawl_Msg'
+        result:
+          $ref: '#/components/schemas/pay-per-crawl_PPUZoneConfigurationResult'
         result_info:
           $ref: '#/components/schemas/pay-per-crawl_ResultInfo'
         success:
