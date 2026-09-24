@@ -110579,6 +110579,18 @@ paths:
       summary: List Applications associated with your account
       description: Lists all the applications that are associated with your account.
       parameters:
+        - name: per_page
+          in: query
+          description: Maximum number of applications to return per page. Defaults to all, or 100 when `page_token` is set.
+          schema:
+            type: integer
+            maximum: 500
+            minimum: 1
+        - name: page_token
+          in: query
+          description: Opaque token from a previous response to retrieve the next page.
+          schema:
+            type: string
         - name: name
           in: query
           description: Filter applications by name.
@@ -110600,9 +110612,18 @@ paths:
                   - properties:
                       result:
                         $ref: '#/components/schemas/cc_ContainersListApplications'
+                      result_info:
+                        $ref: '#/components/schemas/cc_V4PaginatedResultInfo'
                     required:
                       - result
+                      - result_info
                     type: object
+        '400':
+          description: Bad Request that contains a specific constant code and details object about the error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cc_V4BaseErrorResponse'
         '401':
           description: Unauthorized.
           content:
@@ -110622,6 +110643,10 @@ paths:
       tags:
         - Applications
       x-fern-availability: generally-available
+      x-fern-pagination:
+        cursor: $request.page_token
+        next_cursor: $response.result_info.next_page_token
+        results: $response.result
       x-fern-sdk-group-name: containers.applications
       x-fern-sdk-method-name: list
     parameters:
@@ -110885,9 +110910,9 @@ paths:
   /accounts/{account_id}/containers/applications/{application_id}/instances:
     get:
       operationId: listContainerInstances
-      summary: List container instances
+      summary: List container instances (deprecated)
       description: |
-        Lists container instances belonging to an application.
+        Deprecated: use `instances-v2` instead. Lists container instances belonging to an application.
       parameters:
         - name: application_id
           in: path
@@ -110928,12 +110953,111 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/cc_V4BasePaginatedResponse'
+                  - $ref: '#/components/schemas/cc_V4BaseResponse'
                   - properties:
                       result:
                         $ref: '#/components/schemas/cc_ContainersListContainerInstances'
+                      result_info:
+                        $ref: '#/components/schemas/cc_V4PaginatedResultInfo'
                     required:
                       - result
+                      - result_info
+                    type: object
+        '400':
+          description: Container instance APIs are not enabled for this application or the request was invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cc_V4BaseErrorResponse'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cc_V4BaseErrorResponse'
+        '404':
+          description: Response body when an Application is not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cc_V4BaseErrorResponse'
+        '500':
+          description: An internal error has occurred.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cc_V4BaseErrorResponse'
+      deprecated: true
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Container Instances
+      x-api-token-group:
+        - Workers Containers Write
+        - Workers Containers Read
+      x-fern-availability: deprecated
+      x-fern-ignore: true
+      x-fern-sdk-group-name: containers.applications.instances
+      x-fern-sdk-method-name: list-v1
+    parameters:
+      - $ref: '#/components/parameters/cc_AccountId'
+  /accounts/{account_id}/containers/applications/{application_id}/instances-v2:
+    get:
+      operationId: listContainerInstances_v2
+      summary: List container instances
+      description: |
+        Lists container instances belonging to an application.
+      parameters:
+        - name: application_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/cc_ApplicationID'
+        - name: per_page
+          in: query
+          description: Maximum number of instances to return per page. Defaults to 100.
+          schema:
+            type: integer
+            maximum: 1000
+            minimum: 1
+        - name: page_token
+          in: query
+          description: Opaque token from a previous response to retrieve the next page.
+          schema:
+            type: string
+        - name: state
+          in: query
+          description: |
+            Filters instances by lifecycle state. `active` includes provisioning, running, and stopping instances; `not-active` includes stopped and failed instances. When omitted, all instances are returned.
+          schema:
+            type: string
+            enum:
+              - active
+              - not-active
+        - name: name_prefix
+          in: query
+          description: |
+            Filter instances by a case-sensitive name prefix, falling back to the actor ID when no name is known. Keep the same prefix when using a page token.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of container instances.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/cc_V4BaseResponse'
+                  - properties:
+                      result:
+                        $ref: '#/components/schemas/cc_ContainersListContainerInstancesV2'
+                      result_info:
+                        $ref: '#/components/schemas/cc_V4PaginatedResultInfo'
+                    required:
+                      - result
+                      - result_info
                     type: object
         '400':
           description: Container instance APIs are not enabled for this application or the request was invalid.
@@ -110969,6 +111093,10 @@ paths:
         - Workers Containers Write
         - Workers Containers Read
       x-fern-availability: generally-available
+      x-fern-pagination:
+        cursor: $request.page_token
+        next_cursor: $response.result_info.next_page_token
+        results: $response.result
       x-fern-sdk-group-name: containers.applications.instances
       x-fern-sdk-method-name: list
     parameters:
@@ -111504,7 +111632,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: containers.registries.credentials
       x-fern-sdk-method-name: generate
-      x-forge-hidden: true
   /accounts/{account_id}/custom_csrs:
     get:
       operationId: custom-csrs-for-an-account-list-custom-csrs
@@ -401470,6 +401597,11 @@ components:
             $ref: '#/components/schemas/cc_ContainerInstance'
       required:
         - instances
+    cc_ContainersListContainerInstancesV2:
+      description: Container instances belonging to an application.
+      type: array
+      items:
+        $ref: '#/components/schemas/cc_ContainerInstance'
     cc_ContainersModifyApplicationConfiguration:
       description: Application configuration fields you can change without creating a rollout.
       type: object
@@ -402073,26 +402205,6 @@ components:
         - errors
         - messages
         - result
-    cc_V4BasePaginatedResponse:
-      type: object
-      allOf:
-        - $ref: '#/components/schemas/cc_V4BaseResponse'
-        - properties:
-            result_info:
-              type: object
-              properties:
-                next_page_token:
-                  description: The token to use to retrieve the next page of results.
-                  type: string
-                page_token:
-                  description: The page token sent in the request.
-                  type: string
-                per_page:
-                  description: The number of items per page requested.
-                  type: integer
-          required:
-            - result_info
-          type: object
     cc_V4BaseResponse:
       type: object
       properties:
@@ -402108,6 +402220,19 @@ components:
         - success
         - errors
         - messages
+    cc_V4PaginatedResultInfo:
+      description: Cursor pagination details for a v4 API list response.
+      type: object
+      properties:
+        next_page_token:
+          description: The token to use to retrieve the next page of results.
+          type: string
+        page_token:
+          description: The page token sent in the request.
+          type: string
+        per_page:
+          description: The number of items per page requested.
+          type: integer
     cc_WranglerSSHConfig:
       description: Configuration properties for connecting with SSH to a container using Wrangler.
       type: object
