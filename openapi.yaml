@@ -142866,7 +142866,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: images
       x-fern-sdk-method-name: create
-      x-forge-hidden: false
   /accounts/{account_id}/images/v1/{image_id}:
     delete:
       operationId: cloudflare-images-delete-image
@@ -142909,7 +142908,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: images
       x-fern-sdk-method-name: delete
-      x-forge-hidden: false
       x-forge-require-confirmation: This operation will delete this image.
     get:
       operationId: cloudflare-images-image-details
@@ -142953,7 +142951,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: images
       x-fern-sdk-method-name: get
-      x-forge-hidden: false
     patch:
       operationId: cloudflare-images-update-image
       summary: Update image
@@ -143001,7 +142998,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: images
       x-fern-sdk-method-name: edit
-      x-forge-hidden: false
   /accounts/{account_id}/images/v1/{image_id}/blob:
     get:
       operationId: cloudflare-images-base-image
@@ -143046,7 +143042,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: images
       x-fern-sdk-method-name: get-blob
-      x-forge-hidden: false
   /accounts/{account_id}/images/v1/direct_upload:
     post:
       operationId: cloudflare-images-create-authenticated-direct-upload-url-v-1
@@ -143134,7 +143129,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: images.keys
       x-fern-sdk-method-name: list
-      x-forge-hidden: false
   /accounts/{account_id}/images/v1/keys/{signing_key_name}:
     delete:
       operationId: cloudflare-images-keys-delete-signing-key
@@ -143177,7 +143171,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: images.keys
       x-fern-sdk-method-name: delete
-      x-forge-hidden: false
       x-forge-require-confirmation: This operation will delete this signing key. This will invalidate any URLs that are signed with this key.
     put:
       operationId: cloudflare-images-keys-add-signing-key
@@ -143218,7 +143211,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: images.keys
       x-fern-sdk-method-name: create
-      x-forge-hidden: false
   /accounts/{account_id}/images/v1/stats:
     get:
       operationId: cloudflare-images-images-usage-statistics
@@ -143257,7 +143249,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: images
       x-fern-sdk-method-name: stats
-      x-forge-hidden: false
   /accounts/{account_id}/images/v1/variants:
     get:
       operationId: cloudflare-images-variants-list-variants
@@ -143296,7 +143287,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: images.variants
       x-fern-sdk-method-name: list
-      x-forge-hidden: false
     post:
       operationId: cloudflare-images-variants-create-a-variant
       summary: Create a variant
@@ -143339,7 +143329,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: images.variants
       x-fern-sdk-method-name: create
-      x-forge-hidden: false
   /accounts/{account_id}/images/v1/variants/{variant_id}:
     delete:
       operationId: cloudflare-images-variants-delete-a-variant
@@ -143382,7 +143371,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: images.variants
       x-fern-sdk-method-name: delete
-      x-forge-hidden: false
       x-forge-require-confirmation: This operation will delete this variant.
     get:
       operationId: cloudflare-images-variants-variant-details
@@ -143426,7 +143414,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: images.variants
       x-fern-sdk-method-name: get
-      x-forge-hidden: false
     patch:
       operationId: cloudflare-images-variants-update-a-variant
       summary: Update a variant
@@ -143474,7 +143461,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: images.variants
       x-fern-sdk-method-name: edit
-      x-forge-hidden: false
   /accounts/{account_id}/images/v1/variants/{variant_id}/flat:
     get:
       operationId: cloudflare-images-variants-variant-details-flat
@@ -143506,6 +143492,7 @@ paths:
                 allOf:
                   - $ref: '#/components/schemas/images_image_variant_flat_response'
                   - $ref: '#/components/schemas/images_api-response-common-failure'
+      deprecated: true
       security:
         - api_token: []
         - api_email: []
@@ -143515,7 +143502,8 @@ paths:
       x-api-token-group:
         - Images Read
         - Images Write
-      x-fern-availability: generally-available
+      x-fern-availability: deprecated
+      x-fern-ignore: true
       x-fern-sdk-group-name: images.v1.variants-flat
       x-fern-sdk-method-name: get
       x-forge-hidden: true
@@ -143687,7 +143675,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: images
       x-fern-sdk-method-name: list
-      x-forge-hidden: false
   /accounts/{account_id}/images/v2/direct_upload:
     post:
       operationId: cloudflare-images-create-authenticated-direct-upload-url-v-2
@@ -143731,7 +143718,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: images
       x-fern-sdk-method-name: direct-upload
-      x-forge-hidden: false
   /accounts/{account_id}/images/v2/metadata/keys:
     get:
       operationId: cloudflare-images-list-metadata-keys
@@ -143773,7 +143759,7 @@ paths:
     get:
       operationId: cloudflare-images-sourcingkit-list-migrations
       summary: List sourcing kit migrations
-      description: List all migrations for the account.
+      description: List CF Images imports.
       parameters:
         - name: account_id
           in: path
@@ -143820,15 +143806,12 @@ paths:
         - Images Read
         - Images Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: images.sourcing-kit.migrations
+      x-fern-sdk-group-name: images.import
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
     post:
       operationId: cloudflare-images-sourcingkit-create-migration
       summary: Create a sourcing kit migration
-      description: |
-        Create a new migration from an existing source. The migration will import
-        objects from the source bucket into Cloudflare Images.
+      description: Create a pending CF Images import from a configured source.
       parameters:
         - name: account_id
           in: path
@@ -143865,14 +143848,13 @@ paths:
       x-api-token-group:
         - Images Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: images.sourcing-kit.migrations
+      x-fern-sdk-group-name: images.import
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
   /accounts/{account_id}/images/v2/sourcingkit/migrations/{migration_id}:
     delete:
       operationId: cloudflare-images-sourcingkit-delete-migration
       summary: Delete a sourcing kit migration
-      description: Delete an existing migration. Only completed, errored, or aborted migrations can be deleted.
+      description: Delete a completed, failed, or aborted CF Images import.
       parameters:
         - name: account_id
           in: path
@@ -143908,13 +143890,13 @@ paths:
       x-api-token-group:
         - Images Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: images.sourcing-kit.migrations
+      x-fern-sdk-group-name: images.import
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
+      x-forge-require-confirmation: This operation will delete this import migration.
     get:
       operationId: cloudflare-images-sourcingkit-get-migration
       summary: Get sourcing kit migration
-      description: Fetch details for a single migration.
+      description: Get the configuration and status of a CF Images import.
       parameters:
         - name: account_id
           in: path
@@ -143951,16 +143933,13 @@ paths:
         - Images Read
         - Images Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: images.sourcing-kit.migrations
+      x-fern-sdk-group-name: images.import
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
   /accounts/{account_id}/images/v2/sourcingkit/migrations/{migration_id}/lifecycle:
     get:
       operationId: cloudflare-images-sourcingkit-get-migration-progress
       summary: Get migration progress
-      description: |
-        Get the current progress of a migration including counts of scanned, imported,
-        skipped, and errored objects.
+      description: Get progress and object counts for a CF Images import.
       parameters:
         - name: account_id
           in: path
@@ -143997,14 +143976,13 @@ paths:
         - Images Read
         - Images Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: images.sourcing-kit.migrations.lifecycle
-      x-fern-sdk-method-name: get
-      x-forge-hidden: true
+      x-fern-sdk-group-name: images.import
+      x-fern-sdk-method-name: progress
   /accounts/{account_id}/images/v2/sourcingkit/migrations/{migration_id}/lifecycle/abort:
     patch:
       operationId: cloudflare-images-sourcingkit-abort-migration
       summary: Abort a migration
-      description: Abort a running migration. Objects already imported will not be removed.
+      description: Abort a running CF Images import. Already imported images will remain.
       parameters:
         - name: account_id
           in: path
@@ -144038,14 +144016,13 @@ paths:
       x-api-token-group:
         - Images Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: images.sourcing-kit.migrations.lifecycle
+      x-fern-sdk-group-name: images.import
       x-fern-sdk-method-name: abort
-      x-forge-hidden: true
   /accounts/{account_id}/images/v2/sourcingkit/migrations/{migration_id}/lifecycle/start:
     patch:
       operationId: cloudflare-images-sourcingkit-start-migration
       summary: Start a migration
-      description: Start a pending migration. The migration will begin importing objects from the configured source.
+      description: Start a pending CF Images import.
       parameters:
         - name: account_id
           in: path
@@ -144079,14 +144056,13 @@ paths:
       x-api-token-group:
         - Images Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: images.sourcing-kit.migrations.lifecycle
+      x-fern-sdk-group-name: images.import
       x-fern-sdk-method-name: start
-      x-forge-hidden: true
   /accounts/{account_id}/images/v2/sourcingkit/migrations/{migration_id}/logs:
     get:
       operationId: cloudflare-images-sourcingkit-list-migration-logs
       summary: List migration logs
-      description: List log entries for a specific migration.
+      description: List log entries for a CF Images import.
       parameters:
         - name: account_id
           in: path
@@ -144138,14 +144114,13 @@ paths:
         - Images Read
         - Images Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: images.sourcing-kit.migrations.lifecycle
+      x-fern-sdk-group-name: images.import
       x-fern-sdk-method-name: logs
-      x-forge-hidden: true
   /accounts/{account_id}/images/v2/sourcingkit/sources:
     get:
       operationId: cloudflare-images-sourcingkit-list-sources
       summary: List sourcing kit sources
-      description: List all configured migration sources for the account.
+      description: List sources configured for CF Images imports.
       parameters:
         - name: account_id
           in: path
@@ -144197,15 +144172,12 @@ paths:
         - Images Read
         - Images Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: images.sourcing-kit.sources
+      x-fern-sdk-group-name: images.import.sources
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
     post:
       operationId: cloudflare-images-sourcingkit-create-source
       summary: Create a sourcing kit source
-      description: |
-        Create a new migration source by providing storage credentials. The service
-        will verify connectivity to the bucket before accepting the source.
+      description: Configure an S3 source for CF Images imports.
       parameters:
         - name: account_id
           in: path
@@ -144242,14 +144214,13 @@ paths:
       x-api-token-group:
         - Images Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: images.sourcing-kit.sources
+      x-fern-sdk-group-name: images.import.sources
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
   /accounts/{account_id}/images/v2/sourcingkit/sources/{source_id}:
     delete:
       operationId: cloudflare-images-sourcingkit-delete-source
       summary: Delete a sourcing kit source
-      description: Delete an existing migration source. Sources with active migrations cannot be deleted.
+      description: Delete a source configured for CF Images imports. Sources used by active imports cannot be deleted.
       parameters:
         - name: account_id
           in: path
@@ -144285,13 +144256,13 @@ paths:
       x-api-token-group:
         - Images Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: images.sourcing-kit.sources
+      x-fern-sdk-group-name: images.import.sources
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
+      x-forge-require-confirmation: This operation will delete this import source.
     get:
       operationId: cloudflare-images-sourcingkit-get-source
       summary: Get sourcing kit source
-      description: Fetch details for a single migration source.
+      description: Get details of a source configured for CF Images imports.
       parameters:
         - name: account_id
           in: path
@@ -144328,13 +144299,12 @@ paths:
         - Images Read
         - Images Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: images.sourcing-kit.sources
+      x-fern-sdk-group-name: images.import.sources
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
     patch:
       operationId: cloudflare-images-sourcingkit-update-source
       summary: Update a sourcing kit source
-      description: Update the name of an existing migration source.
+      description: Rename a source configured for CF Images imports.
       parameters:
         - name: account_id
           in: path
@@ -144376,14 +144346,13 @@ paths:
       x-api-token-group:
         - Images Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: images.sourcing-kit.sources
+      x-fern-sdk-group-name: images.import.sources
       x-fern-sdk-method-name: update
-      x-forge-hidden: true
   /accounts/{account_id}/images/v2/sourcingkit/sources/{source_id}/connectivity:
     get:
       operationId: cloudflare-images-sourcingkit-get-source-connectivity
       summary: Get source connectivity status
-      description: Check the current connectivity status of an existing migration source.
+      description: Check whether a source can still access its S3 bucket.
       parameters:
         - name: account_id
           in: path
@@ -144420,16 +144389,13 @@ paths:
         - Images Read
         - Images Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: images.sourcing-kit.sources
-      x-fern-sdk-method-name: connectivity
-      x-forge-hidden: true
+      x-fern-sdk-group-name: images.import.sources
+      x-fern-sdk-method-name: check
   /accounts/{account_id}/images/v2/sourcingkit/sources/connectivity-precheck:
     post:
       operationId: cloudflare-images-sourcingkit-precheck-source-connectivity
       summary: Precheck source connectivity
-      description: |
-        Verify connectivity to a storage bucket before creating a source. Returns
-        connectivity status without persisting any state.
+      description: Check S3 credentials without saving a source.
       parameters:
         - name: account_id
           in: path
@@ -144466,9 +144432,8 @@ paths:
       x-api-token-group:
         - Images Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: images.sourcing-kit.sources
+      x-fern-sdk-group-name: images.import.sources
       x-fern-sdk-method-name: pre-check
-      x-forge-hidden: true
   /accounts/{account_id}/infrastructure/targets:
     get:
       operationId: infra-targets-list
@@ -428819,7 +428784,7 @@ components:
       type: string
       example: hero
       maxLength: 99
-      pattern: ^[a-zA-Z0-9]$
+      pattern: ^[a-zA-Z0-9]+$
       x-auditable: true
     images_image_variant_list_response:
       allOf:
@@ -429023,7 +428988,7 @@ components:
       type: string
       example: someKey
       maxLength: 20
-      pattern: ^[a-zA-Z0-9]$
+      pattern: ^[a-zA-Z0-9]+$
       x-auditable: true
     images_sourcingkit_acceptable_content_type:
       description: A MIME type that can be excluded from migration.
@@ -503185,6 +503150,8 @@ x-forge-commands:
     groups:
       flows:
         description: Zone-level transformation flows that control how images are resized and optimized on delivery
+      import:
+        description: Import images from S3
       keys:
         description: Manage signing keys for generating private image URLs
       variants:
