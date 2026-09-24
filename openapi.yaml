@@ -132270,7 +132270,7 @@ paths:
     get:
       operationId: email-routing-destination-addresses-list-destination-addresses
       summary: List destination addresses
-      description: Lists existing destination addresses.
+      description: Lists destination addresses configured for Email Routing in an account.
       parameters:
         - name: account_id
           in: path
@@ -132341,7 +132341,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: email-routing.addresses
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
     post:
       operationId: email-routing-destination-addresses-create-a-destination-address
       summary: Create a destination address
@@ -132386,7 +132385,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: email-routing.addresses
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
   /accounts/{account_id}/email/routing/addresses/{destination_address_identifier}:
     delete:
       operationId: email-routing-destination-addresses-delete-destination-address
@@ -132431,7 +132429,7 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: email-routing.addresses
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
+      x-forge-require-confirmation: This operation permanently deletes a destination address.
     get:
       operationId: email-routing-destination-addresses-get-a-destination-address
       summary: Get a destination address
@@ -132476,7 +132474,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: email-routing.addresses
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
     patch:
       operationId: email-routing-destination-addresses-update-destination-address
       summary: Update destination address
@@ -132526,7 +132523,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: email-routing.addresses
       x-fern-sdk-method-name: update
-      x-forge-hidden: true
   /accounts/{account_id}/email/routing/rules:
     get:
       operationId: email-routing-routing-rules-list-account-routing-rules
@@ -132586,7 +132582,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: email-routing.rules
       x-fern-sdk-method-name: list-account
-      x-forge-hidden: true
   /accounts/{account_id}/email/routing/rules/plan:
     post:
       operationId: email-routing-routing-rules-plan-account-routing-rules
@@ -132632,7 +132627,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: email-routing.rules
       x-fern-sdk-method-name: plan
-      x-forge-hidden: true
   /accounts/{account_id}/email/routing/suppression:
     get:
       operationId: get_publicListSuppressionRouting
@@ -133008,7 +133002,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: email-sending.limits
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
   /accounts/{account_id}/email/sending/messages/{message_id}:
     get:
       operationId: email-sending-get-email-message
@@ -133103,7 +133096,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: email-sending.reputation
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
   /accounts/{account_id}/email/sending/send:
     post:
       operationId: email-sending-account-send-builder
@@ -349571,9 +349563,8 @@ paths:
         free: true
         pro: true
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: email-routing
+      x-fern-sdk-group-name: email-routing.settings
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
     patch:
       operationId: email-routing-settings-update-email-routing-settings
       summary: Update Email Routing settings
@@ -349616,13 +349607,12 @@ paths:
         free: true
         pro: true
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: email-routing
-      x-fern-sdk-method-name: edit
-      x-forge-hidden: true
+      x-fern-sdk-group-name: email-routing.settings
+      x-fern-sdk-method-name: update
     put:
       operationId: email-routing-settings-replace-email-routing-settings
-      summary: Update Email Routing settings
-      description: Update the settings for your Email Routing zone.
+      summary: Apply Email Routing settings
+      description: Apply the provided settings to your Email Routing zone. Omitted settings retain their current values, as with PATCH.
       parameters:
         - name: zone_id
           in: path
@@ -349637,7 +349627,7 @@ paths:
               $ref: '#/components/schemas/email_update_email_routing_settings_properties'
       responses:
         '200':
-          description: Update Email Routing settings response
+          description: Apply Email Routing settings response
           content:
             application/json:
               schema:
@@ -349661,9 +349651,8 @@ paths:
         free: true
         pro: true
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: email-routing
-      x-fern-sdk-method-name: update
-      x-forge-hidden: true
+      x-fern-sdk-group-name: email-routing.settings
+      x-fern-sdk-method-name: apply
   /zones/{zone_id}/email/routing/disable:
     post:
       operationId: email-routing-settings-disable-email-routing
@@ -349701,10 +349690,10 @@ paths:
         enterprise: true
         free: true
         pro: true
-      x-fern-availability: generally-available
+      x-fern-availability: deprecated
+      x-fern-ignore: true
       x-fern-sdk-group-name: email-routing
       x-fern-sdk-method-name: disable
-      x-forge-hidden: true
       x-forge-require-confirmation: This operation turns off email routing for a zone.
   /zones/{zone_id}/email/routing/dns:
     delete:
@@ -349745,9 +349734,9 @@ paths:
         free: true
         pro: true
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: email-routing.dns
-      x-fern-sdk-method-name: delete
-      x-forge-hidden: true
+      x-fern-sdk-group-name: email-routing
+      x-fern-sdk-method-name: disable
+      x-forge-require-confirmation: This operation disables Email Routing and removes its DNS records.
     get:
       operationId: email-routing-settings-email-routing-dns-settings
       summary: Email Routing - DNS settings
@@ -349793,10 +349782,9 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: email-routing.dns
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
     patch:
       operationId: email-routing-settings-unlock-email-routing-dns
-      summary: Unlock Email Routing
+      summary: Unlock Email Routing DNS records
       description: Unlock MX Records previously locked by Email Routing.
       parameters:
         - name: zone_id
@@ -349836,12 +349824,11 @@ paths:
         pro: true
       x-fern-availability: generally-available
       x-fern-sdk-group-name: email-routing.dns
-      x-fern-sdk-method-name: edit
-      x-forge-hidden: true
+      x-fern-sdk-method-name: unlock
     post:
       operationId: email-routing-settings-enable-email-routing-dns
       summary: Enable Email Routing
-      description: Enable you Email Routing zone. Add and lock the necessary MX and SPF records.
+      description: Enable your Email Routing zone. Add and lock the necessary MX and SPF records.
       parameters:
         - name: zone_id
           in: path
@@ -349879,9 +349866,8 @@ paths:
         free: true
         pro: true
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: email-routing.dns
-      x-fern-sdk-method-name: create
-      x-forge-hidden: true
+      x-fern-sdk-group-name: email-routing
+      x-fern-sdk-method-name: enable
   /zones/{zone_id}/email/routing/enable:
     post:
       operationId: email-routing-settings-enable-email-routing
@@ -349919,15 +349905,15 @@ paths:
         enterprise: true
         free: true
         pro: true
-      x-fern-availability: generally-available
+      x-fern-availability: deprecated
+      x-fern-ignore: true
       x-fern-sdk-group-name: email-routing
       x-fern-sdk-method-name: enable
-      x-forge-hidden: true
   /zones/{zone_id}/email/routing/rules:
     get:
       operationId: email-routing-routing-rules-list-routing-rules
       summary: List routing rules
-      description: Lists existing routing rules.
+      description: Lists the routing rules that match incoming messages for a zone.
       parameters:
         - name: zone_id
           in: path
@@ -349987,7 +349973,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: email-routing.rules
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
     post:
       operationId: email-routing-routing-rules-create-routing-rule
       summary: Create routing rule
@@ -350034,12 +350019,11 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: email-routing.rules
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
   /zones/{zone_id}/email/routing/rules/{rule_identifier}:
     delete:
       operationId: email-routing-routing-rules-delete-routing-rule
       summary: Delete routing rule
-      description: Delete a specific routing rule.
+      description: Deletes a routing rule so matching incoming messages are no longer forwarded by it.
       parameters:
         - name: rule_identifier
           in: path
@@ -350079,7 +350063,7 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: email-routing.rules
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
+      x-forge-require-confirmation: This operation permanently deletes an Email Routing rule.
     get:
       operationId: email-routing-routing-rules-get-routing-rule
       summary: Get routing rule
@@ -350124,7 +350108,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: email-routing.rules
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
     put:
       operationId: email-routing-routing-rules-update-routing-rule
       summary: Update routing rule
@@ -350176,7 +350159,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: email-routing.rules
       x-fern-sdk-method-name: update
-      x-forge-hidden: true
   /zones/{zone_id}/email/routing/rules/catch_all:
     get:
       operationId: email-routing-routing-rules-get-catch-all-rule
@@ -350215,9 +350197,8 @@ paths:
         free: true
         pro: true
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: email-routing.rules.catch-alls
+      x-fern-sdk-group-name: email-routing.rules.catch-all
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
     put:
       operationId: email-routing-routing-rules-update-catch-all-rule
       summary: Update catch-all rule
@@ -350262,9 +350243,8 @@ paths:
         free: true
         pro: true
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: email-routing.rules.catch-alls
+      x-fern-sdk-group-name: email-routing.rules.catch-all
       x-fern-sdk-method-name: update
-      x-forge-hidden: true
   /zones/{zone_id}/email/routing/suppression:
     get:
       operationId: get_publicListSuppressionZoneRouting
@@ -350651,10 +350631,10 @@ paths:
         enterprise: true
         free: true
         pro: true
-      x-fern-availability: generally-available
+      x-fern-availability: deprecated
+      x-fern-ignore: true
       x-fern-sdk-group-name: email-routing
       x-fern-sdk-method-name: unlock
-      x-forge-hidden: true
   /zones/{zone_id}/email/sending/subdomains:
     get:
       operationId: email-sending-subdomains-list-sending-subdomains
@@ -350692,7 +350672,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: email-sending.subdomains
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
     post:
       operationId: email-sending-subdomains-create-sending-subdomain
       summary: Create a sending subdomain
@@ -350735,7 +350714,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: email-sending.subdomains
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
   /zones/{zone_id}/email/sending/subdomains/{subdomain_id}:
     delete:
       operationId: email-sending-subdomains-delete-sending-subdomain
@@ -350778,7 +350756,7 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: email-sending.subdomains
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
+      x-forge-require-confirmation: This operation disables sending and removes the subdomain's Email Sending DNS records.
     get:
       operationId: email-sending-subdomains-get-sending-subdomain
       summary: Get a sending subdomain
@@ -350820,7 +350798,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: email-sending.subdomains
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
     patch:
       operationId: email-sending-subdomains-update-sending-subdomain
       summary: Update a sending subdomain
@@ -350868,7 +350845,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: email-sending.subdomains
       x-fern-sdk-method-name: update
-      x-forge-hidden: true
   /zones/{zone_id}/email/sending/subdomains/{subdomain_id}/dns:
     get:
       operationId: email-sending-subdomains-get-sending-subdomain-dns
@@ -350911,7 +350887,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: email-sending.subdomains.dns
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
     post:
       operationId: email-sending-subdomains-fix-sending-subdomain-dns
       summary: Fix sending subdomain DNS records
@@ -350959,7 +350934,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: email-sending.subdomains.dns
       x-fern-sdk-method-name: fix
-      x-forge-hidden: true
   /zones/{zone_id}/email/sending/subdomains/{subdomain_id}/dns/status:
     get:
       operationId: email-sending-subdomains-get-sending-subdomain-dns-status
@@ -351003,8 +350977,7 @@ paths:
         pro: true
       x-fern-availability: generally-available
       x-fern-sdk-group-name: email-sending.subdomains.dns
-      x-fern-sdk-method-name: get-status
-      x-forge-hidden: true
+      x-fern-sdk-method-name: status
   /zones/{zone_id}/email/sending/subdomains/{subdomain_id}/reputation/complaints:
     get:
       operationId: email-sending-subdomains-get-sending-subdomain-reputation-complaints
@@ -351065,7 +351038,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: email-sending.subdomains.reputation
       x-fern-sdk-method-name: get-complaints
-      x-forge-hidden: true
   /zones/{zone_id}/email/sending/subdomains/preview:
     post:
       operationId: email-sending-subdomains-preview-sending-subdomain
@@ -351109,7 +351081,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: email-sending.subdomains
       x-fern-sdk-method-name: preview
-      x-forge-hidden: true
   /zones/{zone_id}/email/sending/suppression:
     get:
       operationId: get_publicListSuppressionZoneSending
@@ -503424,16 +503395,16 @@ x-forge-commands:
       traceroutes:
         description: Run traceroutes from Cloudflare data centers to diagnose network path issues
   email-routing:
-    description: Route incoming emails to destination addresses using custom rules, catch-all handlers, and DNS configuration
+    description: Route incoming email to verified destination addresses or Workers with routing rules, catch-all behavior, and managed DNS records
     groups:
       addresses:
         description: Verified destination email addresses that can receive forwarded mail
       dns:
-        description: DNS records required for email routing (MX, SPF, DKIM) — enable, lock, or disable
+        description: Inspect or unlock the DNS records required by Email Routing
       rules:
-        description: Routing rules that match incoming email addresses and forward to destination mailboxes
-      suppression:
-        description: Email suppression list management for routing and sending
+        description: Match incoming email addresses and forward messages to destination mailboxes or Workers
+      settings:
+        description: Inspect and update Email Routing settings
   email-security:
     description: Cloud email security — investigate threats, manage allow/block policies, and detect phishing
     groups:
@@ -503446,10 +503417,14 @@ x-forge-commands:
       submissions:
         description: User and admin email submissions for classification review
   email-sending:
-    description: Send emails and manage sending subdomains
+    description: Send transactional email and manage sending subdomains and their DNS configuration
     groups:
+      limits:
+        description: Inspect account-level sending quotas and current usage
       subdomains:
-        description: Sending subdomain operations
+        description: Configure sending subdomains and keep their DNS records healthy
+      suppressions:
+        description: Prevent delivery to suppressed addresses and manage the account suppression list
   filters:
     description: Filter expressions used by legacy firewall rules to match requests — prefer Rulesets for new configurations
   firewall:
