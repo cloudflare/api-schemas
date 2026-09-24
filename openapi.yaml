@@ -479406,7 +479406,6 @@ components:
       type: boolean
       example: false
       deprecated: true
-      x-fern-ignore: true
       x-stainless-deprecation-message: This functionality has been removed. The is_pending_reconnect field will now always report false.
     tunnel_management-resources:
       description: Management resources the token will have access to.
@@ -479723,7 +479722,9 @@ components:
         id:
           $ref: '#/components/schemas/tunnel_connection_id'
         is_pending_reconnect:
-          $ref: '#/components/schemas/tunnel_is_pending_reconnect'
+          allOf:
+            - $ref: '#/components/schemas/tunnel_is_pending_reconnect'
+          x-fern-ignore: true
         opened_at:
           description: Timestamp of when the connection was established.
           type: string
