@@ -374601,10 +374601,6 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/waitingroom_identifier'
-      requestBody:
-        required: true
-        content:
-          application/json: {}
       responses:
         '200':
           description: Delete waiting room response
@@ -374638,6 +374634,7 @@ paths:
       x-fern-sdk-group-name: waiting-rooms
       x-fern-sdk-method-name: delete
       x-forge-hidden: true
+      x-forge-require-confirmation: This operation deletes the waiting room from the zone.
     get:
       operationId: waiting-room-waiting-room-details
       summary: Waiting room details
@@ -374920,10 +374917,6 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/waitingroom_identifier'
-      requestBody:
-        required: true
-        content:
-          application/json: {}
       responses:
         '200':
           description: Delete event response
@@ -374957,6 +374950,7 @@ paths:
       x-fern-sdk-group-name: waiting-rooms.events
       x-fern-sdk-method-name: delete
       x-forge-hidden: true
+      x-forge-require-confirmation: This operation deletes the event from the waiting room.
     get:
       operationId: waiting-room-event-details
       summary: Event details
@@ -375361,10 +375355,6 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/waitingroom_identifier'
-      requestBody:
-        required: true
-        content:
-          application/json: {}
       responses:
         '200':
           description: Delete Waiting Room Rule response
@@ -375398,6 +375388,7 @@ paths:
       x-fern-sdk-group-name: waiting-rooms.rules
       x-fern-sdk-method-name: delete
       x-forge-hidden: true
+      x-forge-require-confirmation: This operation deletes the rule from the waiting room.
     patch:
       operationId: waiting-room-patch-waiting-room-rule
       summary: Patch Waiting Room Rule
@@ -482967,6 +482958,16 @@ components:
           type: object
     waitingroom_api-response-common:
       type: object
+      properties:
+        errors:
+          $ref: '#/components/schemas/waitingroom_messages'
+        messages:
+          $ref: '#/components/schemas/waitingroom_messages'
+        result:
+          type: object
+          nullable: true
+        success:
+          type: boolean
       required:
         - success
         - errors
@@ -483119,6 +483120,7 @@ components:
         - da-DK
         - fi-FI
         - lt-LT
+        - lv-LV
         - ms-MY
         - nb-NO
         - ro-RO
