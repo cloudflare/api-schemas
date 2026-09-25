@@ -16758,8 +16758,8 @@ paths:
   /accounts/{account_id}/ai-gateway/custom-providers:
     get:
       operationId: aig-config-list-account-provider
-      summary: List Account Providers
-      description: Lists all AI Gateway evaluator types configured for the account.
+      summary: List custom providers
+      description: Lists the custom providers configured for the account, ordered by position and then name.
       parameters:
         - name: account_id
           in: path
@@ -16820,8 +16820,10 @@ paths:
                         enable:
                           type: boolean
                         headers:
+                          description: JSON object of extra HTTP headers that AI Gateway sends to the provider. Values can contain credentials.
                           type: string
                           maxLength: 8192
+                          x-sensitive: true
                         id:
                           type: string
                           format: uuid
@@ -16884,7 +16886,7 @@ paths:
         - api_email: []
           api_key: []
       tags:
-        - AI Gateway Account Providers
+        - AI Gateway Custom Providers
       x-api-token-group:
         - AI Gateway Write
         - AI Gateway Read
@@ -16897,13 +16899,12 @@ paths:
         free: true
         pro: true
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: ai-gateway.account-providers
+      x-fern-sdk-group-name: ai-gateway.custom-providers
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
     post:
       operationId: aig-config-create-account-provider
-      summary: Create a new Account Provider
-      description: Creates a new AI Gateway.
+      summary: Create a custom provider
+      description: Creates an account-level custom provider that forwards AI Gateway requests to the HTTPS base URL you supply. Requests reference the provider as `custom-{slug}`, so the slug must be unique within the account.
       parameters:
         - name: account_id
           in: path
@@ -16929,8 +16930,10 @@ paths:
                 enable:
                   type: boolean
                 headers:
+                  description: JSON object of extra HTTP headers that AI Gateway sends to the provider. Values can contain credentials.
                   type: string
                   maxLength: 8192
+                  x-sensitive: true
                 js_example:
                   type: string
                 link:
@@ -16972,8 +16975,10 @@ paths:
                       enable:
                         type: boolean
                       headers:
+                        description: JSON object of extra HTTP headers that AI Gateway sends to the provider. Values can contain credentials.
                         type: string
                         maxLength: 8192
+                        x-sensitive: true
                       id:
                         type: string
                         format: uuid
@@ -17042,7 +17047,7 @@ paths:
         - api_email: []
           api_key: []
       tags:
-        - AI Gateway Account Providers
+        - AI Gateway Custom Providers
       x-api-token-group:
         - AI Gateway Write
       x-cfPermissionsRequired:
@@ -17054,14 +17059,24 @@ paths:
         free: true
         pro: true
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: ai-gateway.account-providers
+      x-fern-sdk-group-name: ai-gateway.custom-providers
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
+      x-forge-params:
+        beta:
+          hidden: true
+        curl_example:
+          hidden: true
+        js_example:
+          hidden: true
+        link:
+          hidden: true
+        position:
+          hidden: true
   /accounts/{account_id}/ai-gateway/custom-providers/{id}:
     delete:
       operationId: aig-config-delete-account-provider
-      summary: Delete a Account Provider
-      description: Deletes an AI Gateway dataset.
+      summary: Delete a custom provider
+      description: Deletes a custom provider and every pricing rule that belongs to it.
       parameters:
         - name: account_id
           in: path
@@ -17101,8 +17116,10 @@ paths:
                       enable:
                         type: boolean
                       headers:
+                        description: JSON object of extra HTTP headers that AI Gateway sends to the provider. Values can contain credentials.
                         type: string
                         maxLength: 8192
+                        x-sensitive: true
                       id:
                         type: string
                         format: uuid
@@ -17165,7 +17182,7 @@ paths:
         - api_email: []
           api_key: []
       tags:
-        - AI Gateway Account Providers
+        - AI Gateway Custom Providers
       x-api-token-group:
         - AI Gateway Write
       x-cfPermissionsRequired:
@@ -17177,13 +17194,13 @@ paths:
         free: true
         pro: true
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: ai-gateway.account-providers
+      x-fern-sdk-group-name: ai-gateway.custom-providers
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
+      x-forge-require-confirmation: This permanently deletes the custom provider and all of its pricing rules. Gateway requests that use `custom-{slug}` for this provider will stop routing.
     get:
       operationId: aig-config-fetch-account-provider
-      summary: Fetch a Account Provider
-      description: Retrieves details for a specific AI Gateway dataset.
+      summary: Get a custom provider
+      description: Retrieves a custom provider, including its slug, base URL, and custom headers.
       parameters:
         - name: account_id
           in: path
@@ -17223,8 +17240,10 @@ paths:
                       enable:
                         type: boolean
                       headers:
+                        description: JSON object of extra HTTP headers that AI Gateway sends to the provider. Values can contain credentials.
                         type: string
                         maxLength: 8192
+                        x-sensitive: true
                       id:
                         type: string
                         format: uuid
@@ -17287,7 +17306,7 @@ paths:
         - api_email: []
           api_key: []
       tags:
-        - AI Gateway Account Providers
+        - AI Gateway Custom Providers
       x-api-token-group:
         - AI Gateway Write
         - AI Gateway Read
@@ -17300,13 +17319,12 @@ paths:
         free: true
         pro: true
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: ai-gateway.account-providers
+      x-fern-sdk-group-name: ai-gateway.custom-providers
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
     patch:
       operationId: aig-config-update-account-provider
-      summary: Update a Account Provider
-      description: Updates an existing AI Gateway dataset.
+      summary: Update a custom provider
+      description: Updates the specified fields of a custom provider. Changes clear cached entries for the provider.
       parameters:
         - name: account_id
           in: path
@@ -17338,8 +17356,10 @@ paths:
                 enable:
                   type: boolean
                 headers:
+                  description: JSON object of extra HTTP headers that AI Gateway sends to the provider. Values can contain credentials.
                   type: string
                   maxLength: 8192
+                  x-sensitive: true
                 js_example:
                   type: string
                 link:
@@ -17379,8 +17399,10 @@ paths:
                       enable:
                         type: boolean
                       headers:
+                        description: JSON object of extra HTTP headers that AI Gateway sends to the provider. Values can contain credentials.
                         type: string
                         maxLength: 8192
+                        x-sensitive: true
                       id:
                         type: string
                         format: uuid
@@ -17475,7 +17497,7 @@ paths:
         - api_email: []
           api_key: []
       tags:
-        - AI Gateway Account Providers
+        - AI Gateway Custom Providers
       x-api-token-group:
         - AI Gateway Write
       x-cfPermissionsRequired:
@@ -17487,14 +17509,26 @@ paths:
         free: true
         pro: true
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: ai-gateway.account-providers
+      x-fern-sdk-group-name: ai-gateway.custom-providers
       x-fern-sdk-method-name: update
-      x-forge-hidden: true
+      x-forge-params:
+        beta:
+          hidden: true
+        curl_example:
+          hidden: true
+        js_example:
+          hidden: true
+        link:
+          hidden: true
+        logo:
+          hidden: true
+        position:
+          hidden: true
   /accounts/{account_id}/ai-gateway/custom-providers/costs:
     get:
       operationId: aig-config-list-account-provider-cost
-      summary: List Account Provider Costs
-      description: Lists all AI Gateway evaluator types configured for the account.
+      summary: List custom provider pricing rules
+      description: Lists the pricing rules for custom providers in the account, most recently modified first.
       parameters:
         - name: account_id
           in: path
@@ -17522,8 +17556,10 @@ paths:
         - name: account_provider_id
           in: query
           schema:
+            description: Only return pricing rules for this custom provider ID.
             type: string
             format: uuid
+          x-fern-parameter-name: custom-provider-id
         - name: model_rule
           in: query
           schema:
@@ -17634,7 +17670,7 @@ paths:
         - api_email: []
           api_key: []
       tags:
-        - AI Gateway Account Provider Costs
+        - AI Gateway Custom Provider Costs
       x-api-token-group:
         - AI Gateway Write
         - AI Gateway Read
@@ -17647,13 +17683,13 @@ paths:
         free: true
         pro: true
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: ai-gateway.account-providers.costs
+      x-fern-ignore: true
+      x-fern-sdk-group-name: ai-gateway.custom-providers.costs
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
     post:
       operationId: aig-config-create-account-provider-cost
-      summary: Create a new Account Provider Cost
-      description: Creates a new AI Gateway.
+      summary: Create a custom provider pricing rule
+      description: Creates a pricing rule that sets per-token costs for models matched on a custom provider. AI Gateway uses these rules to calculate request costs.
       parameters:
         - name: account_id
           in: path
@@ -17668,8 +17704,10 @@ paths:
               type: object
               properties:
                 account_provider_id:
+                  description: ID of the custom provider that the pricing rule applies to.
                   type: string
                   format: uuid
+                  x-fern-property-name: custom-provider-id
                 cost_in:
                   type: number
                 cost_out:
@@ -17814,7 +17852,7 @@ paths:
         - api_email: []
           api_key: []
       tags:
-        - AI Gateway Account Provider Costs
+        - AI Gateway Custom Provider Costs
       x-api-token-group:
         - AI Gateway Write
       x-cfPermissionsRequired:
@@ -17826,14 +17864,14 @@ paths:
         free: true
         pro: true
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: ai-gateway.account-providers.costs
+      x-fern-ignore: true
+      x-fern-sdk-group-name: ai-gateway.custom-providers.costs
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
   /accounts/{account_id}/ai-gateway/custom-providers/costs/{id}:
     delete:
       operationId: aig-config-delete-account-provider-cost
-      summary: Delete a Account Provider Cost
-      description: Deletes an AI Gateway dataset.
+      summary: Delete a custom provider pricing rule
+      description: Deletes a custom provider pricing rule. Requests to the matched model stop using its prices.
       parameters:
         - name: account_id
           in: path
@@ -17937,7 +17975,7 @@ paths:
         - api_email: []
           api_key: []
       tags:
-        - AI Gateway Account Provider Costs
+        - AI Gateway Custom Provider Costs
       x-api-token-group:
         - AI Gateway Write
       x-cfPermissionsRequired:
@@ -17949,13 +17987,14 @@ paths:
         free: true
         pro: true
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: ai-gateway.account-providers.costs
+      x-fern-ignore: true
+      x-fern-sdk-group-name: ai-gateway.custom-providers.costs
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
+      x-forge-require-confirmation: This permanently deletes the pricing rule. Cost calculations for the matched model will no longer use its prices.
     get:
       operationId: aig-config-fetch-account-provider-cost
-      summary: Fetch a Account Provider Cost
-      description: Retrieves details for a specific AI Gateway dataset.
+      summary: Get a custom provider pricing rule
+      description: Retrieves a custom provider pricing rule, including its model match rule and token prices.
       parameters:
         - name: account_id
           in: path
@@ -18059,7 +18098,7 @@ paths:
         - api_email: []
           api_key: []
       tags:
-        - AI Gateway Account Provider Costs
+        - AI Gateway Custom Provider Costs
       x-api-token-group:
         - AI Gateway Write
         - AI Gateway Read
@@ -18072,13 +18111,13 @@ paths:
         free: true
         pro: true
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: ai-gateway.account-providers.costs
+      x-fern-ignore: true
+      x-fern-sdk-group-name: ai-gateway.custom-providers.costs
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
     patch:
       operationId: aig-config-update-account-provider-cost
-      summary: Update a Account Provider Cost
-      description: Updates an existing AI Gateway dataset.
+      summary: Update a custom provider pricing rule
+      description: Updates the specified fields of a custom provider pricing rule. Changes clear cached costs for the matched model.
       parameters:
         - name: account_id
           in: path
@@ -18265,7 +18304,7 @@ paths:
         - api_email: []
           api_key: []
       tags:
-        - AI Gateway Account Provider Costs
+        - AI Gateway Custom Provider Costs
       x-api-token-group:
         - AI Gateway Write
       x-cfPermissionsRequired:
@@ -18277,14 +18316,14 @@ paths:
         free: true
         pro: true
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: ai-gateway.account-providers.costs
+      x-fern-ignore: true
+      x-fern-sdk-group-name: ai-gateway.custom-providers.costs
       x-fern-sdk-method-name: update
-      x-forge-hidden: true
   /accounts/{account_id}/ai-gateway/evaluation-types:
     get:
       operationId: aig-config-list-evaluators
-      summary: List Evaluators
-      description: Lists all available evaluator types for scoring AI gateway responses.
+      summary: List evaluator types (deprecated)
+      description: Lists the evaluator types that evaluations can use to score AI Gateway responses. Evaluations are deprecated and unavailable to new accounts.
       parameters:
         - name: account_id
           in: path
@@ -18422,15 +18461,14 @@ paths:
         enterprise: true
         free: true
         pro: true
-      x-fern-availability: generally-available
+      x-fern-availability: deprecated
       x-fern-sdk-group-name: ai-gateway.evaluation-types
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
   /accounts/{account_id}/ai-gateway/gateways:
     get:
       operationId: aig-config-list-gateway
-      summary: List Gateways
-      description: Lists all AI Gateway evaluator types configured for the account.
+      summary: List gateways
+      description: Lists the AI Gateways in the account. Use `search` to filter by gateway ID.
       parameters:
         - name: account_id
           in: path
@@ -18703,7 +18741,7 @@ paths:
                             - response
                           x-auditable: true
                         id:
-                          description: gateway id
+                          description: Unique identifier of the AI Gateway within the account.
                           type: string
                           example: my-gateway
                           maxLength: 64
@@ -19007,11 +19045,10 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: ai-gateway.gateways
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
     post:
       operationId: aig-config-create-gateway
-      summary: Create a new Gateway
-      description: Creates a new AI Gateway.
+      summary: Create a gateway
+      description: Creates an AI Gateway in the account with the specified caching, rate limiting, logging, and authentication settings. The gateway ID appears in request URLs and must be unique within the account.
       parameters:
         - name: account_id
           in: path
@@ -19046,7 +19083,7 @@ paths:
                   type: boolean
                   x-auditable: true
                 id:
-                  description: gateway id
+                  description: Unique identifier of the AI Gateway within the account.
                   type: string
                   example: my-gateway
                   maxLength: 64
@@ -19387,7 +19424,7 @@ paths:
                           - response
                         x-auditable: true
                       id:
-                        description: gateway id
+                        description: Unique identifier of the AI Gateway within the account.
                         type: string
                         example: my-gateway
                         maxLength: 64
@@ -19696,12 +19733,11 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: ai-gateway.gateways
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
   /accounts/{account_id}/ai-gateway/gateways/{gateway_id}/custom-domains:
     get:
       operationId: aig-config-list-custom-domain
-      summary: List Custom Domains
-      description: Lists all AI Gateway evaluator types configured for the account.
+      summary: List custom domains
+      description: Lists the custom domains attached to an AI Gateway, including the certificate and validation status of each domain.
       parameters:
         - name: account_id
           in: path
@@ -19713,7 +19749,7 @@ paths:
           in: path
           required: true
           schema:
-            description: gateway id
+            description: Unique identifier of the AI Gateway within the account.
             type: string
             example: my-gateway
             maxLength: 64
@@ -19766,7 +19802,7 @@ paths:
                           type: integer
                           example: 1717459200000
                         gateway_id:
-                          description: gateway id
+                          description: Unique identifier of the AI Gateway within the account.
                           type: string
                           example: my-gateway
                           maxLength: 64
@@ -19774,7 +19810,7 @@ paths:
                           pattern: ^[a-z0-9_]+(?:-[a-z0-9_]+)*$
                           x-auditable: true
                         hostname:
-                          description: the customer-owned custom hostname
+                          description: Custom hostname that you own, such as `ai.example.com`.
                           type: string
                           example: ai.acme.com
                           maxLength: 253
@@ -19856,7 +19892,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: ai-gateway.custom-domains
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
     post:
       operationId: aig-config-create-custom-domain
       summary: Create a custom domain for a gateway
@@ -19872,7 +19907,7 @@ paths:
           in: path
           required: true
           schema:
-            description: gateway id
+            description: Unique identifier of the AI Gateway within the account.
             type: string
             example: my-gateway
             maxLength: 64
@@ -19886,7 +19921,7 @@ paths:
               type: object
               properties:
                 domain:
-                  description: the customer-owned custom hostname
+                  description: Custom hostname that you own, such as `ai.example.com`.
                   type: string
                   example: ai.acme.com
                   maxLength: 253
@@ -19902,7 +19937,7 @@ paths:
                     - '1.3'
                   x-auditable: true
                 zone_id:
-                  description: Cloudflare Zone ID owning the custom hostname
+                  description: ID of the Cloudflare zone that contains the custom hostname.
                   type: string
                   example: 395566f4c8a5b9d2a5fc0d457b007c44
                   pattern: ^[0-9a-f]{32}$
@@ -20001,12 +20036,11 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: ai-gateway.custom-domains
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
   /accounts/{account_id}/ai-gateway/gateways/{gateway_id}/custom-domains/{hostname}:
     delete:
       operationId: aig-config-delete-custom-domain
-      summary: Delete a Custom Domain
-      description: Deletes an AI Gateway dataset.
+      summary: Delete a custom domain
+      description: Deletes a custom domain from an AI Gateway and removes its Cloudflare for SaaS custom hostname.
       parameters:
         - name: account_id
           in: path
@@ -20018,7 +20052,7 @@ paths:
           in: path
           required: true
           schema:
-            description: gateway id
+            description: Unique identifier of the AI Gateway within the account.
             type: string
             example: my-gateway
             maxLength: 64
@@ -20029,7 +20063,7 @@ paths:
           in: path
           required: true
           schema:
-            description: the customer-owned custom hostname
+            description: Custom hostname that you own, such as `ai.example.com`.
             type: string
             example: ai.acme.com
             maxLength: 253
@@ -20052,7 +20086,7 @@ paths:
                         type: integer
                         example: 1717459200000
                       gateway_id:
-                        description: gateway id
+                        description: Unique identifier of the AI Gateway within the account.
                         type: string
                         example: my-gateway
                         maxLength: 64
@@ -20060,7 +20094,7 @@ paths:
                         pattern: ^[a-z0-9_]+(?:-[a-z0-9_]+)*$
                         x-auditable: true
                       hostname:
-                        description: the customer-owned custom hostname
+                        description: Custom hostname that you own, such as `ai.example.com`.
                         type: string
                         example: ai.acme.com
                         maxLength: 253
@@ -20141,11 +20175,11 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: ai-gateway.custom-domains
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
+      x-forge-require-confirmation: This deletes the custom domain and its custom hostname. Requests to this hostname will stop reaching the gateway.
     get:
       operationId: aig-config-fetch-custom-domain
-      summary: Fetch a Custom Domain
-      description: Retrieves details for a specific AI Gateway dataset.
+      summary: Get a custom domain
+      description: Retrieves a custom domain attached to an AI Gateway, including its status and CNAME target.
       parameters:
         - name: account_id
           in: path
@@ -20157,7 +20191,7 @@ paths:
           in: path
           required: true
           schema:
-            description: gateway id
+            description: Unique identifier of the AI Gateway within the account.
             type: string
             example: my-gateway
             maxLength: 64
@@ -20168,7 +20202,7 @@ paths:
           in: path
           required: true
           schema:
-            description: the customer-owned custom hostname
+            description: Custom hostname that you own, such as `ai.example.com`.
             type: string
             example: ai.acme.com
             maxLength: 253
@@ -20191,7 +20225,7 @@ paths:
                         type: integer
                         example: 1717459200000
                       gateway_id:
-                        description: gateway id
+                        description: Unique identifier of the AI Gateway within the account.
                         type: string
                         example: my-gateway
                         maxLength: 64
@@ -20199,7 +20233,7 @@ paths:
                         pattern: ^[a-z0-9_]+(?:-[a-z0-9_]+)*$
                         x-auditable: true
                       hostname:
-                        description: the customer-owned custom hostname
+                        description: Custom hostname that you own, such as `ai.example.com`.
                         type: string
                         example: ai.acme.com
                         maxLength: 253
@@ -20281,12 +20315,11 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: ai-gateway.custom-domains
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
   /accounts/{account_id}/ai-gateway/gateways/{gateway_id}/datasets:
     get:
       operationId: aig-config-list-dataset
-      summary: List Datasets
-      description: Lists all AI Gateway evaluator types configured for the account.
+      summary: List datasets (deprecated)
+      description: Lists the datasets defined for an AI Gateway. Evaluations and datasets are deprecated and unavailable to new accounts.
       parameters:
         - name: account_id
           in: path
@@ -20298,7 +20331,7 @@ paths:
           in: path
           required: true
           schema:
-            description: gateway id
+            description: Unique identifier of the AI Gateway within the account.
             type: string
             example: my-gateway
             maxLength: 64
@@ -20395,7 +20428,7 @@ paths:
                             type: object
                           x-auditable: true
                         gateway_id:
-                          description: gateway id
+                          description: Unique identifier of the AI Gateway within the account.
                           type: string
                           example: my-gateway
                           maxLength: 64
@@ -20467,20 +20500,19 @@ paths:
         enterprise: true
         free: true
         pro: true
-      x-fern-availability: generally-available
+      x-fern-availability: deprecated
       x-fern-sdk-group-name: ai-gateway.datasets
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
     post:
       operationId: aig-config-create-dataset
-      summary: Create a new Dataset
-      description: Creates a new AI Gateway.
+      summary: Create a dataset (deprecated)
+      description: Creates a dataset that selects gateway logs matching the specified filters for use in evaluations. Evaluations and datasets are deprecated and unavailable to new accounts.
       parameters:
         - name: gateway_id
           in: path
           required: true
           schema:
-            description: gateway id
+            description: Unique identifier of the AI Gateway within the account.
             type: string
             example: my-gateway
             maxLength: 64
@@ -20613,7 +20645,7 @@ paths:
                           type: object
                         x-auditable: true
                       gateway_id:
-                        description: gateway id
+                        description: Unique identifier of the AI Gateway within the account.
                         type: string
                         example: my-gateway
                         maxLength: 64
@@ -20690,15 +20722,14 @@ paths:
         enterprise: true
         free: true
         pro: true
-      x-fern-availability: generally-available
+      x-fern-availability: deprecated
       x-fern-sdk-group-name: ai-gateway.datasets
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
   /accounts/{account_id}/ai-gateway/gateways/{gateway_id}/datasets/{id}:
     delete:
       operationId: aig-config-delete-dataset
-      summary: Delete a Dataset
-      description: Deletes an AI Gateway dataset.
+      summary: Delete a dataset (deprecated)
+      description: Deletes a dataset. Evaluations and datasets are deprecated and unavailable to new accounts.
       parameters:
         - name: account_id
           in: path
@@ -20710,7 +20741,7 @@ paths:
           in: path
           required: true
           schema:
-            description: gateway id
+            description: Unique identifier of the AI Gateway within the account.
             type: string
             example: my-gateway
             maxLength: 64
@@ -20784,7 +20815,7 @@ paths:
                           type: object
                         x-auditable: true
                       gateway_id:
-                        description: gateway id
+                        description: Unique identifier of the AI Gateway within the account.
                         type: string
                         example: my-gateway
                         maxLength: 64
@@ -20855,14 +20886,13 @@ paths:
         enterprise: true
         free: true
         pro: true
-      x-fern-availability: generally-available
+      x-fern-availability: deprecated
       x-fern-sdk-group-name: ai-gateway.datasets
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
     get:
       operationId: aig-config-fetch-dataset
-      summary: Fetch a Dataset
-      description: Retrieves details for a specific AI Gateway dataset.
+      summary: Get a dataset (deprecated)
+      description: Retrieves a dataset and its log filters. Evaluations and datasets are deprecated and unavailable to new accounts.
       parameters:
         - name: account_id
           in: path
@@ -20874,7 +20904,7 @@ paths:
           in: path
           required: true
           schema:
-            description: gateway id
+            description: Unique identifier of the AI Gateway within the account.
             type: string
             example: my-gateway
             maxLength: 64
@@ -20948,7 +20978,7 @@ paths:
                           type: object
                         x-auditable: true
                       gateway_id:
-                        description: gateway id
+                        description: Unique identifier of the AI Gateway within the account.
                         type: string
                         example: my-gateway
                         maxLength: 64
@@ -21020,14 +21050,13 @@ paths:
         enterprise: true
         free: true
         pro: true
-      x-fern-availability: generally-available
+      x-fern-availability: deprecated
       x-fern-sdk-group-name: ai-gateway.datasets
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
     put:
       operationId: aig-config-update-dataset
-      summary: Update a Dataset
-      description: Updates an existing AI Gateway dataset.
+      summary: Update a dataset (deprecated)
+      description: Replaces the name, log filters, and enabled state of a dataset. Evaluations and datasets are deprecated and unavailable to new accounts.
       parameters:
         - name: account_id
           in: path
@@ -21039,7 +21068,7 @@ paths:
           in: path
           required: true
           schema:
-            description: gateway id
+            description: Unique identifier of the AI Gateway within the account.
             type: string
             example: my-gateway
             maxLength: 64
@@ -21172,7 +21201,7 @@ paths:
                           type: object
                         x-auditable: true
                       gateway_id:
-                        description: gateway id
+                        description: Unique identifier of the AI Gateway within the account.
                         type: string
                         example: my-gateway
                         maxLength: 64
@@ -21275,15 +21304,14 @@ paths:
         enterprise: true
         free: true
         pro: true
-      x-fern-availability: generally-available
+      x-fern-availability: deprecated
       x-fern-sdk-group-name: ai-gateway.datasets
       x-fern-sdk-method-name: update
-      x-forge-hidden: true
   /accounts/{account_id}/ai-gateway/gateways/{gateway_id}/evaluations:
     get:
       operationId: aig-config-list-evaluations
-      summary: List Evaluations
-      description: Lists all AI Gateway evaluator types configured for the account.
+      summary: List evaluations (deprecated)
+      description: Lists the evaluations run on an AI Gateway. Evaluations and datasets are deprecated and unavailable to new accounts.
       parameters:
         - name: account_id
           in: path
@@ -21295,7 +21323,7 @@ paths:
           in: path
           required: true
           schema:
-            description: gateway id
+            description: Unique identifier of the AI Gateway within the account.
             type: string
             example: my-gateway
             maxLength: 64
@@ -21403,7 +21431,7 @@ paths:
                                   type: object
                                 x-auditable: true
                               gateway_id:
-                                description: gateway id
+                                description: Unique identifier of the AI Gateway within the account.
                                 type: string
                                 example: my-gateway
                                 maxLength: 64
@@ -21431,7 +21459,7 @@ paths:
                               - modified_at
                             type: object
                         gateway_id:
-                          description: gateway id
+                          description: Unique identifier of the AI Gateway within the account.
                           type: string
                           example: my-gateway
                           maxLength: 64
@@ -21546,20 +21574,19 @@ paths:
         enterprise: true
         free: true
         pro: true
-      x-fern-availability: generally-available
+      x-fern-availability: deprecated
       x-fern-sdk-group-name: ai-gateway.evaluations
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
     post:
       operationId: aig-config-create-evaluations
-      summary: Create a new Evaluation
-      description: Creates a new AI Gateway.
+      summary: Create an evaluation (deprecated)
+      description: Creates an evaluation that scores the logs in a dataset with the specified evaluator types. Evaluations and datasets are deprecated and unavailable to new accounts.
       parameters:
         - name: gateway_id
           in: path
           required: true
           schema:
-            description: gateway id
+            description: Unique identifier of the AI Gateway within the account.
             type: string
             example: my-gateway
             maxLength: 64
@@ -21667,7 +21694,7 @@ paths:
                                 type: object
                               x-auditable: true
                             gateway_id:
-                              description: gateway id
+                              description: Unique identifier of the AI Gateway within the account.
                               type: string
                               example: my-gateway
                               maxLength: 64
@@ -21695,7 +21722,7 @@ paths:
                             - modified_at
                           type: object
                       gateway_id:
-                        description: gateway id
+                        description: Unique identifier of the AI Gateway within the account.
                         type: string
                         example: my-gateway
                         maxLength: 64
@@ -21815,15 +21842,14 @@ paths:
         enterprise: true
         free: true
         pro: true
-      x-fern-availability: generally-available
+      x-fern-availability: deprecated
       x-fern-sdk-group-name: ai-gateway.evaluations
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
   /accounts/{account_id}/ai-gateway/gateways/{gateway_id}/evaluations/{id}:
     delete:
       operationId: aig-config-delete-evaluations
-      summary: Delete a Evaluation
-      description: Deletes an AI Gateway dataset.
+      summary: Delete an evaluation (deprecated)
+      description: Deletes an evaluation and its results. Evaluations and datasets are deprecated and unavailable to new accounts.
       parameters:
         - name: account_id
           in: path
@@ -21835,7 +21861,7 @@ paths:
           in: path
           required: true
           schema:
-            description: gateway id
+            description: Unique identifier of the AI Gateway within the account.
             type: string
             example: my-gateway
             maxLength: 64
@@ -21920,7 +21946,7 @@ paths:
                                 type: object
                               x-auditable: true
                             gateway_id:
-                              description: gateway id
+                              description: Unique identifier of the AI Gateway within the account.
                               type: string
                               example: my-gateway
                               maxLength: 64
@@ -21948,7 +21974,7 @@ paths:
                             - modified_at
                           type: object
                       gateway_id:
-                        description: gateway id
+                        description: Unique identifier of the AI Gateway within the account.
                         type: string
                         example: my-gateway
                         maxLength: 64
@@ -22062,14 +22088,13 @@ paths:
         enterprise: true
         free: true
         pro: true
-      x-fern-availability: generally-available
+      x-fern-availability: deprecated
       x-fern-sdk-group-name: ai-gateway.evaluations
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
     get:
       operationId: aig-config-fetch-evaluations
-      summary: Fetch a Evaluation
-      description: Retrieves details for a specific AI Gateway dataset.
+      summary: Get an evaluation (deprecated)
+      description: Retrieves an evaluation and its results. Evaluations and datasets are deprecated and unavailable to new accounts.
       parameters:
         - name: account_id
           in: path
@@ -22081,7 +22106,7 @@ paths:
           in: path
           required: true
           schema:
-            description: gateway id
+            description: Unique identifier of the AI Gateway within the account.
             type: string
             example: my-gateway
             maxLength: 64
@@ -22166,7 +22191,7 @@ paths:
                                 type: object
                               x-auditable: true
                             gateway_id:
-                              description: gateway id
+                              description: Unique identifier of the AI Gateway within the account.
                               type: string
                               example: my-gateway
                               maxLength: 64
@@ -22194,7 +22219,7 @@ paths:
                             - modified_at
                           type: object
                       gateway_id:
-                        description: gateway id
+                        description: Unique identifier of the AI Gateway within the account.
                         type: string
                         example: my-gateway
                         maxLength: 64
@@ -22309,10 +22334,9 @@ paths:
         enterprise: true
         free: true
         pro: true
-      x-fern-availability: generally-available
+      x-fern-availability: deprecated
       x-fern-sdk-group-name: ai-gateway.evaluations
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
   /accounts/{account_id}/ai-gateway/gateways/{gateway_id}/logs:
     delete:
       operationId: aig-config-delete-gateway-logs
@@ -22329,7 +22353,7 @@ paths:
           in: path
           required: true
           schema:
-            description: gateway id
+            description: Unique identifier of the AI Gateway within the account.
             type: string
             example: my-gateway
             maxLength: 64
@@ -22479,7 +22503,7 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: ai-gateway.logs
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
+      x-forge-require-confirmation: This permanently deletes every stored log entry on the gateway that matches the filters. Deleted logs cannot be recovered.
     get:
       operationId: aig-config-list-gateway-logs
       summary: List Gateway Logs
@@ -22495,7 +22519,7 @@ paths:
           in: path
           required: true
           schema:
-            description: gateway id
+            description: Unique identifier of the AI Gateway within the account.
             type: string
             example: my-gateway
             maxLength: 64
@@ -22866,7 +22890,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: ai-gateway.logs
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
   /accounts/{account_id}/ai-gateway/gateways/{gateway_id}/logs/{id}:
     get:
       operationId: aig-config-get-gateway-log-detail
@@ -22882,7 +22905,7 @@ paths:
           in: path
           required: true
           schema:
-            description: gateway id
+            description: Unique identifier of the AI Gateway within the account.
             type: string
             example: my-gateway
             maxLength: 64
@@ -23021,7 +23044,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: ai-gateway.logs
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
     patch:
       operationId: aig-config-patch-gateway-log
       summary: Patch Gateway Log
@@ -23036,7 +23058,7 @@ paths:
           in: path
           required: true
           schema:
-            description: gateway id
+            description: Unique identifier of the AI Gateway within the account.
             type: string
             example: my-gateway
             maxLength: 64
@@ -23132,8 +23154,7 @@ paths:
         pro: true
       x-fern-availability: generally-available
       x-fern-sdk-group-name: ai-gateway.logs
-      x-fern-sdk-method-name: edit
-      x-forge-hidden: true
+      x-fern-sdk-method-name: update
   /accounts/{account_id}/ai-gateway/gateways/{gateway_id}/logs/{id}/request:
     get:
       operationId: aig-config-get-gateway-log-request
@@ -23149,7 +23170,7 @@ paths:
           in: path
           required: true
           schema:
-            description: gateway id
+            description: Unique identifier of the AI Gateway within the account.
             type: string
             example: my-gateway
             maxLength: 64
@@ -23214,8 +23235,7 @@ paths:
         pro: true
       x-fern-availability: generally-available
       x-fern-sdk-group-name: ai-gateway.logs
-      x-fern-sdk-method-name: request
-      x-forge-hidden: true
+      x-fern-sdk-method-name: get-request
   /accounts/{account_id}/ai-gateway/gateways/{gateway_id}/logs/{id}/response:
     get:
       operationId: aig-config-get-gateway-log-response
@@ -23231,7 +23251,7 @@ paths:
           in: path
           required: true
           schema:
-            description: gateway id
+            description: Unique identifier of the AI Gateway within the account.
             type: string
             example: my-gateway
             maxLength: 64
@@ -23296,13 +23316,12 @@ paths:
         pro: true
       x-fern-availability: generally-available
       x-fern-sdk-group-name: ai-gateway.logs
-      x-fern-sdk-method-name: response
-      x-forge-hidden: true
+      x-fern-sdk-method-name: get-response
   /accounts/{account_id}/ai-gateway/gateways/{gateway_id}/provider_configs:
     get:
       operationId: aig-config-list-providers
-      summary: List Provider Configs
-      description: Lists all AI Gateway evaluator types configured for the account.
+      summary: List provider keys
+      description: Lists the provider keys stored for an AI Gateway. Responses show a masked preview of each key, never the key itself.
       parameters:
         - name: account_id
           in: path
@@ -23314,7 +23333,7 @@ paths:
           in: path
           required: true
           schema:
-            description: gateway id
+            description: Unique identifier of the AI Gateway within the account.
             type: string
             example: my-gateway
             maxLength: 64
@@ -23351,7 +23370,7 @@ paths:
                         default_config:
                           type: boolean
                         gateway_id:
-                          description: gateway id
+                          description: Unique identifier of the AI Gateway within the account.
                           type: string
                           example: my-gateway
                           maxLength: 64
@@ -23431,11 +23450,10 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: ai-gateway.gateways.providers
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
     post:
       operationId: aig-config-create-providers
-      summary: Create a new Provider Configs
-      description: Creates a new AI Gateway.
+      summary: Store a provider key
+      description: Stores an upstream AI provider API key for an AI Gateway in the Secrets Store configured on the gateway, with an optional rate limit. Pass `secret` to store a new key, or omit it to use an existing Secrets Store secret.
       parameters:
         - name: account_id
           in: path
@@ -23447,7 +23465,7 @@ paths:
           in: path
           required: true
           schema:
-            description: gateway id
+            description: Unique identifier of the AI Gateway within the account.
             type: string
             example: my-gateway
             maxLength: 64
@@ -23472,7 +23490,9 @@ paths:
                   type: number
                   default: 60
                 secret:
+                  description: Provider API key to store in the Secrets Store configured on the gateway.
                   type: string
+                  x-sensitive: true
                 secret_id:
                   type: string
               required:
@@ -23495,7 +23515,7 @@ paths:
                       default_config:
                         type: boolean
                       gateway_id:
-                        description: gateway id
+                        description: Unique identifier of the AI Gateway within the account.
                         type: string
                         example: my-gateway
                         maxLength: 64
@@ -23583,12 +23603,11 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: ai-gateway.gateways.providers
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
   /accounts/{account_id}/ai-gateway/gateways/{gateway_id}/provider_configs/{id}:
     delete:
       operationId: aig-config-delete-providers
-      summary: Delete a Provider Configs
-      description: Deletes an AI Gateway dataset.
+      summary: Delete a provider key
+      description: Deletes a provider key configuration from an AI Gateway and deletes its secret from the Secrets Store.
       parameters:
         - name: account_id
           in: path
@@ -23600,7 +23619,7 @@ paths:
           in: path
           required: true
           schema:
-            description: gateway id
+            description: Unique identifier of the AI Gateway within the account.
             type: string
             example: my-gateway
             maxLength: 64
@@ -23628,7 +23647,7 @@ paths:
                       default_config:
                         type: boolean
                       gateway_id:
-                        description: gateway id
+                        description: Unique identifier of the AI Gateway within the account.
                         type: string
                         example: my-gateway
                         maxLength: 64
@@ -23710,11 +23729,11 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: ai-gateway.gateways.providers
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
+      x-forge-require-confirmation: This deletes the stored provider key and its Secrets Store secret. Requests that rely on this key will stop authenticating with it.
     put:
       operationId: aig-config-update-providers
-      summary: Update a Provider Configs
-      description: Updates an existing AI Gateway dataset.
+      summary: Rotate a provider key
+      description: Replaces the stored API key of a provider key configuration. Only the key can change.
       parameters:
         - name: account_id
           in: path
@@ -23726,7 +23745,7 @@ paths:
           in: path
           required: true
           schema:
-            description: gateway id
+            description: Unique identifier of the AI Gateway within the account.
             type: string
             example: my-gateway
             maxLength: 64
@@ -23745,7 +23764,9 @@ paths:
               type: object
               properties:
                 secret:
+                  description: Provider API key to store in the Secrets Store configured on the gateway.
                   type: string
+                  x-sensitive: true
               required:
                 - secret
       responses:
@@ -23764,7 +23785,7 @@ paths:
                       default_config:
                         type: boolean
                       gateway_id:
-                        description: gateway id
+                        description: Unique identifier of the AI Gateway within the account.
                         type: string
                         example: my-gateway
                         maxLength: 64
@@ -23878,12 +23899,11 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: ai-gateway.gateways.providers
       x-fern-sdk-method-name: update
-      x-forge-hidden: true
   /accounts/{account_id}/ai-gateway/gateways/{gateway_id}/routes:
     get:
       operationId: aig-config-list-gateway-dynamic-routes
-      summary: List all AI Gateway Dynamic Routes.
-      description: List all AI Gateway Dynamic Routes.
+      summary: List dynamic routes
+      description: Lists the dynamic routes configured on an AI Gateway.
       parameters:
         - name: account_id
           in: path
@@ -24256,14 +24276,13 @@ paths:
         enterprise: true
         free: true
         pro: true
-      x-fern-availability: generally-available
+      x-fern-availability: beta
       x-fern-sdk-group-name: ai-gateway.dynamic-routing
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
     post:
       operationId: aig-config-post-gateway-dynamic-route
-      summary: Create a new AI Gateway Dynamic Route.
-      description: Create a new AI Gateway Dynamic Route.
+      summary: Create a dynamic route
+      description: Creates a dynamic route on an AI Gateway from the specified routing elements. Clients call the route by using `dynamic/{name}` as the model name.
       parameters:
         - name: account_id
           in: path
@@ -24820,15 +24839,14 @@ paths:
         enterprise: true
         free: true
         pro: true
-      x-fern-availability: generally-available
+      x-fern-availability: beta
       x-fern-sdk-group-name: ai-gateway.dynamic-routing
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
   /accounts/{account_id}/ai-gateway/gateways/{gateway_id}/routes/{id}:
     delete:
       operationId: aig-config-delete-gateway-dynamic-route
-      summary: Delete an AI Gateway Dynamic Route.
-      description: Delete an AI Gateway Dynamic Route.
+      summary: Delete a dynamic route
+      description: Deletes a dynamic route from an AI Gateway.
       parameters:
         - name: account_id
           in: path
@@ -25134,14 +25152,13 @@ paths:
         enterprise: true
         free: true
         pro: true
-      x-fern-availability: generally-available
+      x-fern-availability: beta
       x-fern-sdk-group-name: ai-gateway.dynamic-routing
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
     get:
       operationId: aig-config-get-gateway-dynamic-route
-      summary: Get an AI Gateway Dynamic Route.
-      description: Get an AI Gateway Dynamic Route.
+      summary: Get a dynamic route
+      description: Retrieves a dynamic route with its routing elements, active version, and current deployment.
       parameters:
         - name: account_id
           in: path
@@ -25484,14 +25501,13 @@ paths:
         enterprise: true
         free: true
         pro: true
-      x-fern-availability: generally-available
+      x-fern-availability: beta
       x-fern-sdk-group-name: ai-gateway.dynamic-routing
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
     patch:
       operationId: aig-config-update-gateway-dynamic-route
-      summary: Update an AI Gateway Dynamic Route.
-      description: Update an AI Gateway Dynamic Route.
+      summary: Rename a dynamic route
+      description: Updates the name of a dynamic route. To change routing behaviour, create and deploy a new version.
       parameters:
         - name: account_id
           in: path
@@ -26070,15 +26086,14 @@ paths:
         enterprise: true
         free: true
         pro: true
-      x-fern-availability: generally-available
+      x-fern-availability: beta
       x-fern-sdk-group-name: ai-gateway.dynamic-routing
       x-fern-sdk-method-name: update
-      x-forge-hidden: true
   /accounts/{account_id}/ai-gateway/gateways/{gateway_id}/routes/{id}/deployments:
     get:
       operationId: aig-config-list-gateway-dynamic-route-deployments
-      summary: List all AI Gateway Dynamic Route Deployments.
-      description: List all AI Gateway Dynamic Route Deployments.
+      summary: List dynamic route deployments
+      description: Lists the deployment history of a dynamic route.
       parameters:
         - name: account_id
           in: path
@@ -26185,14 +26200,13 @@ paths:
         enterprise: true
         free: true
         pro: true
-      x-fern-availability: generally-available
-      x-fern-sdk-group-name: ai-gateway.dynamic-routing
-      x-fern-sdk-method-name: list-deployments
-      x-forge-hidden: true
+      x-fern-availability: beta
+      x-fern-sdk-group-name: ai-gateway.dynamic-routing.deployments
+      x-fern-sdk-method-name: list
     post:
       operationId: aig-config-post-gateway-dynamic-route-deployment
-      summary: Create a new AI Gateway Dynamic Route Deployment.
-      description: Create a new AI Gateway Dynamic Route Deployment.
+      summary: Deploy a dynamic route version
+      description: Deploys the specified version of a dynamic route so that it serves traffic. Deploy an earlier version to roll back.
       parameters:
         - name: account_id
           in: path
@@ -26509,15 +26523,14 @@ paths:
         enterprise: true
         free: true
         pro: true
-      x-fern-availability: generally-available
-      x-fern-sdk-group-name: ai-gateway.dynamic-routing
-      x-fern-sdk-method-name: create-deployment
-      x-forge-hidden: true
+      x-fern-availability: beta
+      x-fern-sdk-group-name: ai-gateway.dynamic-routing.deployments
+      x-fern-sdk-method-name: create
   /accounts/{account_id}/ai-gateway/gateways/{gateway_id}/routes/{id}/versions:
     get:
       operationId: aig-config-list-gateway-dynamic-route-versions
-      summary: List all AI Gateway Dynamic Route Versions.
-      description: List all AI Gateway Dynamic Route Versions.
+      summary: List dynamic route versions
+      description: Lists the saved versions of a dynamic route.
       parameters:
         - name: account_id
           in: path
@@ -26632,14 +26645,13 @@ paths:
         enterprise: true
         free: true
         pro: true
-      x-fern-availability: generally-available
-      x-fern-sdk-group-name: ai-gateway.dynamic-routing
-      x-fern-sdk-method-name: list-versions
-      x-forge-hidden: true
+      x-fern-availability: beta
+      x-fern-sdk-group-name: ai-gateway.dynamic-routing.versions
+      x-fern-sdk-method-name: list
     post:
       operationId: aig-config-post-gateway-dynamic-route-version
-      summary: Create a new AI Gateway Dynamic Route Version.
-      description: Create a new AI Gateway Dynamic Route Version.
+      summary: Create a dynamic route version
+      description: Creates a new version of a dynamic route from the specified routing elements. The version does not serve traffic until you deploy it.
       parameters:
         - name: account_id
           in: path
@@ -27162,15 +27174,14 @@ paths:
         enterprise: true
         free: true
         pro: true
-      x-fern-availability: generally-available
-      x-fern-sdk-group-name: ai-gateway.dynamic-routing
-      x-fern-sdk-method-name: create-version
-      x-forge-hidden: true
+      x-fern-availability: beta
+      x-fern-sdk-group-name: ai-gateway.dynamic-routing.versions
+      x-fern-sdk-method-name: create
   /accounts/{account_id}/ai-gateway/gateways/{gateway_id}/routes/{id}/versions/{version_id}:
     get:
       operationId: aig-config-get-gateway-dynamic-route-version
-      summary: Get an AI Gateway Dynamic Route Version.
-      description: Get an AI Gateway Dynamic Route Version.
+      summary: Get a dynamic route version
+      description: Retrieves a saved version of a dynamic route, including its routing elements.
       parameters:
         - name: account_id
           in: path
@@ -27496,10 +27507,9 @@ paths:
         enterprise: true
         free: true
         pro: true
-      x-fern-availability: generally-available
-      x-fern-sdk-group-name: ai-gateway.dynamic-routing
-      x-fern-sdk-method-name: get-version
-      x-forge-hidden: true
+      x-fern-availability: beta
+      x-fern-sdk-group-name: ai-gateway.dynamic-routing.versions
+      x-fern-sdk-method-name: get
   /accounts/{account_id}/ai-gateway/gateways/{gateway_id}/url/{provider}:
     get:
       operationId: aig-config-get-gateway-url
@@ -27510,7 +27520,7 @@ paths:
           in: path
           required: true
           schema:
-            description: gateway id
+            description: Unique identifier of the AI Gateway within the account.
             type: string
             example: my-gateway
             maxLength: 64
@@ -27586,15 +27596,14 @@ paths:
         enterprise: true
         free: true
         pro: true
-      x-fern-availability: generally-available
-      x-fern-sdk-group-name: ai-gateway.urls
-      x-fern-sdk-method-name: get
-      x-forge-hidden: true
+      x-fern-availability: beta
+      x-fern-sdk-group-name: ai-gateway.gateways
+      x-fern-sdk-method-name: get-url
   /accounts/{account_id}/ai-gateway/gateways/{id}:
     delete:
       operationId: aig-config-delete-gateway
-      summary: Delete a Gateway
-      description: Deletes an AI Gateway dataset.
+      summary: Delete a gateway
+      description: Permanently deletes an AI Gateway, its configuration, and its stored logs.
       parameters:
         - name: account_id
           in: path
@@ -27606,13 +27615,14 @@ paths:
           in: path
           required: true
           schema:
-            description: gateway id
+            description: Unique identifier of the AI Gateway within the account.
             type: string
             example: my-gateway
             maxLength: 64
             minLength: 1
             pattern: ^[a-z0-9_]+(?:-[a-z0-9_]+)*$
             x-auditable: true
+          x-fern-parameter-name: gateway-id
       responses:
         '200':
           description: Returns the Object if it was successfully deleted
@@ -27859,7 +27869,7 @@ paths:
                           - response
                         x-auditable: true
                       id:
-                        description: gateway id
+                        description: Unique identifier of the AI Gateway within the account.
                         type: string
                         example: my-gateway
                         maxLength: 64
@@ -28162,11 +28172,11 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: ai-gateway.gateways
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
+      x-forge-require-confirmation: This permanently deletes the gateway, its configuration, and its stored logs. Requests sent to this gateway will fail. This action cannot be undone.
     get:
       operationId: aig-config-fetch-gateway
-      summary: Fetch a Gateway
-      description: Retrieves details for a specific AI Gateway dataset.
+      summary: Get a gateway
+      description: Retrieves the configuration of an AI Gateway.
       parameters:
         - name: account_id
           in: path
@@ -28178,13 +28188,14 @@ paths:
           in: path
           required: true
           schema:
-            description: gateway id
+            description: Unique identifier of the AI Gateway within the account.
             type: string
             example: my-gateway
             maxLength: 64
             minLength: 1
             pattern: ^[a-z0-9_]+(?:-[a-z0-9_]+)*$
             x-auditable: true
+          x-fern-parameter-name: gateway-id
       responses:
         '200':
           description: Returns a single object if found
@@ -28431,7 +28442,7 @@ paths:
                           - response
                         x-auditable: true
                       id:
-                        description: gateway id
+                        description: Unique identifier of the AI Gateway within the account.
                         type: string
                         example: my-gateway
                         maxLength: 64
@@ -28735,11 +28746,10 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: ai-gateway.gateways
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
     put:
       operationId: aig-config-update-gateway
-      summary: Update a Gateway
-      description: Updates an existing AI Gateway dataset.
+      summary: Update a gateway
+      description: Updates the configuration of an AI Gateway, such as its caching, rate limiting, logging, and authentication settings.
       parameters:
         - name: account_id
           in: path
@@ -28751,13 +28761,14 @@ paths:
           in: path
           required: true
           schema:
-            description: gateway id
+            description: Unique identifier of the AI Gateway within the account.
             type: string
             example: my-gateway
             maxLength: 64
             minLength: 1
             pattern: ^[a-z0-9_]+(?:-[a-z0-9_]+)*$
             x-auditable: true
+          x-fern-parameter-name: gateway-id
       requestBody:
         content:
           application/json:
@@ -29478,7 +29489,7 @@ paths:
                           - response
                         x-auditable: true
                       id:
-                        description: gateway id
+                        description: Unique identifier of the AI Gateway within the account.
                         type: string
                         example: my-gateway
                         maxLength: 64
@@ -29813,7 +29824,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: ai-gateway.gateways
       x-fern-sdk-method-name: update
-      x-forge-hidden: true
   /accounts/{account_id}/ai-gateway/logging-state:
     get:
       operationId: aig-config-get-logging-state
@@ -29925,6 +29935,7 @@ paths:
         enterprise: true
         free: true
         pro: true
+      x-fern-ignore: true
       x-fern-sdk-group-name: ai-gateway.logging-state
       x-fern-sdk-method-name: get
     patch:
@@ -30038,8 +30049,10 @@ paths:
         enterprise: true
         free: true
         pro: true
+      x-fern-ignore: true
       x-fern-sdk-group-name: ai-gateway.logging-state
       x-fern-sdk-method-name: update
+      x-forge-require-confirmation: This irreversibly migrates AI Gateway logging for the entire account from Legacy Logs to Workers Observability. You cannot switch the account back to Legacy Logs.
   /accounts/{account_id}/ai-search/instances:
     get:
       operationId: ai-search-list-instances
@@ -504013,22 +504026,28 @@ x-forge-commands:
   ai-gateway:
     description: Proxy, cache, rate-limit, and observe requests to AI providers — OpenAI, Anthropic, Workers AI, and more
     groups:
+      custom-domains:
+        description: Manage custom hostnames that route requests through an AI Gateway
+      custom-providers:
+        description: Manage account-level custom AI providers and their endpoint settings
       datasets:
-        description: Curated collections of gateway logs used as inputs for evaluations and fine-tuning
+        description: 'Deprecated: manage filtered collections of gateway logs used by evaluations'
       dynamic-routing:
         description: Route requests across multiple AI providers with fallback, load-balancing, and versioned deployments
+      dynamic-routing.deployments:
+        description: Deploy dynamic route versions and view deployment history
+      dynamic-routing.versions:
+        description: Create and inspect saved versions of a dynamic route
       evaluation-types:
-        description: Available evaluator types for scoring AI gateway responses (accuracy, toxicity, etc.)
+        description: 'Deprecated: list the evaluator types that evaluations can use'
       evaluations:
-        description: Run quality evaluations against gateway logs or datasets to score model outputs
-      logging-state:
-        description: Inspect and migrate the logging platform used by an AI Gateway account
+        description: 'Deprecated: score the logs in a dataset with selected evaluator types'
+      gateways:
+        description: Create and configure AI Gateways for an account
+      gateways.providers:
+        description: Store and rotate upstream AI provider keys for a gateway
       logs:
-        description: Inspect individual request/response pairs that passed through the gateway
-      provider-configs:
-        description: Store API keys and endpoint settings for each upstream AI provider
-      urls:
-        description: Retrieve the gateway's proxy URL used by clients to send inference requests
+        description: Inspect, annotate, and delete gateway request logs stored by Legacy Logs
   ai-search:
     description: 'Managed search-as-a-service: crawl, index, and query content with AI-powered relevance and chat completions'
     groups:
