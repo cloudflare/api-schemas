@@ -67483,6 +67483,11 @@ paths:
                     bestAttempt:
                       description: Attempt to proceed when 'awaited' events fail or timeout.
                       type: boolean
+                    browser:
+                      description: Rendering backend for this crawl. Set to `kitesurf` to render pages with Kitesurf (beta). Only valid when `render` is `true`.
+                      type: string
+                      enum:
+                        - kitesurf
                     contentUse:
                       description: "Intended content use level to respect the `use` Content-Signal directive in robots.txt. Levels (least to most permissive): 'reference', 'full'. A URL is disallowed when the publisher's declared `use` level is lower than this intent. Learn more: https://contentsignals.org/. Default: 'full'."
                       default: full
@@ -78198,7 +78203,7 @@ paths:
     get:
       operationId: accounts-turnstile-widgets-list
       summary: List Turnstile Widgets
-      description: Lists all turnstile widgets of an account.
+      description: Lists Turnstile widgets for an account.
       responses:
         '200':
           description: List Turnstile Widgets
@@ -78284,7 +78289,8 @@ paths:
       - name: filter
         in: query
         description: |
-          Filter widgets by field using case-insensitive substring matching.
+          Filter widgets by field. The `name` field uses case-insensitive
+          substring matching; `sitekey` uses exact matching.
           Format: `field:value`
 
           Supported fields:
@@ -78299,7 +78305,7 @@ paths:
     post:
       operationId: accounts-turnstile-widget-create
       summary: Create a Turnstile Widget
-      description: Lists challenge widgets.
+      description: Creates a Turnstile widget for an account.
       requestBody:
         required: true
         content:
@@ -78363,11 +78369,14 @@ paths:
       x-fern-sdk-group-name: turnstile.widgets
       x-fern-sdk-method-name: create
       x-forge-hidden: true
+      x-forge-params:
+        mode:
+          flagName: widget-mode
   /accounts/{account_id}/challenges/widgets/{sitekey}:
     delete:
       operationId: accounts-turnstile-widget-delete
       summary: Delete a Turnstile Widget
-      description: Destroy a Turnstile Widget.
+      description: Deletes a Turnstile widget from an account.
       responses:
         '200':
           description: Delete Turnstile Widget Response
@@ -78403,7 +78412,7 @@ paths:
     get:
       operationId: accounts-turnstile-widget-get
       summary: Turnstile Widget Details
-      description: Show a single challenge widget configuration.
+      description: Returns the configuration of a Turnstile widget.
       responses:
         '200':
           description: Turnstile Widget Details Response
@@ -78452,7 +78461,7 @@ paths:
     put:
       operationId: accounts-turnstile-widget-update
       summary: Update a Turnstile Widget
-      description: Update the configuration of a widget.
+      description: Updates the configuration of a Turnstile widget.
       requestBody:
         required: true
         content:
@@ -78512,6 +78521,9 @@ paths:
       x-fern-sdk-group-name: turnstile.widgets
       x-fern-sdk-method-name: update
       x-forge-hidden: true
+      x-forge-params:
+        mode:
+          flagName: widget-mode
   /accounts/{account_id}/challenges/widgets/{sitekey}/rotate_secret:
     parameters:
       - name: account_id
@@ -78528,7 +78540,7 @@ paths:
       operationId: accounts-turnstile-widget-rotate-secret
       summary: Rotate Secret for a Turnstile Widget
       description: |
-        Generate a new secret key for this widget. If `invalidate_immediately`
+        Generates a new secret key for this widget. If `invalidate_immediately`
         is set to `false`, the previous secret remains valid for 2 hours.
 
         Note that secrets cannot be rotated again during the grace period.
@@ -116140,7 +116152,7 @@ paths:
         - Devices
       x-fern-availability: deprecated
       x-fern-ignore: true
-      x-fern-sdk-group-name: zero-trust.devices.v1
+      x-fern-sdk-group-name: zt.devices.v1
       x-fern-sdk-method-name: list
   /accounts/{account_id}/devices/{device_id}:
     get:
@@ -116185,7 +116197,7 @@ paths:
         - Devices
       x-fern-availability: deprecated
       x-fern-ignore: true
-      x-fern-sdk-group-name: zero-trust.devices.v1
+      x-fern-sdk-group-name: zt.devices.v1
       x-fern-sdk-method-name: get
   /accounts/{account_id}/devices/{device_id}/override_codes:
     get:
@@ -116230,7 +116242,7 @@ paths:
         - Zero Trust Read
         - Zero Trust Write
       x-fern-availability: deprecated
-      x-fern-sdk-group-name: zero-trust.devices.override-codes
+      x-fern-sdk-group-name: zt.devices.override-codes
       x-fern-sdk-method-name: list
   /accounts/{account_id}/devices/client-versions:
     get:
@@ -116315,7 +116327,7 @@ paths:
       tags:
         - Client Versions
       x-fern-availability: beta
-      x-fern-sdk-group-name: zero-trust.devices.client-versions
+      x-fern-sdk-group-name: zt.devices.client-versions
       x-fern-sdk-method-name: list
   /accounts/{account_id}/devices/client-versions/target-environments:
     get:
@@ -116367,7 +116379,7 @@ paths:
       tags:
         - Client Versions
       x-fern-availability: beta
-      x-fern-sdk-group-name: zero-trust.devices.client-versions.target-environments
+      x-fern-sdk-group-name: zt.devices.client-versions.target-environments
       x-fern-sdk-method-name: list
   /accounts/{account_id}/devices/deployment-groups:
     get:
@@ -116437,7 +116449,7 @@ paths:
       tags:
         - Deployment Groups
       x-fern-availability: beta
-      x-fern-sdk-group-name: zero-trust.devices.deployment-groups
+      x-fern-sdk-group-name: zt.devices.deployment-groups
       x-fern-sdk-method-name: list
     post:
       operationId: create-deployment-group
@@ -116493,7 +116505,7 @@ paths:
         - Deployment Groups
       x-auditable: true
       x-fern-availability: beta
-      x-fern-sdk-group-name: zero-trust.devices.deployment-groups
+      x-fern-sdk-group-name: zt.devices.deployment-groups
       x-fern-sdk-method-name: create
   /accounts/{account_id}/devices/deployment-groups/{group_id}:
     delete:
@@ -116555,7 +116567,7 @@ paths:
         - Deployment Groups
       x-auditable: true
       x-fern-availability: beta
-      x-fern-sdk-group-name: zero-trust.devices.deployment-groups
+      x-fern-sdk-group-name: zt.devices.deployment-groups
       x-fern-sdk-method-name: delete
     get:
       operationId: get-deployment-group
@@ -116609,7 +116621,7 @@ paths:
       tags:
         - Deployment Groups
       x-fern-availability: beta
-      x-fern-sdk-group-name: zero-trust.devices.deployment-groups
+      x-fern-sdk-group-name: zt.devices.deployment-groups
       x-fern-sdk-method-name: get
     patch:
       operationId: update-deployment-group
@@ -116670,7 +116682,7 @@ paths:
         - Deployment Groups
       x-auditable: true
       x-fern-availability: beta
-      x-fern-sdk-group-name: zero-trust.devices.deployment-groups
+      x-fern-sdk-group-name: zt.devices.deployment-groups
       x-fern-sdk-method-name: update
   /accounts/{account_id}/devices/ip-profiles:
     get:
@@ -116742,7 +116754,7 @@ paths:
         - Zero Trust Read
         - Zero Trust Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.ip-profiles
+      x-fern-sdk-group-name: zt.devices.ip-profiles
       x-fern-sdk-method-name: list
     post:
       operationId: create-ip-profile
@@ -116799,7 +116811,7 @@ paths:
       x-api-token-group:
         - Zero Trust Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.ip-profiles
+      x-fern-sdk-group-name: zt.devices.ip-profiles
       x-fern-sdk-method-name: create
   /accounts/{account_id}/devices/ip-profiles/{profile_id}:
     delete:
@@ -116862,7 +116874,7 @@ paths:
       x-api-token-group:
         - Zero Trust Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.ip-profiles
+      x-fern-sdk-group-name: zt.devices.ip-profiles
       x-fern-sdk-method-name: delete
     get:
       operationId: get-ip-profile
@@ -116919,7 +116931,7 @@ paths:
         - Zero Trust Read
         - Zero Trust Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.ip-profiles
+      x-fern-sdk-group-name: zt.devices.ip-profiles
       x-fern-sdk-method-name: get
     patch:
       operationId: update-ip-profile
@@ -116981,7 +116993,7 @@ paths:
       x-api-token-group:
         - Zero Trust Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.ip-profiles
+      x-fern-sdk-group-name: zt.devices.ip-profiles
       x-fern-sdk-method-name: update
   /accounts/{account_id}/devices/networks:
     get:
@@ -117014,7 +117026,7 @@ paths:
       tags:
         - Device Managed Networks
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.networks
+      x-fern-sdk-group-name: zt.devices.networks
       x-fern-sdk-method-name: list
     post:
       operationId: device-managed-networks-create-device-managed-network
@@ -117065,7 +117077,7 @@ paths:
       x-api-token-group:
         - Zero Trust Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.networks
+      x-fern-sdk-group-name: zt.devices.networks
       x-fern-sdk-method-name: create
   /accounts/{account_id}/devices/networks/{network_id}:
     delete:
@@ -117105,7 +117117,7 @@ paths:
       x-api-token-group:
         - Zero Trust Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.networks
+      x-fern-sdk-group-name: zt.devices.networks
       x-fern-sdk-method-name: delete
     get:
       operationId: device-managed-networks-device-managed-network-details
@@ -117142,7 +117154,7 @@ paths:
       tags:
         - Device Managed Networks
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.networks
+      x-fern-sdk-group-name: zt.devices.networks
       x-fern-sdk-method-name: get
     put:
       operationId: device-managed-networks-update-device-managed-network
@@ -117194,7 +117206,7 @@ paths:
       x-api-token-group:
         - Zero Trust Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.networks
+      x-fern-sdk-group-name: zt.devices.networks
       x-fern-sdk-method-name: update
   /accounts/{account_id}/devices/override_codes:
     post:
@@ -117252,7 +117264,7 @@ paths:
         - Override Codes
       x-auditable: true
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.override-codes
+      x-fern-sdk-group-name: zt.devices.override-codes
       x-fern-sdk-method-name: create
   /accounts/{account_id}/devices/physical-devices:
     get:
@@ -117322,7 +117334,7 @@ paths:
       tags:
         - Physical Devices
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices
+      x-fern-sdk-group-name: zt.devices
       x-fern-sdk-method-name: list
   /accounts/{account_id}/devices/physical-devices/{device_id}:
     delete:
@@ -117378,7 +117390,7 @@ paths:
       x-api-token-group:
         - Zero Trust Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices
+      x-fern-sdk-group-name: zt.devices
       x-fern-sdk-method-name: delete
     get:
       operationId: get-device
@@ -117433,7 +117445,7 @@ paths:
       tags:
         - Physical Devices
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices
+      x-fern-sdk-group-name: zt.devices
       x-fern-sdk-method-name: get
     patch:
       operationId: patch-device
@@ -117494,7 +117506,7 @@ paths:
         - Physical Devices
       x-auditable: true
       x-fern-availability: beta
-      x-fern-sdk-group-name: zero-trust.devices
+      x-fern-sdk-group-name: zt.devices
       x-fern-sdk-method-name: update
   /accounts/{account_id}/devices/physical-devices/{device_id}/revoke:
     post:
@@ -117552,7 +117564,7 @@ paths:
         - Zero Trust Write
       x-fern-availability: deprecated
       x-fern-ignore: true
-      x-fern-sdk-group-name: zero-trust.devices
+      x-fern-sdk-group-name: zt.devices
       x-fern-sdk-method-name: revoke
   /accounts/{account_id}/devices/policies:
     get:
@@ -117590,7 +117602,7 @@ paths:
       tags:
         - Devices
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.profiles.custom
+      x-fern-sdk-group-name: zt.devices.profiles.custom
       x-fern-sdk-method-name: list
   /accounts/{account_id}/devices/policy:
     get:
@@ -117623,7 +117635,7 @@ paths:
       tags:
         - Devices
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.profiles.default
+      x-fern-sdk-group-name: zt.devices.profiles.default
       x-fern-sdk-method-name: get
     patch:
       operationId: devices-update-default-device-settings-policy
@@ -117706,7 +117718,7 @@ paths:
       x-api-token-group:
         - Zero Trust Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.profiles.default
+      x-fern-sdk-group-name: zt.devices.profiles.default
       x-fern-sdk-method-name: update
     post:
       operationId: devices-create-device-settings-policy
@@ -117744,6 +117756,7 @@ paths:
                     - $ref: '#/components/schemas/teams-devices_schemas-description'
                     - default: ''
                       type: string
+                      x-auditable: true
                 disable_auto_fallback:
                   $ref: '#/components/schemas/teams-devices_disable_auto_fallback'
                 dns_search_suffixes:
@@ -117753,6 +117766,7 @@ paths:
                   type: boolean
                   example: true
                   default: true
+                  x-auditable: true
                 exclude:
                   $ref: '#/components/schemas/teams-devices_exclude_request'
                 exclude_office_ips:
@@ -117772,6 +117786,7 @@ paths:
                   type: string
                   example: Allow Developers
                   maxLength: 100
+                  x-auditable: true
                 precedence:
                   $ref: '#/components/schemas/teams-devices_precedence'
                 profile_type:
@@ -117816,7 +117831,7 @@ paths:
       x-api-token-group:
         - Zero Trust Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.profiles.custom
+      x-fern-sdk-group-name: zt.devices.profiles.custom
       x-fern-sdk-method-name: create
   /accounts/{account_id}/devices/policy/{policy_id}:
     delete:
@@ -117856,7 +117871,7 @@ paths:
       x-api-token-group:
         - Zero Trust Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.profiles.custom
+      x-fern-sdk-group-name: zt.devices.profiles.custom
       x-fern-sdk-method-name: delete
     get:
       operationId: devices-get-device-settings-policy-by-id
@@ -117893,7 +117908,7 @@ paths:
       tags:
         - Devices
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.profiles.custom
+      x-fern-sdk-group-name: zt.devices.profiles.custom
       x-fern-sdk-method-name: get
     patch:
       operationId: devices-update-device-settings-policy
@@ -117941,6 +117956,7 @@ paths:
                   description: Whether the policy will be applied to matching devices.
                   type: boolean
                   example: true
+                  x-auditable: true
                 exclude:
                   $ref: '#/components/schemas/teams-devices_exclude_request'
                 exclude_office_ips:
@@ -117960,6 +117976,7 @@ paths:
                   type: string
                   example: Allow Developers
                   maxLength: 100
+                  x-auditable: true
                 precedence:
                   $ref: '#/components/schemas/teams-devices_precedence'
                 register_interface_ip_with_dns:
@@ -118000,7 +118017,7 @@ paths:
       x-api-token-group:
         - Zero Trust Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.profiles.custom
+      x-fern-sdk-group-name: zt.devices.profiles.custom
       x-fern-sdk-method-name: update
   /accounts/{account_id}/devices/policy/{policy_id}/exclude:
     delete:
@@ -118049,7 +118066,7 @@ paths:
       x-auditable: true
       x-fern-availability: generally-available
       x-fern-ignore: true
-      x-fern-sdk-group-name: zero-trust.devices.profiles.custom.excludes
+      x-fern-sdk-group-name: zt.devices.profiles.custom.excludes
       x-fern-sdk-method-name: delete
     get:
       operationId: devices-get-split-tunnel-exclude-list-for-a-device-settings-policy
@@ -118087,7 +118104,7 @@ paths:
         - Devices
       x-fern-availability: generally-available
       x-fern-ignore: true
-      x-fern-sdk-group-name: zero-trust.devices.profiles.custom.excludes
+      x-fern-sdk-group-name: zt.devices.profiles.custom.excludes
       x-fern-sdk-method-name: get
     put:
       operationId: devices-set-split-tunnel-exclude-list-for-a-device-settings-policy
@@ -118135,7 +118152,7 @@ paths:
         - Zero Trust Write
       x-fern-availability: generally-available
       x-fern-ignore: true
-      x-fern-sdk-group-name: zero-trust.devices.profiles.custom.excludes
+      x-fern-sdk-group-name: zt.devices.profiles.custom.excludes
       x-fern-sdk-method-name: update
   /accounts/{account_id}/devices/policy/{policy_id}/fallback_domains:
     delete:
@@ -118184,7 +118201,7 @@ paths:
       x-auditable: true
       x-fern-availability: generally-available
       x-fern-ignore: true
-      x-fern-sdk-group-name: zero-trust.devices.profiles.custom.fallback-domains
+      x-fern-sdk-group-name: zt.devices.profiles.custom.fallback-domains
       x-fern-sdk-method-name: delete
     get:
       operationId: devices-get-local-domain-fallback-list-for-a-device-settings-policy
@@ -118222,7 +118239,7 @@ paths:
         - Devices
       x-fern-availability: generally-available
       x-fern-ignore: true
-      x-fern-sdk-group-name: zero-trust.devices.profiles.custom.fallback-domains
+      x-fern-sdk-group-name: zt.devices.profiles.custom.fallback-domains
       x-fern-sdk-method-name: get
     put:
       operationId: devices-set-local-domain-fallback-list-for-a-device-settings-policy
@@ -118270,7 +118287,7 @@ paths:
         - Zero Trust Write
       x-fern-availability: generally-available
       x-fern-ignore: true
-      x-fern-sdk-group-name: zero-trust.devices.profiles.custom.fallback-domains
+      x-fern-sdk-group-name: zt.devices.profiles.custom.fallback-domains
       x-fern-sdk-method-name: update
   /accounts/{account_id}/devices/policy/{policy_id}/include:
     get:
@@ -118309,7 +118326,7 @@ paths:
         - Devices
       x-fern-availability: generally-available
       x-fern-ignore: true
-      x-fern-sdk-group-name: zero-trust.devices.profiles.custom.includes
+      x-fern-sdk-group-name: zt.devices.profiles.custom.includes
       x-fern-sdk-method-name: get
     put:
       operationId: devices-set-split-tunnel-include-list-for-a-device-settings-policy
@@ -118357,7 +118374,7 @@ paths:
         - Zero Trust Write
       x-fern-availability: generally-available
       x-fern-ignore: true
-      x-fern-sdk-group-name: zero-trust.devices.profiles.custom.includes
+      x-fern-sdk-group-name: zt.devices.profiles.custom.includes
       x-fern-sdk-method-name: update
   /accounts/{account_id}/devices/policy/exclude:
     delete:
@@ -118401,7 +118418,7 @@ paths:
       x-auditable: true
       x-fern-availability: generally-available
       x-fern-ignore: true
-      x-fern-sdk-group-name: zero-trust.devices.profiles.default.excludes
+      x-fern-sdk-group-name: zt.devices.profiles.default.excludes
       x-fern-sdk-method-name: delete
     get:
       operationId: devices-get-split-tunnel-exclude-list
@@ -118434,7 +118451,7 @@ paths:
         - Devices
       x-fern-availability: generally-available
       x-fern-ignore: true
-      x-fern-sdk-group-name: zero-trust.devices.profiles.default.excludes
+      x-fern-sdk-group-name: zt.devices.profiles.default.excludes
       x-fern-sdk-method-name: get
     put:
       operationId: devices-set-split-tunnel-exclude-list
@@ -118477,7 +118494,7 @@ paths:
         - Zero Trust Write
       x-fern-availability: generally-available
       x-fern-ignore: true
-      x-fern-sdk-group-name: zero-trust.devices.profiles.default.excludes
+      x-fern-sdk-group-name: zt.devices.profiles.default.excludes
       x-fern-sdk-method-name: update
   /accounts/{account_id}/devices/policy/fallback_domains:
     delete:
@@ -118521,7 +118538,7 @@ paths:
       x-auditable: true
       x-fern-availability: generally-available
       x-fern-ignore: true
-      x-fern-sdk-group-name: zero-trust.devices.profiles.default.fallback-domains
+      x-fern-sdk-group-name: zt.devices.profiles.default.fallback-domains
       x-fern-sdk-method-name: delete
     get:
       operationId: devices-get-local-domain-fallback-list
@@ -118554,7 +118571,7 @@ paths:
         - Devices
       x-fern-availability: generally-available
       x-fern-ignore: true
-      x-fern-sdk-group-name: zero-trust.devices.profiles.default.fallback-domains
+      x-fern-sdk-group-name: zt.devices.profiles.default.fallback-domains
       x-fern-sdk-method-name: get
     put:
       operationId: devices-set-local-domain-fallback-list
@@ -118597,7 +118614,7 @@ paths:
         - Zero Trust Write
       x-fern-availability: generally-available
       x-fern-ignore: true
-      x-fern-sdk-group-name: zero-trust.devices.profiles.default.fallback-domains
+      x-fern-sdk-group-name: zt.devices.profiles.default.fallback-domains
       x-fern-sdk-method-name: update
   /accounts/{account_id}/devices/policy/include:
     get:
@@ -118631,7 +118648,7 @@ paths:
         - Devices
       x-fern-availability: generally-available
       x-fern-ignore: true
-      x-fern-sdk-group-name: zero-trust.devices.profiles.default.includes
+      x-fern-sdk-group-name: zt.devices.profiles.default.includes
       x-fern-sdk-method-name: get
     put:
       operationId: devices-set-split-tunnel-include-list
@@ -118674,7 +118691,7 @@ paths:
         - Zero Trust Write
       x-fern-availability: generally-available
       x-fern-ignore: true
-      x-fern-sdk-group-name: zero-trust.devices.profiles.default.includes
+      x-fern-sdk-group-name: zt.devices.profiles.default.includes
       x-fern-sdk-method-name: update
   /accounts/{account_id}/devices/posture:
     get:
@@ -118707,7 +118724,7 @@ paths:
       tags:
         - Device posture rules
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.posture.rules
+      x-fern-sdk-group-name: zt.devices.posture.rules
       x-fern-sdk-method-name: list
     post:
       operationId: device-posture-rules-create-device-posture-rule
@@ -118765,7 +118782,7 @@ paths:
       x-api-token-group:
         - Zero Trust Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.posture.rules
+      x-fern-sdk-group-name: zt.devices.posture.rules
       x-fern-sdk-method-name: create
   /accounts/{account_id}/devices/posture/{rule_id}:
     delete:
@@ -118805,7 +118822,7 @@ paths:
       x-api-token-group:
         - Zero Trust Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.posture.rules
+      x-fern-sdk-group-name: zt.devices.posture.rules
       x-fern-sdk-method-name: delete
     get:
       operationId: device-posture-rules-device-posture-rules-details
@@ -118842,7 +118859,7 @@ paths:
       tags:
         - Device posture rules
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.posture.rules
+      x-fern-sdk-group-name: zt.devices.posture.rules
       x-fern-sdk-method-name: get
     put:
       operationId: device-posture-rules-update-device-posture-rule
@@ -118905,7 +118922,7 @@ paths:
       x-api-token-group:
         - Zero Trust Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.posture.rules
+      x-fern-sdk-group-name: zt.devices.posture.rules
       x-fern-sdk-method-name: update
   /accounts/{account_id}/devices/posture/integration:
     get:
@@ -118938,7 +118955,7 @@ paths:
       tags:
         - Device Posture Integrations
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.posture.integrations
+      x-fern-sdk-group-name: zt.devices.posture.integrations
       x-fern-sdk-method-name: list
     post:
       operationId: device-posture-integrations-create-device-posture-integration
@@ -118992,7 +119009,7 @@ paths:
       x-api-token-group:
         - Zero Trust Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.posture.integrations
+      x-fern-sdk-group-name: zt.devices.posture.integrations
       x-fern-sdk-method-name: create
   /accounts/{account_id}/devices/posture/integration/{integration_id}:
     delete:
@@ -119032,7 +119049,7 @@ paths:
       x-api-token-group:
         - Zero Trust Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.posture.integrations
+      x-fern-sdk-group-name: zt.devices.posture.integrations
       x-fern-sdk-method-name: delete
     get:
       operationId: device-posture-integrations-device-posture-integration-details
@@ -119069,7 +119086,7 @@ paths:
       tags:
         - Device Posture Integrations
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.posture.integrations
+      x-fern-sdk-group-name: zt.devices.posture.integrations
       x-fern-sdk-method-name: get
     patch:
       operationId: device-posture-integrations-update-device-posture-integration
@@ -119123,7 +119140,7 @@ paths:
       x-api-token-group:
         - Zero Trust Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.posture.integrations
+      x-fern-sdk-group-name: zt.devices.posture.integrations
       x-fern-sdk-method-name: update
   /accounts/{account_id}/devices/registrations:
     delete:
@@ -119185,7 +119202,7 @@ paths:
       x-api-token-group:
         - Zero Trust Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.registrations
+      x-fern-sdk-group-name: zt.devices.registrations
       x-fern-sdk-method-name: bulk-delete
     get:
       operationId: list-registrations
@@ -119298,7 +119315,7 @@ paths:
       tags:
         - Registrations
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.registrations
+      x-fern-sdk-group-name: zt.devices.registrations
       x-fern-sdk-method-name: list
   /accounts/{account_id}/devices/registrations/{registration_id}:
     delete:
@@ -119354,7 +119371,7 @@ paths:
       x-api-token-group:
         - Zero Trust Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.registrations
+      x-fern-sdk-group-name: zt.devices.registrations
       x-fern-sdk-method-name: delete
     get:
       operationId: get-registration
@@ -119409,7 +119426,7 @@ paths:
       tags:
         - Registrations
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.registrations
+      x-fern-sdk-group-name: zt.devices.registrations
       x-fern-sdk-method-name: get
   /accounts/{account_id}/devices/registrations/{registration_id}/override_codes:
     get:
@@ -119467,7 +119484,7 @@ paths:
         - Zero Trust Read
         - Zero Trust Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.registrations.override-codes
+      x-fern-sdk-group-name: zt.devices.registrations.override-codes
       x-fern-sdk-method-name: get
   /accounts/{account_id}/devices/registrations/revoke:
     post:
@@ -119531,7 +119548,7 @@ paths:
         - Zero Trust Write
       x-fern-availability: deprecated
       x-fern-ignore: true
-      x-fern-sdk-group-name: zero-trust.devices.registrations
+      x-fern-sdk-group-name: zt.devices.registrations
       x-fern-sdk-method-name: revoke
   /accounts/{account_id}/devices/registrations/unrevoke:
     post:
@@ -119595,7 +119612,7 @@ paths:
         - Zero Trust Write
       x-fern-availability: deprecated
       x-fern-ignore: true
-      x-fern-sdk-group-name: zero-trust.devices.registrations
+      x-fern-sdk-group-name: zt.devices.registrations
       x-fern-sdk-method-name: unrevoke
   /accounts/{account_id}/devices/resilience/disconnect:
     get:
@@ -119633,7 +119650,7 @@ paths:
         - Zero Trust Read
         - Zero Trust Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.emergency-disconnect
+      x-fern-sdk-group-name: zt.devices.emergency-disconnect
       x-fern-sdk-method-name: get
     post:
       operationId: devices-resilience-set-global-warp-override
@@ -119673,7 +119690,7 @@ paths:
       x-api-token-group:
         - Zero Trust Resilience Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.emergency-disconnect
+      x-fern-sdk-group-name: zt.devices.emergency-disconnect
       x-fern-sdk-method-name: set
   /accounts/{account_id}/devices/revoke:
     post:
@@ -119719,7 +119736,7 @@ paths:
         - Zero Trust Write
       x-fern-availability: deprecated
       x-fern-ignore: true
-      x-fern-sdk-group-name: zero-trust.devices.v1
+      x-fern-sdk-group-name: zt.devices.v1
       x-fern-sdk-method-name: revoke
   /accounts/{account_id}/devices/settings:
     delete:
@@ -119754,7 +119771,7 @@ paths:
       x-api-token-group:
         - Zero Trust Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.settings
+      x-fern-sdk-group-name: zt.devices.settings
       x-fern-sdk-method-name: delete
     get:
       operationId: zero-trust-accounts-get-device-settings-for-zero-trust-account
@@ -119786,7 +119803,7 @@ paths:
       tags:
         - Zero Trust accounts
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.settings
+      x-fern-sdk-group-name: zt.devices.settings
       x-fern-sdk-method-name: get
     patch:
       operationId: zero-trust-accounts-patch-device-settings-for-the-zero-trust-account
@@ -119826,7 +119843,7 @@ paths:
       x-api-token-group:
         - Zero Trust Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.devices.settings
+      x-fern-sdk-group-name: zt.devices.settings
       x-fern-sdk-method-name: update
     put:
       operationId: zero-trust-accounts-update-device-settings-for-the-zero-trust-account
@@ -119868,7 +119885,7 @@ paths:
         - Zero Trust Write
       x-fern-availability: deprecated
       x-fern-ignore: true
-      x-fern-sdk-group-name: zero-trust.devices.v1.settings
+      x-fern-sdk-group-name: zt.devices.v1.settings
       x-fern-sdk-method-name: update
   /accounts/{account_id}/devices/unrevoke:
     post:
@@ -119914,7 +119931,7 @@ paths:
         - Zero Trust Write
       x-fern-availability: deprecated
       x-fern-ignore: true
-      x-fern-sdk-group-name: zero-trust.devices.v1
+      x-fern-sdk-group-name: zt.devices.v1
       x-fern-sdk-method-name: unrevoke
   /accounts/{account_id}/dex/colos:
     get:
@@ -164391,7 +164408,7 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/tls-certificates-and-hostnames_identifier'
+            $ref: '#/components/schemas/tls-certificates-and-hostnames_mtls_certificate_identifier'
         - name: account_id
           in: path
           required: true
@@ -164441,7 +164458,7 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/tls-certificates-and-hostnames_identifier'
+            $ref: '#/components/schemas/tls-certificates-and-hostnames_mtls_certificate_identifier'
         - name: account_id
           in: path
           required: true
@@ -164493,7 +164510,7 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/tls-certificates-and-hostnames_identifier'
+            $ref: '#/components/schemas/tls-certificates-and-hostnames_mtls_certificate_identifier'
         - name: account_id
           in: path
           required: true
@@ -164966,7 +164983,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: zero-trust.casb.applications
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
       x-stability: beta
   /accounts/{account_id}/one/applications/{application_id}:
     get:
@@ -165062,7 +165078,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: zero-trust.casb.applications
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
       x-stability: beta
   /accounts/{account_id}/one/applications/{application_id}/auth-methods:
     get:
@@ -165163,7 +165178,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: zero-trust.casb.applications.auth-methods
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
       x-stability: beta
   /accounts/{account_id}/one/applications/{application_id}/setup-flows:
     get:
@@ -165276,9 +165290,9 @@ paths:
       tags:
         - Applications
       x-fern-availability: generally-available
+      x-fern-ignore: true
       x-fern-sdk-group-name: zero-trust.casb.applications.setup-flows
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
       x-stability: beta
   /accounts/{account_id}/one/integrations:
     get:
@@ -165394,7 +165408,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: zero-trust.casb.integrations
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
       x-stability: beta
     post:
       operationId: create_integration_v2
@@ -165509,7 +165522,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: zero-trust.casb.integrations
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
       x-stability: beta
   /accounts/{account_id}/one/integrations/{id}:
     delete:
@@ -165544,7 +165556,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: zero-trust.casb.integrations
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
       x-stability: beta
     get:
       operationId: get_integration_v2
@@ -165640,7 +165651,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: zero-trust.casb.integrations
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
       x-stability: beta
     patch:
       operationId: update_integration_v2
@@ -165764,7 +165774,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: zero-trust.casb.integrations
       x-fern-sdk-method-name: update
-      x-forge-hidden: true
       x-stability: beta
   /accounts/{account_id}/one/integrations/{id}/pause:
     post:
@@ -165861,7 +165870,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: zero-trust.casb.integrations
       x-fern-sdk-method-name: pause
-      x-forge-hidden: true
       x-stability: beta
   /accounts/{account_id}/one/integrations/{id}/resume:
     post:
@@ -165958,7 +165966,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: zero-trust.casb.integrations
       x-fern-sdk-method-name: resume
-      x-forge-hidden: true
       x-stability: beta
   /accounts/{account_id}/organizations:
     get:
@@ -172206,7 +172213,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: queues
       x-fern-sdk-method-name: edit
-      x-forge-hidden: true
     put:
       operationId: queues-update
       summary: Update Queue
@@ -172261,9 +172267,9 @@ paths:
         enum:
           - com.cloudflare.edge.worker.queue.update
       x-fern-availability: generally-available
+      x-fern-ignore: true
       x-fern-sdk-group-name: queues
       x-fern-sdk-method-name: update
-      x-forge-hidden: true
   /accounts/{account_id}/queues/{queue_id}/consumers:
     get:
       operationId: queues-list-consumers
@@ -172949,9 +172955,9 @@ paths:
         enum:
           - com.cloudflare.edge.worker.queue.peek
       x-fern-availability: generally-available
+      x-fern-ignore: true
       x-fern-sdk-group-name: queues.messages
       x-fern-sdk-method-name: preview
-      x-forge-hidden: true
   /accounts/{account_id}/queues/{queue_id}/messages/preview/ack:
     post:
       operationId: queues-ack-preview-messages
@@ -173031,9 +173037,9 @@ paths:
         enum:
           - com.cloudflare.edge.worker.queue.ack
       x-fern-availability: generally-available
+      x-fern-ignore: true
       x-fern-sdk-group-name: queues.messages
       x-fern-sdk-method-name: ack-preview
-      x-forge-hidden: true
   /accounts/{account_id}/queues/{queue_id}/messages/pull:
     post:
       operationId: queues-pull-messages
@@ -183191,7 +183197,7 @@ paths:
       operationId: registrar-domain-discovery-transfer-check
       summary: Check domain transfer eligibility
       description: |
-        Performs real-time, authoritative eligibility checks directly against needed upstreams.
+        Performs real-time, authoritative eligibility checks directly against needed requirements.
         Use this endpoint to verify a domain is available before
         attempting a transfer via `POST /registrations/:domain_name/transfer-in`.
 
@@ -183207,9 +183213,9 @@ paths:
         ## Extension Support
 
         All `.uk` extensions (`.uk`, `.co.uk`, etc) do not support auth codes. As such,
-        Cloudflare will ignore the `auth_code` section of this request for Nominet domains.
+        Cloudflare will ignore the `auth_code` section of this request for `.uk` domains.
 
-        This means that a `.uk` domain depends on public data to obtain domain information, 
+        This means that a `.uk` domain depends on public data to obtain domain information,
         so it might be a few minutes outdated.
 
         ### Workflow
@@ -234416,7 +234422,7 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/tls-certificates-and-hostnames_identifier'
+            $ref: '#/components/schemas/tls-certificates-and-hostnames_origin_ca_certificate_identifier'
       responses:
         '200':
           description: Revoke Certificate response.
@@ -234455,7 +234461,7 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/tls-certificates-and-hostnames_identifier'
+            $ref: '#/components/schemas/tls-certificates-and-hostnames_origin_ca_certificate_identifier'
       responses:
         '200':
           description: Get Certificate response.
@@ -340551,7 +340557,7 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/tls-certificates-and-hostnames_identifier'
+            $ref: '#/components/schemas/tls-certificates-and-hostnames_custom_trust_store_identifier'
         - name: zone_id
           in: path
           required: true
@@ -340570,7 +340576,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/tls-certificates-and-hostnames_identifier'
+                  - $ref: '#/components/schemas/tls-certificates-and-hostnames_custom_trust_store_identifier'
                   - $ref: '#/components/schemas/tls-certificates-and-hostnames_api-response-common-failure'
       security:
         - api_token: []
@@ -340602,7 +340608,7 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/tls-certificates-and-hostnames_identifier'
+            $ref: '#/components/schemas/tls-certificates-and-hostnames_custom_trust_store_identifier'
         - name: zone_id
           in: path
           required: true
@@ -345641,7 +345647,7 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/tls-certificates-and-hostnames_identifier'
+            $ref: '#/components/schemas/tls-certificates-and-hostnames_client_certificate_identifier'
       responses:
         '200':
           description: Revoke Client Certificate Response.
@@ -345689,7 +345695,7 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/tls-certificates-and-hostnames_identifier'
+            $ref: '#/components/schemas/tls-certificates-and-hostnames_client_certificate_identifier'
       responses:
         '200':
           description: Client Certificate Details Response.
@@ -345738,7 +345744,7 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/tls-certificates-and-hostnames_identifier'
+            $ref: '#/components/schemas/tls-certificates-and-hostnames_client_certificate_identifier'
       requestBody:
         required: true
         content:
@@ -346520,7 +346526,7 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/tls-certificates-and-hostnames_identifier'
+            $ref: '#/components/schemas/tls-certificates-and-hostnames_custom_certificate_identifier'
         - name: zone_id
           in: path
           required: true
@@ -346571,7 +346577,7 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/tls-certificates-and-hostnames_identifier'
+            $ref: '#/components/schemas/tls-certificates-and-hostnames_custom_certificate_identifier'
         - name: zone_id
           in: path
           required: true
@@ -346624,7 +346630,7 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/tls-certificates-and-hostnames_identifier'
+            $ref: '#/components/schemas/tls-certificates-and-hostnames_custom_certificate_identifier'
         - name: zone_id
           in: path
           required: true
@@ -346711,7 +346717,7 @@ paths:
                   items:
                     properties:
                       id:
-                        $ref: '#/components/schemas/tls-certificates-and-hostnames_identifier'
+                        $ref: '#/components/schemas/tls-certificates-and-hostnames_custom_certificate_identifier'
                       priority:
                         $ref: '#/components/schemas/tls-certificates-and-hostnames_priority'
                     type: object
@@ -347246,7 +347252,7 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/tls-certificates-and-hostnames_identifier'
+            $ref: '#/components/schemas/tls-certificates-and-hostnames_custom_hostname_identifier'
         - name: zone_id
           in: path
           required: true
@@ -347261,7 +347267,7 @@ paths:
                 type: object
                 properties:
                   id:
-                    $ref: '#/components/schemas/tls-certificates-and-hostnames_identifier'
+                    $ref: '#/components/schemas/tls-certificates-and-hostnames_custom_hostname_identifier'
         4XX:
           description: Delete Custom Hostname (and any issued SSL certificates) response failure.
           content:
@@ -347270,7 +347276,7 @@ paths:
                 allOf:
                   - properties:
                       id:
-                        $ref: '#/components/schemas/tls-certificates-and-hostnames_identifier'
+                        $ref: '#/components/schemas/tls-certificates-and-hostnames_custom_hostname_identifier'
                     type: object
                   - $ref: '#/components/schemas/tls-certificates-and-hostnames_api-response-common-failure'
       security:
@@ -347302,7 +347308,7 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/tls-certificates-and-hostnames_identifier'
+            $ref: '#/components/schemas/tls-certificates-and-hostnames_custom_hostname_identifier'
         - name: zone_id
           in: path
           required: true
@@ -347353,7 +347359,7 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/tls-certificates-and-hostnames_identifier'
+            $ref: '#/components/schemas/tls-certificates-and-hostnames_custom_hostname_identifier'
         - name: zone_id
           in: path
           required: true
@@ -347419,17 +347425,17 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/tls-certificates-and-hostnames_identifier'
+            $ref: '#/components/schemas/tls-certificates-and-hostnames_custom_hostname_identifier'
         - name: certificate_pack_id
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/tls-certificates-and-hostnames_identifier'
+            $ref: '#/components/schemas/tls-certificates-and-hostnames_custom_hostname_identifier'
         - name: certificate_id
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/tls-certificates-and-hostnames_identifier'
+            $ref: '#/components/schemas/tls-certificates-and-hostnames_custom_hostname_identifier'
         - name: zone_id
           in: path
           required: true
@@ -347444,7 +347450,7 @@ paths:
                 type: object
                 properties:
                   id:
-                    $ref: '#/components/schemas/tls-certificates-and-hostnames_identifier'
+                    $ref: '#/components/schemas/tls-certificates-and-hostnames_custom_hostname_identifier'
         4XX:
           description: Delete Single Certificate and Key In a Custom Hostname response failure.
           content:
@@ -347453,7 +347459,7 @@ paths:
                 allOf:
                   - properties:
                       id:
-                        $ref: '#/components/schemas/tls-certificates-and-hostnames_identifier'
+                        $ref: '#/components/schemas/tls-certificates-and-hostnames_custom_hostname_identifier'
                     type: object
                   - $ref: '#/components/schemas/tls-certificates-and-hostnames_api-response-common-failure'
       security:
@@ -347482,17 +347488,17 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/tls-certificates-and-hostnames_identifier'
+            $ref: '#/components/schemas/tls-certificates-and-hostnames_custom_hostname_identifier'
         - name: certificate_pack_id
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/tls-certificates-and-hostnames_identifier'
+            $ref: '#/components/schemas/tls-certificates-and-hostnames_custom_hostname_identifier'
         - name: certificate_id
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/tls-certificates-and-hostnames_identifier'
+            $ref: '#/components/schemas/tls-certificates-and-hostnames_custom_hostname_identifier'
         - name: zone_id
           in: path
           required: true
@@ -348436,7 +348442,7 @@ paths:
         - SSL and Certificates Read
       x-fern-availability: generally-available
       x-fern-ignore: true
-      x-fern-sdk-group-name: zero-trust.devices.profiles.default.certificates
+      x-fern-sdk-group-name: zt.devices.profiles.default.certificates
       x-fern-sdk-method-name: get
     patch:
       operationId: devices-update-policy-certificates
@@ -348477,7 +348483,7 @@ paths:
         - SSL and Certificates Write
       x-fern-availability: generally-available
       x-fern-ignore: true
-      x-fern-sdk-group-name: zero-trust.devices.profiles.default.certificates
+      x-fern-sdk-group-name: zt.devices.profiles.default.certificates
       x-fern-sdk-method-name: update
   /zones/{zone_id}/dns_analytics/report:
     get:
@@ -352458,7 +352464,8 @@ paths:
         enterprise: true
         free: true
         pro: true
-      x-fern-availability: generally-available
+      x-fern-availability: deprecated
+      x-fern-ignore: true
       x-fern-sdk-group-name: firewall.filters
       x-fern-sdk-method-name: bulk-delete
       x-forge-hidden: true
@@ -352547,7 +352554,8 @@ paths:
         enterprise: true
         free: true
         pro: true
-      x-fern-availability: generally-available
+      x-fern-availability: deprecated
+      x-fern-ignore: true
       x-fern-sdk-group-name: firewall.filters
       x-fern-sdk-method-name: list
       x-forge-hidden: true
@@ -352597,7 +352605,8 @@ paths:
         enterprise: true
         free: true
         pro: true
-      x-fern-availability: generally-available
+      x-fern-availability: deprecated
+      x-fern-ignore: true
       x-fern-sdk-group-name: firewall.filters
       x-fern-sdk-method-name: create
       x-forge-hidden: true
@@ -352646,7 +352655,8 @@ paths:
         enterprise: true
         free: true
         pro: true
-      x-fern-availability: generally-available
+      x-fern-availability: deprecated
+      x-fern-ignore: true
       x-fern-sdk-group-name: firewall.filters
       x-fern-sdk-method-name: bulk-update
       x-forge-hidden: true
@@ -352693,7 +352703,8 @@ paths:
         enterprise: true
         free: true
         pro: true
-      x-fern-availability: generally-available
+      x-fern-availability: deprecated
+      x-fern-ignore: true
       x-fern-sdk-group-name: firewall.filters
       x-fern-sdk-method-name: delete
       x-forge-hidden: true
@@ -352740,7 +352751,8 @@ paths:
         enterprise: true
         free: true
         pro: true
-      x-fern-availability: generally-available
+      x-fern-availability: deprecated
+      x-fern-ignore: true
       x-fern-sdk-group-name: firewall.filters
       x-fern-sdk-method-name: get
       x-forge-hidden: true
@@ -352792,7 +352804,8 @@ paths:
         enterprise: true
         free: true
         pro: true
-      x-fern-availability: generally-available
+      x-fern-availability: deprecated
+      x-fern-ignore: true
       x-fern-sdk-group-name: firewall.filters
       x-fern-sdk-method-name: update
       x-forge-hidden: true
@@ -353469,6 +353482,7 @@ paths:
         free: true
         pro: true
       x-fern-availability: deprecated
+      x-fern-ignore: true
       x-fern-sdk-group-name: firewall.rules
       x-fern-sdk-method-name: bulk-delete
       x-forge-hidden: true
@@ -353555,6 +353569,7 @@ paths:
         free: true
         pro: true
       x-fern-availability: deprecated
+      x-fern-ignore: true
       x-fern-sdk-group-name: firewall.rules
       x-fern-sdk-method-name: list
       x-forge-hidden: true
@@ -353611,6 +353626,7 @@ paths:
         free: true
         pro: true
       x-fern-availability: deprecated
+      x-fern-ignore: true
       x-fern-sdk-group-name: firewall.rules
       x-fern-sdk-method-name: bulk-edit
       x-forge-hidden: true
@@ -353669,6 +353685,7 @@ paths:
         free: true
         pro: true
       x-fern-availability: deprecated
+      x-fern-ignore: true
       x-fern-sdk-group-name: firewall.rules
       x-fern-sdk-method-name: create
       x-forge-hidden: true
@@ -353725,6 +353742,7 @@ paths:
         free: true
         pro: true
       x-fern-availability: deprecated
+      x-fern-ignore: true
       x-fern-sdk-group-name: firewall.rules
       x-fern-sdk-method-name: bulk-update
       x-forge-hidden: true
@@ -353784,6 +353802,7 @@ paths:
         free: true
         pro: true
       x-fern-availability: deprecated
+      x-fern-ignore: true
       x-fern-sdk-group-name: firewall.rules
       x-fern-sdk-method-name: delete
       x-forge-hidden: true
@@ -353839,6 +353858,7 @@ paths:
         free: true
         pro: true
       x-fern-availability: deprecated
+      x-fern-ignore: true
       x-fern-sdk-group-name: firewall.rules
       x-fern-sdk-method-name: get
       x-forge-hidden: true
@@ -353899,6 +353919,7 @@ paths:
         free: true
         pro: true
       x-fern-availability: deprecated
+      x-fern-ignore: true
       x-fern-sdk-group-name: firewall.rules
       x-fern-sdk-method-name: edit
       x-forge-hidden: true
@@ -353965,6 +353986,7 @@ paths:
         free: true
         pro: true
       x-fern-availability: deprecated
+      x-fern-ignore: true
       x-fern-sdk-group-name: firewall.rules
       x-fern-sdk-method-name: update
       x-forge-hidden: true
@@ -354318,7 +354340,8 @@ paths:
         enterprise: true
         free: false
         pro: false
-      x-fern-availability: generally-available
+      x-fern-availability: deprecated
+      x-fern-ignore: true
       x-fern-sdk-group-name: firewall.waf.overrides
       x-fern-sdk-method-name: list
       x-forge-hidden: true
@@ -354367,7 +354390,8 @@ paths:
         enterprise: true
         free: false
         pro: false
-      x-fern-availability: generally-available
+      x-fern-availability: deprecated
+      x-fern-ignore: true
       x-fern-sdk-group-name: firewall.waf.overrides
       x-fern-sdk-method-name: create
       x-forge-hidden: true
@@ -354411,7 +354435,8 @@ paths:
         enterprise: true
         free: false
         pro: false
-      x-fern-availability: generally-available
+      x-fern-availability: deprecated
+      x-fern-ignore: true
       x-fern-sdk-group-name: firewall.waf.overrides
       x-fern-sdk-method-name: delete
       x-forge-hidden: true
@@ -354455,7 +354480,8 @@ paths:
         enterprise: true
         free: false
         pro: false
-      x-fern-availability: generally-available
+      x-fern-availability: deprecated
+      x-fern-ignore: true
       x-fern-sdk-group-name: firewall.waf.overrides
       x-fern-sdk-method-name: get
       x-forge-hidden: true
@@ -354518,7 +354544,8 @@ paths:
         enterprise: true
         free: false
         pro: false
-      x-fern-availability: generally-available
+      x-fern-availability: deprecated
+      x-fern-ignore: true
       x-fern-sdk-group-name: firewall.waf.overrides
       x-fern-sdk-method-name: update
       x-forge-hidden: true
@@ -354612,7 +354639,8 @@ paths:
         enterprise: true
         free: false
         pro: true
-      x-fern-availability: generally-available
+      x-fern-availability: deprecated
+      x-fern-ignore: true
       x-fern-sdk-group-name: firewall.waf.packages
       x-fern-sdk-method-name: list
       x-forge-hidden: true
@@ -354663,7 +354691,8 @@ paths:
         enterprise: true
         free: false
         pro: true
-      x-fern-availability: generally-available
+      x-fern-availability: deprecated
+      x-fern-ignore: true
       x-fern-sdk-group-name: firewall.waf.packages
       x-fern-sdk-method-name: get
       x-forge-hidden: true
@@ -354729,6 +354758,7 @@ paths:
         free: false
         pro: true
       x-fern-availability: deprecated
+      x-fern-ignore: true
       x-fern-sdk-group-name: firewall.waf.packages
       x-fern-sdk-method-name: edit
       x-forge-hidden: true
@@ -357257,7 +357287,7 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/tls-certificates-and-hostnames_identifier'
+            $ref: '#/components/schemas/tls-certificates-and-hostnames_keyless_certificate_identifier'
         - name: zone_id
           in: path
           required: true
@@ -357307,7 +357337,7 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/tls-certificates-and-hostnames_identifier'
+            $ref: '#/components/schemas/tls-certificates-and-hostnames_keyless_certificate_identifier'
         - name: zone_id
           in: path
           required: true
@@ -357395,7 +357425,7 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/tls-certificates-and-hostnames_identifier'
+            $ref: '#/components/schemas/tls-certificates-and-hostnames_keyless_certificate_identifier'
         - name: zone_id
           in: path
           required: true
@@ -362084,7 +362114,7 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/tls-certificates-and-hostnames_identifier'
+            $ref: '#/components/schemas/tls-certificates-and-hostnames_zone_aop_certificate_identifier'
         - name: zone_id
           in: path
           required: true
@@ -362131,7 +362161,7 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/tls-certificates-and-hostnames_identifier'
+            $ref: '#/components/schemas/tls-certificates-and-hostnames_zone_aop_certificate_identifier'
         - name: zone_id
           in: path
           required: true
@@ -362460,7 +362490,7 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/tls-certificates-and-hostnames_identifier'
+            $ref: '#/components/schemas/tls-certificates-and-hostnames_hostname_aop_certificate_identifier'
         - name: zone_id
           in: path
           required: true
@@ -362507,7 +362537,7 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/tls-certificates-and-hostnames_identifier'
+            $ref: '#/components/schemas/tls-certificates-and-hostnames_hostname_aop_certificate_identifier'
         - name: zone_id
           in: path
           required: true
@@ -364830,6 +364860,7 @@ paths:
         free: true
         pro: true
       x-fern-availability: deprecated
+      x-fern-ignore: true
       x-fern-sdk-group-name: rate-limits
       x-fern-sdk-method-name: list
       x-forge-hidden: true
@@ -364884,7 +364915,8 @@ paths:
         enterprise: true
         free: true
         pro: true
-      x-fern-availability: generally-available
+      x-fern-availability: deprecated
+      x-fern-ignore: true
       x-fern-sdk-group-name: rate-limits
       x-fern-sdk-method-name: create
       x-forge-hidden: true
@@ -364925,7 +364957,8 @@ paths:
         enterprise: true
         free: true
         pro: true
-      x-fern-availability: generally-available
+      x-fern-availability: deprecated
+      x-fern-ignore: true
       x-fern-sdk-group-name: rate-limits
       x-fern-sdk-method-name: delete
       x-forge-hidden: true
@@ -364966,7 +364999,8 @@ paths:
         enterprise: true
         free: true
         pro: true
-      x-fern-availability: generally-available
+      x-fern-availability: deprecated
+      x-fern-ignore: true
       x-fern-sdk-group-name: rate-limits
       x-fern-sdk-method-name: get
       x-forge-hidden: true
@@ -365026,7 +365060,8 @@ paths:
         enterprise: true
         free: true
         pro: true
-      x-fern-availability: generally-available
+      x-fern-availability: deprecated
+      x-fern-ignore: true
       x-fern-sdk-group-name: rate-limits
       x-fern-sdk-method-name: edit
       x-forge-hidden: true
@@ -373038,7 +373073,7 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/tls-certificates-and-hostnames_identifier'
+            $ref: '#/components/schemas/tls-certificates-and-hostnames_certificate_pack_identifier'
         - name: zone_id
           in: path
           required: true
@@ -373089,7 +373124,7 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/tls-certificates-and-hostnames_identifier'
+            $ref: '#/components/schemas/tls-certificates-and-hostnames_certificate_pack_identifier'
         - name: zone_id
           in: path
           required: true
@@ -373140,7 +373175,7 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/tls-certificates-and-hostnames_identifier'
+            $ref: '#/components/schemas/tls-certificates-and-hostnames_certificate_pack_identifier'
         - name: zone_id
           in: path
           required: true
@@ -473567,16 +473602,19 @@ components:
       type: boolean
       example: true
       default: false
+      x-auditable: true
     teams-devices_allow_updates:
       description: Whether to receive update notifications when a new version of the client is available.
       type: boolean
       example: true
       default: false
+      x-auditable: true
     teams-devices_allowed_to_leave:
       description: Whether to allow devices to leave the organization.
       type: boolean
       example: true
       default: true
+      x-auditable: true
     teams-devices_antivirus_input_request:
       type: object
       properties:
@@ -473701,6 +473739,7 @@ components:
       type: number
       example: 0
       default: 0
+      x-auditable: true
     teams-devices_browser_extension_config:
       description: Browser extension proxy settings. Required when profile_type is browser_extension and invalid for WARP profiles.
       type: object
@@ -473711,9 +473750,11 @@ components:
           enum:
             - unlocked
             - locked
+          x-auditable: true
         proxy_enabled:
           description: Whether the browser extension proxy is active.
           type: boolean
+          x-auditable: true
       additionalProperties: false
       nullable: true
       required:
@@ -473724,6 +473765,7 @@ components:
       type: number
       example: 180
       default: 180
+      x-auditable: true
     teams-devices_carbonblack_input_request:
       type: object
       properties:
@@ -474100,6 +474142,7 @@ components:
       type: boolean
       example: false
       default: false
+      x-auditable: true
     teams-devices_default_device_settings_policy:
       type: object
       properties:
@@ -474117,6 +474160,7 @@ components:
           description: Whether the policy will be applied to matching devices.
           type: boolean
           example: true
+          x-auditable: true
         disable_auto_fallback:
           $ref: '#/components/schemas/teams-devices_disable_auto_fallback'
         dns_search_suffixes:
@@ -474126,6 +474170,7 @@ components:
           type: boolean
           example: true
           default: true
+          x-auditable: true
         exclude:
           $ref: '#/components/schemas/teams-devices_exclude'
         exclude_office_ips:
@@ -474233,11 +474278,11 @@ components:
       type: array
       items:
         type: string
+        x-auditable: true
       example:
         - policy-uuid-1
         - policy-uuid-2
       nullable: true
-      x-auditable: true
     teams-devices_deployment_group_update_request:
       type: object
       properties:
@@ -474391,6 +474436,7 @@ components:
           type: boolean
           example: true
           default: true
+          x-auditable: true
         exclude:
           $ref: '#/components/schemas/teams-devices_exclude'
         exclude_office_ips:
@@ -474414,6 +474460,7 @@ components:
           type: string
           example: Allow Developers
           maxLength: 100
+          x-auditable: true
         policy_id:
           $ref: '#/components/schemas/teams-devices_schemas-uuid'
         precedence:
@@ -474650,6 +474697,7 @@ components:
       type: boolean
       example: true
       default: false
+      x-auditable: true
     teams-devices_exclude_request:
       description: List of routes excluded in the WARP client's tunnel. Both 'exclude' and 'include' cannot be set in the same request.
       type: array
@@ -474803,10 +474851,10 @@ components:
           type: array
           items:
             type: string
+            x-auditable: true
           example:
             - 198.51.100.1:443
           maxItems: 5
-          x-auditable: true
         autoswitch:
           description: Automatically switch Global Acceleration regions based on device location. Defaults to false when not provided.
           type: boolean
@@ -474823,26 +474871,25 @@ components:
           type: array
           items:
             type: string
+            x-auditable: true
           example:
             - 198.51.100.1:443
           maxItems: 5
-          x-auditable: true
         wireguard_endpoints:
           description: IP:port entries for the WireGuard tunnel endpoints. Either wireguard_endpoints or masque_endpoints must be provided.
           type: array
           items:
             type: string
+            x-auditable: true
           example:
             - 198.51.100.1:2408
           maxItems: 5
-          x-auditable: true
       nullable: true
       required:
         - enabled
         - wireguard_endpoints
         - masque_endpoints
         - api_endpoints
-      x-auditable: true
     teams-devices_global_warp_override:
       type: object
       properties:
@@ -474896,17 +474943,20 @@ components:
       description: The address in CIDR format to include in the tunnel. If `address` is present, `host` must not be present.
       type: string
       example: 192.0.2.0/24
+      x-auditable: true
       x-stainless-terraform-configurability: computed_optional
     teams-devices_include_split_tunnel_description:
       description: A description of the Split Tunnel item, displayed in the client UI.
       type: string
       example: Include testing domains in the tunnel
       maxLength: 100
+      x-auditable: true
       x-stainless-terraform-configurability: computed_optional
     teams-devices_include_split_tunnel_host:
       description: The domain name to include in the tunnel. If `host` is present, `address` must not be present.
       type: string
       example: '*.example.com'
+      x-auditable: true
       x-stainless-terraform-configurability: computed_optional
     teams-devices_include_split_tunnel_with_address:
       type: object
@@ -475174,12 +475224,12 @@ components:
               - Will Block
               - Blocked
             type: string
+            x-auditable: true
           example:
             - Good
             - Notified
           minItems: 1
           uniqueItems: true
-          x-auditable: true
         connection_id:
           description: Posture Integration ID.
           type: string
@@ -475208,10 +475258,12 @@ components:
       description: The amount of time in minutes a user is allowed access to their LAN. A value of 0 will allow LAN access until the next WARP reconnection, such as a reboot or a laptop waking from sleep. Note that this field is omitted from the response if null or unset.
       type: number
       example: 30
+      x-auditable: true
     teams-devices_lan_allow_subnet_size:
       description: The size of the subnet for the local access network. Note that this field is omitted from the response if null or unset.
       type: number
       example: 24
+      x-auditable: true
     teams-devices_last_seen:
       description: When the device last connected to Cloudflare services.
       type: string
@@ -475604,6 +475656,7 @@ components:
       description: The precedence of the policy. Lower values indicate higher precedence. Policies will be evaluated in ascending order of this field.
       type: number
       example: 100
+      x-auditable: true
     teams-devices_profile_type:
       description: The client type to which the device settings profile applies. This field is set when the profile is created and cannot be changed.
       type: string
@@ -475612,11 +475665,13 @@ components:
       enum:
         - warp
         - browser_extension
+      x-auditable: true
     teams-devices_register_interface_ip_with_dns:
       description: Determines if the operating system will register WARP's local interface IP with your on-premises DNS server.
       type: boolean
       example: true
       default: true
+      x-auditable: true
     teams-devices_registration:
       description: A WARP configuration tied to a single user. Multiple registrations can be created from a single WARP device.
       type: object
@@ -475794,6 +475849,7 @@ components:
       type: boolean
       example: false
       default: false
+      x-auditable: true
     teams-devices_schedule:
       description: 'Polling frequency for the WARP client posture check. Default: `5m` (poll every five minutes). Minimum: `1m`.'
       type: string
@@ -475820,6 +475876,7 @@ components:
       type: string
       example: Policy for test teams.
       maxLength: 500
+      x-auditable: true
     teams-devices_schemas-id_response:
       allOf:
         - $ref: '#/components/schemas/teams-devices_api-response-single'
@@ -475833,6 +475890,7 @@ components:
       type: string
       example: identity.email == "test@cloudflare.com"
       maxLength: 500
+      x-auditable: true
     teams-devices_schemas-name:
       description: The device name.
       type: string
@@ -476007,17 +476065,20 @@ components:
       description: The address in CIDR format to exclude from the tunnel. If `address` is present, `host` must not be present.
       type: string
       example: 192.0.2.0/24
+      x-auditable: true
       x-stainless-terraform-configurability: computed_optional
     teams-devices_split_tunnel_description:
       description: A description of the Split Tunnel item, displayed in the client UI.
       type: string
       example: Exclude testing domains from the tunnel
       maxLength: 100
+      x-auditable: true
       x-stainless-terraform-configurability: computed_optional
     teams-devices_split_tunnel_host:
       description: The domain name to exclude from the tunnel. If `host` is present, `address` must not be present.
       type: string
       example: '*.example.com'
+      x-auditable: true
       x-stainless-terraform-configurability: computed_optional
     teams-devices_split_tunnel_include:
       type: object
@@ -476052,6 +476113,7 @@ components:
       type: boolean
       example: true
       default: false
+      x-auditable: true
     teams-devices_tanium_config_request:
       type: object
       properties:
@@ -476137,9 +476199,11 @@ components:
         id:
           description: The id of the DEX test targeting this policy.
           type: string
+          x-auditable: true
         name:
           description: The name of the DEX test targeting this policy.
           type: string
+          x-auditable: true
     teams-devices_target_environment_info:
       type: object
       properties:
@@ -476207,6 +476271,7 @@ components:
       type: string
       example: wireguard
       default: ''
+      x-auditable: true
     teams-devices_tunnel_type:
       description: Type of the tunnel connection used.
       type: string
@@ -476246,6 +476311,7 @@ components:
       type: boolean
       example: false
       default: false
+      x-auditable: true
     teams-devices_unique_client_id_input_request:
       type: object
       properties:
@@ -476390,6 +476456,7 @@ components:
           items:
             format: uuid
             type: string
+            x-auditable: true
           example:
             - f174e90a-fafe-4643-bbbc-4a0ed4fc8415
           minItems: 1
@@ -476399,6 +476466,7 @@ components:
           type: string
           format: uuid
           example: f174e90a-fafe-4643-bbbc-4a0ed4fc8415
+          x-auditable: true
       nullable: true
       required:
         - allowed
@@ -476650,7 +476718,7 @@ components:
         host:
           $ref: '#/components/schemas/tls-certificates-and-hostnames_host'
         id:
-          $ref: '#/components/schemas/tls-certificates-and-hostnames_identifier-2'
+          $ref: '#/components/schemas/tls-certificates-and-hostnames_keyless_certificate_identifier'
         modified_on:
           description: When the Keyless SSL was last modified.
           type: string
@@ -476931,7 +476999,7 @@ components:
         hosts:
           $ref: '#/components/schemas/tls-certificates-and-hostnames_hosts-2'
         id:
-          $ref: '#/components/schemas/tls-certificates-and-hostnames_identifier'
+          $ref: '#/components/schemas/tls-certificates-and-hostnames_certificate_pack_identifier'
         primary_certificate:
           $ref: '#/components/schemas/tls-certificates-and-hostnames_primary'
         status:
@@ -477042,6 +477110,12 @@ components:
         - id
         - hosts
         - status
+    tls-certificates-and-hostnames_certificate_pack_identifier:
+      description: The unique identifier for a certificate_pack.
+      type: string
+      example: 3822ff90-ea29-44df-9e55-21300bb9419b
+      readOnly: true
+      x-auditable: true
     tls-certificates-and-hostnames_certificate_pack_quota_response:
       allOf:
         - $ref: '#/components/schemas/tls-certificates-and-hostnames_api-response-single'
@@ -477142,7 +477216,7 @@ components:
               type: object
               properties:
                 id:
-                  $ref: '#/components/schemas/tls-certificates-and-hostnames_identifier'
+                  $ref: '#/components/schemas/tls-certificates-and-hostnames_custom_certificate_identifier'
           type: object
     tls-certificates-and-hostnames_certificate_response_single:
       allOf:
@@ -477197,7 +477271,7 @@ components:
               type: object
               properties:
                 id:
-                  $ref: '#/components/schemas/tls-certificates-and-hostnames_identifier'
+                  $ref: '#/components/schemas/tls-certificates-and-hostnames_origin_ca_certificate_identifier'
                 revoked_at:
                   $ref: '#/components/schemas/tls-certificates-and-hostnames_revoked_at'
           type: object
@@ -477222,7 +477296,7 @@ components:
         expires_on:
           $ref: '#/components/schemas/tls-certificates-and-hostnames_expires_on-4'
         id:
-          $ref: '#/components/schemas/tls-certificates-and-hostnames_identifier'
+          $ref: '#/components/schemas/tls-certificates-and-hostnames_zone_aop_certificate_identifier'
         issuer:
           $ref: '#/components/schemas/tls-certificates-and-hostnames_issuer'
         signature:
@@ -477239,7 +477313,7 @@ components:
         expires_on:
           $ref: '#/components/schemas/tls-certificates-and-hostnames_expires_on-5'
         id:
-          $ref: '#/components/schemas/tls-certificates-and-hostnames_identifier'
+          $ref: '#/components/schemas/tls-certificates-and-hostnames_hostname_aop_certificate_identifier'
         issuer:
           $ref: '#/components/schemas/tls-certificates-and-hostnames_issuer'
         serial_number:
@@ -477260,7 +477334,7 @@ components:
         expires_on:
           $ref: '#/components/schemas/tls-certificates-and-hostnames_expires_on-2'
         id:
-          $ref: '#/components/schemas/tls-certificates-and-hostnames_identifier'
+          $ref: '#/components/schemas/tls-certificates-and-hostnames_mtls_certificate_identifier'
         issuer:
           $ref: '#/components/schemas/tls-certificates-and-hostnames_issuer-2'
         name:
@@ -477283,7 +477357,7 @@ components:
         expires_on:
           $ref: '#/components/schemas/tls-certificates-and-hostnames_expires_on-2'
         id:
-          $ref: '#/components/schemas/tls-certificates-and-hostnames_identifier'
+          $ref: '#/components/schemas/tls-certificates-and-hostnames_mtls_certificate_identifier'
         issuer:
           $ref: '#/components/schemas/tls-certificates-and-hostnames_issuer-2'
         name:
@@ -477310,7 +477384,7 @@ components:
         hostnames:
           $ref: '#/components/schemas/tls-certificates-and-hostnames_hostnames'
         id:
-          $ref: '#/components/schemas/tls-certificates-and-hostnames_identifier'
+          $ref: '#/components/schemas/tls-certificates-and-hostnames_origin_ca_certificate_identifier'
         request_type:
           $ref: '#/components/schemas/tls-certificates-and-hostnames_request_type'
         requested_validity:
@@ -477364,7 +477438,7 @@ components:
         fingerprint_sha256:
           $ref: '#/components/schemas/tls-certificates-and-hostnames_fingerprint_sha256'
         id:
-          $ref: '#/components/schemas/tls-certificates-and-hostnames_identifier'
+          $ref: '#/components/schemas/tls-certificates-and-hostnames_client_certificate_identifier'
         issued_on:
           $ref: '#/components/schemas/tls-certificates-and-hostnames_issued_on'
         location:
@@ -477385,6 +477459,14 @@ components:
           $ref: '#/components/schemas/tls-certificates-and-hostnames_status-11'
         validity_days:
           $ref: '#/components/schemas/tls-certificates-and-hostnames_validity_days-2'
+    tls-certificates-and-hostnames_client_certificate_identifier:
+      description: Client Certificate Tag
+      type: string
+      example: 0d89c70d-ad9f-4843-b99f-6cc0252067e9
+      maxLength: 36
+      minLength: 36
+      readOnly: true
+      x-auditable: true
     tls-certificates-and-hostnames_client_certificate_response_collection:
       allOf:
         - $ref: '#/components/schemas/tls-certificates-and-hostnames_api-response-collection'
@@ -477536,7 +477618,7 @@ components:
         hosts:
           $ref: '#/components/schemas/tls-certificates-and-hostnames_hosts'
         id:
-          $ref: '#/components/schemas/tls-certificates-and-hostnames_identifier'
+          $ref: '#/components/schemas/tls-certificates-and-hostnames_custom_certificate_identifier'
         issuer:
           $ref: '#/components/schemas/tls-certificates-and-hostnames_issuer'
         keyless_server:
@@ -477564,7 +477646,7 @@ components:
         hostname:
           $ref: '#/components/schemas/tls-certificates-and-hostnames_hostname'
         id:
-          $ref: '#/components/schemas/tls-certificates-and-hostnames_identifier'
+          $ref: '#/components/schemas/tls-certificates-and-hostnames_custom_hostname_identifier'
         ssl:
           $ref: '#/components/schemas/tls-certificates-and-hostnames_ssl'
       allOf:
@@ -477580,7 +477662,7 @@ components:
         expires_on:
           $ref: '#/components/schemas/tls-certificates-and-hostnames_expires_on-2'
         id:
-          $ref: '#/components/schemas/tls-certificates-and-hostnames_identifier'
+          $ref: '#/components/schemas/tls-certificates-and-hostnames_custom_trust_store_identifier'
         issuer:
           $ref: '#/components/schemas/tls-certificates-and-hostnames_issuer'
         signature:
@@ -477628,6 +477710,13 @@ components:
         $ref: '#/components/schemas/tls-certificates-and-hostnames_custom_cert_and_key'
       maxItems: 2
       minItems: 1
+    tls-certificates-and-hostnames_custom_certificate_identifier:
+      description: Custom certificate identifier tag.
+      type: string
+      example: 2458ce5a-0c35-4c7f-82c7-8e9487d3ff60
+      maxLength: 36
+      readOnly: true
+      x-auditable: true
     tls-certificates-and-hostnames_custom_csr:
       description: A custom Certificate Signing Request (CSR).
       type: object
@@ -478010,6 +478099,14 @@ components:
         - errors
         - messages
         - result
+    tls-certificates-and-hostnames_custom_hostname_identifier:
+      description: Custom hostname identifier tag.
+      type: string
+      example: 0d89c70d-ad9f-4843-b99f-6cc0252067e9
+      maxLength: 36
+      minLength: 36
+      readOnly: true
+      x-auditable: true
     tls-certificates-and-hostnames_custom_hostname_quota:
       type: object
       properties:
@@ -478091,6 +478188,13 @@ components:
       type: string
       example: sni.example.com
       x-auditable: true
+    tls-certificates-and-hostnames_custom_trust_store_identifier:
+      description: Certificate identifier tag.
+      type: string
+      example: 2458ce5a-0c35-4c7f-82c7-8e9487d3ff60
+      maxLength: 36
+      readOnly: true
+      x-auditable: true
     tls-certificates-and-hostnames_custom_trust_store_response_collection:
       allOf:
         - $ref: '#/components/schemas/tls-certificates-and-hostnames_api-response-collection'
@@ -478108,7 +478212,7 @@ components:
               type: object
               properties:
                 id:
-                  $ref: '#/components/schemas/tls-certificates-and-hostnames_identifier'
+                  $ref: '#/components/schemas/tls-certificates-and-hostnames_custom_trust_store_identifier'
           type: object
     tls-certificates-and-hostnames_custom_trust_store_response_single:
       allOf:
@@ -478131,7 +478235,7 @@ components:
         hostname:
           $ref: '#/components/schemas/tls-certificates-and-hostnames_hostname'
         id:
-          $ref: '#/components/schemas/tls-certificates-and-hostnames_identifier'
+          $ref: '#/components/schemas/tls-certificates-and-hostnames_custom_hostname_identifier'
         ownership_verification:
           $ref: '#/components/schemas/tls-certificates-and-hostnames_ownership_verification'
         ownership_verification_http:
@@ -478159,7 +478263,7 @@ components:
               type: object
               properties:
                 id:
-                  $ref: '#/components/schemas/tls-certificates-and-hostnames_identifier'
+                  $ref: '#/components/schemas/tls-certificates-and-hostnames_certificate_pack_identifier'
           type: object
     tls-certificates-and-hostnames_deploy:
       description: The environment to deploy the certificate to, defaults to production.
@@ -478341,7 +478445,7 @@ components:
       type: object
       properties:
         cert_id:
-          $ref: '#/components/schemas/tls-certificates-and-hostnames_identifier'
+          $ref: '#/components/schemas/tls-certificates-and-hostnames_hostname_aop_certificate_identifier'
         certificate:
           $ref: '#/components/schemas/tls-certificates-and-hostnames_certificate-6'
         enabled:
@@ -478349,11 +478453,18 @@ components:
         hostname:
           $ref: '#/components/schemas/tls-certificates-and-hostnames_hostname-2'
         id:
-          $ref: '#/components/schemas/tls-certificates-and-hostnames_identifier'
+          $ref: '#/components/schemas/tls-certificates-and-hostnames_hostname_aop_certificate_identifier'
         private_key:
           $ref: '#/components/schemas/tls-certificates-and-hostnames_private_key-3'
       allOf:
         - $ref: '#/components/schemas/tls-certificates-and-hostnames_hostname_certid_object'
+    tls-certificates-and-hostnames_hostname_aop_certificate_identifier:
+      description: Certificate identifier tag.
+      type: string
+      example: 2458ce5a-0c35-4c7f-82c7-8e9487d3ff60
+      maxLength: 36
+      readOnly: true
+      x-auditable: true
     tls-certificates-and-hostnames_hostname_aop_response_collection:
       allOf:
         - $ref: '#/components/schemas/tls-certificates-and-hostnames_api-response-collection'
@@ -478451,7 +478562,7 @@ components:
       type: object
       properties:
         cert_id:
-          $ref: '#/components/schemas/tls-certificates-and-hostnames_identifier'
+          $ref: '#/components/schemas/tls-certificates-and-hostnames_hostname_aop_certificate_identifier'
         cert_status:
           $ref: '#/components/schemas/tls-certificates-and-hostnames_status-9'
         cert_updated_at:
@@ -478532,13 +478643,6 @@ components:
       example: 023e105f4ecef8ad9ca31a8372d0c353
       maxLength: 32
       x-auditable: true
-    tls-certificates-and-hostnames_identifier-2:
-      description: Keyless certificate identifier tag.
-      type: string
-      example: 4d2844d2ce78891c34d0b6c0535a291e
-      maxLength: 32
-      readOnly: true
-      x-auditable: true
     tls-certificates-and-hostnames_issued_on:
       description: Date that the Client Certificate was issued by the Certificate Authority.
       type: string
@@ -478561,6 +478665,13 @@ components:
       type: object
       allOf:
         - $ref: '#/components/schemas/tls-certificates-and-hostnames_base'
+    tls-certificates-and-hostnames_keyless_certificate_identifier:
+      description: Keyless certificate identifier tag.
+      type: string
+      example: 4d2844d2ce78891c34d0b6c0535a291e
+      maxLength: 32
+      readOnly: true
+      x-auditable: true
     tls-certificates-and-hostnames_keyless_private_ip:
       description: Private IP of the Key Server Host.
       type: string
@@ -478592,7 +478703,7 @@ components:
               type: object
               properties:
                 id:
-                  $ref: '#/components/schemas/tls-certificates-and-hostnames_identifier'
+                  $ref: '#/components/schemas/tls-certificates-and-hostnames_keyless_certificate_identifier'
           type: object
     tls-certificates-and-hostnames_keyless_tunnel:
       description: Configuration for using Keyless SSL through a Cloudflare Tunnel.
@@ -478645,6 +478756,13 @@ components:
       example: 2014-01-01T05:20:00Z
       readOnly: true
       x-auditable: true
+    tls-certificates-and-hostnames_mtls_certificate_identifier:
+      description: Certificate identifier tag.
+      type: string
+      example: 2458ce5a-0c35-4c7f-82c7-8e9487d3ff60
+      maxLength: 36
+      readOnly: true
+      x-auditable: true
     tls-certificates-and-hostnames_name:
       description: The keyless SSL name.
       type: string
@@ -478680,6 +478798,12 @@ components:
       type: string
       example: fallback.example.com
       maxLength: 255
+      x-auditable: true
+    tls-certificates-and-hostnames_origin_ca_certificate_identifier:
+      description: The x509 serial number of the Origin CA certificate.
+      type: string
+      example: '328578533902268680212849205732770752308931942346'
+      readOnly: true
       x-auditable: true
     tls-certificates-and-hostnames_ownership_verification:
       description: This is a record which can be placed to activate a hostname.
@@ -479925,11 +480049,18 @@ components:
         enabled:
           $ref: '#/components/schemas/tls-certificates-and-hostnames_enabled-4'
         id:
-          $ref: '#/components/schemas/tls-certificates-and-hostnames_identifier'
+          $ref: '#/components/schemas/tls-certificates-and-hostnames_zone_aop_certificate_identifier'
         private_key:
           $ref: '#/components/schemas/tls-certificates-and-hostnames_private_key-2'
       allOf:
         - $ref: '#/components/schemas/tls-certificates-and-hostnames_certificateObject'
+    tls-certificates-and-hostnames_zone_aop_certificate_identifier:
+      description: Certificate identifier tag.
+      type: string
+      example: 2458ce5a-0c35-4c7f-82c7-8e9487d3ff60
+      maxLength: 36
+      readOnly: true
+      x-auditable: true
     tunnel_account_id:
       description: Cloudflare account ID
       type: string
@@ -481406,7 +481537,7 @@ components:
       example: 0x4AAF00AAAABn0R22HWm098HVBjhdsYUc
       x-sensitive: true
     turnstile_sitekey:
-      description: Widget item identifier tag.
+      description: Unique identifier for a Turnstile widget.
       type: string
       example: 0x4AAF00AAAABn0R22HWm-YUc
       maxLength: 32
