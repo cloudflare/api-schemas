@@ -430519,6 +430519,23 @@ components:
             result:
               $ref: '#/components/schemas/intel_asn'
           type: object
+    intel_asn_country:
+      type: string
+      example: US
+      x-auditable: true
+    intel_asn_description:
+      type: string
+      example: CLOUDFLARENET
+      x-auditable: true
+    intel_asn_type:
+      description: Infrastructure type of this ASN.
+      type: string
+      example: hosting_provider
+      enum:
+        - hosting_provider
+        - isp
+        - organization
+      x-auditable: true
     intel_categories_with_super_category_ids_example_empty:
       type: array
       items:
@@ -430829,6 +430846,155 @@ components:
       description: Number of results per page of results.
       type: number
       example: 20
+    intel_phishing-url-info:
+      type: object
+      properties:
+        categorizations:
+          description: List of categorizations applied to this submission.
+          type: array
+          items:
+            properties:
+              category:
+                description: Name of the category applied.
+                type: string
+                example: PHISHING
+                x-auditable: true
+              verification_status:
+                description: Result of human review for this categorization.
+                type: string
+                example: confirmed
+                x-auditable: true
+            type: object
+        model_results:
+          description: List of model results for completed scans.
+          type: array
+          items:
+            properties:
+              model_name:
+                description: Name of the model.
+                type: string
+                example: MACHINE_LEARNING_v2
+                x-auditable: true
+              model_score:
+                description: This is the score that is outputted by the model for this submission.
+                type: number
+                example: 0.024
+            type: object
+        rule_matches:
+          description: List of signatures that matched against site content found when crawling the URL.
+          type: array
+          items:
+            properties:
+              banning:
+                description: For internal use.
+                type: boolean
+              blocking:
+                description: For internal use.
+                type: boolean
+              description:
+                description: Description of the signature that matched.
+                type: string
+                example: Match frequently used social followers phishing kit
+                x-auditable: true
+              name:
+                description: Name of the signature that matched.
+                type: string
+                example: phishkit.social_followers
+                x-auditable: true
+            type: object
+        scan_status:
+          description: Status of the most recent scan found.
+          type: object
+          properties:
+            last_processed:
+              description: Timestamp of when the submission was processed.
+              type: string
+              example: Wed, 26 Oct 2022 16:04:51 GMT
+              x-auditable: true
+            scan_complete:
+              description: For internal use.
+              type: boolean
+            status_code:
+              description: Status code that the crawler received when loading the submitted URL.
+              type: integer
+              x-auditable: true
+            submission_id:
+              description: ID of the most recent submission.
+              type: integer
+              x-auditable: true
+        screenshot_download_signature:
+          description: For internal use.
+          type: string
+        screenshot_path:
+          description: For internal use.
+          type: string
+        url:
+          description: URL that was submitted.
+          type: string
+          example: https://www.cloudflare.com
+          x-auditable: true
+    intel_phishing-url-info_components-schemas-single_response:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/intel_api-response-single'
+        - properties:
+            result:
+              $ref: '#/components/schemas/intel_phishing-url-info'
+          type: object
+    intel_phishing-url-submit:
+      type: object
+      properties:
+        excluded_urls:
+          description: URLs that were excluded from scanning because their domain is in our no-scan list.
+          type: array
+          items:
+            properties:
+              url:
+                description: URL that was excluded.
+                type: string
+                example: https://developers.cloudflare.com
+                x-auditable: true
+            type: object
+        skipped_urls:
+          description: URLs that were skipped because the same URL is currently being scanned.
+          type: array
+          items:
+            properties:
+              url:
+                description: URL that was skipped.
+                type: string
+                example: https://www.cloudflare.com/developer-week/
+                x-auditable: true
+              url_id:
+                description: ID of the submission of that URL that is currently scanning.
+                type: integer
+                example: 2
+                x-auditable: true
+            type: object
+        submitted_urls:
+          description: URLs that were successfully submitted for scanning.
+          type: array
+          items:
+            properties:
+              url:
+                description: URL that was submitted.
+                type: string
+                example: https://www.cloudflare.com
+                x-auditable: true
+              url_id:
+                description: ID assigned to this URL submission. Used to retrieve scanning results.
+                type: integer
+                example: 1
+                x-auditable: true
+            type: object
+    intel_phishing-url-submit_components-schemas-single_response:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/intel_api-response-single'
+        - properties:
+            result:
+              $ref: '#/components/schemas/intel_phishing-url-submit'
+          type: object
     intel_popularity_rank:
       description: Global Cloudflare 100k ranking for the last 30 days, if available for the hostname. The top ranked domain is 1, the lowest ranked domain is 100,000.
       type: integer
@@ -430907,6 +431073,27 @@ components:
         - success
         - errors
         - messages
+    intel_schemas-asn:
+      type: object
+      properties:
+        asn:
+          $ref: '#/components/schemas/intel_asn'
+        country:
+          $ref: '#/components/schemas/intel_asn_country'
+        description:
+          $ref: '#/components/schemas/intel_asn_description'
+        domain_count:
+          type: integer
+          x-auditable: true
+        top_domains:
+          type: array
+          items:
+            type: string
+            x-auditable: true
+          example:
+            - example.com
+        type:
+          $ref: '#/components/schemas/intel_asn_type'
     intel_schemas-ip:
       type: object
       properties:
@@ -431007,6 +431194,14 @@ components:
           description: Total results available without any search parameters.
           type: number
           example: 2000
+    intel_schemas-single_response:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/intel_api-response-single'
+        - properties:
+            result:
+              $ref: '#/components/schemas/intel_whois'
+          type: object
     intel_single_response:
       type: object
       allOf:
@@ -431034,6 +431229,12 @@ components:
       description: 'STIX 2.1 identifier: https://docs.oasis-open.org/cti/stix/v2.1/cs02/stix-v2.1-cs02.html#_64yvzeku5a5c.'
       type: string
       example: ipv4-addr--baa568ec-6efe-5902-be55-0663833db537
+      x-auditable: true
+    intel_url:
+      description: URL(s) to filter submissions results by.
+      type: string
+      format: uri
+      example: https://www.cloudflare.com
       x-auditable: true
     intel_url_intelligence:
       type: object
@@ -431098,6 +431299,57 @@ components:
             result:
               $ref: '#/components/schemas/intel_url_intelligence'
           type: object
+    intel_url_param:
+      type: object
+      properties:
+        url:
+          $ref: '#/components/schemas/intel_url'
+    intel_whois:
+      type: object
+      properties:
+        created_date:
+          type: string
+          format: date
+          example: 2009-02-17
+          x-auditable: true
+        domain:
+          $ref: '#/components/schemas/intel_domain_name'
+        nameservers:
+          type: array
+          items:
+            type: string
+            x-auditable: true
+          example:
+            - ns3.cloudflare.com
+            - ns4.cloudflare.com
+            - ns5.cloudflare.com
+            - ns6.cloudflare.com
+            - ns7.cloudflare.com
+        registrant:
+          type: string
+          example: DATA REDACTED
+          x-auditable: true
+        registrant_country:
+          type: string
+          example: United States
+          x-auditable: true
+        registrant_email:
+          type: string
+          example: https://domaincontact.cloudflareregistrar.com/cloudflare.com
+          x-auditable: true
+        registrant_org:
+          type: string
+          example: DATA REDACTED
+          x-auditable: true
+        registrar:
+          type: string
+          example: Cloudflare, Inc.
+          x-auditable: true
+        updated_date:
+          type: string
+          format: date
+          example: 2017-05-24
+          x-auditable: true
     kamino_environment:
       type: object
       properties:
@@ -503897,8 +504149,6 @@ x-forge-commands:
         description: IP address intelligence — geolocation, risk assessment, and hosting provider details
       miscategorizations:
         description: Report and track domain miscategorization corrections
-      urls:
-        description: URL intelligence operations
       whois:
         description: WHOIS registration data for domains including registrant, registrar, and nameservers
   leaked-credential-checks:
