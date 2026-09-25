@@ -128695,7 +128695,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: email-security.analytics.monthly-report
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
       x-stability: beta
     parameters:
       - $ref: '#/components/parameters/email-security_account_id'
@@ -128703,7 +128702,7 @@ paths:
     get:
       operationId: email_security_investigate
       summary: Search email messages
-      description: Returns information for each email that matches the search parameter(s).
+      description: Returns information for each email that matches the provided search parameters.
       parameters:
         - name: start
           in: query
@@ -128721,7 +128720,7 @@ paths:
           example: 2022-07-25T14:30:00Z
         - name: query
           in: query
-          description: Space-delimited search term. Case-insensitive.
+          description: Space-delimited term matched case-insensitively against message metadata — sender, recipient, subject, attachment names and hashes, and message ID.
           schema:
             type: string
           example: bob jones
@@ -128745,6 +128744,7 @@ paths:
               - NONE
         - name: metric
           in: query
+          description: Metric to aggregate the results by, as used by the Email Security dashboard.
           schema:
             type: string
         - name: message_action
@@ -128758,11 +128758,13 @@ paths:
               - MOVED
         - name: recipient
           in: query
+          description: Filter by recipient. Matches an email address or a domain.
           schema:
             type: string
           example: me@example.com
         - name: sender
           in: query
+          description: Filter by sender. Matches an email address or a domain.
           schema:
             type: string
           example: noreply@example.com
@@ -128774,20 +128776,23 @@ paths:
           example: 192.0.2.1
         - name: alert_id
           in: query
+          description: Filter by alert ID.
           schema:
             type: string
         - name: domain
           in: query
-          description: Sender domains to filter by.
+          description: Filter by a domain found in the email — sender domain, recipient domain, or a domain in a link.
           schema:
             type: string
           example: example.com
         - name: message_id
           in: query
+          description: Filter by the RFC 5322 Message-ID header.
           schema:
             type: string
         - name: subject
           in: query
+          description: Search for messages containing individual keywords in any order within the subject.
           schema:
             type: string
         - name: delivery_status
@@ -128797,6 +128802,7 @@ paths:
             $ref: '#/components/schemas/email-security_MessageDeliveryStatus'
         - name: cursor
           in: query
+          description: Opaque cursor from a previous response's `result_info.next` or `result_info.previous` for cursor-based pagination. When omitted, the first page is returned.
           schema:
             type: string
         - $ref: '#/components/parameters/email-security_per_page'
@@ -128869,7 +128875,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: email-security.investigate
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
       x-stability: beta
     parameters:
       - $ref: '#/components/parameters/email-security_account_id'
@@ -128906,7 +128911,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: email-security.investigate
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
       x-stability: beta
     parameters:
       - $ref: '#/components/parameters/email-security_account_id'
@@ -128919,7 +128923,7 @@ paths:
   /accounts/{account_id}/email-security/investigate/{investigate_id}/action_log:
     get:
       operationId: email_security_get_message_action_log
-      summary: Get action log for a message
+      summary: List post-delivery actions for a message
       description: Returns the list of post-delivery actions (moves, quarantine releases, previews, etc.) that have been applied to a specific email message.
       responses:
         '200':
@@ -128950,8 +128954,7 @@ paths:
         - 'Cloud Email Security: Read'
       x-fern-availability: beta
       x-fern-sdk-group-name: email-security.investigate.action-log
-      x-fern-sdk-method-name: get
-      x-forge-hidden: true
+      x-fern-sdk-method-name: list
       x-stability: beta
     parameters:
       - $ref: '#/components/parameters/email-security_account_id'
@@ -128964,7 +128967,7 @@ paths:
     get:
       operationId: email_security_get_message_detections
       summary: Get message detection details
-      description: Returns detection details such as threat categories and sender information for non-benign messages.
+      description: Returns detection details such as threat categories and sender information for messages with a detection.
       responses:
         '200':
           description: Email message detection details.
@@ -128993,7 +128996,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: email-security.investigate.detections
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
       x-stability: beta
     parameters:
       - $ref: '#/components/parameters/email-security_account_id'
@@ -129060,15 +129062,15 @@ paths:
       x-api-token-group:
         - 'Cloud Email Security: Write'
       x-fern-availability: beta
+      x-fern-ignore: true
       x-fern-sdk-group-name: email-security.investigate.move
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
       x-stability: beta
   /accounts/{account_id}/email-security/investigate/{investigate_id}/preview:
     get:
       operationId: email_security_get_message_preview
-      summary: Get email preview
-      description: Returns a preview of the message body as a base64 encoded PNG image for non-benign messages.
+      summary: Get preview for a detection
+      description: Returns a preview of the message body as a base64-encoded PNG image for any message with a detection. For messages without a detection, use the non-detection preview endpoint instead.
       responses:
         '200':
           description: Email preview.
@@ -129097,7 +129099,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: email-security.investigate.preview
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
       x-stability: beta
     parameters:
       - $ref: '#/components/parameters/email-security_account_id'
@@ -129110,7 +129111,7 @@ paths:
     get:
       operationId: email_security_get_message_raw
       summary: Get raw email content
-      description: Returns the raw eml of any non-benign message.
+      description: Returns the raw EML content of any message with a detection.
       responses:
         '200':
           description: Raw email content.
@@ -129139,7 +129140,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: email-security.investigate.raw
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
       x-stability: beta
     parameters:
       - $ref: '#/components/parameters/email-security_account_id'
@@ -129159,7 +129159,7 @@ paths:
     post:
       operationId: email_security_post_reclassify
       summary: Change email classification
-      description: Submits a request to reclassify an email's disposition. Use for reporting false positives or false negatives. Optionally provide the raw EML content for reanalysis. The reclassification is processed asynchronously.
+      description: Submits a request to reclassify an email's disposition. Use for reporting false positives or false negatives. Optionally provide the raw EML content for reanalysis. The reclassification is processed asynchronously. Deprecated; use the create submissions endpoint instead.
       requestBody:
         required: true
         content:
@@ -129182,6 +129182,7 @@ paths:
                     type: object
         4XX:
           $ref: '#/components/responses/email-security_ClientError'
+      deprecated: true
       security:
         - api_token: []
         - api_email: []
@@ -129190,10 +129191,10 @@ paths:
         - Email Security
       x-api-token-group:
         - 'Cloud Email Security: Write'
-      x-fern-availability: beta
+      x-fern-availability: deprecated
+      x-fern-ignore: true
       x-fern-sdk-group-name: email-security.investigate.reclassify
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
       x-stability: beta
   /accounts/{account_id}/email-security/investigate/{investigate_id}/trace:
     get:
@@ -129228,7 +129229,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: email-security.investigate.trace
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
       x-stability: beta
     parameters:
       - $ref: '#/components/parameters/email-security_account_id'
@@ -129247,6 +129247,7 @@ paths:
         - $ref: '#/components/parameters/email-security_per_page'
         - name: action_type
           in: query
+          description: Filter jobs by the action they perform.
           schema:
             type: string
             enum:
@@ -129254,7 +129255,7 @@ paths:
               - RELEASE
         - name: status
           in: query
-          description: Filter by job status.
+          description: Filter jobs by their processing status.
           schema:
             $ref: '#/components/schemas/email-security_BulkJobStatus'
       responses:
@@ -129290,14 +129291,13 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: email-security.investigate.bulk
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
       x-stability: beta
     parameters:
       - $ref: '#/components/parameters/email-security_account_id'
     post:
       operationId: email_security_create_bulk_job
       summary: Create a bulk action job
-      description: Creates a new bulk action job to move or release messages that match the provided search parameters.
+      description: Creates a new bulk action job to move or release messages that match the provided search parameters. To move or release an explicit list of known messages instead of a search, use the move or release endpoints.
       requestBody:
         required: true
         content:
@@ -129331,7 +129331,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: email-security.investigate.bulk
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
       x-stability: beta
   /accounts/{account_id}/email-security/investigate/bulk/{job_id}:
     delete:
@@ -129369,7 +129368,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: email-security.investigate.bulk
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
       x-forge-require-confirmation: This operation permanently deletes the completed, cancelled, or failed bulk action job from all list and detail endpoints.
       x-stability: beta
     get:
@@ -129404,7 +129402,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: email-security.investigate.bulk
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
       x-stability: beta
     parameters:
       - $ref: '#/components/parameters/email-security_account_id'
@@ -129452,9 +129449,8 @@ paths:
       x-api-token-group:
         - 'Cloud Email Security: Write'
       x-fern-availability: beta
-      x-fern-sdk-group-name: email-security.investigate.bulk.cancel
-      x-fern-sdk-method-name: create
-      x-forge-hidden: true
+      x-fern-sdk-group-name: email-security.investigate.bulk
+      x-fern-sdk-method-name: cancel
       x-stability: beta
   /accounts/{account_id}/email-security/investigate/bulk/{job_id}/messages:
     get:
@@ -129466,7 +129462,7 @@ paths:
         - $ref: '#/components/parameters/email-security_per_page'
         - name: status
           in: query
-          description: Filter by message status.
+          description: Filter the job's messages by their processing status.
           schema:
             $ref: '#/components/schemas/email-security_BulkActionMessageStatus'
       responses:
@@ -129502,7 +129498,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: email-security.investigate.bulk.messages
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
       x-stability: beta
     parameters:
       - $ref: '#/components/parameters/email-security_account_id'
@@ -129517,8 +129512,8 @@ paths:
       - $ref: '#/components/parameters/email-security_account_id'
     post:
       operationId: email_security_post_bulk_move
-      summary: Move multiple messages
-      description: Moves multiple messages to a specified mailbox folder (Inbox, JunkEmail, DeletedItems, RecoverableItemsDeletions, or RecoverableItemsPurges). Requires active integration.
+      summary: Move messages
+      description: Moves one or more messages to a specified mailbox folder (Inbox, JunkEmail, DeletedItems, RecoverableItemsDeletions, or RecoverableItemsPurges). Requires active integration. Operates on an explicit list of messages; to move all messages matching a search, create a bulk action job instead.
       requestBody:
         required: true
         content:
@@ -129541,6 +129536,8 @@ paths:
                   type: array
                   items:
                     $ref: '#/components/schemas/email-security_InvestigateId'
+                  maxItems: 1000
+                  minItems: 1
                   x-auditable: true
                 postfix_ids:
                   description: 'Deprecated, use `ids` instead. End of life: November 1, 2026.'
@@ -129552,6 +129549,7 @@ paths:
                   x-stainless-deprecation-message: Use `ids` instead.
               required:
                 - destination
+                - ids
       responses:
         '200':
           description: Bulk move operation results.
@@ -129579,17 +129577,16 @@ paths:
       x-api-token-group:
         - 'Cloud Email Security: Write'
       x-fern-availability: beta
-      x-fern-sdk-group-name: email-security.investigate.move
-      x-fern-sdk-method-name: bulk
-      x-forge-hidden: true
+      x-fern-sdk-group-name: email-security.investigate
+      x-fern-sdk-method-name: move
       x-stability: beta
   /accounts/{account_id}/email-security/investigate/preview:
     parameters:
       - $ref: '#/components/parameters/email-security_account_id'
     post:
       operationId: email_security_post_preview
-      summary: Preview for non-detection messages
-      description: Generates a preview image for a message that was not flagged as a detection. Useful for investigating benign messages. Returns a base64-encoded PNG screenshot of the email body.
+      summary: Generate preview for a non-detection message
+      description: Generates a preview image for a message that was not flagged as a detection. The message is rendered from the copy in the recipient's mailbox, so this requires an active integration and only works while the message is still in the recipient's inbox. Returns a base64-encoded PNG screenshot of the email body. For messages with a detection, use the detection preview endpoint instead.
       requestBody:
         required: true
         content:
@@ -129597,10 +129594,10 @@ paths:
             schema:
               type: object
               properties:
-                postfix_id:
-                  $ref: '#/components/schemas/email-security_PostfixId'
+                id:
+                  $ref: '#/components/schemas/email-security_InvestigateId'
               required:
-                - postfix_id
+                - id
       responses:
         '200':
           description: Email preview.
@@ -129627,8 +129624,7 @@ paths:
         - 'Cloud Email Security: Write'
       x-fern-availability: beta
       x-fern-sdk-group-name: email-security.investigate.preview
-      x-fern-sdk-method-name: create
-      x-forge-hidden: true
+      x-fern-sdk-method-name: generate
       x-stability: beta
   /accounts/{account_id}/email-security/investigate/release:
     parameters:
@@ -129636,7 +129632,7 @@ paths:
     post:
       operationId: email_security_post_release
       summary: Release messages from quarantine
-      description: Delivers one or more quarantined messages to their intended recipients, for cases where a message was incorrectly quarantined. The response includes delivery status for each recipient.
+      description: Delivers one or more quarantined messages to their intended recipients, for cases where a message was incorrectly quarantined. Operates on an explicit list of messages; to release all messages matching a search, create a bulk action job instead. The response includes delivery status for each recipient.
       requestBody:
         description: A list of investigate IDs identifying the messages to release.
         required: true
@@ -129646,6 +129642,7 @@ paths:
               type: array
               items:
                 $ref: '#/components/schemas/email-security_InvestigateId'
+              minItems: 1
       responses:
         '200':
           description: Release operation results.
@@ -129673,14 +129670,13 @@ paths:
       x-api-token-group:
         - 'Cloud Email Security: Write'
       x-fern-availability: beta
-      x-fern-sdk-group-name: email-security.investigate.release
-      x-fern-sdk-method-name: bulk
-      x-forge-hidden: true
+      x-fern-sdk-group-name: email-security.investigate
+      x-fern-sdk-method-name: release
       x-stability: beta
   /accounts/{account_id}/email-security/phishguard/reports:
     get:
       operationId: email_security_get_phishguard_reports
-      summary: Get PhishGuard reports
+      summary: List PhishGuard reports
       description: Retrieves PhishGuard security alert reports for a specified date range. Reports include detected threats, dispositions, and contextual information. Use for security monitoring and threat analysis.
       parameters:
         - name: start
@@ -129747,7 +129743,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: email-security.phishguard.reports
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
       x-stability: beta
     parameters:
       - $ref: '#/components/parameters/email-security_account_id'
@@ -129791,11 +129786,13 @@ paths:
             type: boolean
         - name: pattern_type
           in: query
+          description: Filter by pattern type.
           schema:
             allOf:
               - $ref: '#/components/schemas/email-security_PatternType'
         - name: pattern
           in: query
+          description: Filter by exact pattern value.
           schema:
             type: string
       responses:
@@ -129824,7 +129821,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: email-security.allow-policies
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
       x-stability: beta
     parameters:
       - $ref: '#/components/parameters/email-security_account_id'
@@ -129863,7 +129859,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: email-security.allow-policies
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
       x-stability: beta
   /accounts/{account_id}/email-security/settings/allow_policies/{policy_id}:
     delete:
@@ -129895,7 +129890,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: email-security.allow-policies
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
       x-forge-require-confirmation: This operation deletes the allow policy and restores normal security scanning and disposition actions for matching emails.
       x-stability: beta
     get:
@@ -129928,7 +129922,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: email-security.allow-policies
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
       x-stability: beta
     parameters:
       - $ref: '#/components/parameters/email-security_account_id'
@@ -129972,7 +129965,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: email-security.allow-policies
       x-fern-sdk-method-name: edit
-      x-forge-hidden: true
       x-stability: beta
     put:
       operationId: email_security_replace_allow_policy
@@ -130007,14 +129999,13 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: email-security.allow-policies
       x-fern-sdk-method-name: update
-      x-forge-hidden: true
       x-stability: beta
   /accounts/{account_id}/email-security/settings/allow_policies/batch:
     parameters:
       - $ref: '#/components/parameters/email-security_account_id'
     post:
       operationId: email_security_batch_allow_policies
-      summary: Batch allow policies operations
+      summary: Batch allow policy operations
       description: |
         Executes multiple operations atomically. All four operation arrays
         (deletes, patches, puts, posts) are required and executed in order.
@@ -130108,7 +130099,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: email-security.allow-policies
       x-fern-sdk-method-name: batch
-      x-forge-hidden: true
       x-forge-require-confirmation: This operation may delete the selected allow policies and restore normal security scanning and disposition actions for matching emails.
       x-stability: beta
   /accounts/{account_id}/email-security/settings/block_senders:
@@ -130166,7 +130156,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: email-security.block-senders
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
       x-stability: beta
     parameters:
       - $ref: '#/components/parameters/email-security_account_id'
@@ -130205,7 +130194,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: email-security.block-senders
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
       x-stability: beta
   /accounts/{account_id}/email-security/settings/block_senders/{pattern_id}:
     delete:
@@ -130237,7 +130225,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: email-security.block-senders
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
       x-forge-require-confirmation: This operation deletes the blocked sender pattern and stops automatically blocking matching emails based on this rule.
       x-stability: beta
     get:
@@ -130270,7 +130257,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: email-security.block-senders
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
       x-stability: beta
     parameters:
       - $ref: '#/components/parameters/email-security_account_id'
@@ -130314,7 +130300,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: email-security.block-senders
       x-fern-sdk-method-name: edit
-      x-forge-hidden: true
       x-stability: beta
     put:
       operationId: email_security_replace_blocked_sender
@@ -130349,14 +130334,13 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: email-security.block-senders
       x-fern-sdk-method-name: update
-      x-forge-hidden: true
       x-stability: beta
   /accounts/{account_id}/email-security/settings/block_senders/batch:
     parameters:
       - $ref: '#/components/parameters/email-security_account_id'
     post:
       operationId: email_security_batch_blocked_senders
-      summary: Batch blocked senders operations
+      summary: Batch blocked sender operations
       description: |
         Executes multiple operations atomically. All four operation arrays
         (deletes, patches, puts, posts) are required and executed in order.
@@ -130450,7 +130434,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: email-security.block-senders
       x-fern-sdk-method-name: batch
-      x-forge-hidden: true
       x-forge-require-confirmation: This operation may delete the selected blocked sender patterns and stop automatically blocking matching emails based on those rules.
       x-stability: beta
   /accounts/{account_id}/email-security/settings/content_policies:
@@ -130507,7 +130490,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: email-security.content-policies
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
       x-stability: beta
     parameters:
       - $ref: '#/components/parameters/email-security_account_id'
@@ -130546,7 +130528,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: email-security.content-policies
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
       x-stability: beta
   /accounts/{account_id}/email-security/settings/content_policies/{policy_id}:
     delete:
@@ -130578,7 +130559,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: email-security.content-policies
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
       x-forge-require-confirmation: This operation deletes the content policy and stops evaluating emails against its pattern.
       x-stability: beta
     get:
@@ -130611,7 +130591,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: email-security.content-policies
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
       x-stability: beta
     parameters:
       - $ref: '#/components/parameters/email-security_account_id'
@@ -130655,7 +130634,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: email-security.content-policies
       x-fern-sdk-method-name: edit
-      x-forge-hidden: true
       x-stability: beta
   /accounts/{account_id}/email-security/settings/content_policies/batch:
     parameters:
@@ -130756,7 +130734,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: email-security.content-policies
       x-fern-sdk-method-name: batch
-      x-forge-hidden: true
       x-forge-require-confirmation: This operation may delete the selected content policies and stop evaluating emails against their patterns.
       x-stability: beta
   /accounts/{account_id}/email-security/settings/domains:
@@ -130807,7 +130784,6 @@ paths:
       x-fern-ignore: true
       x-fern-sdk-group-name: email-security.domains
       x-fern-sdk-method-name: bulk-delete
-      x-forge-hidden: true
       x-forge-require-confirmation: This operation permanently deletes protection for the selected email domains. Emails for these domains will no longer be processed by Email Security.
       x-stability: beta
     get:
@@ -130881,7 +130857,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: email-security.domains
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
       x-stability: beta
     parameters:
       - $ref: '#/components/parameters/email-security_account_id'
@@ -130920,7 +130895,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: email-security.domains
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
       x-stability: beta
   /accounts/{account_id}/email-security/settings/domains/{domain_id}:
     delete:
@@ -130952,7 +130926,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: email-security.domains
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
       x-forge-require-confirmation: This operation permanently deletes protection for the email domain. Emails for this domain will no longer be processed by Email Security.
       x-stability: beta
     get:
@@ -130985,7 +130958,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: email-security.domains
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
       x-stability: beta
     parameters:
       - $ref: '#/components/parameters/email-security_account_id'
@@ -131029,7 +131001,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: email-security.domains
       x-fern-sdk-method-name: edit
-      x-forge-hidden: true
       x-stability: beta
     put:
       operationId: email_security_replace_domain
@@ -131064,7 +131035,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: email-security.domains
       x-fern-sdk-method-name: update
-      x-forge-hidden: true
       x-stability: beta
   /accounts/{account_id}/email-security/settings/domains/{domain_id}/verification:
     get:
@@ -131099,7 +131069,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: email-security.domains.verification
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
       x-stability: beta
     parameters:
       - $ref: '#/components/parameters/email-security_account_id'
@@ -131210,13 +131179,12 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: email-security.domains
       x-fern-sdk-method-name: batch
-      x-forge-hidden: true
       x-forge-require-confirmation: This operation may permanently delete protection for the selected email domains. Emails for those domains will no longer be processed by Email Security.
       x-stability: beta
   /accounts/{account_id}/email-security/settings/impersonation_registry:
     get:
       operationId: email_security_list_impersonation_registry
-      summary: List entries in impersonation registry
+      summary: List impersonation registry entries
       description: Returns a paginated list of protected identities in the impersonation registry. These entries define identities and email addresses to protect from impersonation attacks. Can be manually added or automatically synced from directory integrations.
       parameters:
         - $ref: '#/components/parameters/email-security_page'
@@ -131262,7 +131230,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: email-security.impersonation-registry
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
       x-stability: beta
     parameters:
       - $ref: '#/components/parameters/email-security_account_id'
@@ -131301,7 +131268,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: email-security.impersonation-registry
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
       x-stability: beta
   /accounts/{account_id}/email-security/settings/impersonation_registry/{impersonation_registry_id}:
     delete:
@@ -131333,7 +131299,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: email-security.impersonation-registry
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
       x-forge-require-confirmation: This operation deletes the impersonation registry entry and stops protecting the identity from impersonation.
       x-stability: beta
     get:
@@ -131366,7 +131331,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: email-security.impersonation-registry
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
       x-stability: beta
     parameters:
       - $ref: '#/components/parameters/email-security_account_id'
@@ -131410,7 +131374,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: email-security.impersonation-registry
       x-fern-sdk-method-name: edit
-      x-forge-hidden: true
       x-stability: beta
   /accounts/{account_id}/email-security/settings/sending_domain_restrictions:
     get:
@@ -131456,7 +131419,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: email-security.sending-domain-restrictions
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
       x-stability: beta
     parameters:
       - $ref: '#/components/parameters/email-security_account_id'
@@ -131495,7 +131457,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: email-security.sending-domain-restrictions
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
       x-stability: beta
   /accounts/{account_id}/email-security/settings/sending_domain_restrictions/{sending_domain_restriction_id}:
     delete:
@@ -131527,7 +131488,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: email-security.sending-domain-restrictions
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
       x-forge-require-confirmation: This operation deletes the sending domain restriction and removes TLS enforcement for emails from this domain.
       x-stability: beta
     get:
@@ -131560,7 +131520,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: email-security.sending-domain-restrictions
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
       x-stability: beta
     parameters:
       - $ref: '#/components/parameters/email-security_account_id'
@@ -131604,14 +131563,13 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: email-security.sending-domain-restrictions
       x-fern-sdk-method-name: edit
-      x-forge-hidden: true
       x-stability: beta
   /accounts/{account_id}/email-security/settings/sending_domain_restrictions/batch:
     parameters:
       - $ref: '#/components/parameters/email-security_account_id'
     post:
       operationId: email_security_batch_sending_domain_restrictions
-      summary: Batch sending domain restrictions operations
+      summary: Batch sending domain restriction operations
       description: Executes multiple delete operations on sending domain restrictions atomically. All operations succeed or fail together as a transaction. Currently only supports batch deletion. Removes TLS enforcement requirements for the specified domains.
       requestBody:
         required: true
@@ -131670,7 +131628,6 @@ paths:
       x-fern-ignore: true
       x-fern-sdk-group-name: email-security.sending-domain-restrictions
       x-fern-sdk-method-name: batch
-      x-forge-hidden: true
       x-forge-require-confirmation: This operation deletes the selected sending domain restrictions and removes TLS enforcement for the specified domains.
       x-stability: beta
   /accounts/{account_id}/email-security/settings/trusted_domains:
@@ -131731,7 +131688,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: email-security.trusted-domains
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
       x-stability: beta
     parameters:
       - $ref: '#/components/parameters/email-security_account_id'
@@ -131770,7 +131726,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: email-security.trusted-domains
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
       x-stability: beta
   /accounts/{account_id}/email-security/settings/trusted_domains/{trusted_domain_id}:
     delete:
@@ -131802,7 +131757,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: email-security.trusted-domains
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
       x-forge-require-confirmation: This operation deletes the trusted domain pattern and restores normal recent domain and similarity checks for matching emails.
       x-stability: beta
     get:
@@ -131835,7 +131789,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: email-security.trusted-domains
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
       x-stability: beta
     parameters:
       - $ref: '#/components/parameters/email-security_account_id'
@@ -131879,7 +131832,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: email-security.trusted-domains
       x-fern-sdk-method-name: edit
-      x-forge-hidden: true
       x-stability: beta
     put:
       operationId: email_security_replace_trusted_domain
@@ -131914,14 +131866,13 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: email-security.trusted-domains
       x-fern-sdk-method-name: update
-      x-forge-hidden: true
       x-stability: beta
   /accounts/{account_id}/email-security/settings/trusted_domains/batch:
     parameters:
       - $ref: '#/components/parameters/email-security_account_id'
     post:
       operationId: email_security_batch_trusted_domains
-      summary: Batch trusted domains operations
+      summary: Batch trusted domain operations
       description: |
         Executes multiple operations atomically. All four operation arrays
         (deletes, patches, puts, posts) are required and executed in order.
@@ -132015,7 +131966,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: email-security.trusted-domains
       x-fern-sdk-method-name: batch
-      x-forge-hidden: true
       x-forge-require-confirmation: This operation may delete the selected trusted domain patterns and restore normal recent domain and similarity checks for matching emails.
       x-stability: beta
   /accounts/{account_id}/email-security/settings/url_ignore_patterns:
@@ -132054,7 +132004,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: email-security.url-ignore-patterns
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
       x-stability: beta
     parameters:
       - $ref: '#/components/parameters/email-security_account_id'
@@ -132093,7 +132042,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: email-security.url-ignore-patterns
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
       x-stability: beta
   /accounts/{account_id}/email-security/settings/url_ignore_patterns/{pattern_id}:
     delete:
@@ -132125,7 +132073,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: email-security.url-ignore-patterns
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
       x-forge-require-confirmation: This operation deletes the URL rewrite ignore pattern and causes matching URLs to be rewritten again.
       x-stability: beta
     get:
@@ -132158,7 +132105,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: email-security.url-ignore-patterns
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
       x-stability: beta
     parameters:
       - $ref: '#/components/parameters/email-security_account_id'
@@ -132202,15 +132148,17 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: email-security.url-ignore-patterns
       x-fern-sdk-method-name: edit
-      x-forge-hidden: true
       x-stability: beta
   /accounts/{account_id}/email-security/settings/url_ignore_patterns/batch:
     parameters:
       - $ref: '#/components/parameters/email-security_account_id'
     post:
       operationId: email_security_batch_url_ignore_patterns
-      summary: Batch URL ignore patterns
-      description: Sends a batch of URL ignore patterns API calls to execute together.
+      summary: Batch URL ignore pattern operations
+      description: |
+        Executes multiple operations atomically. All four operation arrays
+        (deletes, patches, puts, posts) are required and executed in order.
+        Send empty arrays for unused operations.
       requestBody:
         required: true
         content:
@@ -132313,13 +132261,12 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: email-security.url-ignore-patterns
       x-fern-sdk-method-name: batch
-      x-forge-hidden: true
       x-forge-require-confirmation: This operation may delete the selected URL rewrite ignore patterns and cause matching URLs to be rewritten again.
       x-stability: beta
   /accounts/{account_id}/email-security/submissions:
     get:
       operationId: email_security_submissions
-      summary: Get reclassify submissions
+      summary: List reclassify submissions
       description: Returns information for submissions made to reclassify emails. Shows the status, outcome, and disposition changes for reclassification requests made by users or the security team. Useful for tracking false positive/negative reports.
       parameters:
         - name: start
@@ -132338,6 +132285,7 @@ paths:
           example: 2022-07-25T14:30:00Z
         - name: type
           in: query
+          description: Filter by who created the submission — `TEAM` for security team members or `USER` for end users.
           schema:
             type: string
             enum:
@@ -132345,6 +132293,7 @@ paths:
               - USER
         - name: submission_id
           in: query
+          description: Filter by a specific submission ID.
           schema:
             type: string
         - name: original_disposition
@@ -132361,10 +132310,12 @@ paths:
             $ref: '#/components/schemas/email-security_SubmissionDisposition'
         - name: status
           in: query
+          description: Filter by review status — `escalated`, `reviewed`, or `unreviewed`.
           schema:
             type: string
         - name: query
           in: query
+          description: Search term for filtering submissions.
           schema:
             type: string
             nullable: true
@@ -132415,10 +132366,80 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: email-security.submissions
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
       x-stability: beta
     parameters:
       - $ref: '#/components/parameters/email-security_account_id'
+    post:
+      operationId: email_security_create_submissions
+      summary: Create new submissions
+      description: Submits messages for reclassification or to report missed detections.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              discriminator:
+                propertyName: type
+              oneOf:
+                - properties:
+                    messages:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/email-security_ReclassificationSubmission'
+                    type:
+                      type: string
+                      enum:
+                        - reclassification
+                  required:
+                    - type
+                    - messages
+                  type: object
+                - properties:
+                    messages:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/email-security_MissedDetectionSubmission'
+                    type:
+                      type: string
+                      enum:
+                        - missed_detection
+                  required:
+                    - type
+                    - messages
+                  type: object
+      responses:
+        '202':
+          description: Submission accepted.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/email-security_api-response-common'
+                  - properties:
+                      result:
+                        type: object
+                        properties:
+                          results:
+                            type: array
+                            items:
+                              $ref: '#/components/schemas/email-security_SubmissionResult'
+                        required:
+                          - results
+                    required:
+                      - result
+                    type: object
+        4XX:
+          $ref: '#/components/responses/email-security_ClientError'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Email Security
+      x-fern-availability: beta
+      x-fern-sdk-group-name: email-security.submissions
+      x-fern-sdk-method-name: create
+      x-stability: beta
   /accounts/{account_id}/email/routing/addresses:
     get:
       operationId: email-routing-destination-addresses-list-destination-addresses
@@ -419606,6 +419627,32 @@ components:
       required:
         - inbound
         - outbound
+    email-security_MissedDetectionSubmission:
+      type: object
+      properties:
+        eml_content:
+          type: string
+        escalated_submission_id:
+          type: string
+          x-auditable: true
+        expected_disposition:
+          $ref: '#/components/schemas/email-security_SubmissionDisposition'
+        message_id:
+          type: string
+          x-auditable: true
+        postfix_id:
+          $ref: '#/components/schemas/email-security_PostfixId'
+        recipient_emails:
+          type: array
+          items:
+            type: string
+            x-auditable: true
+          minItems: 1
+      required:
+        - postfix_id
+        - expected_disposition
+        - message_id
+        - recipient_emails
     email-security_MoveResponseItem:
       type: object
       properties:
@@ -419759,6 +419806,20 @@ components:
         - SNOOPY-CASB_OFFICE_365
         - SNOOPY-OFFICE_365
         - SNOOPY-GOOGLE_DIRECTORY
+    email-security_ReclassificationSubmission:
+      type: object
+      properties:
+        alert_id:
+          type: string
+          x-auditable: true
+        escalated_submission_id:
+          type: string
+          x-auditable: true
+        expected_disposition:
+          $ref: '#/components/schemas/email-security_SubmissionDisposition'
+      required:
+        - alert_id
+        - expected_disposition
     email-security_ReclassifyRequest:
       type: object
       properties:
@@ -420031,6 +420092,19 @@ components:
         - SPAM
         - BULK
         - NONE
+    email-security_SubmissionResult:
+      type: object
+      properties:
+        accepted:
+          type: boolean
+        error:
+          type: string
+          nullable: true
+        id:
+          type: string
+      required:
+        - id
+        - accepted
     email-security_ThreatCategory:
       type: object
       properties:
@@ -504201,11 +504275,11 @@ x-forge-commands:
       investigate:
         description: Search and investigate email messages — view detections, traces, raw content, and take remediation actions
       phishguard:
-        description: PhishGuard user-reported phishing submissions and analysis reports
+        description: PhishGuard user-reported phishing reports — view detected threats for a date range
       settings:
-        description: Email security policies — allow lists, blocked senders, trusted domains, and impersonation registry
+        description: Email security configuration — block senders, allow policies, content policies, domains, trusted domains, impersonation registry, and URL handling
       submissions:
-        description: User and admin email submissions for classification review
+        description: Reclassify submissions — track user and team reports of false positives and missed detections
   email-sending:
     description: Send transactional email and manage sending subdomains and their DNS configuration
     groups:
