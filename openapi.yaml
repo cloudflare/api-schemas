@@ -129230,16 +129230,9 @@ paths:
               - RELEASE
         - name: status
           in: query
+          description: Filter by job status.
           schema:
-            type: string
-            enum:
-              - PENDING
-              - DISCOVERING
-              - PROCESSING
-              - COMPLETED
-              - FAILED
-              - CANCELLED
-              - SKIPPED
+            $ref: '#/components/schemas/email-security_BulkJobStatus'
       responses:
         '200':
           description: Jobs retrieved successfully.
@@ -129320,7 +129313,7 @@ paths:
     delete:
       operationId: email_security_delete_bulk_job
       summary: Delete a bulk action job
-      description: Deletes the job, removing it from all list and detail endpoints. Only jobs in a terminal state (`COMPLETED`, `CANCELLED`, `FAILED`, or `SKIPPED`) can be deleted. To stop an in-progress job without removing it, use the cancel endpoint instead.
+      description: Deletes the job, removing it from all list and detail endpoints. Only jobs in a terminal state (`COMPLETED`, `CANCELLED`, or `FAILED`) can be deleted. To stop an in-progress job without removing it, use the cancel endpoint instead.
       responses:
         '200':
           description: Job deleted.
@@ -129353,7 +129346,7 @@ paths:
       x-fern-sdk-group-name: email-security.investigate.bulk
       x-fern-sdk-method-name: delete
       x-forge-hidden: true
-      x-forge-require-confirmation: This operation permanently deletes the completed, cancelled, failed, or skipped bulk action job from all list and detail endpoints.
+      x-forge-require-confirmation: This operation permanently deletes the completed, cancelled, or failed bulk action job from all list and detail endpoints.
       x-stability: beta
     get:
       operationId: email_security_get_bulk_job
@@ -129449,16 +129442,9 @@ paths:
         - $ref: '#/components/parameters/email-security_per_page'
         - name: status
           in: query
+          description: Filter by message status.
           schema:
-            type: string
-            enum:
-              - PENDING
-              - DISCOVERING
-              - PROCESSING
-              - COMPLETED
-              - FAILED
-              - CANCELLED
-              - SKIPPED
+            $ref: '#/components/schemas/email-security_BulkActionMessageStatus'
       responses:
         '200':
           description: Messages for the bulk job.
@@ -417922,15 +417908,7 @@ components:
         retry_count:
           type: integer
         status:
-          type: string
-          enum:
-            - PENDING
-            - DISCOVERING
-            - PROCESSING
-            - COMPLETED
-            - FAILED
-            - CANCELLED
-            - SKIPPED
+          $ref: '#/components/schemas/email-security_BulkActionMessageStatus'
         status_message:
           type: string
           nullable: true
@@ -417942,6 +417920,16 @@ components:
         - status
         - retry_count
         - created_at
+    email-security_BulkActionMessageStatus:
+      description: Status of a message within a bulk action job.
+      type: string
+      enum:
+        - PENDING
+        - PROCESSING
+        - COMPLETED
+        - FAILED
+        - CANCELLED
+        - SKIPPED
     email-security_BulkActionRequest:
       type: object
       properties:
@@ -418044,15 +418032,7 @@ components:
           format: date-time
           nullable: true
         status:
-          type: string
-          enum:
-            - PENDING
-            - DISCOVERING
-            - PROCESSING
-            - COMPLETED
-            - FAILED
-            - CANCELLED
-            - SKIPPED
+          $ref: '#/components/schemas/email-security_BulkJobStatus'
         status_message:
           type: string
           nullable: true
@@ -418071,6 +418051,16 @@ components:
         - messages_skipped
         - messages_cancelled
         - created_at
+    email-security_BulkJobStatus:
+      description: Status of a bulk action job.
+      type: string
+      enum:
+        - PENDING
+        - DISCOVERING
+        - PROCESSING
+        - COMPLETED
+        - FAILED
+        - CANCELLED
     email-security_BulkMessageActionParams:
       discriminator:
         propertyName: type
