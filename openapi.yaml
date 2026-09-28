@@ -298,8 +298,8 @@ paths:
   /accounts/{account_id}/abuse-reports:
     get:
       operationId: ListAbuseReports
-      summary: List abuse reports
-      description: List the abuse reports for a given account
+      summary: List abuse reports against the account
+      description: List abuse reports made against domains or other content associated with the account. To list reports that the account submitted, use the submitted abuse reports endpoint instead.
       parameters:
         - name: account_id
           in: path
@@ -417,12 +417,22 @@ paths:
           description: |-
             The request is not authorized. Missing or invalid credentials may be
             rejected with the standard Cloudflare API authentication error. If
-            credentials are valid, the API token does not have the Abuse Reports
-            read permission required for this account.
+            credentials are valid, the API token does not have the
+            `Trust and Safety Read` or `Trust and Safety Write` permission for
+            this account.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/abuse-reports_UnauthorizedErrorResponse'
+        '403':
+          description: |-
+            Cloudflare's API layer rejected the request because the API token or
+            OAuth grant does not have the required Trust and Safety permission for
+            this account. The response uses error code `10000`.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/abuse-reports_CloudflareAPIErrorResponse'
         '500':
           description: Failed to retrieve abuse reports
           content:
@@ -452,12 +462,13 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: abuse-reports
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
   /accounts/{account_id}/abuse-reports/{report_id}/appeals/eligibility:
     get:
       operationId: CheckAppealEligibility
       summary: Check whether a report can be appealed
-      description: 'Returns whether the report is currently appealable, along with the signals behind that decision: whether it already has an open appeal, how many appeals have been submitted against it, and whether it has at least one mitigation that an appeal could reverse.'
+      description: |-
+        Returns whether the report is currently appealable, along with the signals behind that decision: whether it already has an open appeal, how many appeals have been submitted against it, and whether it has at least one mitigation that an appeal could reverse.
+        Report-level appeals are currently available only for DMCA (copyright) reports. For other report types this operation returns the same `404 Report not found` response as a report that does not exist for the account.
       parameters:
         - name: account_id
           in: path
@@ -499,14 +510,24 @@ paths:
           description: |-
             The request is not authorized. Missing or invalid credentials may be
             rejected with the standard Cloudflare API authentication error. If
-            credentials are valid, the API token does not have the Abuse Reports
-            read permission required for this account.
+            credentials are valid, the API token does not have the
+            `Trust and Safety Read` or `Trust and Safety Write` permission for
+            this account.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/abuse-reports_UnauthorizedErrorResponse'
+        '403':
+          description: |-
+            Cloudflare's API layer rejected the request because the API token or
+            OAuth grant does not have the required Trust and Safety permission for
+            this account. The response uses error code `10000`.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/abuse-reports_CloudflareAPIErrorResponse'
         '404':
-          description: The report was not found, or does not support appeals.
+          description: The report was not found for this account, or its type does not support report-level appeals (currently DMCA reports only).
           content:
             application/json:
               schema:
@@ -545,7 +566,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: abuse-reports.appeals
       x-fern-sdk-method-name: eligibility
-      x-forge-hidden: true
   /accounts/{account_id}/abuse-reports/{report_id}/emails:
     get:
       operationId: ListEmails
@@ -647,12 +667,22 @@ paths:
           description: |-
             The request is not authorized. Missing or invalid credentials may be
             rejected with the standard Cloudflare API authentication error. If
-            credentials are valid, the API token does not have the Abuse Reports
-            read permission required for this account.
+            credentials are valid, the API token does not have the
+            `Trust and Safety Read` or `Trust and Safety Write` permission for
+            this account.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/abuse-reports_UnauthorizedErrorResponse'
+        '403':
+          description: |-
+            Cloudflare's API layer rejected the request because the API token or
+            OAuth grant does not have the required Trust and Safety permission for
+            this account. The response uses error code `10000`.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/abuse-reports_CloudflareAPIErrorResponse'
         '500':
           description: Failed to list abuse report emails
           content:
@@ -682,7 +712,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: abuse-reports.emails
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
   /accounts/{account_id}/abuse-reports/{report_id}/mitigations:
     get:
       operationId: ListMitigations
@@ -811,12 +840,22 @@ paths:
           description: |-
             The request is not authorized. Missing or invalid credentials may be
             rejected with the standard Cloudflare API authentication error. If
-            credentials are valid, the API token does not have the Abuse Reports
-            read permission required for this account.
+            credentials are valid, the API token does not have the
+            `Trust and Safety Read` or `Trust and Safety Write` permission for
+            this account.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/abuse-reports_UnauthorizedErrorResponse'
+        '403':
+          description: |-
+            Cloudflare's API layer rejected the request because the API token or
+            OAuth grant does not have the required Trust and Safety permission for
+            this account. The response uses error code `10000`.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/abuse-reports_CloudflareAPIErrorResponse'
         '500':
           description: Failed to list abuse report mitigations
           content:
@@ -846,12 +885,15 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: abuse-reports.mitigations
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
   /accounts/{account_id}/abuse-reports/{report_id}/mitigations/appeal:
     post:
       operationId: RequestReview
       summary: Request review on mitigations
-      description: Request a review for mitigations on an account. Repeating a request for a mitigation with an unresolved appeal is idempotent and returns that mitigation in the in-review state.
+      description: |-
+        Request a review of mitigations applied because of an abuse report, or submit a report-level appeal.
+
+        - To request a review of specific mitigations, send `appeals` with the mitigation IDs and reasons. Repeating a request for a mitigation with an unresolved appeal is idempotent and returns that mitigation in the in-review state.
+        - To submit a report-level appeal, send `type` and, for a `counter_notice`, the counter-notice details in `data`. Report-level appeals are currently available only for DMCA (copyright) reports.
       parameters:
         - name: account_id
           in: path
@@ -890,12 +932,21 @@ paths:
           description: |-
             The request is not authorized. Missing or invalid credentials may be
             rejected with the standard Cloudflare API authentication error. If
-            credentials are valid, the API token does not have the Abuse Reports
-            edit permission required for this account.
+            credentials are valid, the API token does not have the
+            `Trust and Safety Write` permission for this account.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/abuse-reports_UnauthorizedErrorResponse'
+        '403':
+          description: |-
+            Cloudflare's API layer rejected the request because the API token or
+            OAuth grant does not have the required Trust and Safety permission for
+            this account. The response uses error code `10000`.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/abuse-reports_CloudflareAPIErrorResponse'
         '500':
           description: Failed to request review on delayed action.
           content:
@@ -924,12 +975,11 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: abuse-reports.mitigations
       x-fern-sdk-method-name: review
-      x-forge-hidden: true
   /accounts/{account_id}/abuse-reports/{report_param}:
     get:
       operationId: GetAbuseReport
-      summary: Abuse Report Details
-      description: Retrieve the details of an abuse report.
+      summary: Get an abuse report against the account
+      description: Retrieve the details of an abuse report made against a domain or other content associated with the account. To retrieve a report that the account submitted, use the submitted abuse report endpoint instead.
       parameters:
         - name: account_id
           in: path
@@ -941,13 +991,14 @@ paths:
             maxLength: 32
         - name: report_param
           in: path
-          description: Identifier of the abuse report
+          description: Public report ID.
           required: true
           schema:
             type: string
+          x-fern-parameter-name: report-id
       responses:
         '200':
-          description: Report submitted successfully
+          description: Abuse report found.
           content:
             application/json:
               schema:
@@ -994,12 +1045,22 @@ paths:
           description: |-
             The request is not authorized. Missing or invalid credentials may be
             rejected with the standard Cloudflare API authentication error. If
-            credentials are valid, the API token does not have the Abuse Reports
-            read permission required for this account.
+            credentials are valid, the API token does not have the
+            `Trust and Safety Read` or `Trust and Safety Write` permission for
+            this account.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/abuse-reports_UnauthorizedErrorResponse'
+        '403':
+          description: |-
+            Cloudflare's API layer rejected the request because the API token or
+            OAuth grant does not have the required Trust and Safety permission for
+            this account. The response uses error code `10000`.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/abuse-reports_CloudflareAPIErrorResponse'
         '500':
           description: Report submitted with an error
           content:
@@ -1032,7 +1093,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: abuse-reports
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
     post:
       operationId: SubmitAbuseReport
       summary: Submit an abuse report
@@ -1041,9 +1101,9 @@ paths:
 
         Requires the abuse-reports entitlement on the account (Enterprise
         accounts have it by default; other accounts must request access) and an
-        API token with the `Account > Abuse Reports > Edit` permission. If the
-        account is not entitled, the request is rejected with an HTTP `401`
-        response (see below).
+        API token with the `Trust and Safety Write` permission. If the account
+        is not entitled, the request is rejected with an HTTP `401` response
+        (see below).
       parameters:
         - name: account_id
           in: path
@@ -1059,6 +1119,7 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/abuse-reports_SubmissionReportType'
+          x-fern-parameter-name: report-type
       requestBody:
         required: true
         content:
@@ -1086,12 +1147,21 @@ paths:
             because the account does not have the abuse-reports entitlement
             (Enterprise accounts have it by default; other accounts must request
             access), or because the API token is missing the
-            `Account > Abuse Reports > Edit` permission. Entitlement failures
+            `Trust and Safety Write` permission. Entitlement failures
             return the message `Not entitled to use feature: Abuse Report API`.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/abuse-reports_UnauthorizedErrorResponse'
+        '403':
+          description: |-
+            Cloudflare's API layer rejected the request because the API token or
+            OAuth grant does not have the required Trust and Safety permission for
+            this account. The response uses error code `10000`.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/abuse-reports_CloudflareAPIErrorResponse'
         '500':
           description: Report submitted with an error
           content:
@@ -1102,10 +1172,11 @@ paths:
         - api_token: []
       tags:
         - tseng-abuse-complaint-processor_other
+      x-api-token-group:
+        - Trust and Safety Write
       x-fern-availability: generally-available
       x-fern-sdk-group-name: abuse-reports
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
   /accounts/{account_id}/abuse-reports/submitted:
     get:
       operationId: ListSubmittedAbuseReports
@@ -1195,11 +1266,23 @@ paths:
         '400':
           description: Invalid account or query parameters.
         '401':
-          description: The request is not authorized to read abuse reports for this account.
+          description: |-
+            The request is not authorized to read abuse reports for this account.
+            The API token needs the `Trust and Safety Read` or
+            `Trust and Safety Write` permission.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/abuse-reports_UnauthorizedErrorResponse'
+        '403':
+          description: |-
+            Cloudflare's API layer rejected the request because the API token or
+            OAuth grant does not have the required Trust and Safety permission for
+            this account. The response uses error code `10000`.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/abuse-reports_CloudflareAPIErrorResponse'
         '500':
           description: Failed to retrieve submitted abuse reports.
       security:
@@ -1212,7 +1295,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: abuse-reports
       x-fern-sdk-method-name: list-submitted
-      x-forge-hidden: true
   /accounts/{account_id}/abuse-reports/submitted/{report_id}:
     get:
       operationId: GetSubmittedAbuseReport
@@ -1243,11 +1325,23 @@ paths:
         '400':
           description: Invalid account or report code.
         '401':
-          description: The request is not authorized to read abuse reports for this account.
+          description: |-
+            The request is not authorized to read abuse reports for this account.
+            The API token needs the `Trust and Safety Read` or
+            `Trust and Safety Write` permission.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/abuse-reports_UnauthorizedErrorResponse'
+        '403':
+          description: |-
+            Cloudflare's API layer rejected the request because the API token or
+            OAuth grant does not have the required Trust and Safety permission for
+            this account. The response uses error code `10000`.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/abuse-reports_CloudflareAPIErrorResponse'
         '404':
           description: No matching submitted report was found for the account.
         '500':
@@ -1262,7 +1356,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: abuse-reports
       x-fern-sdk-method-name: get-submitted
-      x-forge-hidden: true
   /accounts/{account_id}/abuse-reports/submitted/{report_id}/emails:
     get:
       operationId: ListSubmittedAbuseReportEmails
@@ -1303,11 +1396,23 @@ paths:
         '400':
           description: Invalid account, report, or query parameters.
         '401':
-          description: The request is not authorized to read abuse reports for this account.
+          description: |-
+            The request is not authorized to read abuse reports for this account.
+            The API token needs the `Trust and Safety Read` or
+            `Trust and Safety Write` permission.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/abuse-reports_UnauthorizedErrorResponse'
+        '403':
+          description: |-
+            Cloudflare's API layer rejected the request because the API token or
+            OAuth grant does not have the required Trust and Safety permission for
+            this account. The response uses error code `10000`.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/abuse-reports_CloudflareAPIErrorResponse'
         '404':
           description: Submitted abuse report not found for the selected account.
         '500':
@@ -1322,7 +1427,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: abuse-reports.emails
       x-fern-sdk-method-name: list-submitted
-      x-forge-hidden: true
   /accounts/{account_id}/access/ai-controls/mcp/analytics/portals/{portal_id}/tool-calls/timeseries:
     get:
       operationId: mcp-portals-api-portal-tool-call-timeseries
@@ -381521,7 +381625,7 @@ components:
         - counter_notice
         - content_removed
     abuse-reports_AuthErrorResponse:
-      description: 'The Abuse Reports API returns this HTTP 401 authorization error after credentials pass authentication but fail the required Abuse Reports permission check or, for report submission, the account entitlement check. Submission entitlement failures return "Not entitled to use feature: Abuse Report API". Enterprise accounts have the entitlement by default; other accounts must request access.'
+      description: 'The Abuse Reports API returns this HTTP 401 authorization error after credentials pass authentication but fail the required Trust and Safety permission check or, for report submission, the account entitlement check. Submission entitlement failures return "Not entitled to use feature: Abuse Report API". Enterprise accounts have the entitlement by default; other accounts must request access.'
       type: object
       properties:
         err_code:
@@ -381696,7 +381800,7 @@ components:
           title: Children Abuse Report
           type: object
     abuse-reports_CloudflareAPIErrorResponse:
-      description: Cloudflare's API layer uses this standard error envelope for requests that fail authentication before they reach the Abuse Reports API. The example shows the authentication error for missing or invalid credentials.
+      description: Cloudflare's API layer uses this standard error envelope for requests that fail authentication or authorization before they reach the Abuse Reports API. The example shows error code `10000`, returned for missing or invalid credentials (HTTP 401) and for a token or OAuth grant that lacks the required Trust and Safety permission (HTTP 403).
       type: object
       properties:
         errors:
@@ -382733,7 +382837,7 @@ components:
           title: Trademark Report
           type: object
     abuse-reports_UnauthorizedErrorResponse:
-      description: For HTTP 401 responses, use one of these error shapes. Cloudflare's API layer rejects requests with missing or invalid credentials before they reach the Abuse Reports API and returns the standard Cloudflare API error envelope. The Abuse Reports API returns its authorization error shape when valid credentials fail the Abuse Reports permission check or the submission entitlement check.
+      description: For HTTP 401 responses, use one of these error shapes. Cloudflare's API layer rejects requests with missing or invalid credentials before they reach the Abuse Reports API and returns the standard Cloudflare API error envelope. The Abuse Reports API returns its authorization error shape when valid credentials fail the Trust and Safety permission check or the submission entitlement check.
       oneOf:
         - $ref: '#/components/schemas/abuse-reports_CloudflareAPIErrorResponse'
         - $ref: '#/components/schemas/abuse-reports_AuthErrorResponse'
@@ -504425,8 +504529,10 @@ x-forge-commands:
   abuse-reports:
     description: Submit and track abuse reports for phishing, malware, and other policy violations on Cloudflare-proxied sites
     groups:
+      appeals:
+        description: Appeal eligibility for abuse reports
       emails:
-        description: Emails operations
+        description: Emails sent for abuse reports
       mitigations:
         description: Mitigation actions taken in response to abuse reports
   accounts:
