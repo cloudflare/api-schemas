@@ -128805,7 +128805,7 @@ paths:
               - NONE
         - name: metric
           in: query
-          description: Metric to aggregate the results by, as used by the Email Security dashboard.
+          description: Metric to aggregate the results by.
           schema:
             type: string
         - name: message_action
@@ -128863,9 +128863,10 @@ paths:
             $ref: '#/components/schemas/email-security_MessageDeliveryStatus'
         - name: cursor
           in: query
-          description: Opaque cursor from a previous response's `result_info.next` or `result_info.previous` for cursor-based pagination. When omitted, the first page is returned.
+          description: Pagination cursor from the previous response's `result_info`.
           schema:
             type: string
+          x-auditable: true
         - $ref: '#/components/parameters/email-security_per_page'
         - name: page
           in: query
@@ -128986,6 +128987,9 @@ paths:
       operationId: email_security_get_message_action_log
       summary: List post-delivery actions for a message
       description: Returns the list of post-delivery actions (moves, quarantine releases, previews, etc.) that have been applied to a specific email message.
+      parameters:
+        - $ref: '#/components/parameters/email-security_page'
+        - $ref: '#/components/parameters/email-security_per_page'
       responses:
         '200':
           description: Action log for the email.
@@ -128993,7 +128997,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/email-security_api-response-common'
+                  - $ref: '#/components/schemas/email-security_api-response-collection'
                   - properties:
                       result:
                         type: array
@@ -129350,7 +129354,7 @@ paths:
         - 'Cloud Email Security: Write'
         - 'Cloud Email Security: Read'
       x-fern-availability: beta
-      x-fern-sdk-group-name: email-security.investigate.bulk
+      x-fern-sdk-group-name: email-security.bulk-actions
       x-fern-sdk-method-name: list
       x-stability: beta
     parameters:
@@ -129390,7 +129394,7 @@ paths:
       x-api-token-group:
         - 'Cloud Email Security: Write'
       x-fern-availability: beta
-      x-fern-sdk-group-name: email-security.investigate.bulk
+      x-fern-sdk-group-name: email-security.bulk-actions
       x-fern-sdk-method-name: create
       x-stability: beta
   /accounts/{account_id}/email-security/investigate/bulk/{job_id}:
@@ -129427,7 +129431,7 @@ paths:
       tags:
         - Email Security
       x-fern-availability: beta
-      x-fern-sdk-group-name: email-security.investigate.bulk
+      x-fern-sdk-group-name: email-security.bulk-actions
       x-fern-sdk-method-name: delete
       x-forge-require-confirmation: This operation permanently deletes the completed, cancelled, or failed bulk action job from all list and detail endpoints.
       x-stability: beta
@@ -129461,26 +129465,26 @@ paths:
         - 'Cloud Email Security: Write'
         - 'Cloud Email Security: Read'
       x-fern-availability: beta
-      x-fern-sdk-group-name: email-security.investigate.bulk
+      x-fern-sdk-group-name: email-security.bulk-actions
       x-fern-sdk-method-name: get
       x-stability: beta
     parameters:
       - $ref: '#/components/parameters/email-security_account_id'
       - name: job_id
         in: path
+        description: Identifier of the bulk action job.
         required: true
         schema:
-          type: string
-          format: uuid
+          $ref: '#/components/schemas/email-security_BulkJobId'
   /accounts/{account_id}/email-security/investigate/bulk/{job_id}/cancel:
     parameters:
       - $ref: '#/components/parameters/email-security_account_id'
       - name: job_id
         in: path
+        description: Identifier of the bulk action job to cancel.
         required: true
         schema:
-          type: string
-          format: uuid
+          $ref: '#/components/schemas/email-security_BulkJobId'
     post:
       operationId: email_security_cancel_bulk_job
       summary: Cancel a bulk action job
@@ -129510,7 +129514,7 @@ paths:
       x-api-token-group:
         - 'Cloud Email Security: Write'
       x-fern-availability: beta
-      x-fern-sdk-group-name: email-security.investigate.bulk
+      x-fern-sdk-group-name: email-security.bulk-actions
       x-fern-sdk-method-name: cancel
       x-stability: beta
   /accounts/{account_id}/email-security/investigate/bulk/{job_id}/messages:
@@ -129557,17 +129561,17 @@ paths:
         - 'Cloud Email Security: Write'
         - 'Cloud Email Security: Read'
       x-fern-availability: beta
-      x-fern-sdk-group-name: email-security.investigate.bulk.messages
+      x-fern-sdk-group-name: email-security.bulk-actions.messages
       x-fern-sdk-method-name: list
       x-stability: beta
     parameters:
       - $ref: '#/components/parameters/email-security_account_id'
       - name: job_id
         in: path
+        description: Identifier of the bulk action job whose messages to list.
         required: true
         schema:
-          type: string
-          format: uuid
+          $ref: '#/components/schemas/email-security_BulkJobId'
   /accounts/{account_id}/email-security/investigate/move:
     parameters:
       - $ref: '#/components/parameters/email-security_account_id'
@@ -129695,15 +129699,22 @@ paths:
       summary: Release messages from quarantine
       description: Delivers one or more quarantined messages to their intended recipients, for cases where a message was incorrectly quarantined. Operates on an explicit list of messages; to release all messages matching a search, create a bulk action job instead. The response includes delivery status for each recipient.
       requestBody:
-        description: A list of investigate IDs identifying the messages to release.
+        description: The messages to release, identified by their investigate IDs.
         required: true
         content:
           application/json:
             schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/email-security_InvestigateId'
-              minItems: 1
+              type: object
+              properties:
+                ids:
+                  description: Investigate IDs of the messages to release.
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/email-security_InvestigateId'
+                  minItems: 1
+                  x-auditable: true
+              required:
+                - ids
       responses:
         '200':
           description: Release operation results.
@@ -129774,6 +129785,8 @@ paths:
           example: 2020-09-01T00:00:00Z
           x-stainless-deprecation-message: Use `end` instead.
           x-sunset: 2026-11-01T00:00:00Z
+        - $ref: '#/components/parameters/email-security_page'
+        - $ref: '#/components/parameters/email-security_per_page'
       responses:
         '200':
           description: List of PhishGuard reports.
@@ -129781,7 +129794,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/email-security_api-response-common'
+                  - $ref: '#/components/schemas/email-security_api-response-collection'
                   - properties:
                       result:
                         type: array
@@ -130068,7 +130081,8 @@ paths:
       operationId: email_security_batch_allow_policies
       summary: Batch allow policy operations
       description: |
-        Executes multiple operations atomically. All four operation arrays
+        Executes multiple allow policy operations atomically: delete, partially update,
+        replace, and create allow policies in a single request. All four operation arrays
         (deletes, patches, puts, posts) are required and executed in order.
         Send empty arrays for unused operations.
       requestBody:
@@ -130079,6 +130093,7 @@ paths:
               type: object
               properties:
                 deletes:
+                  description: IDs of the allow policies to delete.
                   type: array
                   items:
                     properties:
@@ -130089,6 +130104,7 @@ paths:
                     type: object
                   maxItems: 1000
                 patches:
+                  description: Partial updates to apply — each entry carries the policy's ID and only the fields to change.
                   type: array
                   items:
                     allOf:
@@ -130102,11 +130118,13 @@ paths:
                         type: object
                   maxItems: 1000
                 posts:
+                  description: Allow policies to create.
                   type: array
                   items:
                     $ref: '#/components/schemas/email-security_CreateAllowPolicy'
                   maxItems: 1000
                 puts:
+                  description: Full replacements to apply — each entry carries the policy's ID and every field of its new value.
                   type: array
                   items:
                     allOf:
@@ -130403,8 +130421,9 @@ paths:
       operationId: email_security_batch_blocked_senders
       summary: Batch blocked sender operations
       description: |
-        Executes multiple operations atomically. All four operation arrays
-        (deletes, patches, puts, posts) are required and executed in order.
+        Executes multiple blocked sender operations atomically: delete, partially update,
+        replace, and create blocked sender patterns in a single request. All four operation
+        arrays (deletes, patches, puts, posts) are required and executed in order.
         Send empty arrays for unused operations.
       requestBody:
         required: true
@@ -130414,6 +130433,7 @@ paths:
               type: object
               properties:
                 deletes:
+                  description: IDs of the blocked sender patterns to delete.
                   type: array
                   items:
                     properties:
@@ -130424,6 +130444,7 @@ paths:
                     type: object
                   maxItems: 1000
                 patches:
+                  description: Partial updates to apply — each entry carries the pattern's ID and only the fields to change.
                   type: array
                   items:
                     allOf:
@@ -130437,11 +130458,13 @@ paths:
                         type: object
                   maxItems: 1000
                 posts:
+                  description: Blocked sender patterns to create.
                   type: array
                   items:
                     $ref: '#/components/schemas/email-security_CreateBlockedSender'
                   maxItems: 1000
                 puts:
+                  description: Full replacements to apply — each entry carries the pattern's ID and every field of its new value.
                   type: array
                   items:
                     allOf:
@@ -130703,7 +130726,8 @@ paths:
       operationId: email_security_batch_content_policies
       summary: Batch content policy operations
       description: |
-        Executes multiple operations atomically. All four operation arrays
+        Executes multiple content policy operations atomically: delete, partially update,
+        replace, and create content policies in a single request. All four operation arrays
         (deletes, patches, puts, posts) are required and executed in order.
         Send empty arrays for unused operations.
       requestBody:
@@ -130714,6 +130738,7 @@ paths:
               type: object
               properties:
                 deletes:
+                  description: IDs of the content policies to delete.
                   type: array
                   items:
                     properties:
@@ -130724,6 +130749,7 @@ paths:
                     type: object
                   maxItems: 1000
                 patches:
+                  description: Partial updates to apply — each entry carries the policy's ID and only the fields to change.
                   type: array
                   items:
                     allOf:
@@ -130737,11 +130763,13 @@ paths:
                         type: object
                   maxItems: 1000
                 posts:
+                  description: Content policies to create.
                   type: array
                   items:
                     $ref: '#/components/schemas/email-security_CreateContentPolicy'
                   maxItems: 1000
                 puts:
+                  description: Full replacements to apply — each entry carries the policy's ID and every field of its new value.
                   type: array
                   items:
                     allOf:
@@ -131156,6 +131184,7 @@ paths:
               type: object
               properties:
                 deletes:
+                  description: IDs of the domains to remove protection from.
                   type: array
                   items:
                     properties:
@@ -131166,6 +131195,7 @@ paths:
                     type: object
                   maxItems: 1000
                 patches:
+                  description: Partial updates to apply — each entry carries the domain's ID and only the fields to change.
                   type: array
                   items:
                     allOf:
@@ -131178,11 +131208,13 @@ paths:
                         type: object
                   maxItems: 1000
                 posts:
+                  description: Domains to add protection for.
                   type: array
                   items:
                     $ref: '#/components/schemas/email-security_CreateDomain'
                   maxItems: 1000
                 puts:
+                  description: Full replacements to apply — each entry carries the domain's ID and every field of its new value.
                   type: array
                   items:
                     allOf:
@@ -131640,6 +131672,7 @@ paths:
               type: object
               properties:
                 deletes:
+                  description: IDs of the sending domain restrictions to delete.
                   type: array
                   items:
                     properties:
@@ -131935,8 +131968,9 @@ paths:
       operationId: email_security_batch_trusted_domains
       summary: Batch trusted domain operations
       description: |
-        Executes multiple operations atomically. All four operation arrays
-        (deletes, patches, puts, posts) are required and executed in order.
+        Executes multiple trusted domain operations atomically: delete, partially update,
+        replace, and create trusted domain patterns in a single request. All four operation
+        arrays (deletes, patches, puts, posts) are required and executed in order.
         Send empty arrays for unused operations.
       requestBody:
         required: true
@@ -131946,6 +131980,7 @@ paths:
               type: object
               properties:
                 deletes:
+                  description: IDs of the trusted domain patterns to delete.
                   type: array
                   items:
                     properties:
@@ -131956,6 +131991,7 @@ paths:
                     type: object
                   maxItems: 1000
                 patches:
+                  description: Partial updates to apply — each entry carries the pattern's ID and only the fields to change.
                   type: array
                   items:
                     allOf:
@@ -131969,11 +132005,13 @@ paths:
                         type: object
                   maxItems: 1000
                 posts:
+                  description: Trusted domain patterns to create.
                   type: array
                   items:
                     $ref: '#/components/schemas/email-security_CreateTrustedDomain'
                   maxItems: 1000
                 puts:
+                  description: Full replacements to apply — each entry carries the pattern's ID and every field of its new value.
                   type: array
                   items:
                     allOf:
@@ -132228,6 +132266,7 @@ paths:
               type: object
               properties:
                 deletes:
+                  description: IDs of the URL ignore patterns to delete.
                   type: array
                   items:
                     properties:
@@ -132238,6 +132277,7 @@ paths:
                     type: object
                   maxItems: 1000
                 patches:
+                  description: Partial updates to apply — each entry carries the pattern's ID and only the fields to change.
                   type: array
                   items:
                     allOf:
@@ -132251,11 +132291,13 @@ paths:
                         type: object
                   maxItems: 1000
                 posts:
+                  description: URL ignore patterns to create.
                   type: array
                   items:
                     $ref: '#/components/schemas/email-security_CreateUrlIgnorePattern'
                   maxItems: 1000
                 puts:
+                  description: Full replacements to apply — each entry carries the pattern's ID and every field of its new value.
                   type: array
                   items:
                     allOf:
@@ -418821,6 +418863,7 @@ components:
             - $ref: '#/components/schemas/email-security_BlockedSenderId'
           readOnly: true
         is_regex:
+          description: Whether `pattern` is a regular expression instead of a literal value.
           type: boolean
           example: false
           x-auditable: true
@@ -418918,11 +418961,13 @@ components:
       type: object
       properties:
         action:
+          description: The action the job performs on every message matching the search parameters.
           type: string
           enum:
             - MOVE
             - RELEASE
         comment:
+          description: Optional note describing the job.
           type: string
           nullable: true
         destination:
@@ -419035,6 +419080,12 @@ components:
         - messages_skipped
         - messages_cancelled
         - created_at
+    email-security_BulkJobId:
+      description: Bulk action job identifier.
+      type: string
+      format: uuid
+      example: f174e90a-fafe-4643-bbbc-4a0ed4fc8415
+      x-auditable: true
     email-security_BulkJobStatus:
       description: Status of a bulk action job.
       type: string
@@ -419093,17 +419144,21 @@ components:
           deprecated: true
           x-stainless-deprecation-message: Use GET /investigate/{investigate_id}/action_log instead.
         alert_id:
+          description: Alert ID of the detection to filter by.
           type: string
           nullable: true
         delivery_status:
+          description: Delivery status to filter by.
           type: string
           allOf:
             - $ref: '#/components/schemas/email-security_MessageDeliveryStatus'
           nullable: true
         detections_only:
+          description: Whether to include only detections in search results.
           type: boolean
           default: true
         domain:
+          description: Match messages that mention this domain — sender domain, recipient domain, or a domain in a link.
           type: string
           nullable: true
         end:
@@ -419112,14 +419167,17 @@ components:
           format: date-time
           example: 2022-07-25T14:30:00Z
         exact_subject:
+          description: Match messages whose subject line equals this value exactly.
           type: string
           nullable: true
         final_disposition:
+          description: Dispositions to filter by.
           type: string
           allOf:
             - $ref: '#/components/schemas/email-security_DispositionLabel'
           nullable: true
         message_action:
+          description: Message actions to filter by.
           type: string
           enum:
             - PREVIEW
@@ -419127,18 +419185,23 @@ components:
             - MOVED
           nullable: true
         message_id:
+          description: Message-ID header value to filter by.
           type: string
           nullable: true
         metric:
+          description: Metric name to filter the search by.
           type: string
           nullable: true
         query:
+          description: Space-delimited search term. Case-insensitive.
           nullable: true
           type: string
         recipient:
+          description: Match messages whose recipient is this email address or domain.
           type: string
           nullable: true
         sender:
+          description: Match messages whose sender is this email address or domain.
           type: string
           nullable: true
         smtp_helo_ip:
@@ -419151,9 +419214,11 @@ components:
           format: date-time
           example: 2022-06-25T14:30:00Z
         subject:
+          description: Match messages whose subject contains these keywords, in any order.
           type: string
           nullable: true
         submissions:
+          description: Whether to search reclassification submissions instead of original messages.
           type: boolean
           default: false
     email-security_ContentPolicy:
@@ -419165,6 +419230,7 @@ components:
             - $ref: '#/components/schemas/email-security_timestamp'
           readOnly: true
         enabled:
+          description: Whether the policy is active.
           type: boolean
           example: true
           x-auditable: true
@@ -419177,23 +419243,27 @@ components:
             - $ref: '#/components/schemas/email-security_timestamp'
           readOnly: true
         name:
+          description: Human-readable name of the policy.
           type: string
           example: Block phishing keywords
           maxLength: 256
           minLength: 1
           x-auditable: true
         notes:
+          description: Optional note describing the purpose of the policy.
           type: string
           example: Blocks common phishing subject lines
           maxLength: 4096
           nullable: true
         pattern:
+          description: Regular expression the policy matches against.
           type: string
           example: urgent.*verify.*account
           maxLength: 2048
           minLength: 1
           x-auditable: true
         targets:
+          description: Parts of the email the pattern is matched against.
           type: array
           items:
             $ref: '#/components/schemas/email-security_ContentPolicyTarget'
@@ -419251,6 +419321,7 @@ components:
       type: object
       properties:
         allowed_delivery_modes:
+          description: Delivery modes to onboard the domain through.
           type: array
           items:
             $ref: '#/components/schemas/email-security_DeliveryMode'
@@ -419258,24 +419329,29 @@ components:
           minItems: 1
           x-stainless-collection-type: set
         domain:
+          description: The email domain to protect.
           type: string
           x-auditable: true
         drop_dispositions:
+          description: Dispositions to drop instead of delivering, e.g. `["MALICIOUS", "SPAM"]`.
           type: array
           items:
             $ref: '#/components/schemas/email-security_DispositionLabel'
           maxItems: 10
           x-stainless-collection-type: set
         folder:
+          description: The mailbox folder to scan, for API-scanning domains.
           allOf:
             - $ref: '#/components/schemas/email-security_ScannableFolder'
           x-stainless-terraform-configurability: computed_optional
         integration_id:
+          description: Identifier of the CASB integration that authorizes this domain. The integration also enables API scanning, post-delivery actions, and directory sync.
           type: string
           format: uuid
           nullable: true
           x-auditable: true
         ip_restrictions:
+          description: Source IP ranges mail is accepted from. Any other source is rejected.
           type: array
           items:
             type: string
@@ -419286,6 +419362,7 @@ components:
           maxItems: 100
           x-stainless-collection-type: set
         lookback_hops:
+          description: Number of hops to trace back through received headers when reconstructing the original message (1-20).
           type: integer
           maximum: 20
           minimum: 1
@@ -419293,6 +419370,7 @@ components:
           x-auditable: true
           x-stainless-terraform-configurability: computed_optional
         regions:
+          description: Regions that process messages for this domain, e.g. `["GLOBAL"]` or `["US"]`.
           type: array
           items:
             $ref: '#/components/schemas/email-security_Region'
@@ -419300,16 +419378,19 @@ components:
           minItems: 1
           x-stainless-collection-type: set
         require_tls_inbound:
+          description: Require TLS on inbound connections.
           type: boolean
           nullable: true
           x-auditable: true
           x-stainless-terraform-configurability: computed_optional
         require_tls_outbound:
+          description: Require TLS on outbound connections.
           type: boolean
           nullable: true
           x-auditable: true
           x-stainless-terraform-configurability: computed_optional
         transport:
+          description: The mail transport hostname for MX/Inline delivery — the MX record Cloudflare delivers email to (e.g. `mx.example.com`).
           type: string
           nullable: true
           x-auditable: true
@@ -419472,6 +419553,7 @@ components:
         - API
         - RETRO_SCAN
     email-security_DispositionLabel:
+      description: The verdict Email Security assigns to a message.
       type: string
       enum:
         - MALICIOUS
@@ -419699,6 +419781,7 @@ components:
       type: object
       properties:
         comments:
+          description: Optional note describing the entry.
           type: string
           nullable: true
         created_at:
@@ -419706,16 +419789,20 @@ components:
             - $ref: '#/components/schemas/email-security_timestamp'
           readOnly: true
         directory_id:
+          description: Identifier of the directory the entry was synced from, when directory-synced.
           type: integer
           nullable: true
         directory_node_id:
+          description: Identifier of the directory node the entry was synced from, when directory-synced.
           type: integer
           nullable: true
         email:
+          description: Email address (or pattern) of the protected identity.
           type: string
           example: john.doe@example.com
           x-auditable: true
         external_directory_node_id:
+          description: Deprecated. External identifier of the directory node.
           type: string
           deprecated: true
           nullable: true
@@ -419725,6 +419812,7 @@ components:
             - $ref: '#/components/schemas/email-security_ImpersonationRegistryId'
           readOnly: true
         is_email_regex:
+          description: Whether `email` is a regular expression instead of a literal address.
           type: boolean
           example: false
           x-auditable: true
@@ -419740,11 +419828,13 @@ components:
             - $ref: '#/components/schemas/email-security_timestamp'
           readOnly: true
         name:
+          description: Display name of the protected identity.
           type: string
           example: John Doe
           maxLength: 1024
           x-auditable: true
         provenance:
+          description: Source the entry was created from.
           type: string
           allOf:
             - $ref: '#/components/schemas/email-security_Provenance'
@@ -419775,6 +419865,7 @@ components:
       required:
         - href
     email-security_MailboxDestination:
+      description: The mailbox folder to move messages to.
       type: string
       enum:
         - Inbox
@@ -420157,18 +420248,22 @@ components:
       type: object
       properties:
         eml_content:
+          description: Base64 encoded content of the EML file.
           type: string
         escalated_submission_id:
+          description: Submission ID of the original user submission, when escalating an escalated user report.
           type: string
           x-auditable: true
         expected_disposition:
           $ref: '#/components/schemas/email-security_SubmissionDisposition'
         message_id:
+          description: Message-ID header value of the reported message.
           type: string
           x-auditable: true
         postfix_id:
           $ref: '#/components/schemas/email-security_PostfixId'
         recipient_emails:
+          description: Recipient email addresses of the reported message.
           type: array
           items:
             type: string
@@ -420336,9 +420431,11 @@ components:
       type: object
       properties:
         alert_id:
+          description: Alert ID of the detection to reclassify.
           type: string
           x-auditable: true
         escalated_submission_id:
+          description: Submission ID of the original user submission, when reclassifying an escalated user report.
           type: string
           x-auditable: true
         expected_disposition:
@@ -420353,9 +420450,11 @@ components:
           description: Base64 encoded content of the EML file.
           type: string
         escalated_submission_id:
+          description: Submission ID of the original user submission, when reclassifying an escalated user report.
           type: string
           x-auditable: true
         expected_disposition:
+          description: The disposition the message should have.
           type: string
           enum:
             - NONE
@@ -420367,6 +420466,7 @@ components:
       required:
         - expected_disposition
     email-security_Region:
+      description: The region that processes messages for this domain.
       type: string
       enum:
         - GLOBAL
@@ -420411,6 +420511,7 @@ components:
       type: object
       properties:
         allowed_delivery_modes:
+          description: Delivery modes to onboard the domain through.
           type: array
           items:
             $ref: '#/components/schemas/email-security_DeliveryMode'
@@ -420418,21 +420519,25 @@ components:
           minItems: 1
           x-stainless-collection-type: set
         drop_dispositions:
+          description: Dispositions to drop instead of delivering, e.g. `["MALICIOUS", "SPAM"]`.
           type: array
           items:
             $ref: '#/components/schemas/email-security_DispositionLabel'
           maxItems: 10
           x-stainless-collection-type: set
         folder:
+          description: The mailbox folder to scan, for API-scanning domains.
           allOf:
             - $ref: '#/components/schemas/email-security_ScannableFolder'
           x-stainless-terraform-configurability: computed_optional
         integration_id:
+          description: Identifier of the CASB integration that authorizes this domain. The integration also enables API scanning, post-delivery actions, and directory sync.
           type: string
           format: uuid
           nullable: true
           x-auditable: true
         ip_restrictions:
+          description: Source IP ranges mail is accepted from. Any other source is rejected.
           type: array
           items:
             type: string
@@ -420443,6 +420548,7 @@ components:
           maxItems: 100
           x-stainless-collection-type: set
         lookback_hops:
+          description: Number of hops to trace back through received headers when reconstructing the original message (1-20).
           type: integer
           maximum: 20
           minimum: 1
@@ -420450,6 +420556,7 @@ components:
           x-auditable: true
           x-stainless-terraform-configurability: computed_optional
         regions:
+          description: Regions that process messages for this domain, e.g. `["GLOBAL"]` or `["US"]`.
           type: array
           items:
             $ref: '#/components/schemas/email-security_Region'
@@ -420457,16 +420564,19 @@ components:
           minItems: 1
           x-stainless-collection-type: set
         require_tls_inbound:
+          description: Require TLS on inbound connections.
           type: boolean
           nullable: true
           x-auditable: true
           x-stainless-terraform-configurability: computed_optional
         require_tls_outbound:
+          description: Require TLS on outbound connections.
           type: boolean
           nullable: true
           x-auditable: true
           x-stainless-terraform-configurability: computed_optional
         transport:
+          description: The mail transport hostname for MX/Inline delivery — the MX record Cloudflare delivers email to (e.g. `mx.example.com`).
           type: string
           nullable: true
           x-auditable: true
@@ -420476,6 +420586,7 @@ components:
         - drop_dispositions
         - regions
     email-security_ScannableFolder:
+      description: The mailbox folder to scan, for API-scanning domains.
       type: string
       enum:
         - AllItems
@@ -420552,18 +420663,22 @@ components:
         escalated_as:
           $ref: '#/components/schemas/email-security_OptionalSubmissionDisposition'
         escalated_at:
+          description: When the submission was escalated to the security team.
           type: string
           format: date-time
           nullable: true
         escalated_by:
+          description: Email address of the user who escalated the submission.
           type: string
           nullable: true
         escalated_submission_id:
+          description: Submission ID of the escalated team submission, when this user submission was escalated.
           type: string
           nullable: true
         original_disposition:
           $ref: '#/components/schemas/email-security_OptionalSubmissionDisposition'
         original_edf_hash:
+          description: EDF hash of the original message.
           type: string
           nullable: true
         original_postfix_id:
@@ -420571,6 +420686,7 @@ components:
           type: string
           nullable: true
         outcome:
+          description: Processing outcome of the submission.
           type: string
           nullable: true
         outcome_disposition:
@@ -420580,6 +420696,7 @@ components:
           type: string
           format: date-time
         requested_by:
+          description: Email address of the user who requested the submission.
           type: string
           nullable: true
         requested_disposition:
@@ -420591,9 +420708,11 @@ components:
           readOnly: true
           x-stainless-deprecation-message: Use `requested_at` instead.
         status:
+          description: Processing status of the submission.
           type: string
           nullable: true
         subject:
+          description: Subject line of the submitted message.
           type: string
           nullable: true
         submission_id:
@@ -420610,6 +420729,7 @@ components:
         - submission_id
         - requested_at
     email-security_SubmissionDisposition:
+      description: The disposition a message is submitted to have.
       type: string
       enum:
         - MALICIOUS
@@ -420684,6 +420804,7 @@ components:
           example: true
           x-auditable: true
         is_regex:
+          description: Whether `pattern` is a regular expression instead of a literal domain.
           type: boolean
           example: false
           x-auditable: true
@@ -420704,6 +420825,7 @@ components:
             - $ref: '#/components/schemas/email-security_timestamp'
           readOnly: true
         pattern:
+          description: The domain pattern to trust, e.g. `example.com`.
           type: string
           example: example.com
           maxLength: 1024
@@ -420738,25 +420860,30 @@ components:
       type: object
       properties:
         allowed_delivery_modes:
+          description: Delivery modes to onboard the domain through.
           type: array
           items:
             $ref: '#/components/schemas/email-security_DeliveryMode'
           x-stainless-collection-type: set
         drop_dispositions:
+          description: Dispositions to drop instead of delivering, e.g. `["MALICIOUS", "SPAM"]`.
           type: array
           items:
             $ref: '#/components/schemas/email-security_DispositionLabel'
           x-stainless-collection-type: set
         folder:
+          description: The mailbox folder to scan, for API-scanning domains.
           allOf:
             - $ref: '#/components/schemas/email-security_ScannableFolder'
           x-stainless-terraform-configurability: computed_optional
         integration_id:
+          description: Identifier of the CASB integration that authorizes this domain. The integration also enables API scanning, post-delivery actions, and directory sync.
           type: string
           format: uuid
           nullable: true
           x-auditable: true
         ip_restrictions:
+          description: Source IP ranges mail is accepted from. Any other source is rejected.
           type: array
           items:
             type: string
@@ -420766,25 +420893,30 @@ components:
             - 2001:db8::/32
           x-stainless-collection-type: set
         lookback_hops:
+          description: Number of hops to trace back through received headers when reconstructing the original message (1-20).
           type: integer
           maximum: 20
           minimum: 1
           x-auditable: true
           x-stainless-terraform-configurability: computed_optional
         regions:
+          description: Regions that process messages for this domain, e.g. `["GLOBAL"]` or `["US"]`.
           type: array
           items:
             $ref: '#/components/schemas/email-security_Region'
           x-stainless-collection-type: set
         require_tls_inbound:
+          description: Require TLS on inbound connections.
           type: boolean
           x-auditable: true
           x-stainless-terraform-configurability: computed_optional
         require_tls_outbound:
+          description: Require TLS on outbound connections.
           type: boolean
           x-auditable: true
           x-stainless-terraform-configurability: computed_optional
         transport:
+          description: The mail transport hostname for MX/Inline delivery — the MX record Cloudflare delivers email to (e.g. `mx.example.com`).
           type: string
           x-auditable: true
     email-security_UpdateImpersonationRegistry:
@@ -504521,6 +504653,10 @@ x-forge-commands:
   email-security:
     description: Cloud email security — investigate threats, manage allow/block policies, and detect phishing
     groups:
+      analytics:
+        description: Analytics and reporting — monthly report and per-day breakdowns of threat activity
+      bulk-actions:
+        description: Asynchronous jobs that move or release every message matching a search — create, monitor, and manage bulk jobs
       investigate:
         description: Search and investigate email messages — view detections, traces, raw content, and take remediation actions
       phishguard:
