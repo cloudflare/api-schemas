@@ -63748,6 +63748,1513 @@ paths:
       x-fern-ignore: true
       x-fern-sdk-group-name: autorag
       x-fern-sdk-method-name: sync
+  /accounts/{account_id}/basin-catalog:
+    get:
+      operationId: basin-list-catalogs
+      summary: List Basin Catalogs
+      description: |
+        Returns a list of R2 buckets that have been enabled as Apache Iceberg catalogs
+        for the specified account. Each catalog represents an R2 bucket configured
+        to store Iceberg metadata and data files.
+      parameters:
+        - name: account_id
+          in: path
+          description: Identifies the account.
+          required: true
+          schema:
+            $ref: '#/components/schemas/r2-data-catalog_account-id'
+      responses:
+        '200':
+          description: List of Basin Catalogs.
+          content:
+            application/json:
+              example:
+                errors: []
+                messages: []
+                result:
+                  warehouses:
+                    - bucket: analytics-bucket
+                      id: 550e8400-e29b-41d4-a716-446655440000
+                      maintenance_config:
+                        compaction:
+                          state: enabled
+                          target_size_mb: '128'
+                        snapshot_expiration:
+                          max_snapshot_age: 7d
+                          min_snapshots_to_keep: 100
+                          state: enabled
+                      name: account123_analytics-bucket
+                      status: active
+                    - bucket: logs-bucket
+                      id: 6ba7b810-9dad-11d1-80b4-00c04fd430c8
+                      maintenance_config:
+                        compaction:
+                          state: disabled
+                          target_size_mb: '128'
+                        snapshot_expiration:
+                          max_snapshot_age: 7d
+                          min_snapshots_to_keep: 100
+                          state: disabled
+                      name: account123_logs-bucket
+                      status: inactive
+                success: true
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/r2-data-catalog_api-response-single'
+                  - properties:
+                      result:
+                        $ref: '#/components/schemas/r2-data-catalog_catalog-list'
+                    type: object
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+        '401':
+          description: Authentication failed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+        '403':
+          description: Forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Basin Catalog Management
+      x-api-token-group:
+        - Workers R2 Data Catalog Write
+        - Workers R2 Data Catalog Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: basin-catalog
+      x-fern-sdk-method-name: list
+  /accounts/{account_id}/basin-catalog/{bucket_name}:
+    get:
+      operationId: basin-get-catalog-details
+      summary: Get Basin Catalog details
+      description: |
+        Retrieve detailed information about a specific Basin Catalog by bucket name.
+        Returns catalog status, maintenance configuration, and credential status.
+      parameters:
+        - name: account_id
+          in: path
+          description: Identifies the account.
+          required: true
+          schema:
+            $ref: '#/components/schemas/r2-data-catalog_account-id'
+        - name: bucket_name
+          in: path
+          description: Specifies the R2 bucket name.
+          required: true
+          schema:
+            $ref: '#/components/schemas/r2-data-catalog_bucket-name'
+      responses:
+        '200':
+          description: Basin Catalog details.
+          content:
+            application/json:
+              example:
+                errors: []
+                messages: []
+                result:
+                  bucket: analytics-bucket
+                  credential_status: present
+                  id: 550e8400-e29b-41d4-a716-446655440000
+                  maintenance_config:
+                    compaction:
+                      state: enabled
+                      target_size_mb: '128'
+                    snapshot_expiration:
+                      max_snapshot_age: 7d
+                      min_snapshots_to_keep: 100
+                      state: enabled
+                  name: account123_analytics-bucket
+                  status: active
+                success: true
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/r2-data-catalog_api-response-single'
+                  - properties:
+                      result:
+                        $ref: '#/components/schemas/r2-data-catalog_catalog'
+                    type: object
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+        '401':
+          description: Authentication failed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+        '403':
+          description: Forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+        '404':
+          description: Catalog not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Basin Catalog Management
+      x-api-token-group:
+        - Workers R2 Data Catalog Write
+        - Workers R2 Data Catalog Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: basin-catalog
+      x-fern-sdk-method-name: get
+  /accounts/{account_id}/basin-catalog/{bucket_name}/credential:
+    post:
+      operationId: basin-store-credentials
+      summary: Store catalog credentials
+      description: |
+        Store authentication credentials for a catalog. These credentials are used
+        to authenticate with R2 storage when performing catalog operations.
+      parameters:
+        - name: account_id
+          in: path
+          description: Identifies the account.
+          required: true
+          schema:
+            $ref: '#/components/schemas/r2-data-catalog_account-id'
+        - name: bucket_name
+          in: path
+          description: Specifies the R2 bucket name.
+          required: true
+          schema:
+            $ref: '#/components/schemas/r2-data-catalog_bucket-name'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              token: your-cloudflare-api-token-here
+            schema:
+              $ref: '#/components/schemas/r2-data-catalog_catalog-credential-request'
+      responses:
+        '200':
+          description: Credentials stored successfully.
+          content:
+            application/json:
+              example:
+                errors: []
+                messages: []
+                result: null
+                success: true
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/r2-data-catalog_api-response-single'
+                  - properties:
+                      result:
+                        type: object
+                        nullable: true
+                    type: object
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+        '401':
+          description: Authentication failed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+        '403':
+          description: Forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+        '404':
+          description: Catalog not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Credential Management
+      x-api-token-group:
+        - Workers R2 Data Catalog Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: basin-catalog.credentials
+      x-fern-sdk-method-name: create
+  /accounts/{account_id}/basin-catalog/{bucket_name}/delete:
+    post:
+      operationId: basin-delete-catalog
+      summary: Delete Basin Catalog metadata
+      description: |
+        Removes the catalog from the control plane without deleting R2 bucket objects.
+        Set force=true to remove catalog namespaces, tables, views, and maintenance
+        metadata. Force deletion is limited to a configured catalog object count.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/r2-data-catalog_account-id'
+        - name: bucket_name
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/r2-data-catalog_bucket-name'
+        - name: force
+          in: query
+          description: Remove child metadata before deleting the catalog.
+          schema:
+            type: boolean
+            default: false
+          x-fern-parameter-name: cascade
+      responses:
+        '204':
+          description: Catalog metadata deleted successfully.
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+        '401':
+          description: Authentication failed.
+        '404':
+          description: Catalog not found.
+        '409':
+          description: Catalog is non-empty, has unfinished work, is protected, or exceeds the force-delete limit.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+        '500':
+          description: Internal server error.
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Basin Catalog Management
+      x-api-token-group:
+        - Workers R2 Data Catalog Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: basin-catalog
+      x-fern-sdk-method-name: delete
+      x-forge-require-confirmation: This removes catalog metadata. R2 bucket objects are retained.
+  /accounts/{account_id}/basin-catalog/{bucket_name}/disable:
+    post:
+      operationId: basin-disable-catalog
+      summary: Disable Basin Catalog
+      description: |
+        Disable an R2 bucket as a catalog. This operation deactivates the catalog
+        but preserves existing metadata and data files. The catalog can be
+        re-enabled later.
+      parameters:
+        - name: account_id
+          in: path
+          description: Identifies the account.
+          required: true
+          schema:
+            $ref: '#/components/schemas/r2-data-catalog_account-id'
+        - name: bucket_name
+          in: path
+          description: Specifies the R2 bucket name to disable as catalog.
+          required: true
+          schema:
+            $ref: '#/components/schemas/r2-data-catalog_bucket-name'
+      responses:
+        '204':
+          description: Catalog disabled successfully.
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+        '401':
+          description: Authentication failed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+        '403':
+          description: Forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+        '404':
+          description: Catalog not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Basin Catalog Management
+      x-api-token-group:
+        - Workers R2 Data Catalog Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: basin-catalog
+      x-fern-sdk-method-name: disable
+      x-forge-require-confirmation: This operation turns off the data catalog for the bucket. Existing namespace or table state remains, but writes stop.
+  /accounts/{account_id}/basin-catalog/{bucket_name}/enable:
+    post:
+      operationId: basin-enable-catalog
+      summary: Enable R2 bucket as a catalog
+      description: |
+        Enable an R2 bucket as an Apache Iceberg catalog. This operation creates
+        the necessary catalog infrastructure and activates the bucket for storing
+        Iceberg metadata and data files.
+      parameters:
+        - name: account_id
+          in: path
+          description: Identifies the account.
+          required: true
+          schema:
+            $ref: '#/components/schemas/r2-data-catalog_account-id'
+        - name: bucket_name
+          in: path
+          description: Specifies the R2 bucket name to enable as catalog.
+          required: true
+          schema:
+            $ref: '#/components/schemas/r2-data-catalog_bucket-name'
+      responses:
+        '200':
+          description: Catalog enabled successfully.
+          content:
+            application/json:
+              example:
+                errors: []
+                messages: []
+                result:
+                  id: 550e8400-e29b-41d4-a716-446655440000
+                  name: account123_my-bucket
+                success: true
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/r2-data-catalog_api-response-single'
+                  - properties:
+                      result:
+                        $ref: '#/components/schemas/r2-data-catalog_catalog-activation-response'
+                    type: object
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+        '401':
+          description: Authentication failed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+        '403':
+          description: Forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+        '404':
+          description: R2 bucket not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+        '409':
+          description: Catalog already enabled.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Basin Catalog Management
+      x-api-token-group:
+        - Workers R2 Data Catalog Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: basin-catalog
+      x-fern-sdk-method-name: enable
+  /accounts/{account_id}/basin-catalog/{bucket_name}/maintenance-configs:
+    get:
+      operationId: basin-get-maintenance-config
+      summary: Get catalog maintenance configuration
+      description: |
+        Retrieve the maintenance configuration for a specific catalog,
+        including compaction settings and credential status.
+      parameters:
+        - name: account_id
+          in: path
+          description: Identifies the account.
+          required: true
+          schema:
+            $ref: '#/components/schemas/r2-data-catalog_account-id'
+        - name: bucket_name
+          in: path
+          description: Specifies the R2 bucket name.
+          required: true
+          schema:
+            $ref: '#/components/schemas/r2-data-catalog_bucket-name'
+      responses:
+        '200':
+          description: Maintenance configuration retrieved successfully.
+          content:
+            application/json:
+              example:
+                errors: []
+                messages: []
+                result:
+                  credential_status: present
+                  maintenance_config:
+                    compaction:
+                      state: enabled
+                      target_size_mb: '128'
+                    snapshot_expiration:
+                      max_snapshot_age: 7d
+                      min_snapshots_to_keep: 100
+                      state: enabled
+                success: true
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/r2-data-catalog_api-response-single'
+                  - properties:
+                      result:
+                        $ref: '#/components/schemas/r2-data-catalog_catalog-maintenance-config-response'
+                    type: object
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+        '401':
+          description: Authentication failed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+        '403':
+          description: Forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+        '404':
+          description: Catalog not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Maintenance Configuration
+      x-api-token-group:
+        - Workers R2 Data Catalog Write
+        - Workers R2 Data Catalog Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: basin-catalog.maintenance-configs
+      x-fern-sdk-method-name: get
+    post:
+      operationId: basin-update-maintenance-config
+      summary: Update catalog maintenance configuration
+      description: |
+        Update the maintenance configuration for a catalog. This allows you to
+        enable or disable compaction and adjust target file sizes for optimization.
+      parameters:
+        - name: account_id
+          in: path
+          description: Identifies the account.
+          required: true
+          schema:
+            $ref: '#/components/schemas/r2-data-catalog_account-id'
+        - name: bucket_name
+          in: path
+          description: Specifies the R2 bucket name.
+          required: true
+          schema:
+            $ref: '#/components/schemas/r2-data-catalog_bucket-name'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              compaction:
+                state: enabled
+                target_size_mb: '256'
+              snapshot_expiration:
+                max_snapshot_age: 14d
+                min_snapshots_to_keep: 5
+                state: enabled
+            schema:
+              $ref: '#/components/schemas/r2-data-catalog_catalog-maintenance-update-request'
+      responses:
+        '200':
+          description: Maintenance configuration updated successfully.
+          content:
+            application/json:
+              example:
+                errors: []
+                messages: []
+                result:
+                  compaction:
+                    state: enabled
+                    target_size_mb: '256'
+                  snapshot_expiration:
+                    max_snapshot_age: 14d
+                    min_snapshots_to_keep: 5
+                    state: enabled
+                success: true
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/r2-data-catalog_api-response-single'
+                  - properties:
+                      result:
+                        $ref: '#/components/schemas/r2-data-catalog_catalog-maintenance-config'
+                    type: object
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+        '401':
+          description: Authentication failed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+        '403':
+          description: Forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+        '404':
+          description: Catalog not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Maintenance Configuration
+      x-api-token-group:
+        - Workers R2 Data Catalog Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: basin-catalog.maintenance-configs
+      x-fern-sdk-method-name: update
+  /accounts/{account_id}/basin-catalog/{bucket_name}/namespaces:
+    get:
+      operationId: basin-list-namespaces
+      summary: List namespaces in catalog
+      description: |
+        Returns a list of namespaces in the specified Basin Catalog.
+        Supports hierarchical filtering and pagination for efficient traversal
+        of large namespace hierarchies.
+      parameters:
+        - name: account_id
+          in: path
+          description: Identifies the account.
+          required: true
+          schema:
+            $ref: '#/components/schemas/r2-data-catalog_account-id'
+        - name: bucket_name
+          in: path
+          description: Specifies the R2 bucket name.
+          required: true
+          schema:
+            $ref: '#/components/schemas/r2-data-catalog_bucket-name'
+        - name: page_token
+          in: query
+          description: |
+            Opaque pagination token from a previous response.
+            Use this to fetch the next page of results.
+          schema:
+            type: string
+          example: MSYxNzU5NzU1NTc4NTA0MTk0JjAxOTliOTliLTJjODgtNzNiMy04ZGJiLTQyMWUwZThmMjc1Nw
+        - name: page_size
+          in: query
+          description: |
+            Maximum number of namespaces to return per page.
+            Defaults to 100, maximum 1000.
+          schema:
+            type: integer
+            default: 100
+            maximum: 1000
+            minimum: 1
+          example: 100
+        - name: parent
+          in: query
+          description: |
+            Parent namespace to filter by. Only returns direct children of this namespace.
+            For nested namespaces, use %1F as separator (e.g., "bronze%1Fanalytics").
+            Omit this parameter to list top-level namespaces.
+          schema:
+            type: string
+          example: bronze
+        - name: return_uuids
+          in: query
+          description: |
+            Whether to include namespace UUIDs in the response.
+            Set to true to receive the namespace_uuids array.
+          schema:
+            type: boolean
+            default: false
+          example: true
+        - name: return_details
+          in: query
+          description: |
+            Whether to include additional metadata (timestamps).
+            When true, response includes created_at and updated_at arrays.
+          schema:
+            type: boolean
+            default: false
+          example: true
+      responses:
+        '200':
+          description: List of namespaces retrieved successfully.
+          content:
+            application/json:
+              example:
+                errors: []
+                messages: []
+                result:
+                  details:
+                    - created_at: 2025-10-07T10:00:00Z
+                      namespace:
+                        - bronze
+                      namespace_uuid: 0199b999-6869-7383-bb1f-d30e059d5326
+                      updated_at: 2025-10-07T12:00:00Z
+                    - created_at: 2025-10-07T10:15:00Z
+                      namespace:
+                        - silver
+                      namespace_uuid: 0199b99b-2c88-73b3-8dbb-421e0e8f2757
+                      updated_at: null
+                    - created_at: 2025-10-07T10:30:00Z
+                      namespace:
+                        - gold
+                      namespace_uuid: 0199b99c-3d99-73c4-9dcc-532f1f9f3868
+                      updated_at: 2025-10-07T11:00:00Z
+                  namespace_uuids:
+                    - 0199b999-6869-7383-bb1f-d30e059d5326
+                    - 0199b99b-2c88-73b3-8dbb-421e0e8f2757
+                    - 0199b99c-3d99-73c4-9dcc-532f1f9f3868
+                  namespaces:
+                    - - bronze
+                    - - silver
+                    - - gold
+                  next_page_token: null
+                success: true
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/r2-data-catalog_api-response-single'
+                  - properties:
+                      result:
+                        $ref: '#/components/schemas/r2-data-catalog_namespace-list-response'
+                    type: object
+        '400':
+          description: Bad request (e.g., invalid page_size, malformed parent namespace).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+        '401':
+          description: Authentication failed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+        '403':
+          description: Forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+        '404':
+          description: Catalog not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Namespace Management
+      x-api-token-group:
+        - Workers R2 Data Catalog Write
+        - Workers R2 Data Catalog Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: basin-catalog.namespaces
+      x-fern-sdk-method-name: list
+  /accounts/{account_id}/basin-catalog/{bucket_name}/namespaces/{namespace}/tables:
+    get:
+      operationId: basin-list-tables
+      summary: List tables in namespace
+      description: |
+        Returns a list of tables in the specified namespace within a Basin Catalog.
+        Supports pagination for efficient traversal of large table collections.
+      parameters:
+        - name: account_id
+          in: path
+          description: Identifies the account.
+          required: true
+          schema:
+            $ref: '#/components/schemas/r2-data-catalog_account-id'
+        - name: bucket_name
+          in: path
+          description: Specifies the R2 bucket name.
+          required: true
+          schema:
+            $ref: '#/components/schemas/r2-data-catalog_bucket-name'
+        - name: namespace
+          in: path
+          description: |
+            The namespace identifier.
+            For nested namespaces, use %1F as separator (e.g., "bronze%1Fanalytics").
+          required: true
+          schema:
+            type: string
+          example: bronze
+        - name: page_token
+          in: query
+          description: |
+            Opaque pagination token from a previous response.
+            Use this to fetch the next page of results.
+          schema:
+            type: string
+          example: MSYxNzU5NzU2MTI4NTU2Njk2JjAxOTliOWEzLTkxMmUtN2ZhMS05YzllLTg5MTAxMGQzYTg0MQ
+        - name: page_size
+          in: query
+          description: |
+            Maximum number of tables to return per page.
+            Defaults to 100, maximum 1000.
+          schema:
+            type: integer
+            default: 100
+            maximum: 1000
+            minimum: 1
+          example: 100
+        - name: return_uuids
+          in: query
+          description: |
+            Whether to include table UUIDs in the response.
+            Set to true to receive the table_uuids array.
+          schema:
+            type: boolean
+            default: false
+          example: true
+        - name: return_details
+          in: query
+          description: |
+            Whether to include additional metadata (timestamps, locations).
+            When true, response includes created_at, updated_at, metadata_locations, and locations arrays.
+          schema:
+            type: boolean
+            default: false
+          example: true
+      responses:
+        '200':
+          description: List of tables retrieved successfully.
+          content:
+            application/json:
+              example:
+                errors: []
+                messages: []
+                result:
+                  details:
+                    - created_at: 2025-10-07T10:00:00Z
+                      identifier:
+                        name: events
+                        namespace:
+                          - bronze
+                      location: s3://my-bucket/__r2_data_catalog/wh-id/table-id/
+                      metadata_location: s3://my-bucket/__r2_data_catalog/wh-id/table-id/metadata/v1.metadata.json
+                      table_uuid: 0199b9a1-28a0-71e0-a73e-b0fc32c8468e
+                      updated_at: 2025-10-07T15:00:00Z
+                    - created_at: 2025-10-07T10:30:00Z
+                      identifier:
+                        name: users
+                        namespace:
+                          - bronze
+                      location: s3://my-bucket/__r2_data_catalog/wh-id/table-id-2/
+                      metadata_location: s3://my-bucket/__r2_data_catalog/wh-id/table-id-2/metadata/v2.metadata.json
+                      table_uuid: 0199b9a1-3c74-7731-bf53-d8c67ead079d
+                      updated_at: 2025-10-07T16:00:00Z
+                  identifiers:
+                    - name: events
+                      namespace:
+                        - bronze
+                    - name: users
+                      namespace:
+                        - bronze
+                  next_page_token: null
+                  table_uuids:
+                    - 0199b9a1-28a0-71e0-a73e-b0fc32c8468e
+                    - 0199b9a1-3c74-7731-bf53-d8c67ead079d
+                success: true
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/r2-data-catalog_api-response-single'
+                  - properties:
+                      result:
+                        $ref: '#/components/schemas/r2-data-catalog_table-list-response'
+                    type: object
+        '400':
+          description: Bad request (e.g., invalid page_size, malformed namespace).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+        '401':
+          description: Authentication failed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+        '403':
+          description: Forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+        '404':
+          description: Catalog or namespace not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Table Management
+      x-api-token-group:
+        - Workers R2 Data Catalog Write
+        - Workers R2 Data Catalog Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: basin-catalog.namespaces.tables
+      x-fern-sdk-method-name: list
+  /accounts/{account_id}/basin-catalog/{bucket_name}/namespaces/{namespace}/tables/{table_name}:
+    get:
+      operationId: basin-get-table
+      summary: Get table details
+      description: |
+        Returns full Apache Iceberg metadata for a single table: schema,
+        partition specs, sort orders, properties, and recent snapshot history.
+        Designed for catalog introspection UIs that need per-table details
+        without holding R2 credentials.
+
+        The `metadata.snapshots`, `metadata.snapshot-log`, and
+        `metadata.metadata-log` arrays are pruned to the most recent 10
+        entries by `timestamp-ms`. Use `total_snapshots` and
+        `returned_snapshots` to surface the truncation to end users.
+      parameters:
+        - name: account_id
+          in: path
+          description: Identifies the account.
+          required: true
+          schema:
+            $ref: '#/components/schemas/r2-data-catalog_account-id'
+        - name: bucket_name
+          in: path
+          description: Specifies the R2 bucket name.
+          required: true
+          schema:
+            $ref: '#/components/schemas/r2-data-catalog_bucket-name'
+        - name: namespace
+          in: path
+          description: |
+            The namespace identifier.
+            For nested namespaces, use %1F as separator (e.g., "bronze%1Fanalytics").
+          required: true
+          schema:
+            type: string
+          example: bronze
+        - name: table_name
+          in: path
+          description: The table name within the given namespace.
+          required: true
+          schema:
+            type: string
+          example: events
+      responses:
+        '200':
+          description: Table details retrieved successfully.
+          content:
+            application/json:
+              example:
+                errors: []
+                messages: []
+                result:
+                  identifier:
+                    name: events
+                    namespace:
+                      - bronze
+                  metadata:
+                    current-schema-id: 1
+                    current-snapshot-id: 3055729675574597000
+                    default-spec-id: 0
+                    format-version: 2
+                    location: s3://my-bucket/__r2_data_catalog/wh-id/table-id
+                    partition-specs:
+                      - fields:
+                          - field-id: 1000
+                            name: user_id_bucket
+                            source-id: 1
+                            transform: bucket[16]
+                        spec-id: 0
+                    properties:
+                      write.parquet.compression-codec: zstd
+                    schemas:
+                      - type: struct
+                        fields:
+                          - id: 1
+                            name: user_id
+                            required: true
+                            type: long
+                        schema-id: 1
+                    snapshots:
+                      - sequence-number: 1
+                        snapshot-id: 3055729675574597000
+                        summary:
+                          operation: append
+                        timestamp-ms: 1555100955770
+                    table-uuid: 550e8400-e29b-41d4-a716-446655440000
+                  metadata_location: s3://my-bucket/__r2_data_catalog/wh-id/table-id/metadata/00001-abc.metadata.json
+                  returned_snapshots: 10
+                  table_uuid: 550e8400-e29b-41d4-a716-446655440000
+                  total_snapshots: 122113
+                success: true
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/r2-data-catalog_api-response-single'
+                  - properties:
+                      result:
+                        $ref: '#/components/schemas/r2-data-catalog_get-table-response'
+                    type: object
+        '400':
+          description: Bad request (e.g., malformed namespace).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+        '401':
+          description: Authentication failed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+        '403':
+          description: Forbidden — JWT claims do not match account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+        '404':
+          description: Catalog, namespace, or table not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Table Management
+      x-api-token-group:
+        - Workers R2 Data Catalog Write
+        - Workers R2 Data Catalog Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: basin-catalog.namespaces.tables
+      x-fern-sdk-method-name: get
+  /accounts/{account_id}/basin-catalog/{bucket_name}/namespaces/{namespace}/tables/{table_name}/maintenance-configs:
+    get:
+      operationId: basin-get-table-maintenance-config
+      summary: Get table maintenance configuration
+      description: |
+        Retrieve the maintenance configuration for a specific table,
+        including compaction settings.
+      parameters:
+        - name: account_id
+          in: path
+          description: Identifies the account.
+          required: true
+          schema:
+            $ref: '#/components/schemas/r2-data-catalog_account-id'
+        - name: bucket_name
+          in: path
+          description: Specifies the R2 bucket name.
+          required: true
+          schema:
+            $ref: '#/components/schemas/r2-data-catalog_bucket-name'
+        - name: namespace
+          in: path
+          description: The namespace identifier (use %1F as separator for nested namespaces).
+          required: true
+          schema:
+            type: string
+          example: my_namespace%1Fsub_namespace
+        - name: table_name
+          in: path
+          description: The table name.
+          required: true
+          schema:
+            type: string
+          example: my_table
+      responses:
+        '200':
+          description: Table maintenance configuration retrieved successfully.
+          content:
+            application/json:
+              example:
+                errors: []
+                messages: []
+                result:
+                  maintenance_config:
+                    compaction:
+                      next_eligible_at: 2026-09-01T12:00:00Z
+                      state: enabled
+                      target_size_mb: '128'
+                    interval: 1h
+                    snapshot_expiration:
+                      max_snapshot_age: 7d
+                      min_snapshots_to_keep: 100
+                      next_eligible_at: 2026-09-01T12:00:00Z
+                      state: enabled
+                success: true
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/r2-data-catalog_api-response-single'
+                  - properties:
+                      result:
+                        $ref: '#/components/schemas/r2-data-catalog_table-maintenance-config-response'
+                    type: object
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+        '401':
+          description: Authentication failed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+        '403':
+          description: Forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+        '404':
+          description: Table not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Table Maintenance Configuration
+      x-api-token-group:
+        - Workers R2 Data Catalog Write
+        - Workers R2 Data Catalog Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: basin-catalog.namespaces.tables.maintenance-configs
+      x-fern-sdk-method-name: get
+    post:
+      operationId: basin-update-table-maintenance-config
+      summary: Update table maintenance configuration
+      description: |
+        Update the maintenance configuration for a specific table. This allows you to
+        enable or disable compaction and adjust target file sizes for optimization.
+      parameters:
+        - name: account_id
+          in: path
+          description: Identifies the account.
+          required: true
+          schema:
+            $ref: '#/components/schemas/r2-data-catalog_account-id'
+        - name: bucket_name
+          in: path
+          description: Specifies the R2 bucket name.
+          required: true
+          schema:
+            $ref: '#/components/schemas/r2-data-catalog_bucket-name'
+        - name: namespace
+          in: path
+          description: The namespace identifier (use %1F as separator for nested namespaces).
+          required: true
+          schema:
+            type: string
+          example: my_namespace%1Fsub_namespace
+        - name: table_name
+          in: path
+          description: The table name.
+          required: true
+          schema:
+            type: string
+          example: my_table
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              compaction:
+                state: enabled
+                target_size_mb: '256'
+              snapshot_expiration:
+                max_snapshot_age: 14d
+                min_snapshots_to_keep: 5
+                state: enabled
+            schema:
+              $ref: '#/components/schemas/r2-data-catalog_table-maintenance-update-request'
+      responses:
+        '200':
+          description: Table maintenance configuration updated successfully.
+          content:
+            application/json:
+              example:
+                errors: []
+                messages: []
+                result:
+                  compaction:
+                    next_eligible_at: 2026-09-01T12:00:00Z
+                    state: enabled
+                    target_size_mb: '256'
+                  interval: 1h
+                  snapshot_expiration:
+                    max_snapshot_age: 14d
+                    min_snapshots_to_keep: 5
+                    next_eligible_at: 2026-09-01T12:00:00Z
+                    state: enabled
+                success: true
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/r2-data-catalog_api-response-single'
+                  - properties:
+                      result:
+                        $ref: '#/components/schemas/r2-data-catalog_table-maintenance-config'
+                    type: object
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+        '401':
+          description: Authentication failed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+        '403':
+          description: Forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+        '404':
+          description: Table not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Table Maintenance Configuration
+      x-api-token-group:
+        - Workers R2 Data Catalog Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: basin-catalog.namespaces.tables.maintenance-configs
+      x-fern-sdk-method-name: update
+  /accounts/{account_id}/basin-catalog/{bucket_name}/namespaces/{namespace}/tables/{table_name}/maintenance-configs/{configuration_type}/queue:
+    post:
+      operationId: basin-queue-table-maintenance
+      summary: Queue table maintenance
+      description: Queue maintenance for normal polling. This request does not start a run.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/r2-data-catalog_account-id'
+        - name: bucket_name
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/r2-data-catalog_bucket-name'
+        - name: namespace
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: table_name
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: configuration_type
+          in: path
+          required: true
+          schema:
+            type: string
+            enum:
+              - compaction
+              - snapshot_expiration
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/r2-data-catalog_queue-maintenance-request'
+      responses:
+        '202':
+          description: Maintenance was queued for normal polling.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/r2-data-catalog_api-response-single'
+                  - properties:
+                      result:
+                        $ref: '#/components/schemas/r2-data-catalog_queue-maintenance-response'
+                    type: object
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+        '403':
+          description: Forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+        '404':
+          description: Table or maintenance configuration not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+        '409':
+          description: Maintenance is currently assigned to an executor.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+        '429':
+          description: Manual queue request limit reached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Table Maintenance Configuration
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: basin-catalog.namespaces.tables.maintenance-configs
+      x-fern-sdk-method-name: queue
+  /accounts/{account_id}/basin-catalog/{bucket_name}/namespaces/{namespace}/tables/{table_name}/maintenance-runs:
+    get:
+      operationId: basin-list-table-maintenance-runs
+      summary: List table maintenance runs
+      description: Retrieves recent table maintenance runs for the current table.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/r2-data-catalog_account-id'
+        - name: bucket_name
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/r2-data-catalog_bucket-name'
+        - name: namespace
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: table_name
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: page_size
+          in: query
+          schema:
+            type: integer
+            maximum: 100
+            minimum: 1
+        - name: page_token
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Maintenance runs retrieved successfully.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/r2-data-catalog_api-response-single'
+                  - properties:
+                      result:
+                        $ref: '#/components/schemas/r2-data-catalog_maintenance-runs-response'
+                    type: object
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+        '401':
+          description: Authentication failed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+        '403':
+          description: Forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+        '404':
+          description: Table not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Table Maintenance Configuration
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: basin-catalog.namespaces.tables.maintenance-runs
+      x-fern-sdk-method-name: list
   /accounts/{account_id}/billable-usage:
     get:
       operationId: billable-usage-get-v1-account-usage
@@ -173669,6 +175176,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+      deprecated: true
       security:
         - api_token: []
         - api_email: []
@@ -173678,10 +175186,10 @@ paths:
       x-api-token-group:
         - Workers R2 Data Catalog Write
         - Workers R2 Data Catalog Read
-      x-fern-availability: generally-available
+      x-fern-availability: deprecated
       x-fern-sdk-group-name: r2-data-catalog
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
+      x-stainless-deprecation-message: Use `GET /accounts/{account_id}/basin-catalog` instead.
   /accounts/{account_id}/r2-catalog/{bucket_name}:
     get:
       operationId: get-catalog-details
@@ -173762,6 +175270,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+      deprecated: true
       security:
         - api_token: []
         - api_email: []
@@ -173771,10 +175280,10 @@ paths:
       x-api-token-group:
         - Workers R2 Data Catalog Write
         - Workers R2 Data Catalog Read
-      x-fern-availability: generally-available
+      x-fern-availability: deprecated
       x-fern-sdk-group-name: r2-data-catalog
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
+      x-stainless-deprecation-message: Use `GET /accounts/{account_id}/basin-catalog/{bucket_name}` instead.
   /accounts/{account_id}/r2-catalog/{bucket_name}/credential:
     post:
       operationId: store-credentials
@@ -173851,6 +175360,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+      deprecated: true
       security:
         - api_token: []
         - api_email: []
@@ -173859,10 +175369,10 @@ paths:
         - Credential Management
       x-api-token-group:
         - Workers R2 Data Catalog Write
-      x-fern-availability: generally-available
+      x-fern-availability: deprecated
       x-fern-sdk-group-name: r2-data-catalog.credentials
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
+      x-stainless-deprecation-message: Use `POST /accounts/{account_id}/basin-catalog/{bucket_name}/credential` instead.
   /accounts/{account_id}/r2-catalog/{bucket_name}/delete:
     post:
       operationId: delete-catalog
@@ -173910,6 +175420,7 @@ paths:
                 $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
         '500':
           description: Internal server error.
+      deprecated: true
       security:
         - api_token: []
         - api_email: []
@@ -173918,11 +175429,11 @@ paths:
         - R2 Catalog Management
       x-api-token-group:
         - Workers R2 Data Catalog Write
-      x-fern-availability: generally-available
+      x-fern-availability: deprecated
       x-fern-sdk-group-name: r2-data-catalog
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
       x-forge-require-confirmation: This removes catalog metadata. R2 bucket objects are retained.
+      x-stainless-deprecation-message: Use `POST /accounts/{account_id}/basin-catalog/{bucket_name}/delete` instead.
   /accounts/{account_id}/r2-catalog/{bucket_name}/disable:
     post:
       operationId: disable-catalog
@@ -173977,6 +175488,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+      deprecated: true
       security:
         - api_token: []
         - api_email: []
@@ -173985,11 +175497,11 @@ paths:
         - R2 Catalog Management
       x-api-token-group:
         - Workers R2 Data Catalog Write
-      x-fern-availability: generally-available
+      x-fern-availability: deprecated
       x-fern-sdk-group-name: r2-data-catalog
       x-fern-sdk-method-name: disable
-      x-forge-hidden: true
       x-forge-require-confirmation: This operation turns off the data catalog for the bucket. Existing namespace or table state remains, but writes stop.
+      x-stainless-deprecation-message: Use `POST /accounts/{account_id}/basin-catalog/{bucket_name}/disable` instead.
   /accounts/{account_id}/r2-catalog/{bucket_name}/enable:
     post:
       operationId: enable-catalog
@@ -174066,6 +175578,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+      deprecated: true
       security:
         - api_token: []
         - api_email: []
@@ -174074,10 +175587,10 @@ paths:
         - R2 Catalog Management
       x-api-token-group:
         - Workers R2 Data Catalog Write
-      x-fern-availability: generally-available
+      x-fern-availability: deprecated
       x-fern-sdk-group-name: r2-data-catalog
       x-fern-sdk-method-name: enable
-      x-forge-hidden: true
+      x-stainless-deprecation-message: Use `POST /accounts/{account_id}/basin-catalog/{bucket_name}/enable` instead.
   /accounts/{account_id}/r2-catalog/{bucket_name}/maintenance-configs:
     get:
       operationId: get-maintenance-config
@@ -174154,6 +175667,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+      deprecated: true
       security:
         - api_token: []
         - api_email: []
@@ -174163,10 +175677,10 @@ paths:
       x-api-token-group:
         - Workers R2 Data Catalog Write
         - Workers R2 Data Catalog Read
-      x-fern-availability: generally-available
+      x-fern-availability: deprecated
       x-fern-sdk-group-name: r2-data-catalog.maintenance-configs
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
+      x-stainless-deprecation-message: Use `GET /accounts/{account_id}/basin-catalog/{bucket_name}/maintenance-configs` instead.
     post:
       operationId: update-maintenance-config
       summary: Update catalog maintenance configuration
@@ -174254,6 +175768,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+      deprecated: true
       security:
         - api_token: []
         - api_email: []
@@ -174262,10 +175777,10 @@ paths:
         - Maintenance Configuration
       x-api-token-group:
         - Workers R2 Data Catalog Write
-      x-fern-availability: generally-available
+      x-fern-availability: deprecated
       x-fern-sdk-group-name: r2-data-catalog.maintenance-configs
       x-fern-sdk-method-name: update
-      x-forge-hidden: true
+      x-stainless-deprecation-message: Use `POST /accounts/{account_id}/basin-catalog/{bucket_name}/maintenance-configs` instead.
   /accounts/{account_id}/r2-catalog/{bucket_name}/namespaces:
     get:
       operationId: list-namespaces
@@ -174405,6 +175920,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+      deprecated: true
       security:
         - api_token: []
         - api_email: []
@@ -174414,10 +175930,10 @@ paths:
       x-api-token-group:
         - Workers R2 Data Catalog Write
         - Workers R2 Data Catalog Read
-      x-fern-availability: generally-available
+      x-fern-availability: deprecated
       x-fern-sdk-group-name: r2-data-catalog.namespaces
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
+      x-stainless-deprecation-message: Use `GET /accounts/{account_id}/basin-catalog/{bucket_name}/namespaces` instead.
   /accounts/{account_id}/r2-catalog/{bucket_name}/namespaces/{namespace}/tables:
     get:
       operationId: list-tables
@@ -174561,6 +176077,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+      deprecated: true
       security:
         - api_token: []
         - api_email: []
@@ -174570,10 +176087,10 @@ paths:
       x-api-token-group:
         - Workers R2 Data Catalog Write
         - Workers R2 Data Catalog Read
-      x-fern-availability: generally-available
+      x-fern-availability: deprecated
       x-fern-sdk-group-name: r2-data-catalog.namespaces.tables
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
+      x-stainless-deprecation-message: Use `GET /accounts/{account_id}/basin-catalog/{bucket_name}/namespaces/{namespace}/tables` instead.
   /accounts/{account_id}/r2-catalog/{bucket_name}/namespaces/{namespace}/tables/{table_name}:
     get:
       operationId: get-table
@@ -174702,6 +176219,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+      deprecated: true
       security:
         - api_token: []
         - api_email: []
@@ -174711,10 +176229,10 @@ paths:
       x-api-token-group:
         - Workers R2 Data Catalog Write
         - Workers R2 Data Catalog Read
-      x-fern-availability: generally-available
+      x-fern-availability: deprecated
       x-fern-sdk-group-name: r2-data-catalog.namespaces.tables
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
+      x-stainless-deprecation-message: Use `GET /accounts/{account_id}/basin-catalog/{bucket_name}/namespaces/{namespace}/tables/{table_name}` instead.
   /accounts/{account_id}/r2-catalog/{bucket_name}/namespaces/{namespace}/tables/{table_name}/maintenance-configs:
     get:
       operationId: get-table-maintenance-config
@@ -174807,6 +176325,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+      deprecated: true
       security:
         - api_token: []
         - api_email: []
@@ -174816,10 +176335,10 @@ paths:
       x-api-token-group:
         - Workers R2 Data Catalog Write
         - Workers R2 Data Catalog Read
-      x-fern-availability: generally-available
+      x-fern-availability: deprecated
       x-fern-sdk-group-name: r2-data-catalog.namespaces.tables.maintenance-configs
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
+      x-stainless-deprecation-message: Use `GET /accounts/{account_id}/basin-catalog/{bucket_name}/namespaces/{namespace}/tables/{table_name}/maintenance-configs` instead.
     post:
       operationId: update-table-maintenance-config
       summary: Update table maintenance configuration
@@ -174924,6 +176443,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+      deprecated: true
       security:
         - api_token: []
         - api_email: []
@@ -174932,10 +176452,10 @@ paths:
         - Table Maintenance Configuration
       x-api-token-group:
         - Workers R2 Data Catalog Write
-      x-fern-availability: generally-available
+      x-fern-availability: deprecated
       x-fern-sdk-group-name: r2-data-catalog.namespaces.tables.maintenance-configs
       x-fern-sdk-method-name: update
-      x-forge-hidden: true
+      x-stainless-deprecation-message: Use `POST /accounts/{account_id}/basin-catalog/{bucket_name}/namespaces/{namespace}/tables/{table_name}/maintenance-configs` instead.
   /accounts/{account_id}/r2-catalog/{bucket_name}/namespaces/{namespace}/tables/{table_name}/maintenance-configs/{configuration_type}/queue:
     post:
       operationId: queue-table-maintenance
@@ -175018,15 +176538,17 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+      deprecated: true
       security:
         - api_token: []
         - api_email: []
           api_key: []
       tags:
         - Table Maintenance Configuration
+      x-fern-availability: deprecated
       x-fern-sdk-group-name: r2-data-catalog.namespaces.tables.maintenance-configs
       x-fern-sdk-method-name: queue
-      x-forge-hidden: true
+      x-stainless-deprecation-message: Use `POST /accounts/{account_id}/basin-catalog/{bucket_name}/namespaces/{namespace}/tables/{table_name}/maintenance-configs/{configuration_type}/queue` instead.
   /accounts/{account_id}/r2-catalog/{bucket_name}/namespaces/{namespace}/tables/{table_name}/maintenance-runs:
     get:
       operationId: list-table-maintenance-runs
@@ -175099,15 +176621,17 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+      deprecated: true
       security:
         - api_token: []
         - api_email: []
           api_key: []
       tags:
         - Table Maintenance Configuration
+      x-fern-availability: deprecated
       x-fern-sdk-group-name: r2-data-catalog.namespaces.tables.maintenance-runs
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
+      x-stainless-deprecation-message: Use `GET /accounts/{account_id}/basin-catalog/{bucket_name}/namespaces/{namespace}/tables/{table_name}/maintenance-runs` instead.
   /accounts/{account_id}/r2/buckets:
     get:
       operationId: r2-list-buckets
@@ -504702,6 +506226,21 @@ x-forge-commands:
         description: Route traffic through the fastest network paths to your origin using real-time latency data
       tiered-caching:
         description: Reduce origin load by having upper-tier data centers serve cache misses before reaching your origin
+  basin-catalog:
+    description: Iceberg-compatible data catalog for R2 — organize objects into tables and namespaces for SQL query engines
+    groups:
+      credentials:
+        description: Catalog access credentials for external query engines (Spark, Trino, etc.)
+      maintenance-configs:
+        description: Table maintenance settings — compaction schedules and snapshot expiration policies
+      namespaces:
+        description: Logical namespaces that group related tables within the data catalog
+      namespaces.tables:
+        description: Tables within catalog namespaces
+      namespaces.tables.maintenance-configs:
+        description: Table-level maintenance configurations and operations
+      namespaces.tables.maintenance-runs:
+        description: History of maintenance runs performed on tables
   billing:
     description: Account billing profiles and usage data for Cloudflare subscriptions and add-on services
     groups:
@@ -505093,6 +506632,12 @@ x-forge-commands:
         description: Table maintenance settings — compaction schedules and snapshot expiration policies
       namespaces:
         description: Logical namespaces that group related tables within the data catalog
+      namespaces.tables:
+        description: Tables within catalog namespaces
+      namespaces.tables.maintenance-configs:
+        description: Table-level maintenance configurations and operations
+      namespaces.tables.maintenance-runs:
+        description: History of maintenance runs performed on tables
   radar:
     description: Internet-wide traffic intelligence — BGP, DNS, HTTP trends, attack data, and network quality insights
     groups:
