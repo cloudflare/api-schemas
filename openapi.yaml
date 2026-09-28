@@ -154794,6 +154794,7 @@ paths:
         free: false
         pro: false
       x-fern-availability: generally-available
+      x-fern-ignore: true
       x-fern-sdk-group-name: magic-transit.apps
       x-fern-sdk-method-name: edit
       x-forge-hidden: true
@@ -161642,6 +161643,7 @@ paths:
         free: false
         pro: false
       x-fern-availability: generally-available
+      x-fern-ignore: true
       x-fern-sdk-group-name: magic-transit.sites.app-configuration
       x-fern-sdk-method-name: edit
       x-forge-hidden: true
@@ -438931,6 +438933,9 @@ components:
       properties:
         bond_id:
           $ref: '#/components/schemas/magic_bond_id'
+        ha_link:
+          description: mark true to use this LAN for HA probing. only works for site with HA turned on. only one LAN can be set as the ha_link.
+          type: boolean
         is_breakout:
           description: mark true to use this LAN for source-based breakout traffic
           type: boolean
@@ -439647,6 +439652,10 @@ components:
           $ref: '#/components/schemas/magic_connector-id'
         description:
           type: string
+        ha_mode:
+          description: Site high availability mode. If set to true, the site can have two connectors and runs in high availability mode.
+          type: boolean
+          example: true
         location:
           $ref: '#/components/schemas/magic_site-location'
         name:
@@ -439813,6 +439822,8 @@ components:
             - high
         id:
           $ref: '#/components/schemas/magic_identifier'
+        load_balance_inner_flows:
+          type: boolean
         name:
           type: string
         physport:
@@ -439863,6 +439874,17 @@ components:
     magic_wan_update_request:
       type: object
       properties:
+        health_check_rate:
+          description: Magic WAN health check rate for tunnels created on this link.
+          type: string
+          example: low
+          enum:
+            - low
+            - mid
+            - high
+        load_balance_inner_flows:
+          type: boolean
+          nullable: true
         name:
           type: string
         physport:
@@ -439876,6 +439898,18 @@ components:
     magic_wans_add_single_request:
       type: object
       properties:
+        health_check_rate:
+          description: Magic WAN health check rate for tunnels created on this link. The default value is `mid`.
+          type: string
+          example: low
+          default: mid
+          enum:
+            - low
+            - mid
+            - high
+        load_balance_inner_flows:
+          type: boolean
+          default: true
         name:
           type: string
         physport:
