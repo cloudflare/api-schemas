@@ -8148,6 +8148,46 @@ paths:
       x-fern-sdk-group-name: zero-trust.identity-providers.scim.groups
       x-fern-sdk-method-name: list
   /accounts/{account_id}/access/identity_providers/{identity_provider_id}/scim/groups/{group_id}:
+    delete:
+      operationId: access-identity-providers-delete-scim-group-resource
+      summary: Delete a SCIM Group resource
+      description: Deletes a SCIM Group resource from the identity provider's SCIM population.
+      parameters:
+        - name: identity_provider_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/access_uuid'
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/access_identifier'
+        - name: group_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/access_identifier'
+      responses:
+        '204':
+          description: SCIM Group resource deleted.
+        4XX:
+          description: Failed to delete the SCIM Group resource.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/access_api-response-common-failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Access identity providers
+      x-api-token-group:
+        - 'Access: Organizations, Identity Providers, and Groups Write'
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.identity-providers.scim.groups
+      x-fern-sdk-method-name: delete
     get:
       operationId: access-identity-providers-get-scim-group-resource
       summary: Get a SCIM Group resource
@@ -8267,6 +8307,46 @@ paths:
       x-fern-sdk-group-name: zero-trust.identity-providers.scim.users
       x-fern-sdk-method-name: list
   /accounts/{account_id}/access/identity_providers/{identity_provider_id}/scim/users/{user_id}:
+    delete:
+      operationId: access-identity-providers-delete-scim-user-resource
+      summary: Delete a SCIM User resource
+      description: Deletes a SCIM User resource from the identity provider's SCIM population.
+      parameters:
+        - name: identity_provider_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/access_uuid'
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/access_identifier'
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/access_identifier'
+      responses:
+        '204':
+          description: SCIM User resource deleted.
+        4XX:
+          description: Failed to delete the SCIM User resource.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/access_api-response-common-failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Access identity providers
+      x-api-token-group:
+        - 'Access: Organizations, Identity Providers, and Groups Write'
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.identity-providers.scim.users
+      x-fern-sdk-method-name: delete
     get:
       operationId: access-identity-providers-get-scim-user-resource
       summary: Get a SCIM User resource
@@ -9089,6 +9169,8 @@ paths:
                   $ref: '#/components/schemas/access_service_token_inactivity'
                 session_duration:
                   $ref: '#/components/schemas/access_session_duration'
+                strict_service_token_auth:
+                  $ref: '#/components/schemas/access_strict_service_token_auth'
                 ui_read_only_toggle_reason:
                   $ref: '#/components/schemas/access_ui_read_only_toggle_reason'
                 user_seat_expiration_inactive_time:
@@ -9169,6 +9251,8 @@ paths:
                   $ref: '#/components/schemas/access_service_token_inactivity'
                 session_duration:
                   $ref: '#/components/schemas/access_session_duration'
+                strict_service_token_auth:
+                  $ref: '#/components/schemas/access_strict_service_token_auth'
                 ui_read_only_toggle_reason:
                   $ref: '#/components/schemas/access_ui_read_only_toggle_reason'
                 user_seat_expiration_inactive_time:
@@ -341868,6 +341952,8 @@ paths:
                   $ref: '#/components/schemas/access_login_design'
                 name:
                   $ref: '#/components/schemas/access_name-15'
+                strict_service_token_auth:
+                  $ref: '#/components/schemas/access_strict_service_token_auth'
                 ui_read_only_toggle_reason:
                   $ref: '#/components/schemas/access_ui_read_only_toggle_reason'
                 user_seat_expiration_inactive_time:
@@ -341925,6 +342011,8 @@ paths:
                   $ref: '#/components/schemas/access_login_design'
                 name:
                   $ref: '#/components/schemas/access_name-15'
+                strict_service_token_auth:
+                  $ref: '#/components/schemas/access_strict_service_token_auth'
                 ui_read_only_toggle_reason:
                   $ref: '#/components/schemas/access_ui_read_only_toggle_reason'
                 user_seat_expiration_inactive_time:
@@ -388669,6 +388757,8 @@ components:
           $ref: '#/components/schemas/access_service_token_inactivity'
         session_duration:
           $ref: '#/components/schemas/access_session_duration'
+        strict_service_token_auth:
+          $ref: '#/components/schemas/access_strict_service_token_auth'
         ui_read_only_toggle_reason:
           $ref: '#/components/schemas/access_ui_read_only_toggle_reason'
         updated_at:
@@ -388696,6 +388786,8 @@ components:
           $ref: '#/components/schemas/access_login_design'
         name:
           $ref: '#/components/schemas/access_name-15'
+        strict_service_token_auth:
+          $ref: '#/components/schemas/access_strict_service_token_auth'
         ui_read_only_toggle_reason:
           $ref: '#/components/schemas/access_ui_read_only_toggle_reason'
         updated_at:
@@ -391054,6 +391146,11 @@ components:
       example:
         - FAILURE
         - SUCCESS
+    access_strict_service_token_auth:
+      description: Enables new behaviors for requests made with Access service tokens. Unauthorized requests emit audit logs, and return a 401 or 403 status code in the response instead of redirecting to the login page. Successful requests no longer receive a CF_Authorization cookie in the response. Zero Trust organizations created on or after October 5, 2026 will have this setting enabled by default, and cannot disable it.
+      type: boolean
+      example: true
+      x-auditable: true
     access_string_key_map_device_session:
       type: object
       additionalProperties:
