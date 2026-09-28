@@ -198606,7 +198606,11 @@ paths:
     get:
       operationId: account-api-tokens-list-tokens
       summary: List Tokens
-      description: List all Account Owned API tokens created for this account. Results include active, disabled, and recently-expired tokens when include_expired is set to true.
+      description: |-
+        List Account Owned API tokens created for this account. Callers with
+        `com.cloudflare.api.account.token.list_self` permission only receive
+        tokens they created. Results include active, disabled, and
+        recently-expired tokens when `include_expired` is set to true.
       parameters:
         - name: account_id
           in: path
@@ -198661,6 +198665,7 @@ paths:
       x-cfPermissionsRequired:
         enum:
           - com.cloudflare.api.account.token.list
+          - com.cloudflare.api.account.token.list_self
       x-cfPlanAvailability:
         business: true
         enterprise: true
@@ -198916,7 +198921,11 @@ paths:
     get:
       operationId: account-api-tokens-list-permission-groups
       summary: List Permission Groups
-      description: Find all available permission groups for Account Owned API Tokens
+      description: |-
+        Find all available permission groups for Account Owned API Tokens.
+        Each permission group indicates whether the caller can select it when
+        creating a token. Token creation performs the authoritative permission
+        check.
       parameters:
         - name: account_id
           in: path
@@ -427039,6 +427048,16 @@ components:
       required:
         - name
       title: Create User group with a set of policies
+    iam_creator_email_at_creation:
+      description: |-
+        The email address of the user who created the token at the time of
+        creation. Only present for Account Owned API Tokens when a creator email
+        was available.
+      type: string
+      example: user@example.com
+      maxLength: 90
+      readOnly: true
+      x-auditable: true
     iam_dns_verification_code:
       description: DNS verification code. Add this entire string to the DNS TXT record of the email domain to validate ownership.
       type: string
@@ -427748,6 +427767,11 @@ components:
                     description: Public ID.
                     type: string
                     x-auditable: true
+                  is_selectable:
+                    description: Whether the caller can select this permission group when creating a token.
+                    type: boolean
+                    example: true
+                    readOnly: true
                   name:
                     description: Permission Group Name
                     type: string
@@ -427767,36 +427791,43 @@ components:
               example:
                 - category: account_and_billing
                   id: 7cf72faf220841aabcfdfab81c43c4f6
+                  is_selectable: true
                   name: Billing Read
                   scopes:
                     - com.cloudflare.api.account
                 - category: network_services
                   id: 9d24387c6e8544e2bc4024a03991339f
+                  is_selectable: true
                   name: 'Load Balancing: Monitors and Pools Read'
                   scopes:
                     - com.cloudflare.api.account
                 - category: network_services
                   id: d2a1802cc9a34e30852f8b33869b2f3c
+                  is_selectable: false
                   name: 'Load Balancing: Monitors and Pools Write'
                   scopes:
                     - com.cloudflare.api.account
                 - category: developer_platform
                   id: 8b47d2786a534c08a1f94ee8f9f599ef
+                  is_selectable: true
                   name: Workers KV Storage Read
                   scopes:
                     - com.cloudflare.api.account
                 - category: developer_platform
                   id: f7f0eda5697f475c90846e879bab8666
+                  is_selectable: true
                   name: Workers KV Storage Write
                   scopes:
                     - com.cloudflare.api.account
                 - category: developer_platform
                   id: 1a71c399035b4950a1bd1466bbe4f420
+                  is_selectable: true
                   name: Workers Scripts Read
                   scopes:
                     - com.cloudflare.api.account
                 - category: developer_platform
                   id: e086da7e2179491d91ee5f35b3ca210a
+                  is_selectable: true
                   name: Workers Scripts Write
                   scopes:
                     - com.cloudflare.api.account
@@ -427830,6 +427861,25 @@ components:
       type: string
       example: Demo Account
       maxLength: 100
+      x-auditable: true
+    iam_provisioner_id:
+      description: |-
+        The identifier of the service that provisioned the token. For an
+        OAuth-provisioned token, this is the OAuth client identifier. Present
+        when `provisioner_type` is present and null when the identifier is
+        unavailable.
+      type: string
+      example: a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4
+      nullable: true
+      readOnly: true
+      x-auditable: true
+    iam_provisioner_type:
+      description: |-
+        The type of service that provisioned the token. Only present for
+        provisioned Account Owned API Tokens.
+      type: string
+      example: com.cloudflare.api.oauthtoken
+      readOnly: true
       x-auditable: true
     iam_request_create_resource_group:
       type: object
@@ -427927,15 +427977,7 @@ components:
     iam_resources:
       description: A list of resource names that the policy applies to.
       example:
-        object:
-          summary: Nested object value
-          value:
-            com.cloudflare.api.account.eb78d65290b24279ba6f44721b3ea3c4:
-              com.cloudflare.api.account.zone.*: '*'
-        string:
-          summary: Single string value
-          value:
-            com.cloudflare.api.account.zone.22b1de5f1c0e4b3ea97bb1e963b06a43: '*'
+        com.cloudflare.api.account.zone.22b1de5f1c0e4b3ea97bb1e963b06a43: '*'
       oneOf:
         - $ref: '#/components/schemas/iam_resources_type_object_string'
         - $ref: '#/components/schemas/iam_resources_type_object_nested'
@@ -429326,6 +429368,8 @@ components:
       properties:
         condition:
           $ref: '#/components/schemas/iam_condition'
+        creator_email_at_creation:
+          $ref: '#/components/schemas/iam_creator_email_at_creation'
         expires_on:
           $ref: '#/components/schemas/iam_expires_on'
         id:
@@ -429342,6 +429386,10 @@ components:
           $ref: '#/components/schemas/iam_not_before'
         policies:
           $ref: '#/components/schemas/iam_token_policies'
+        provisioner_id:
+          $ref: '#/components/schemas/iam_provisioner_id'
+        provisioner_type:
+          $ref: '#/components/schemas/iam_provisioner_type'
         status:
           $ref: '#/components/schemas/iam_token_status'
     iam_token_body:
