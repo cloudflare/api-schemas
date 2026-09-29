@@ -211650,7 +211650,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: vectorize
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
     post:
       operationId: vectorize-create-vectorize-index
       summary: Create Vectorize Index
@@ -211706,7 +211705,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: vectorize
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
   /accounts/{account_id}/vectorize/v2/indexes/{index_name}:
     delete:
       operationId: vectorize-delete-vectorize-index
@@ -211763,7 +211761,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: vectorize
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
     get:
       operationId: vectorize-get-vectorize-index
       summary: Get Vectorize Index
@@ -211819,7 +211816,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: vectorize
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
   /accounts/{account_id}/vectorize/v2/indexes/{index_name}/delete_by_ids:
     post:
       operationId: vectorize-delete-vectors-by-id
@@ -211881,7 +211877,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: vectorize
       x-fern-sdk-method-name: delete-by-ids
-      x-forge-hidden: true
   /accounts/{account_id}/vectorize/v2/indexes/{index_name}/get_by_ids:
     post:
       operationId: vectorize-get-vectors-by-id
@@ -211941,7 +211936,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: vectorize
       x-fern-sdk-method-name: get-by-ids
-      x-forge-hidden: true
   /accounts/{account_id}/vectorize/v2/indexes/{index_name}/info:
     get:
       operationId: vectorize-index-info
@@ -211998,7 +211992,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: vectorize
       x-fern-sdk-method-name: info
-      x-forge-hidden: true
   /accounts/{account_id}/vectorize/v2/indexes/{index_name}/insert:
     post:
       operationId: vectorize-insert-vector
@@ -212068,7 +212061,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: vectorize
       x-fern-sdk-method-name: insert
-      x-forge-hidden: true
   /accounts/{account_id}/vectorize/v2/indexes/{index_name}/list:
     get:
       operationId: vectorize-list-vectors
@@ -212140,7 +212132,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: vectorize
       x-fern-sdk-method-name: list-vectors
-      x-forge-hidden: true
   /accounts/{account_id}/vectorize/v2/indexes/{index_name}/metadata_index/create:
     post:
       operationId: vectorize-create-metadata-index
@@ -212202,7 +212193,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: vectorize.metadata-index
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
   /accounts/{account_id}/vectorize/v2/indexes/{index_name}/metadata_index/delete:
     post:
       operationId: vectorize-delete-metadata-index
@@ -212264,7 +212254,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: vectorize.metadata-index
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
       x-forge-require-confirmation: This operation deletes a metadata index destructively.
   /accounts/{account_id}/vectorize/v2/indexes/{index_name}/metadata_index/list:
     get:
@@ -212319,7 +212308,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: vectorize.metadata-index
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
   /accounts/{account_id}/vectorize/v2/indexes/{index_name}/query:
     post:
       operationId: vectorize-query-vector
@@ -212379,7 +212367,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: vectorize
       x-fern-sdk-method-name: query
-      x-forge-hidden: true
   /accounts/{account_id}/vectorize/v2/indexes/{index_name}/upsert:
     post:
       operationId: vectorize-upsert-vector
@@ -212449,7 +212436,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: vectorize
       x-fern-sdk-method-name: upsert
-      x-forge-hidden: true
   /accounts/{account_id}/vuln_scanner/credential_sets:
     get:
       operationId: list-credential-sets
@@ -486239,7 +486225,11 @@ components:
       type: object
       properties:
         config:
-          $ref: '#/components/schemas/vectorize_index-dimension-configuration'
+          allOf:
+            - $ref: '#/components/schemas/vectorize_index-dimension-configuration'
+            - properties:
+                preset:
+                  $ref: '#/components/schemas/vectorize_index-preset'
         created_on:
           description: Specifies the timestamp the resource was created as an ISO8601 string.
           type: string
@@ -509161,6 +509151,13 @@ x-forge-commands:
         description: Create and manage personal API tokens scoped to your user for programmatic API access
   user.analytics:
     description: User-level traffic analytics — aggregated totals and timeseries across all zones
+  vectorize:
+    description: Globally distributed vector database for building semantic search, recommendations, and RAG applications on Workers
+    groups:
+      deprecated-indexes:
+        description: Deprecated v1 Vectorize index operations
+      metadata-index:
+        description: Metadata indexes for filtered vector search
   waiting-rooms:
     description: Virtual queues that throttle traffic to your site during peak demand with customizable waiting pages
     groups:
