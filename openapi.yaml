@@ -140556,14 +140556,14 @@ paths:
     get:
       operationId: flagship_list_apps
       summary: List apps
-      description: Lists all apps in the account. Returns identity and audit fields only — flag definitions are not included.
+      description: Lists all Flagship apps in the account. Returns identity and audit fields only; flag definitions are not included.
       parameters:
         - name: account_id
           in: path
-          description: Cloudflare account ID.
+          description: Cloudflare account ID that owns the Flagship app.
           required: true
           schema:
-            description: Cloudflare account ID.
+            description: Cloudflare account ID that owns the Flagship app.
             type: string
       responses:
         '200':
@@ -140658,7 +140658,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: flagship.apps
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
     post:
       operationId: flagship_create_app
       summary: Create app
@@ -140666,10 +140665,10 @@ paths:
       parameters:
         - name: account_id
           in: path
-          description: Cloudflare account ID.
+          description: Cloudflare account ID that owns the Flagship app.
           required: true
           schema:
-            description: Cloudflare account ID.
+            description: Cloudflare account ID that owns the Flagship app.
             type: string
       requestBody:
         required: true
@@ -140679,6 +140678,7 @@ paths:
               type: object
               properties:
                 name:
+                  description: Name of the Flagship app (1–64 letters, numbers, hyphens, or underscores).
                   type: string
                   maxLength: 64
                   minLength: 1
@@ -140776,7 +140776,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: flagship.apps
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
   /accounts/{account_id}/flagship/apps/{app_id}:
     delete:
       operationId: flagship_delete_app
@@ -140785,17 +140784,17 @@ paths:
       parameters:
         - name: account_id
           in: path
-          description: Cloudflare account ID.
+          description: Cloudflare account ID that owns the Flagship app.
           required: true
           schema:
-            description: Cloudflare account ID.
+            description: Cloudflare account ID that owns the Flagship app.
             type: string
         - name: app_id
           in: path
-          description: App identifier.
+          description: Flagship app ID returned when the app was created.
           required: true
           schema:
-            description: App identifier.
+            description: Flagship app ID returned when the app was created.
             type: string
       responses:
         '200':
@@ -140893,7 +140892,7 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: flagship.apps
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
+      x-forge-require-confirmation: Delete this Flagship app, all of its flags, and all changelog history? This action cannot be undone.
     get:
       operationId: flagship_get_app
       summary: Get app
@@ -140901,17 +140900,17 @@ paths:
       parameters:
         - name: account_id
           in: path
-          description: Cloudflare account ID.
+          description: Cloudflare account ID that owns the Flagship app.
           required: true
           schema:
-            description: Cloudflare account ID.
+            description: Cloudflare account ID that owns the Flagship app.
             type: string
         - name: app_id
           in: path
-          description: App identifier.
+          description: Flagship app ID returned when the app was created.
           required: true
           schema:
-            description: App identifier.
+            description: Flagship app ID returned when the app was created.
             type: string
       responses:
         '200':
@@ -141004,7 +141003,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: flagship.apps
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
     put:
       operationId: flagship_update_app
       summary: Update app
@@ -141012,17 +141010,17 @@ paths:
       parameters:
         - name: account_id
           in: path
-          description: Cloudflare account ID.
+          description: Cloudflare account ID that owns the Flagship app.
           required: true
           schema:
-            description: Cloudflare account ID.
+            description: Cloudflare account ID that owns the Flagship app.
             type: string
         - name: app_id
           in: path
-          description: App identifier.
+          description: Flagship app ID returned when the app was created.
           required: true
           schema:
-            description: App identifier.
+            description: Flagship app ID returned when the app was created.
             type: string
       requestBody:
         required: true
@@ -141032,6 +141030,7 @@ paths:
               type: object
               properties:
                 name:
+                  description: Name of the Flagship app (1–64 letters, numbers, hyphens, or underscores).
                   type: string
                   maxLength: 64
                   minLength: 1
@@ -141127,7 +141126,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: flagship.apps
       x-fern-sdk-method-name: update
-      x-forge-hidden: true
   /accounts/{account_id}/flagship/apps/{app_id}/definitions:
     get:
       operationId: flagship_get_definitions
@@ -141136,17 +141134,17 @@ paths:
       parameters:
         - name: account_id
           in: path
-          description: Cloudflare account ID.
+          description: Cloudflare account ID that owns the Flagship app.
           required: true
           schema:
-            description: Cloudflare account ID.
+            description: Cloudflare account ID that owns the Flagship app.
             type: string
         - name: app_id
           in: path
-          description: App identifier.
+          description: Flagship app ID returned when the app was created.
           required: true
           schema:
-            description: App identifier.
+            description: Flagship app ID returned when the app was created.
             type: string
         - name: If-None-Match
           in: header
@@ -141273,26 +141271,25 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: flagship.apps.definitions
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
   /accounts/{account_id}/flagship/apps/{app_id}/evaluate:
     get:
       operationId: flagship_evaluate_flag
-      summary: Evaluate flag
-      description: Evaluates a flag against the provided context. Pass context attributes as query parameters; values are forwarded as strings. For low-latency in-Worker evaluation, prefer the Flagship binding over this endpoint.
+      summary: Evaluate flag from query context
+      description: Evaluates a flag against the provided context. Pass context attributes as query parameters; values are coerced to numbers or booleans where unambiguous. For low-latency in-Worker evaluation, prefer the Flagship binding over this endpoint.
       parameters:
         - name: account_id
           in: path
-          description: Cloudflare account ID.
+          description: Cloudflare account ID that owns the Flagship app.
           required: true
           schema:
-            description: Cloudflare account ID.
+            description: Cloudflare account ID that owns the Flagship app.
             type: string
         - name: app_id
           in: path
-          description: App identifier.
+          description: Flagship app ID returned when the app was created.
           required: true
           schema:
-            description: App identifier.
+            description: Flagship app ID returned when the app was created.
             type: string
         - name: flagKey
           in: query
@@ -141371,25 +141368,24 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: flagship.apps.evaluate
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
     post:
       operationId: flagship_evaluate_flag_post
-      summary: Evaluate flag (POST)
+      summary: Evaluate flag with JSON context
       description: Evaluates a flag against the provided context, passed as a JSON request body (OFREP-shaped) rather than query parameters. Returns the same response shape as the GET variant.
       parameters:
         - name: account_id
           in: path
-          description: Cloudflare account ID.
+          description: Cloudflare account ID that owns the Flagship app.
           required: true
           schema:
-            description: Cloudflare account ID.
+            description: Cloudflare account ID that owns the Flagship app.
             type: string
         - name: app_id
           in: path
-          description: App identifier.
+          description: Flagship app ID returned when the app was created.
           required: true
           schema:
-            description: App identifier.
+            description: Flagship app ID returned when the app was created.
             type: string
       requestBody:
         required: true
@@ -141399,11 +141395,13 @@ paths:
               type: object
               properties:
                 context:
+                  description: Evaluation attributes keyed by name. Values may be any JSON value; the context supports up to 100 entries and 32 KB.
                   type: object
                   default: {}
                   additionalProperties:
                     $ref: '#/components/schemas/flagship_JsonValue'
                 flagKey:
+                  description: Key of the flag to evaluate within the app.
                   type: string
                   maxLength: 64
                   minLength: 1
@@ -141473,9 +141471,8 @@ paths:
         free: true
         pro: true
       x-fern-availability: beta
-      x-fern-sdk-group-name: flagship.apps.evaluate
-      x-fern-sdk-method-name: create
-      x-forge-hidden: true
+      x-fern-sdk-group-name: flagship.apps.flags
+      x-fern-sdk-method-name: evaluate
   /accounts/{account_id}/flagship/apps/{app_id}/flags:
     get:
       operationId: flagship_list_flags
@@ -141484,24 +141481,26 @@ paths:
       parameters:
         - name: account_id
           in: path
-          description: Cloudflare account ID.
+          description: Cloudflare account ID that owns the Flagship app.
           required: true
           schema:
-            description: Cloudflare account ID.
+            description: Cloudflare account ID that owns the Flagship app.
             type: string
         - name: app_id
           in: path
-          description: App identifier.
+          description: Flagship app ID returned when the app was created.
           required: true
           schema:
-            description: App identifier.
+            description: Flagship app ID returned when the app was created.
             type: string
         - name: limit
           in: query
           description: Max items to return (1–200).
           schema:
             description: Max items to return (1–200).
-            type: string
+            type: integer
+            maximum: 200
+            minimum: 1
         - name: cursor
           in: query
           description: Pagination cursor from a previous response.
@@ -141602,7 +141601,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: flagship.apps.flags
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
     post:
       operationId: flagship_create_flag
       summary: Create flag
@@ -141610,17 +141608,17 @@ paths:
       parameters:
         - name: account_id
           in: path
-          description: Cloudflare account ID.
+          description: Cloudflare account ID that owns the Flagship app.
           required: true
           schema:
-            description: Cloudflare account ID.
+            description: Cloudflare account ID that owns the Flagship app.
             type: string
         - name: app_id
           in: path
-          description: App identifier.
+          description: Flagship app ID returned when the app was created.
           required: true
           schema:
-            description: App identifier.
+            description: Flagship app ID returned when the app was created.
             type: string
       requestBody:
         required: true
@@ -141634,6 +141632,7 @@ paths:
                   type: string
                   minLength: 1
                 description:
+                  description: Optional operator-facing description. It does not affect flag evaluation.
                   type: string
                   maxLength: 512
                   nullable: true
@@ -141677,6 +141676,8 @@ paths:
                                     - ends_with
                                     - in
                                     - not_in
+                                    - has
+                                    - not_has
                                 value:
                                   $ref: '#/components/schemas/flagship_JsonValue'
                               required:
@@ -141710,6 +141711,8 @@ paths:
                                               - ends_with
                                               - in
                                               - not_in
+                                              - has
+                                              - not_has
                                           value:
                                             $ref: '#/components/schemas/flagship_JsonValue'
                                         required:
@@ -141743,6 +141746,8 @@ paths:
                                                         - ends_with
                                                         - in
                                                         - not_in
+                                                        - has
+                                                        - not_has
                                                     value:
                                                       $ref: '#/components/schemas/flagship_JsonValue'
                                                   required:
@@ -141776,6 +141781,8 @@ paths:
                                                                   - ends_with
                                                                   - in
                                                                   - not_in
+                                                                  - has
+                                                                  - not_has
                                                               value:
                                                                 $ref: '#/components/schemas/flagship_JsonValue'
                                                             required:
@@ -141809,6 +141816,8 @@ paths:
                                                                             - ends_with
                                                                             - in
                                                                             - not_in
+                                                                            - has
+                                                                            - not_has
                                                                         value:
                                                                           $ref: '#/components/schemas/flagship_JsonValue'
                                                                       required:
@@ -141842,6 +141851,8 @@ paths:
                                                                                       - ends_with
                                                                                       - in
                                                                                       - not_in
+                                                                                      - has
+                                                                                      - not_has
                                                                                   value:
                                                                                     $ref: '#/components/schemas/flagship_JsonValue'
                                                                                 required:
@@ -141926,12 +141937,14 @@ paths:
                           attribute:
                             description: Context attribute used for sticky bucketing. Defaults to `targetingKey`. If absent at evaluation time, bucketing is random per request.
                             type: string
+                            maxLength: 64
                             minLength: 1
                           percentage:
-                            description: Percentage of matching traffic (0–100) served this variation. For multi-way splits, use cumulative upper bounds across rules (e.g. 30, 70, 100).
+                            description: Percentage of matching traffic (0–100, up to 2 decimal places) served this variation. For multi-way splits, use cumulative upper bounds across rules (e.g. 30, 70, 100).
                             type: number
                             maximum: 100
                             minimum: 0
+                            multipleOf: 0.01
                         required:
                           - percentage
                       serve_variation:
@@ -142055,33 +142068,32 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: flagship.apps.flags
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
   /accounts/{account_id}/flagship/apps/{app_id}/flags/{flag_key}:
     delete:
       operationId: flagship_delete_flag
       summary: Delete flag
-      description: Deletes a flag permanently. Subsequent evaluations fall back to the caller-supplied default. Cannot be undone.
+      description: Deletes a flag permanently. After deletion propagates, direct evaluations return not found; typed binding accessors may return the caller-supplied default. Cannot be undone.
       parameters:
         - name: account_id
           in: path
-          description: Cloudflare account ID.
+          description: Cloudflare account ID that owns the Flagship app.
           required: true
           schema:
-            description: Cloudflare account ID.
+            description: Cloudflare account ID that owns the Flagship app.
             type: string
         - name: app_id
           in: path
-          description: App identifier.
+          description: Flagship app ID returned when the app was created.
           required: true
           schema:
-            description: App identifier.
+            description: Flagship app ID returned when the app was created.
             type: string
         - name: flag_key
           in: path
-          description: Flag key (slug).
+          description: Case-sensitive key identifying the flag within the app.
           required: true
           schema:
-            description: Flag key (slug).
+            description: Case-sensitive key identifying the flag within the app.
             type: string
       responses:
         '200':
@@ -142173,7 +142185,7 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: flagship.apps.flags
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
+      x-forge-require-confirmation: Delete this feature flag? After the deletion propagates, evaluation requests can no longer resolve it. This action cannot be undone.
     get:
       operationId: flagship_get_flag
       summary: Get flag
@@ -142181,24 +142193,24 @@ paths:
       parameters:
         - name: account_id
           in: path
-          description: Cloudflare account ID.
+          description: Cloudflare account ID that owns the Flagship app.
           required: true
           schema:
-            description: Cloudflare account ID.
+            description: Cloudflare account ID that owns the Flagship app.
             type: string
         - name: app_id
           in: path
-          description: App identifier.
+          description: Flagship app ID returned when the app was created.
           required: true
           schema:
-            description: App identifier.
+            description: Flagship app ID returned when the app was created.
             type: string
         - name: flag_key
           in: path
-          description: Flag key (slug).
+          description: Case-sensitive key identifying the flag within the app.
           required: true
           schema:
-            description: Flag key (slug).
+            description: Case-sensitive key identifying the flag within the app.
             type: string
       responses:
         '200':
@@ -142291,32 +142303,31 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: flagship.apps.flags
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
     put:
       operationId: flagship_update_flag
       summary: Update flag
-      description: Replaces the entire flag definition. Omitted fields are dropped, not preserved — read before writing. Each update appends a changelog entry.
+      description: Replaces the entire flag definition. Omitted fields are dropped, not preserved — read before writing. The path key identifies the flag and cannot be renamed by changing the body `key`. Each update appends a changelog entry.
       parameters:
         - name: account_id
           in: path
-          description: Cloudflare account ID.
+          description: Cloudflare account ID that owns the Flagship app.
           required: true
           schema:
-            description: Cloudflare account ID.
+            description: Cloudflare account ID that owns the Flagship app.
             type: string
         - name: app_id
           in: path
-          description: App identifier.
+          description: Flagship app ID returned when the app was created.
           required: true
           schema:
-            description: App identifier.
+            description: Flagship app ID returned when the app was created.
             type: string
         - name: flag_key
           in: path
-          description: Flag key (slug).
+          description: Case-sensitive key identifying the flag within the app.
           required: true
           schema:
-            description: Flag key (slug).
+            description: Case-sensitive key identifying the flag within the app.
             type: string
       requestBody:
         required: true
@@ -142330,6 +142341,7 @@ paths:
                   type: string
                   minLength: 1
                 description:
+                  description: Optional operator-facing description. It does not affect flag evaluation.
                   type: string
                   maxLength: 512
                   nullable: true
@@ -142373,6 +142385,8 @@ paths:
                                     - ends_with
                                     - in
                                     - not_in
+                                    - has
+                                    - not_has
                                 value:
                                   $ref: '#/components/schemas/flagship_JsonValue'
                               required:
@@ -142406,6 +142420,8 @@ paths:
                                               - ends_with
                                               - in
                                               - not_in
+                                              - has
+                                              - not_has
                                           value:
                                             $ref: '#/components/schemas/flagship_JsonValue'
                                         required:
@@ -142439,6 +142455,8 @@ paths:
                                                         - ends_with
                                                         - in
                                                         - not_in
+                                                        - has
+                                                        - not_has
                                                     value:
                                                       $ref: '#/components/schemas/flagship_JsonValue'
                                                   required:
@@ -142472,6 +142490,8 @@ paths:
                                                                   - ends_with
                                                                   - in
                                                                   - not_in
+                                                                  - has
+                                                                  - not_has
                                                               value:
                                                                 $ref: '#/components/schemas/flagship_JsonValue'
                                                             required:
@@ -142505,6 +142525,8 @@ paths:
                                                                             - ends_with
                                                                             - in
                                                                             - not_in
+                                                                            - has
+                                                                            - not_has
                                                                         value:
                                                                           $ref: '#/components/schemas/flagship_JsonValue'
                                                                       required:
@@ -142538,6 +142560,8 @@ paths:
                                                                                       - ends_with
                                                                                       - in
                                                                                       - not_in
+                                                                                      - has
+                                                                                      - not_has
                                                                                   value:
                                                                                     $ref: '#/components/schemas/flagship_JsonValue'
                                                                                 required:
@@ -142622,12 +142646,14 @@ paths:
                           attribute:
                             description: Context attribute used for sticky bucketing. Defaults to `targetingKey`. If absent at evaluation time, bucketing is random per request.
                             type: string
+                            maxLength: 64
                             minLength: 1
                           percentage:
-                            description: Percentage of matching traffic (0–100) served this variation. For multi-way splits, use cumulative upper bounds across rules (e.g. 30, 70, 100).
+                            description: Percentage of matching traffic (0–100, up to 2 decimal places) served this variation. For multi-way splits, use cumulative upper bounds across rules (e.g. 30, 70, 100).
                             type: number
                             maximum: 100
                             minimum: 0
+                            multipleOf: 0.01
                         required:
                           - percentage
                       serve_variation:
@@ -142751,40 +142777,41 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: flagship.apps.flags
       x-fern-sdk-method-name: update
-      x-forge-hidden: true
   /accounts/{account_id}/flagship/apps/{app_id}/flags/{flag_key}/changelog:
     get:
       operationId: flagship_get_flag_changelog
-      summary: Get flag changelog
+      summary: List flag changelog entries
       description: Returns the audit history for a flag, newest first. Each entry includes the event type and full flag state after the change; `update` entries include a field-level diff. Capped at 200 entries per flag.
       parameters:
         - name: account_id
           in: path
-          description: Cloudflare account ID.
+          description: Cloudflare account ID that owns the Flagship app.
           required: true
           schema:
-            description: Cloudflare account ID.
+            description: Cloudflare account ID that owns the Flagship app.
             type: string
         - name: app_id
           in: path
-          description: App identifier.
+          description: Flagship app ID returned when the app was created.
           required: true
           schema:
-            description: App identifier.
+            description: Flagship app ID returned when the app was created.
             type: string
         - name: flag_key
           in: path
-          description: Flag key (slug).
+          description: Case-sensitive key identifying the flag within the app.
           required: true
           schema:
-            description: Flag key (slug).
+            description: Case-sensitive key identifying the flag within the app.
             type: string
         - name: limit
           in: query
           description: Max items to return (1–200).
           schema:
             description: Max items to return (1–200).
-            type: string
+            type: integer
+            maximum: 200
+            minimum: 1
         - name: cursor
           in: query
           description: Pagination cursor from a previous response.
@@ -142885,7 +142912,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: flagship.apps.flags.changelog
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
   /accounts/{account_id}/gateway:
     get:
       operationId: zero-trust-accounts-get-zero-trust-account-information
@@ -428320,10 +428346,13 @@ components:
       type: object
       properties:
         flagKey:
+          description: Key of the evaluated flag.
           type: string
         reason:
+          description: Reason the evaluator selected this variation.
           type: string
           enum:
+            - STATIC
             - TARGETING_MATCH
             - DEFAULT
             - DISABLED
@@ -428331,6 +428360,7 @@ components:
         value:
           $ref: '#/components/schemas/flagship_JsonValue'
         variant:
+          description: Name of the variation that supplied the resolved value.
           type: string
       required:
         - flagKey
@@ -428344,6 +428374,7 @@ components:
           type: string
           minLength: 1
         description:
+          description: Optional operator-facing description. It does not affect flag evaluation.
           type: string
           maxLength: 512
           nullable: true
@@ -428387,6 +428418,8 @@ components:
                             - ends_with
                             - in
                             - not_in
+                            - has
+                            - not_has
                         value:
                           $ref: '#/components/schemas/flagship_JsonValue'
                       required:
@@ -428420,6 +428453,8 @@ components:
                                       - ends_with
                                       - in
                                       - not_in
+                                      - has
+                                      - not_has
                                   value:
                                     $ref: '#/components/schemas/flagship_JsonValue'
                                 required:
@@ -428453,6 +428488,8 @@ components:
                                                 - ends_with
                                                 - in
                                                 - not_in
+                                                - has
+                                                - not_has
                                             value:
                                               $ref: '#/components/schemas/flagship_JsonValue'
                                           required:
@@ -428486,6 +428523,8 @@ components:
                                                           - ends_with
                                                           - in
                                                           - not_in
+                                                          - has
+                                                          - not_has
                                                       value:
                                                         $ref: '#/components/schemas/flagship_JsonValue'
                                                     required:
@@ -428519,6 +428558,8 @@ components:
                                                                     - ends_with
                                                                     - in
                                                                     - not_in
+                                                                    - has
+                                                                    - not_has
                                                                 value:
                                                                   $ref: '#/components/schemas/flagship_JsonValue'
                                                               required:
@@ -428552,6 +428593,8 @@ components:
                                                                               - ends_with
                                                                               - in
                                                                               - not_in
+                                                                              - has
+                                                                              - not_has
                                                                           value:
                                                                             $ref: '#/components/schemas/flagship_JsonValue'
                                                                         required:
@@ -428636,12 +428679,14 @@ components:
                   attribute:
                     description: Context attribute used for sticky bucketing. Defaults to `targetingKey`. If absent at evaluation time, bucketing is random per request.
                     type: string
+                    maxLength: 64
                     minLength: 1
                   percentage:
-                    description: Percentage of matching traffic (0–100) served this variation. For multi-way splits, use cumulative upper bounds across rules (e.g. 30, 70, 100).
+                    description: Percentage of matching traffic (0–100, up to 2 decimal places) served this variation. For multi-way splits, use cumulative upper bounds across rules (e.g. 30, 70, 100).
                     type: number
                     maximum: 100
                     minimum: 0
+                    multipleOf: 0.01
                 required:
                   - percentage
               serve_variation:
@@ -428729,6 +428774,8 @@ components:
                                   - ends_with
                                   - in
                                   - not_in
+                                  - has
+                                  - not_has
                               value:
                                 $ref: '#/components/schemas/flagship_JsonValue'
                             required:
@@ -428762,6 +428809,8 @@ components:
                                             - ends_with
                                             - in
                                             - not_in
+                                            - has
+                                            - not_has
                                         value:
                                           $ref: '#/components/schemas/flagship_JsonValue'
                                       required:
@@ -428795,6 +428844,8 @@ components:
                                                       - ends_with
                                                       - in
                                                       - not_in
+                                                      - has
+                                                      - not_has
                                                   value:
                                                     $ref: '#/components/schemas/flagship_JsonValue'
                                                 required:
@@ -428828,6 +428879,8 @@ components:
                                                                 - ends_with
                                                                 - in
                                                                 - not_in
+                                                                - has
+                                                                - not_has
                                                             value:
                                                               $ref: '#/components/schemas/flagship_JsonValue'
                                                           required:
@@ -428861,6 +428914,8 @@ components:
                                                                           - ends_with
                                                                           - in
                                                                           - not_in
+                                                                          - has
+                                                                          - not_has
                                                                       value:
                                                                         $ref: '#/components/schemas/flagship_JsonValue'
                                                                     required:
@@ -428894,6 +428949,8 @@ components:
                                                                                     - ends_with
                                                                                     - in
                                                                                     - not_in
+                                                                                    - has
+                                                                                    - not_has
                                                                                 value:
                                                                                   $ref: '#/components/schemas/flagship_JsonValue'
                                                                               required:
@@ -428974,12 +429031,14 @@ components:
                         attribute:
                           description: Context attribute used for sticky bucketing. Defaults to `targetingKey`. If absent at evaluation time, bucketing is random per request.
                           type: string
+                          maxLength: 64
                           minLength: 1
                         percentage:
-                          description: Percentage of matching traffic (0–100) served this variation. For multi-way splits, use cumulative upper bounds across rules (e.g. 30, 70, 100).
+                          description: Percentage of matching traffic (0–100, up to 2 decimal places) served this variation. For multi-way splits, use cumulative upper bounds across rules (e.g. 30, 70, 100).
                           type: number
                           maximum: 100
                           minimum: 0
+                          multipleOf: 0.01
                       required:
                         - percentage
                     serve_variation:
