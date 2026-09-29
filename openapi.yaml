@@ -200967,7 +200967,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: account-tags
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
       x-stability: beta
     get:
       operationId: tags-get
@@ -201028,12 +201027,11 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: account-tags
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
       x-stability: beta
     put:
       operationId: tags-set
       summary: Set tags for an account-level resource
-      description: Creates or updates tags for a specific account-level resource.
+      description: Creates or updates tags for a specific account-level resource. Replaces all existing tags for the resource.
       parameters:
         - name: account_id
           in: path
@@ -201085,7 +201083,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: account-tags
       x-fern-sdk-method-name: update
-      x-forge-hidden: true
       x-stability: beta
   /accounts/{account_id}/tags/keys:
     get:
@@ -201131,7 +201128,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: keys
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
       x-stability: beta
   /accounts/{account_id}/tags/resources:
     get:
@@ -201209,7 +201205,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: tags.resources
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
       x-stability: beta
   /accounts/{account_id}/tags/summary:
     get:
@@ -201255,7 +201250,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: resource-tagging.summary
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
       x-stability: beta
   /accounts/{account_id}/tags/values/{tag_key}:
     get:
@@ -201309,7 +201303,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: values
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
       x-stability: beta
   /accounts/{account_id}/teamnet/routes:
     get:
@@ -378552,7 +378545,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: zone-tags
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
       x-stability: beta
     get:
       operationId: tags-zone-get
@@ -378613,7 +378605,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: zone-tags
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
       x-stability: beta
     put:
       operationId: tags-zone-set
@@ -378670,7 +378661,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: zone-tags
       x-fern-sdk-method-name: update
-      x-forge-hidden: true
       x-stability: beta
   /zones/{zone_id}/token_validation/config:
     get:
@@ -469129,16 +469119,18 @@ components:
         - resource_id
     resource-tagging_delete_tags_request_account_level_worker_version:
       description: Request body schema for deleting tags from worker_version resources.
-      allOf:
-        - $ref: '#/components/schemas/resource-tagging_delete_tags_request_account_level_base'
-        - properties:
-            resource_type:
-              $ref: '#/components/schemas/resource-tagging_account_resource_type_worker_version_enum'
-            worker_id:
-              $ref: '#/components/schemas/resource-tagging_worker_id'
-          required:
-            - worker_id
-          type: object
+      type: object
+      properties:
+        resource_id:
+          $ref: '#/components/schemas/resource-tagging_resource_id'
+        resource_type:
+          $ref: '#/components/schemas/resource-tagging_account_resource_type_worker_version_enum'
+        worker_id:
+          $ref: '#/components/schemas/resource-tagging_worker_id'
+      required:
+        - resource_type
+        - resource_id
+        - worker_id
     resource-tagging_delete_tags_request_zone_level:
       description: Request body schema for deleting tags from zone-level resources.
       discriminator:
@@ -469160,16 +469152,18 @@ components:
         - $ref: '#/components/schemas/resource-tagging_delete_tags_request_zone_level_access_application_policy'
     resource-tagging_delete_tags_request_zone_level_access_application_policy:
       description: Request body schema for deleting tags from access_application_policy resources.
-      allOf:
-        - $ref: '#/components/schemas/resource-tagging_delete_tags_request_zone_level_base'
-        - properties:
-            access_application_id:
-              $ref: '#/components/schemas/resource-tagging_access_application_id'
-            resource_type:
-              $ref: '#/components/schemas/resource-tagging_zone_resource_type_access_application_policy_enum'
-          required:
-            - access_application_id
-          type: object
+      type: object
+      properties:
+        access_application_id:
+          $ref: '#/components/schemas/resource-tagging_access_application_id'
+        resource_id:
+          $ref: '#/components/schemas/resource-tagging_resource_id'
+        resource_type:
+          $ref: '#/components/schemas/resource-tagging_zone_resource_type_access_application_policy_enum'
+      required:
+        - resource_type
+        - resource_id
+        - access_application_id
     resource-tagging_delete_tags_request_zone_level_base:
       description: Request body schema for deleting tags from zone-level resources. Zone ID comes from URL path.
       type: object
