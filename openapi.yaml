@@ -145879,20 +145879,6 @@ paths:
       x-fern-sdk-group-name: hyperdrive
       x-fern-sdk-method-name: create
       x-forge-params:
-        integration.custom_database_name:
-          flagName: integration-custom-database-name
-        integration.database_branch_name:
-          flagName: integration-database-branch-name
-        integration.database_name:
-          flagName: integration-database-name
-        integration.integration:
-          flagName: integration
-        integration.organization_name:
-          flagName: integration-organization-name
-        integration.scheme:
-          flagName: integration-scheme
-        mtls.mtls_certificate_id:
-          flagName: mtls-certificate-id
         mtls.sslmode:
           choices:
             - require
@@ -146059,8 +146045,6 @@ paths:
       x-fern-sdk-group-name: hyperdrive
       x-fern-sdk-method-name: update
       x-forge-params:
-        mtls.mtls_certificate_id:
-          flagName: mtls-certificate-id
         mtls.sslmode:
           choices:
             - require
@@ -146125,8 +146109,6 @@ paths:
       x-fern-sdk-group-name: hyperdrive
       x-fern-sdk-method-name: replace
       x-forge-params:
-        mtls.mtls_certificate_id:
-          flagName: mtls-certificate-id
         mtls.sslmode:
           choices:
             - require
@@ -146182,7 +146164,7 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: hyperdrive
       x-fern-sdk-method-name: restart
-  /accounts/{account_id}/hyperdrive/integrationsOperations/{integration}/createDatabaseSignature:
+  /accounts/{account_id}/hyperdrive/integrationsOperations/planetScale/createDatabaseSignature:
     post:
       operationId: create-hyperdrive-database-signature
       summary: Create Database Signature
@@ -146194,12 +146176,6 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/hyperdrive_identifier'
-        - name: integration
-          in: path
-          description: The database integration to authorize against. This value is case-insensitive.
-          required: true
-          schema:
-            $ref: '#/components/schemas/hyperdrive_hyperdrive-integration'
       responses:
         '200':
           description: Create Database Signature Response.
@@ -146229,6 +146205,10 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: hyperdrive
       x-fern-sdk-method-name: create-database-signature
+      x-forge-aliases:
+        - x-fern-availability: beta
+          x-fern-sdk-group-name: hyperdrive.integration.planetscale
+          x-fern-sdk-method-name: signature
   /accounts/{account_id}/iam/permission_groups:
     get:
       operationId: account-permission-group-list
@@ -430612,8 +430592,8 @@ components:
         - account_id
         - timestamp
         - signature
-    hyperdrive_hyperdrive-integration:
-      description: The database integration used by this operation.
+    hyperdrive_hyperdrive-integration-provider:
+      description: The database integration provider used by this operation.
       type: string
       example: planetscale
       enum:
@@ -430631,6 +430611,7 @@ components:
           description: Define mTLS certificate ID obtained after uploading client cert.
           type: string
           example: 00000000-0000-0000-0000-0000000000
+          x-fern-property-name: certificate-id
         sslmode:
           description: PostgreSQL accepts `require`, `verify-ca`, and `verify-full`. MySQL accepts `REQUIRED`, `VERIFY_CA`, and `VERIFY_IDENTITY`. The verify modes require a CA certificate; the require modes cannot be used with a CA certificate.
           type: string
@@ -430691,18 +430672,18 @@ components:
           maxLength: 2048
           minLength: 1
           x-auditable: true
-        integration:
-          $ref: '#/components/schemas/hyperdrive_hyperdrive-integration'
         organization_name:
           description: The name of the PlanetScale organization.
           type: string
           maxLength: 2048
           minLength: 1
           x-auditable: true
+        provider:
+          $ref: '#/components/schemas/hyperdrive_hyperdrive-integration-provider'
         scheme:
           $ref: '#/components/schemas/hyperdrive_hyperdrive-scheme'
       required:
-        - integration
+        - provider
         - organization_name
         - database_name
         - database_branch_name
