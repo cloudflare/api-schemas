@@ -436650,10 +436650,17 @@ components:
         filter:
           description: |
             Optional Logpush filter predicate to restrict which events are ingested.
-            If provided, replaces the dataset's default filter entirely.
             See [Logpush filters](https://developers.cloudflare.com/logs/reference/filters/)
             for syntax and examples.
           type: string
+          x-auditable: true
+          x-stainless-terraform-configurability: computed_optional
+        filter_attack_traffic:
+          description: |
+            Whether to filter attack traffic from the Logpush job. Defaults to
+            `true` for supported datasets when omitted. Supported datasets are
+            `http_requests`, `firewall_events`, and `network_analytics_logs`.
+          type: boolean
           x-auditable: true
           x-stainless-terraform-configurability: computed_optional
       required:
@@ -436695,6 +436702,13 @@ components:
                 The Logpush filter predicate applied to this dataset. Omitted
                 when no filter is set.
               type: string
+              x-auditable: true
+              x-stainless-terraform-configurability: computed_optional
+            filter_attack_traffic:
+              description: |
+                Whether the Logpush job filters attack traffic. Omitted for
+                datasets that do not support this option.
+              type: boolean
               x-auditable: true
               x-stainless-terraform-configurability: computed_optional
           required:
@@ -436910,6 +436924,14 @@ components:
             for syntax and examples.
           type: string
           nullable: true
+          x-auditable: true
+          x-stainless-terraform-configurability: computed_optional
+        filter_attack_traffic:
+          description: |
+            Whether to filter attack traffic from the Logpush job. If omitted,
+            the existing setting is left unchanged. Supported datasets are
+            `http_requests`, `firewall_events`, and `network_analytics_logs`.
+          type: boolean
           x-auditable: true
           x-stainless-terraform-configurability: computed_optional
       required:
