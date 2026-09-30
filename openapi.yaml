@@ -64104,6 +64104,91 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: basin-catalog.credentials
       x-fern-sdk-method-name: create
+  /accounts/{account_id}/basin-catalog/{bucket_name}/credential/status:
+    get:
+      operationId: basin-get-credential-status
+      summary: Get Basin Catalog credential status
+      description: |
+        Check whether the configured catalog credentials are valid, invalid,
+        or absent by probing authentication against the catalog.
+      parameters:
+        - name: account_id
+          in: path
+          description: Identifies the account.
+          required: true
+          schema:
+            $ref: '#/components/schemas/r2-data-catalog_account-id'
+        - name: bucket_name
+          in: path
+          description: Specifies the R2 bucket name.
+          required: true
+          schema:
+            $ref: '#/components/schemas/r2-data-catalog_bucket-name'
+      responses:
+        '200':
+          description: Credential status retrieved successfully.
+          content:
+            application/json:
+              example:
+                errors: []
+                messages: []
+                result:
+                  status: valid
+                success: true
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/r2-data-catalog_api-response-single'
+                  - properties:
+                      result:
+                        type: object
+                        properties:
+                          status:
+                            $ref: '#/components/schemas/r2-data-catalog_credential-probe-status'
+                        required:
+                          - status
+                    type: object
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+        '401':
+          description: Authentication failed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+        '403':
+          description: Forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+        '404':
+          description: Catalog not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Credential Management
+      x-api-token-group:
+        - Workers R2 Data Catalog Write
+        - Workers R2 Data Catalog Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: basin-catalog.credentials
+      x-fern-sdk-method-name: status
   /accounts/{account_id}/basin-catalog/{bucket_name}/delete:
     post:
       operationId: basin-delete-catalog
@@ -177349,6 +177434,93 @@ paths:
       x-fern-sdk-group-name: r2-data-catalog.credentials
       x-fern-sdk-method-name: create
       x-stainless-deprecation-message: Use `POST /accounts/{account_id}/basin-catalog/{bucket_name}/credential` instead.
+  /accounts/{account_id}/r2-catalog/{bucket_name}/credential/status:
+    get:
+      operationId: get-credential-status
+      summary: Get catalog credential status
+      description: |
+        Check whether the configured catalog credentials are valid, invalid,
+        or absent by probing authentication against the catalog.
+      parameters:
+        - name: account_id
+          in: path
+          description: Identifies the account.
+          required: true
+          schema:
+            $ref: '#/components/schemas/r2-data-catalog_account-id'
+        - name: bucket_name
+          in: path
+          description: Specifies the R2 bucket name.
+          required: true
+          schema:
+            $ref: '#/components/schemas/r2-data-catalog_bucket-name'
+      responses:
+        '200':
+          description: Credential status retrieved successfully.
+          content:
+            application/json:
+              example:
+                errors: []
+                messages: []
+                result:
+                  status: valid
+                success: true
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/r2-data-catalog_api-response-single'
+                  - properties:
+                      result:
+                        type: object
+                        properties:
+                          status:
+                            $ref: '#/components/schemas/r2-data-catalog_credential-probe-status'
+                        required:
+                          - status
+                    type: object
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+        '401':
+          description: Authentication failed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+        '403':
+          description: Forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+        '404':
+          description: Catalog not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2-data-catalog_api-response-common-failure'
+      deprecated: true
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Credential Management
+      x-api-token-group:
+        - Workers R2 Data Catalog Write
+        - Workers R2 Data Catalog Read
+      x-fern-availability: deprecated
+      x-fern-sdk-group-name: r2-data-catalog.credentials
+      x-fern-sdk-method-name: status
+      x-stainless-deprecation-message: Use `GET /accounts/{account_id}/basin-catalog/{bucket_name}/credential/status` instead.
   /accounts/{account_id}/r2-catalog/{bucket_name}/delete:
     post:
       operationId: delete-catalog
@@ -458229,13 +458401,17 @@ components:
       type: object
       properties:
         state:
-          description: Updates the state optionally.
-          allOf:
-            - $ref: '#/components/schemas/r2-data-catalog_catalog-maintenance-state'
+          $ref: '#/components/schemas/r2-data-catalog_catalog-maintenance-state'
         target_size_mb:
-          description: Updates the target file size optionally.
-          allOf:
-            - $ref: '#/components/schemas/r2-data-catalog_catalog-target-file-size'
+          $ref: '#/components/schemas/r2-data-catalog_catalog-target-file-size'
+    r2-data-catalog_credential-probe-status:
+      description: Shows the verified credential status probed against the catalog.
+      type: string
+      example: valid
+      enum:
+        - valid
+        - invalid
+        - absent
     r2-data-catalog_credential-status:
       description: Shows the credential configuration status.
       type: string
@@ -458530,9 +458706,7 @@ components:
           format: int64
           minimum: 1
         state:
-          description: Updates the state optionally.
-          allOf:
-            - $ref: '#/components/schemas/r2-data-catalog_catalog-maintenance-state'
+          $ref: '#/components/schemas/r2-data-catalog_catalog-maintenance-state'
     r2-data-catalog_table-compaction-config:
       description: Configures compaction settings for table optimization.
       type: object
