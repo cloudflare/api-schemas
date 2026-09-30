@@ -238474,11 +238474,12 @@ paths:
       operationId: sql-api-query-get
       summary: Query analytics datasets
       description: |
-        Executes a SQL query against the analytics datasets available to the caller. SQL placeholders can be bound with query parameters named `param_<name>`, such as `param_status=404` for `$status`.
+        Executes a SQL query against the analytics datasets available to the caller. SQL placeholders can be bound with query parameters named `param_<name>`, such as `param_status=404` for `$status`. A trailing `FORMAT JSON`, `FORMAT JSONEachRow`, `FORMAT TabSeparated`, or `FORMAT TSV` is supported for all datasets. Without FORMAT, each backend retains its existing default JSON response.
       parameters:
         - name: query
           in: query
-          description: SQL query to execute.
+          description: |
+            SQL query to execute. A trailing FORMAT selects JSON, JSONEachRow, TabSeparated, or TSV output on any dataset.
           required: true
           schema:
             type: string
@@ -238515,7 +238516,7 @@ paths:
       operationId: sql-api-query-post
       summary: Query analytics datasets
       description: |
-        Executes a SQL query against the analytics datasets available to the caller. Send either raw SQL or a JSON object containing the query and optional positional or named parameters, time range, and account or zone scope. Raw SQL placeholders can also be bound with query parameters named `param_<name>`.
+        Executes a SQL query against the analytics datasets available to the caller. Send either raw SQL or a JSON object containing the query and optional positional or named parameters, time range, and account or zone scope. Raw SQL placeholders can also be bound with query parameters named `param_<name>`. A trailing `FORMAT JSON`, `FORMAT JSONEachRow`, `FORMAT TabSeparated`, or `FORMAT TSV` is supported for all datasets. Without FORMAT, each backend retains its existing default JSON response.
       requestBody:
         required: true
         content:
@@ -397684,6 +397685,45 @@ components:
       required:
         - code
         - message
+    analytics-sql_ClickHouseJsonQueryResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            additionalProperties: true
+            type: object
+        meta:
+          type: array
+          items:
+            additionalProperties: false
+            properties:
+              name:
+                type: string
+              type:
+                type: string
+            required:
+              - name
+              - type
+            type: object
+        rows:
+          type: integer
+          format: int64
+          minimum: 0
+        rows_before_limit_at_least:
+          description: ClickHouse pre-limit count, or rows when unavailable.
+          type: integer
+          format: int64
+          minimum: 0
+        statistics:
+          $ref: '#/components/schemas/analytics-sql_SqlQueryStatistics'
+      additionalProperties: false
+      required:
+        - meta
+        - data
+        - rows
+        - rows_before_limit_at_least
+        - statistics
     analytics-sql_CustomAttribute:
       type: object
       properties:
@@ -397859,6 +397899,24 @@ components:
       enum:
         - unsampled
         - adaptive
+    analytics-sql_LogExplorerQueryResponse:
+      type: object
+      properties:
+        data:
+          description: Log Explorer query rows keyed by selected column names.
+          type: array
+          items:
+            additionalProperties: true
+            type: object
+        rows:
+          description: Number of rows in data.
+          type: integer
+          format: int64
+          minimum: 0
+      additionalProperties: false
+      required:
+        - data
+        - rows
     analytics-sql_SqlQueryAccountScope:
       type: object
       properties:
@@ -397883,7 +397941,8 @@ components:
             - additionalProperties: true
               type: object
         query:
-          description: SQL query to execute.
+          description: |
+            SQL query to execute. A trailing FORMAT selects JSON, JSONEachRow, TabSeparated, or TSV output on any dataset.
           type: string
         scope:
           $ref: '#/components/schemas/analytics-sql_SqlQueryScope'
@@ -508387,11 +508446,24 @@ components:
             type: string
     analytics-sql_QuerySuccess:
       description: |
-        Query executed successfully. Columns that the query reaches only through `*` exclude any that the caller is not permitted to read.
+        Query executed successfully. Columns that the query reaches only through `*` exclude any that the caller is not permitted to read. ClickHouse's default JSON envelope has data, rows, and statistics; explicit FORMAT JSON additionally has typed metadata and rows_before_limit_at_least. Log Explorer's default and FORMAT JSON responses use its existing {data, rows} envelope, without unavailable metadata, pre-limit counts, or statistics. FORMAT JSONEachRow returns newline-delimited JSON objects. FORMAT TabSeparated and TSV return escaped tab-separated rows without a header; Log Explorer serializes nested JSON values as compact JSON text in one field.
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/analytics-sql_SqlQueryResponse'
+            oneOf:
+              - $ref: '#/components/schemas/analytics-sql_SqlQueryResponse'
+              - $ref: '#/components/schemas/analytics-sql_ClickHouseJsonQueryResponse'
+              - $ref: '#/components/schemas/analytics-sql_LogExplorerQueryResponse'
+        application/x-ndjson:
+          schema:
+            description: |
+              FORMAT JSONEachRow emits one JSON object per line, rather than a single JSON document.
+            type: string
+        text/tab-separated-values:
+          schema:
+            description: |
+              FORMAT TabSeparated (or TSV) emits escaped tab-separated rows without a header.
+            type: string
     analytics-sql_ResourceExhausted:
       description: The query exhausted available resources.
       content:
