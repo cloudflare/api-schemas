@@ -493794,6 +493794,7 @@ components:
           ai_search: '#/components/schemas/workers_binding_kind_ai_search'
           ai_search_namespace: '#/components/schemas/workers_binding_kind_ai_search_namespace'
           analytics_engine: '#/components/schemas/workers_binding_kind_analytics_engine'
+          artifacts: '#/components/schemas/workers_binding_kind_artifacts'
           assets: '#/components/schemas/workers_binding_kind_assets'
           browser: '#/components/schemas/workers_binding_kind_browser'
           d1: '#/components/schemas/workers_binding_kind_d1'
@@ -493834,6 +493835,7 @@ components:
         - $ref: '#/components/schemas/workers_binding_kind_ai_search_namespace'
         - $ref: '#/components/schemas/workers_binding_kind_messaging'
         - $ref: '#/components/schemas/workers_binding_kind_analytics_engine'
+        - $ref: '#/components/schemas/workers_binding_kind_artifacts'
         - $ref: '#/components/schemas/workers_binding_kind_assets'
         - $ref: '#/components/schemas/workers_binding_kind_browser'
         - $ref: '#/components/schemas/workers_binding_kind_d1'
@@ -493945,6 +493947,29 @@ components:
         - name
         - type
         - dataset
+    workers_binding_kind_artifacts:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/workers_binding_name'
+        namespace:
+          description: The Artifacts namespace exposed to the Worker in the Worker's account. Must be 2-63 characters, start with an ASCII alphanumeric character, contain only ASCII alphanumeric characters, dots, underscores, and hyphens, and must not end with a hyphen. The namespace does not need to be created before binding it.
+          type: string
+          example: agent-workspace
+          maxLength: 63
+          minLength: 2
+          pattern: ^[a-zA-Z0-9]([a-zA-Z0-9._-]*[a-zA-Z0-9._])?$
+          x-auditable: true
+        type:
+          description: The kind of resource that the binding provides.
+          type: string
+          enum:
+            - artifacts
+          x-auditable: true
+      required:
+        - name
+        - type
+        - namespace
     workers_binding_kind_assets:
       type: object
       properties:
