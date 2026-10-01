@@ -238569,6 +238569,9 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: sql
       x-fern-sdk-method-name: query
+      x-forge-params:
+        query:
+          positional: true
   /analytics/sql/introspection:
     get:
       operationId: sql-api-introspection
@@ -397946,6 +397949,7 @@ components:
           type: string
           example: 0123456789abcdef0123456789abcdef
           pattern: ^[0-9a-f]{32}$
+          x-fern-property-name: account
       additionalProperties: false
       required:
         - accountTag
@@ -397967,7 +397971,9 @@ components:
         scope:
           $ref: '#/components/schemas/analytics-sql_SqlQueryScope'
         time_range:
-          $ref: '#/components/schemas/analytics-sql_SqlQueryTimeRange'
+          allOf:
+            - $ref: '#/components/schemas/analytics-sql_SqlQueryTimeRange'
+          x-fern-property-name: time
       example:
         params:
           status: 404
@@ -398039,10 +398045,12 @@ components:
           description: Inclusive upper bound for the dataset's timestamp column.
           type: string
           example: 2026-01-02T00:00:00Z
+          x-fern-property-name: until
         start:
           description: Inclusive lower bound for the dataset's timestamp column.
           type: string
           example: 2026-01-01T00:00:00Z
+          x-fern-property-name: since
       additionalProperties: false
       required:
         - start
@@ -398055,6 +398063,7 @@ components:
           type: string
           example: 023e105f2fd349899d7634a245f8ca0f
           pattern: ^[0-9a-f]{32}$
+          x-fern-property-name: zone
       additionalProperties: false
       required:
         - zoneTag
