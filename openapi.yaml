@@ -126384,26 +126384,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                description:
-                  type: string
-                  nullable: true
-                enabled:
-                  type: boolean
-                name:
-                  type: string
-                profile_id:
-                  type: string
-                  format: uuid
-                topic:
-                  type: string
-                  maxLength: 50
-                  minLength: 2
-              required:
-                - name
-                - enabled
-                - topic
+              $ref: '#/components/schemas/dlp_NewCustomPromptTopic'
       responses:
         '200':
           description: Create custom prompt topic response.
@@ -126551,23 +126532,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                description:
-                  type: string
-                  nullable: true
-                enabled:
-                  type: boolean
-                name:
-                  type: string
-                topic:
-                  type: string
-                  maxLength: 50
-                  minLength: 2
-              required:
-                - name
-                - enabled
-                - topic
+              $ref: '#/components/schemas/dlp_CustomPromptTopicUpdate'
       responses:
         '200':
           description: Update custom prompt topic response.
@@ -127471,41 +127436,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                case_sensitive:
-                  description: |-
-                    Only applies to custom word lists.
-                    Determines if the words should be matched in a case-sensitive manner
-                    Cannot be set to false if `secret` is true or undefined
-                  type: boolean
-                description:
-                  description: The description of the dataset.
-                  type: string
-                  nullable: true
-                encoding_version:
-                  description: |-
-                    Dataset encoding version
-
-                    Non-secret custom word lists with no header are always version 1.
-                    Secret EDM lists with no header are version 1.
-                    Multicolumn CSV with headers are version 2.
-                    Omitting this field provides the default value 0, which is interpreted
-                    the same as 1.
-                  type: integer
-                  format: int32
-                  minimum: 0
-                name:
-                  type: string
-                secret:
-                  description: |-
-                    Generate a secret dataset.
-
-                    If true, the response will include a secret to use with the EDM encoder.
-                    If false, the response has no secret and the dataset is uploaded in plaintext.
-                  type: boolean
-              required:
-                - name
+              $ref: '#/components/schemas/dlp_NewDataset'
       responses:
         '200':
           description: Dataset created successfully.
@@ -127640,22 +127571,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                case_sensitive:
-                  description: |-
-                    Determines if the words should be matched in a case-sensitive manner.
-
-                    Only required for custom word lists.
-                  type: boolean
-                description:
-                  description: The description of the dataset.
-                  type: string
-                  nullable: true
-                name:
-                  description: The name of the dataset, must be unique.
-                  type: string
-                  nullable: true
+              $ref: '#/components/schemas/dlp_DatasetUpdate'
       responses:
         '200':
           description: Dataset updated successfully.
@@ -127829,34 +127745,7 @@ paths:
             schema:
               type: array
               items:
-                allOf:
-                  - oneOf:
-                      - properties:
-                          entry_id:
-                            type: string
-                            format: uuid
-                        required:
-                          - entry_id
-                        title: Existing Column
-                        type: object
-                      - properties:
-                          entry_name:
-                            type: string
-                        required:
-                          - entry_name
-                        title: New Column
-                        type: object
-                  - properties:
-                      header_name:
-                        type: string
-                      num_cells:
-                        type: integer
-                        format: int64
-                        minimum: 0
-                    required:
-                      - header_name
-                      - num_cells
-                    type: object
+                $ref: '#/components/schemas/dlp_NewDatasetColumn'
       responses:
         '200':
           description: Dataset columns created successfully.
@@ -128013,19 +127902,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                description:
-                  type: string
-                  default: ''
-                match_percent:
-                  type: integer
-                  format: int32
-                name:
-                  type: string
-              required:
-                - name
-                - match_percent
+              $ref: '#/components/schemas/dlp_NewDocumentFingerprint'
       responses:
         '200':
           description: Document fingerprint created successfully.
@@ -416985,7 +416862,9 @@ components:
           allOf:
             - $ref: '#/components/schemas/dlp_Confidence'
         context_awareness:
-          $ref: '#/components/schemas/dlp_ContextAwareness'
+          allOf:
+            - $ref: '#/components/schemas/dlp_ContextAwareness'
+          deprecated: true
         created_at:
           description: When the profile was created.
           type: string
@@ -417064,7 +416943,9 @@ components:
           default: low
           nullable: true
         context_awareness:
-          $ref: '#/components/schemas/dlp_ContextAwareness'
+          allOf:
+            - $ref: '#/components/schemas/dlp_ContextAwareness'
+          deprecated: true
         data_classes:
           description: Data class IDs to associate with the profile. If omitted, existing associations are unchanged.
           type: array
@@ -418164,7 +418045,11 @@ components:
           default: low
           nullable: true
         context_awareness:
-          $ref: '#/components/schemas/dlp_ContextAwareness'
+          allOf:
+            - $ref: '#/components/schemas/dlp_ContextAwareness'
+          deprecated: true
+          x-stainless-skip:
+            - terraform
         data_classes:
           description: Data class IDs to associate with the profile.
           type: array
@@ -418562,7 +418447,6 @@ components:
             Whether this entry is deprecated for new use. This is computed from the static catalog and
             emitted only when true.
           type: boolean
-          default: false
           x-stainless-terraform-configurability: computed
         enabled:
           type: boolean
@@ -418636,7 +418520,11 @@ components:
           allOf:
             - $ref: '#/components/schemas/dlp_Confidence'
         context_awareness:
-          $ref: '#/components/schemas/dlp_ContextAwareness'
+          allOf:
+            - $ref: '#/components/schemas/dlp_ContextAwareness'
+          deprecated: true
+          x-stainless-skip:
+            - terraform
         entries:
           type: array
           items:
@@ -418768,7 +418656,11 @@ components:
           default: low
           nullable: true
         context_awareness:
-          $ref: '#/components/schemas/dlp_ContextAwareness'
+          allOf:
+            - $ref: '#/components/schemas/dlp_ContextAwareness'
+          deprecated: true
+          x-stainless-skip:
+            - terraform
         entries:
           type: array
           items:
@@ -418858,7 +418750,8 @@ components:
     dlp_RiskEvent:
       type: object
       properties:
-        event_details: {}
+        event_details:
+          type: object
         id:
           type: string
         name:
@@ -419262,7 +419155,10 @@ components:
         updated_at:
           type: string
           format: date-time
-        word_list: {}
+        word_list:
+          type: array
+          items:
+            type: string
       required:
         - id
         - name
