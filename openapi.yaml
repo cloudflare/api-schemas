@@ -195931,7 +195931,7 @@ paths:
       x-fern-sdk-method-name: list
     post:
       operationId: share-create
-      summary: Create a new share
+      summary: Trigger a share creation
       description: Creates a new resource share for sharing Cloudflare resources with other accounts or organizations.
       parameters:
         - name: account_id
@@ -195983,7 +195983,7 @@ paths:
   /accounts/{account_id}/shares/{share_id}:
     delete:
       operationId: share-delete
-      summary: Delete a share
+      summary: Trigger a share deletion
       description: Deletion is not immediate, an updated share object with a new status will be returned.
       parameters:
         - name: account_id
@@ -196086,7 +196086,7 @@ paths:
       x-fern-sdk-method-name: get
     put:
       operationId: share-update
-      summary: Update a share
+      summary: Trigger a share rename
       description: |
         Updates the share's display name and tags. This endpoint does **not**
         modify recipients or resources — those are managed via dedicated
@@ -196207,7 +196207,7 @@ paths:
       x-fern-sdk-method-name: list
     post:
       operationId: share-excluded-recipient-create
-      summary: Create a new share excluded recipient
+      summary: Trigger an account exclusion from a share
       description: Excludes a single account from an organization-targeted share. The share continues to target the entire organization, but the excluded account is skipped during reconciliation.
       parameters:
         - name: account_id
@@ -196263,7 +196263,7 @@ paths:
       x-fern-sdk-method-name: create
     put:
       operationId: share-excluded-recipients-update
-      summary: Update a share's excluded recipients
+      summary: Trigger excluded-account reconciliation on a share
       description: Reconciles a share's excluded recipients to match the given list. Only valid for shares with `target_type=organization`.
       parameters:
         - name: account_id
@@ -196315,7 +196315,7 @@ paths:
   /accounts/{account_id}/shares/{share_id}/excluded-recipients/{excluded_recipient_id}:
     delete:
       operationId: share-excluded-recipient-delete
-      summary: Delete a share excluded recipient
+      summary: Trigger an account un-exclusion from a share
       description: Removes a single account from a share's excluded-recipient list. The account becomes eligible to receive the share again on the next reconciliation cycle.
       parameters:
         - name: account_id
@@ -196483,7 +196483,7 @@ paths:
       x-fern-sdk-method-name: list
     post:
       operationId: share-recipient-create
-      summary: Create a new share recipient
+      summary: Trigger a recipient addition to a share
       description: |
         Adds a single recipient to an account-targeted resource share, granting
         them access to the shared resources. The recipient account must belong
@@ -196545,7 +196545,7 @@ paths:
       x-fern-sdk-method-name: create
     put:
       operationId: share-recipients-update
-      summary: Update a share's recipients
+      summary: Trigger recipient reconciliation on a share
       description: |
         Replaces the full recipient list for an account-targeted share. The
         server computes the diff between the current and desired recipients:
@@ -196606,7 +196606,7 @@ paths:
   /accounts/{account_id}/shares/{share_id}/recipients/{recipient_id}:
     delete:
       operationId: share-recipient-delete
-      summary: Delete a share recipient
+      summary: Trigger a recipient removal from a share
       description: |
         Performs a **soft delete**: sets the recipient's
         `desired_association_status` to `disassociated`, which signals the
@@ -196784,7 +196784,7 @@ paths:
       x-fern-sdk-method-name: list
     post:
       operationId: share-resource-create
-      summary: Create a new share resource
+      summary: Trigger a resource addition to a share
       description: Adds a resource to an existing share, making it available to share recipients.
       parameters:
         - name: account_id
@@ -196841,7 +196841,7 @@ paths:
   /accounts/{account_id}/shares/{share_id}/resources/{share_resource_id}:
     delete:
       operationId: share-resource-delete
-      summary: Delete a share resource
+      summary: Trigger a resource deletion from a share
       description: Deletion is not immediate, an updated share resource object with a new status will be returned.
       parameters:
         - name: account_id
@@ -196952,7 +196952,7 @@ paths:
       x-fern-sdk-method-name: get
     put:
       operationId: share-resource-update
-      summary: Update a share resource
+      summary: Trigger a resource metadata update in a share
       description: Update is not immediate, an updated share resource object with a new status will be returned.
       parameters:
         - name: account_id
