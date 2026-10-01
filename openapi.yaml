@@ -215854,7 +215854,10 @@ paths:
     delete:
       operationId: namespace-worker-delete-script-tag
       summary: Delete Workers for Platforms Script Tag
-      description: Delete a tag from a script uploaded to a Workers for Platforms dispatch namespace.
+      description: |
+        Delete a tag from a script uploaded to a Workers for Platforms dispatch namespace.
+
+        On `api-version` dates on or after `2026-10-01`, `tag` identifies a key and the operation returns the complete updated tag map. Deleting a missing key succeeds. Earlier versions retain the legacy string-tag behavior and return a null result.
       parameters:
         - name: account_id
           in: path
@@ -215875,14 +215878,33 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/workers_tag'
+            oneOf:
+              - allOf:
+                  - $ref: '#/components/schemas/workers_typed_tag_key'
+                x-version-after: 2026-10-01T00:00:00Z
+              - allOf:
+                  - $ref: '#/components/schemas/workers_tag'
+                x-version-before: 2026-10-01T00:00:00Z
+        - $ref: '#/components/parameters/workers_api_version_header'
       responses:
         '200':
           description: Delete script tag.
+          headers:
+            api-version:
+              description: The resolved API compatibility date used to serve this request.
+              schema:
+                type: string
+                pattern: ^\d{4}-\d{2}-\d{2}$
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/workers_api-response-null-result'
+                oneOf:
+                  - allOf:
+                      - $ref: '#/components/schemas/workers_tags-kv-response'
+                    x-version-after: 2026-10-01T00:00:00Z
+                  - allOf:
+                      - $ref: '#/components/schemas/workers_api-response-null-result'
+                    x-version-before: 2026-10-01T00:00:00Z
         4XX:
           description: Delete script tag failure.
           content:
@@ -215901,6 +215923,72 @@ paths:
       x-fern-sdk-group-name: workers-for-platforms.dispatch-namespaces.scripts.tags
       x-fern-sdk-method-name: delete
       x-forge-require-confirmation: This will delete the tag from the Workers for Platforms script.
+    patch:
+      operationId: namespace-worker-patch-script-tag
+      summary: Update Workers for Platforms Script Tag
+      description: |
+        Add or update one tag key/value on a script uploaded to a Workers for Platforms dispatch namespace without replacing its other tags.
+
+        This operation requires an `api-version` on or after `2026-10-01`.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/workers_identifier'
+        - name: dispatch_namespace
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/workers_dispatch_namespace_name'
+        - name: script_name
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/workers_script_name'
+        - name: tag
+          in: path
+          description: Tag key. Cloudflare-reserved prefixes are not accepted.
+          required: true
+          schema:
+            $ref: '#/components/schemas/workers_typed_tag_key'
+        - $ref: '#/components/parameters/workers_api_version_header'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/workers_tag_patch'
+      responses:
+        '200':
+          description: The complete updated tag map.
+          headers:
+            api-version:
+              description: The resolved API compatibility date used to serve this request.
+              schema:
+                type: string
+                pattern: ^\d{4}-\d{2}-\d{2}$
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/workers_tags-kv-response'
+        4XX:
+          description: Update script tag failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/workers_api-response-common-failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Workers for Platforms
+      x-fern-audiences:
+        - sdk
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: workers-for-platforms.dispatch-namespaces.scripts.tags
+      x-fern-sdk-method-name: edit
     put:
       operationId: namespace-worker-put-script-tag
       summary: Create Workers for Platforms Script Tag
@@ -384442,6 +384530,17 @@ components:
         default: 25
         maximum: 1000
         minimum: 5
+    workers_api_version_header:
+      description: |
+        Requested API compatibility date in `YYYY-MM-DD[.release]` format (UTC). The optional release suffix contains lowercase letters; for example, `2026-10-01.epoch`.
+
+        Typed Worker tag operations require a date on or after `2026-10-01`.
+      in: header
+      name: api-version
+      schema:
+        type: string
+        example: 2026-10-01.epoch
+        pattern: ^\d{4}-\d{2}-\d{2}(\.[a-z]+)?$
   schemas:
     aaa_account-id:
       description: The account id
@@ -498028,6 +498127,16 @@ components:
       example: my-tag
       maxLength: 1024
       pattern: ^[^,&]*$
+    workers_tag_patch:
+      description: The value to assign to the tag key. An empty string is valid. The complete UTF-8 encoded tag (the key plus `=` and the value when the value is non-empty) must not exceed 1024 bytes.
+      type: object
+      properties:
+        value:
+          type: string
+          example: production
+      additionalProperties: false
+      required:
+        - value
     workers_tags:
       description: Tags associated with the Worker.
       type: array
@@ -498040,6 +498149,25 @@ components:
       nullable: true
       x-auditable: true
       x-stainless-collection-type: set
+    workers_tags-kv-response:
+      allOf:
+        - $ref: '#/components/schemas/workers_api-response-common'
+        - properties:
+            result:
+              $ref: '#/components/schemas/workers_tags_kv'
+          required:
+            - result
+          type: object
+    workers_tags_kv:
+      description: Tags associated with the Worker, as a key/value object. Each complete UTF-8 encoded tag (the key plus `=` and the value when the value is non-empty) must not exceed 1024 bytes.
+      type: object
+      example:
+        environment: production
+        team: my-team
+      additionalProperties:
+        type: string
+      maxProperties: 10
+      x-auditable: true
     workers_tail:
       type: object
       properties:
@@ -498093,6 +498221,12 @@ components:
       example: false
       default: false
       x-auditable: true
+    workers_typed_tag_key:
+      description: A typed tag key containing only Unicode letters or numbers, underscores, periods, or hyphens. The complete UTF-8 encoded tag (the key plus `=` and the value when the value is non-empty) must not exceed 1024 bytes. Cloudflare-reserved prefixes are not accepted.
+      type: string
+      example: environment
+      maxLength: 256
+      minLength: 1
     workers_upload-assets-response:
       allOf:
         - $ref: '#/components/schemas/workers_api-response-common'
