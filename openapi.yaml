@@ -238778,7 +238778,7 @@ paths:
       operationId: sql-api-introspection
       summary: List available analytics datasets
       description: |
-        Returns the analytics dataset catalogue. By default, the response contains dataset names, titles, categories, descriptions, and kinds. Set `include_columns` to include each dataset's column names, descriptions, and data types. The caller must have Account Analytics Read permission on the account identified by `account_tag`. Dataset names, descriptions, and columns are the same for every authorized account. When `include_custom_attributes` is set, the response also includes custom attribute names and types discovered from that account's own data, which legitimately differs per caller.
+        Returns the analytics dataset catalogue. By default, the response contains dataset names, titles, categories, descriptions, kinds, and hidden flags. Set `include_columns` to include each dataset's column names, descriptions, data types, and hidden flags. The caller must have Account Analytics Read permission on the account identified by `account_tag`. Dataset names, descriptions, and columns are the same for every authorized account. When `include_custom_attributes` is set, the response also includes custom attribute names and types discovered from that account's own data, which legitimately differs per caller. `hidden` marks catalogue entries a client should de-emphasise. It has no effect on access: hidden datasets and columns are returned here and remain fully queryable.
 
         The catalogue lists the datasets this deployment is able to describe, which is not a fixed list. Some datasets are described by the service that owns them and are listed only where that service is available, so the same account may see a different catalogue in different environments, and datasets may appear or disappear without a change to this API. Clients should query the catalogue rather than hard-coding it, and should not treat a dataset's absence as proof that it does not exist.
 
@@ -398242,6 +398242,10 @@ components:
         description:
           description: Human-readable description of the column.
           type: string
+        hidden:
+          description: |
+            Whether the column is de-emphasised in column listings. A presentation hint only: a hidden column is still returned here, is still selectable by name, and is still included by `SELECT *`.
+          type: boolean
         name:
           description: Column name used in SQL queries.
           type: string
@@ -398251,6 +398255,7 @@ components:
         - name
         - description
         - data_type
+        - hidden
     analytics-sql_IntrospectionDataset:
       type: object
       properties:
@@ -398271,6 +398276,10 @@ components:
         description:
           description: Human-readable description of the dataset.
           type: string
+        hidden:
+          description: |
+            Whether the dataset is de-emphasised in catalogue listings. A presentation hint only: a hidden dataset is still returned here and is just as queryable as any other.
+          type: boolean
         kind:
           $ref: '#/components/schemas/analytics-sql_IntrospectionDatasetKind'
         name:
@@ -398288,6 +398297,7 @@ components:
         - category
         - description
         - kind
+        - hidden
     analytics-sql_IntrospectionDatasetKind:
       description: |
         What kind of dataset this is. Determines aggregation rules and sampling behavior. Exactly one of `events`, `states`, or `logs` is present.
