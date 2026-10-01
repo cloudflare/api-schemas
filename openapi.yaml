@@ -238395,6 +238395,205 @@ paths:
       x-fern-sdk-group-name: zero-trust.risk-scoring.summary
       x-fern-sdk-method-name: get
       x-forge-hidden: true
+  /accounts/{account_tag}/analytics/sql:
+    get:
+      operationId: sql-api-query-get-account-scoped
+      summary: Query analytics datasets
+      description: Executes a SQL query scoped to the account in the request path. API Gateway forwards the path account in its signed JWT to the existing SQL API handler, so an accountTag predicate or JSON scope is not required. Explicit account scope must match the path account. Any zone restrictions must belong to that account. Query parameters, time ranges, output formats, authorization, and responses follow the legacy query endpoint.
+      parameters:
+        - name: account_tag
+          in: path
+          description: Account that authorizes and scopes the request.
+          required: true
+          schema:
+            type: string
+            pattern: ^[a-f0-9]{32}$
+          example: 0123456789abcdef0123456789abcdef
+        - name: query
+          in: query
+          description: |
+            SQL query to execute. A trailing FORMAT selects JSON, JSONEachRow, TabSeparated, or TSV output on any dataset.
+          required: true
+          schema:
+            type: string
+          example: SELECT edgeResponseStatus FROM events.httpRequests WHERE datetime > '2026-01-01' LIMIT 10
+      responses:
+        '200':
+          $ref: '#/components/responses/analytics-sql_QuerySuccess'
+        '400':
+          $ref: '#/components/responses/analytics-sql_MalformedRequest'
+        '403':
+          $ref: '#/components/responses/analytics-sql_Forbidden'
+        '422':
+          $ref: '#/components/responses/analytics-sql_UnprocessableQuery'
+        '429':
+          $ref: '#/components/responses/analytics-sql_QueryLimitExceeded'
+        '500':
+          $ref: '#/components/responses/analytics-sql_InternalError'
+        '501':
+          $ref: '#/components/responses/analytics-sql_NotImplemented'
+        '503':
+          $ref: '#/components/responses/analytics-sql_ServiceUnavailable'
+        '507':
+          $ref: '#/components/responses/analytics-sql_ResourceExhausted'
+      security:
+        - api_token: []
+      tags:
+        - Analytics SQL
+      x-api-token-group:
+        - Account Analytics Read
+      x-fern-audiences:
+        - sdk
+      x-fern-availability: alpha
+      x-fern-sdk-group-name: analytics.sql.accounts
+      x-fern-sdk-method-name: get
+    post:
+      operationId: sql-api-query-post-account-scoped
+      summary: Query analytics datasets
+      description: Executes a SQL query scoped to the account in the request path. API Gateway forwards the path account in its signed JWT to the existing SQL API handler, so an accountTag predicate or JSON scope is not required. Explicit account scope must match the path account. Any zone restrictions must belong to that account. Query parameters, time ranges, output formats, authorization, and responses follow the legacy query endpoint.
+      parameters:
+        - name: account_tag
+          in: path
+          description: Account that authorizes and scopes the request.
+          required: true
+          schema:
+            type: string
+            pattern: ^[a-f0-9]{32}$
+          example: 0123456789abcdef0123456789abcdef
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/analytics-sql_SqlQueryRequest'
+          text/plain:
+            example: SELECT edgeResponseStatus FROM events.httpRequests WHERE datetime > '2026-01-01' LIMIT 10
+            schema:
+              type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/analytics-sql_QuerySuccess'
+        '400':
+          $ref: '#/components/responses/analytics-sql_MalformedRequest'
+        '403':
+          $ref: '#/components/responses/analytics-sql_Forbidden'
+        '422':
+          $ref: '#/components/responses/analytics-sql_UnprocessableQuery'
+        '429':
+          $ref: '#/components/responses/analytics-sql_QueryLimitExceeded'
+        '500':
+          $ref: '#/components/responses/analytics-sql_InternalError'
+        '501':
+          $ref: '#/components/responses/analytics-sql_NotImplemented'
+        '503':
+          $ref: '#/components/responses/analytics-sql_ServiceUnavailable'
+        '507':
+          $ref: '#/components/responses/analytics-sql_ResourceExhausted'
+      security:
+        - api_token: []
+      tags:
+        - Analytics SQL
+      x-api-token-group:
+        - Account Analytics Read
+      x-fern-audiences:
+        - sdk
+      x-fern-availability: alpha
+      x-fern-sdk-group-name: analytics.sql.accounts
+      x-fern-sdk-method-name: post
+  /accounts/{account_tag}/analytics/sql/introspection:
+    get:
+      operationId: sql-api-introspection-account-scoped
+      summary: List available analytics datasets
+      description: Returns the dataset catalogue for the account in the request path. API Gateway forwards the path account in its signed JWT to the existing introspection handler; account_tag is not required as a query parameter. If supplied, it must match the path account. Dataset and column discovery options are identical to the legacy introspection endpoint.
+      parameters:
+        - name: account_tag
+          in: path
+          description: Account that authorizes and scopes the request.
+          required: true
+          schema:
+            type: string
+            pattern: ^[a-f0-9]{32}$
+          example: 0123456789abcdef0123456789abcdef
+        - name: include_columns
+          in: query
+          description: Include column metadata for each returned dataset.
+          schema:
+            type: boolean
+            default: false
+        - name: include_custom_attributes
+          in: query
+          description: |
+            Include a capped set of custom attribute names and types observed during the preceding seven days. Requires a nonempty dataset_name.
+          schema:
+            type: boolean
+            default: false
+        - name: include_wae
+          in: query
+          description: |
+            Include Workers Analytics Engine datasets, which are discovered from the account's own data. Set to `false` to return only datasets described from the static catalogue, which avoids that lookup.
+          schema:
+            type: boolean
+            default: true
+        - name: include_lex
+          in: query
+          description: |
+            Include Log Explorer datasets, which are listed only where the account has them. Set to `false` to return only datasets described from the static catalogue, which avoids that lookup.
+          schema:
+            type: boolean
+            default: true
+        - name: dataset_name
+          in: query
+          description: |
+            Return only the dataset with this exact name. An empty value is treated as if the parameter had been omitted, and does not filter the catalogue. A name that matches no dataset in this deployment's catalogue is rejected with `422`; a dataset that exists but is not describable here is rejected identically, so the two cases cannot be told apart.
+
+            A Workers Analytics Engine dataset is named in full, as `events.analyticsEngine.<dataset_name>`; the namespace on its own returns every such dataset the account has. A `dataset_name` the account does not have is rejected with `422` like any other unknown name.
+          schema:
+            type: string
+          example: events.httpRequests
+      responses:
+        '200':
+          description: Dataset catalogue returned successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/analytics-sql_IntrospectionResponse'
+        '400':
+          $ref: '#/components/responses/analytics-sql_MalformedRequest'
+        '403':
+          description: |
+            Authentication failed or the caller does not have Account Analytics Read permission on the specified account.
+          content:
+            text/plain:
+              example: Authorization error
+              schema:
+                type: string
+        '422':
+          description: |
+            The request could not be processed. This is returned when the account tag is invalid or unknown, when `include_custom_attributes` is set without a `dataset_name`, when a Workers Analytics Engine `dataset_name` is supplied alongside `include_wae=false` or contains characters a dataset name cannot contain, or when the supplied criteria match no dataset that this deployment can describe — either because no such dataset exists or because it is not describable here. The message names the criteria that matched nothing.
+          content:
+            text/plain:
+              example: 'Input was invalid: There are no introspectable datasets matching the provided criteria (dataset_name=`events.nonexistent`)'
+              schema:
+                type: string
+        '500':
+          $ref: '#/components/responses/analytics-sql_InternalError'
+        '503':
+          description: The authorization service is temporarily unavailable.
+          content:
+            text/plain:
+              schema:
+                type: string
+      security:
+        - api_token: []
+      tags:
+        - Analytics SQL
+      x-api-token-group:
+        - Account Analytics Read
+      x-fern-audiences:
+        - sdk
+      x-fern-availability: alpha
+      x-fern-sdk-group-name: analytics.sql.accounts.introspection
+      x-fern-sdk-method-name: get
   /accounts/move:
     post:
       operationId: Accounts_batchMoveAccounts
