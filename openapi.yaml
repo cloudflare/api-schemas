@@ -120173,8 +120173,10 @@ paths:
   /accounts/{account_id}/data-security/posture/policies/logs:
     get:
       operationId: ListPolicyLogs
-      summary: List policy invocation logs
+      summary: List policy invocation logs (deprecated)
       description: |
+        Deprecated: use `GET /accounts/{account_id}/data-security/posture/policy_logs`, which returns identical results. This path will be removed.
+
         Returns a list of policy invocation logs for the given account, sourced from ClickHouse via Ready Analytics. Each entry represents one execution of a policy against a finding instance, including the actions (remediation jobs and webhooks) it dispatched.
 
         Results are scoped to the requesting account's CASB integrations. The `integration_id` query parameter, when supplied, is intersected against the account's integration allowlist; values outside the allowlist are silently dropped.
@@ -120255,6 +120257,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/posture-api_error-response'
+      deprecated: true
       security:
         - api_token: []
       tags:
