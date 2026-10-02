@@ -144297,7 +144297,7 @@ paths:
       tags:
         - Zero Trust SSH Settings
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.gateway.audit-ssh-settings
+      x-fern-sdk-group-name: zero-trust.access.infrastructure.audit-ssh-settings
       x-fern-sdk-method-name: get
     put:
       operationId: zero-trust-update-audit-ssh-settings
@@ -144343,7 +144343,7 @@ paths:
       tags:
         - Zero Trust SSH Settings
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.gateway.audit-ssh-settings
+      x-fern-sdk-group-name: zero-trust.access.infrastructure.audit-ssh-settings
       x-fern-sdk-method-name: update
   /accounts/{account_id}/gateway/audit_ssh_settings/rotate_seed:
     post:
@@ -144379,7 +144379,7 @@ paths:
       tags:
         - Zero Trust SSH Settings
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: zero-trust.gateway.audit-ssh-settings
+      x-fern-sdk-group-name: zero-trust.access.infrastructure.audit-ssh-settings
       x-fern-sdk-method-name: rotate-seed
   /accounts/{account_id}/gateway/categories:
     get:
@@ -501617,6 +501617,8 @@ components:
           example: O=Example Inc.,L=California,ST=San Francisco,C=US
           readOnly: true
           x-auditable: true
+        region:
+          $ref: '#/components/schemas/zero-trust-gateway_region'
         type:
           $ref: '#/components/schemas/zero-trust-gateway_type'
         updated_at:
@@ -502765,6 +502767,12 @@ components:
       format: date-time
       example: 2014-01-01T05:20:00.12345Z
       readOnly: true
+    zero-trust-gateway_region:
+      description: Indicate the read-only region the certificate authority's key material is pinned to. Omitted for certificates that were created without a region.
+      type: string
+      example: wnam
+      readOnly: true
+      x-auditable: true
     zero-trust-gateway_response_collection:
       type: object
       allOf:
