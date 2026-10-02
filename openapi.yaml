@@ -9179,9 +9179,6 @@ paths:
                   $ref: '#/components/schemas/access_warp_auth_non_browser_401'
                 warp_auth_session_duration:
                   $ref: '#/components/schemas/access_warp_auth_session_duration'
-              required:
-                - name
-                - auth_domain
       responses:
         '201':
           description: Create your Zero Trust organization response
@@ -11118,8 +11115,8 @@ paths:
   /accounts/{account_id}/access/users/{user_id}/mfa_authenticators/{authenticator_id}:
     delete:
       operationId: zero-trust-users-delete-mfa-authenticator
-      summary: Delete a user's MFA device
-      description: Deletes a specific MFA device, including a PIV key or FIDO2 key enrollment, for a user. This action is only available if MFA is turned on for the organization. Successful deletion revokes the enrollment and returns a null result.
+      summary: Delete a user's authenticator
+      description: Deletes a specific MFA device or passkey, including a PIV key or FIDO2 key enrollment, for a user. Admin deletion remains available when MFA is disabled. Successful deletion revokes the enrollment and returns a null result.
       parameters:
         - name: user_id
           in: path
@@ -11158,6 +11155,50 @@ paths:
       x-api-token-group: null
       x-fern-availability: generally-available
       x-fern-sdk-group-name: zero-trust.users.mfa.authenticators
+      x-fern-sdk-method-name: delete
+  /accounts/{account_id}/access/users/{user_id}/passkeys/{authenticator_id}:
+    delete:
+      operationId: zero-trust-users-delete-passkey
+      summary: Delete a user's passkey
+      description: Alias of the authenticator deletion endpoint for passkey management. The identifier is the passkey's authenticator ID from the last-seen identity response. Successful deletion revokes the enrollment and returns a null result.
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/access_uuid'
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/access_identifier'
+        - name: authenticator_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/access_authenticator_id'
+      responses:
+        '200':
+          description: Delete passkey response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/access_delete_authenticator_response'
+        4XX:
+          description: Delete passkey response failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/access_api-response-common-failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Zero Trust users
+      x-api-token-group: null
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.users.passkeys
       x-fern-sdk-method-name: delete
   /accounts/{account_id}/addressing/address_maps:
     get:
@@ -345634,9 +345675,6 @@ paths:
                   $ref: '#/components/schemas/access_ui_read_only_toggle_reason'
                 user_seat_expiration_inactive_time:
                   $ref: '#/components/schemas/access_user_seat_expiration_inactive_time-2'
-              required:
-                - name
-                - auth_domain
       responses:
         '201':
           description: Create your Zero Trust organization response
@@ -389633,12 +389671,12 @@ components:
         - auth_context
       title: Authentication Context
     access_auth_domain:
-      description: The unique subdomain assigned to your Zero Trust organization.
+      description: The unique subdomain assigned to your Zero Trust organization. If omitted on creation, a unique subdomain is auto-generated in the format `adjective-noun-hex4` (e.g. `frosty-moon-7a3b.cloudflareaccess.com`).
       type: string
       example: test.cloudflareaccess.com
       x-auditable: true
     access_auth_domain-2:
-      description: The unique subdomain assigned to your Zero Trust organization.
+      description: The unique subdomain assigned to your Zero Trust organization. Auto-generated if omitted on creation.
       type: string
       example: test.cloudflareaccess.com
     access_authentication_method_rule:
@@ -392249,6 +392287,25 @@ components:
               type: object
               allOf:
                 - $ref: '#/components/schemas/access_identity'
+                - properties:
+                    passkeys:
+                      description: Active passkey enrollments for the user.
+                      type: array
+                      items:
+                        properties:
+                          created_at:
+                            type: string
+                            format: date-time
+                          id:
+                            description: Authenticator ID used to delete the passkey.
+                            type: string
+                          last_used_at:
+                            type: string
+                            format: date-time
+                          name:
+                            type: string
+                        type: object
+                  type: object
           type: object
     access_last_successful_login:
       description: The time at which the user last successfully logged in.
@@ -392565,7 +392622,7 @@ components:
       default: false
       x-auditable: true
     access_name:
-      description: The name of your Zero Trust organization.
+      description: The name of your Zero Trust organization. When omitted on creation, defaults to the provided auth_domain; when both are omitted, defaults to the auto-generated subdomain slug (e.g. frosty-moon-7a3b).
       type: string
       example: Widget Corps Internal Applications
       x-auditable: true
@@ -392626,7 +392683,7 @@ components:
       type: string
       example: YubiKey 5 NFC
     access_name-15:
-      description: The name of your Zero Trust organization.
+      description: The name of your Zero Trust organization. When omitted on creation, defaults to the provided auth_domain; when both are omitted, defaults to the auto-generated subdomain.
       type: string
       example: Widget Corps Internal Applications
     access_name-16:
