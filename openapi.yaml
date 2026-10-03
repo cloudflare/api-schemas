@@ -53224,6 +53224,71 @@ paths:
       x-fern-sdk-group-name: analytics_engine.sql
       x-fern-sdk-method-name: query
       x-forge-hidden: true
+  /accounts/{account_id}/argo/count_zones_enabled:
+    get:
+      operationId: argo-smart-routing-get-count-zones-enabled-for-account
+      summary: Get count of zones with Argo Smart Routing enabled for account
+      description: Returns the number of zones that have Argo Smart Routing enabled for the specified account.
+      parameters:
+        - name: account_id
+          in: path
+          description: Identifier of the account.
+          required: true
+          schema:
+            $ref: '#/components/schemas/argo-config_identifier'
+      responses:
+        '200':
+          description: Count of zones with Argo Smart Routing enabled.
+          content:
+            application/json:
+              examples:
+                success:
+                  summary: Successful response
+                  value:
+                    errors: []
+                    messages: []
+                    result: 5
+                    success: true
+              schema:
+                $ref: '#/components/schemas/argo-config_count_zones_response'
+        4XX:
+          description: Count zones enabled failure.
+          content:
+            application/json:
+              examples:
+                error:
+                  summary: Error response
+                  value:
+                    errors:
+                      - code: 7003
+                        message: No route for the URI
+                    messages: []
+                    result: null
+                    success: false
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/argo-config_api_response_common_failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Argo Smart Routing
+      x-api-token-group:
+        - Trust and Safety Write
+        - Trust and Safety Read
+        - Zone Read
+        - Zone Write
+      x-cfPermissionsRequired:
+        enum:
+          - '#zone_settings:read'
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: true
+        pro: true
+      x-fern-sdk-group-name: argo.smart-routing
+      x-fern-sdk-method-name: count-zones-enabled-for-account
   /accounts/{account_id}/artifacts/namespaces:
     get:
       operationId: artifacts_namespaces_list
@@ -340813,6 +340878,64 @@ paths:
       x-fern-sdk-method-name: get
       x-stainless-deprecation-message: |
         This endpoint is deprecated and will be removed in a future version. Please use the GraphQL Analytics API instead: https://developers.cloudflare.com/analytics/graphql-api/ It provides equivalent data and more features, including the ability to select only the metrics you need. Migration guide: https://developers.cloudflare.com/analytics/migration-guides/zone-analytics/
+  /user/argo/count_zones_enabled:
+    get:
+      operationId: argo-smart-routing-get-count-zones-enabled-for-user
+      summary: Get count of zones with Argo Smart Routing enabled for user
+      description: Returns the number of zones that have Argo Smart Routing enabled for the authenticated user.
+      responses:
+        '200':
+          description: Count of zones with Argo Smart Routing enabled.
+          content:
+            application/json:
+              examples:
+                success:
+                  summary: Successful response
+                  value:
+                    errors: []
+                    messages: []
+                    result: 3
+                    success: true
+              schema:
+                $ref: '#/components/schemas/argo-config_count_zones_response'
+        4XX:
+          description: Count zones enabled failure.
+          content:
+            application/json:
+              examples:
+                error:
+                  summary: Error response
+                  value:
+                    errors:
+                      - code: 7003
+                        message: No route for the URI
+                    messages: []
+                    result: null
+                    success: false
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/argo-config_api_response_common_failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Argo Smart Routing
+      x-api-token-group:
+        - Trust and Safety Write
+        - Trust and Safety Read
+        - Zone Read
+        - Zone Write
+      x-cfPermissionsRequired:
+        enum:
+          - '#zone_settings:read'
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: true
+        pro: true
+      x-fern-sdk-group-name: argo.smart-routing
+      x-fern-sdk-method-name: count-zones-enabled-for-user
   /user/audit_logs:
     get:
       operationId: audit-logs-get-user-audit-logs
@@ -401773,6 +401896,29 @@ components:
           $ref: '#/components/schemas/argo-config_messages'
         result:
           $ref: '#/components/schemas/argo-config_result_object'
+        success:
+          description: Describes a successful API response.
+          type: boolean
+          example: true
+          enum:
+            - true
+      required:
+        - success
+        - errors
+        - messages
+        - result
+    argo-config_count_zones_response:
+      type: object
+      properties:
+        errors:
+          $ref: '#/components/schemas/argo-config_messages'
+        messages:
+          $ref: '#/components/schemas/argo-config_messages'
+        result:
+          description: The number of zones with Argo Smart Routing enabled.
+          type: integer
+          example: 3
+          minimum: 0
         success:
           description: Describes a successful API response.
           type: boolean
