@@ -506559,6 +506559,7 @@ components:
           - $ref: '#/components/schemas/zones_true_client_ip_header-2'
           - $ref: '#/components/schemas/zones_waf-2'
           - $ref: '#/components/schemas/zones_webmcp_enabled'
+          - $ref: '#/components/schemas/zones_webmcp_mcp_url'
           - $ref: '#/components/schemas/zones_webmcp_packs'
           - $ref: '#/components/schemas/zones_webp'
           - $ref: '#/components/schemas/zones_websockets'
@@ -507343,6 +507344,7 @@ components:
         - $ref: '#/components/schemas/zones_true_client_ip_header-2'
         - $ref: '#/components/schemas/zones_waf-2'
         - $ref: '#/components/schemas/zones_webmcp_enabled'
+        - $ref: '#/components/schemas/zones_webmcp_mcp_url'
         - $ref: '#/components/schemas/zones_webmcp_packs'
         - $ref: '#/components/schemas/zones_webp'
         - $ref: '#/components/schemas/zones_websockets'
@@ -507422,6 +507424,7 @@ components:
         - $ref: '#/components/schemas/zones_true_client_ip_header_value'
         - $ref: '#/components/schemas/zones_waf_value'
         - $ref: '#/components/schemas/zones_webmcp_enabled_value'
+        - $ref: '#/components/schemas/zones_webmcp_mcp_url_value'
         - $ref: '#/components/schemas/zones_webmcp_packs_value'
         - $ref: '#/components/schemas/zones_webp_value'
         - $ref: '#/components/schemas/zones_websockets_value'
@@ -508048,6 +508051,38 @@ components:
       enum:
         - off
         - on
+    zones_webmcp_mcp_url:
+      description: |-
+        Optional per-zone path of the site's own MCP server, used by the WebMCP
+        mcp-server-client tool pack to list and call the site's MCP tools from
+        the browser. The path is resolved against the page's origin, so it
+        applies to every hostname in the zone. Only takes effect when
+        webmcp_enabled is on and the mcp-server-client pack is active. Leave
+        empty to use /mcp. This setting is currently in beta and its behavior
+        may change.
+      allOf:
+        - $ref: '#/components/schemas/zones_base'
+        - properties:
+            id:
+              description: ID of the zone setting.
+              example: webmcp_mcp_url
+              enum:
+                - webmcp_mcp_url
+            value:
+              $ref: '#/components/schemas/zones_webmcp_mcp_url_value'
+      title: WebMCP MCP Endpoint
+    zones_webmcp_mcp_url_value:
+      description: |-
+        Root-relative path (with optional query string) of this zone's MCP
+        endpoint, for example "/api/mcp". Surfaced to the injected bridge as the
+        data-mcp-url attribute. Absolute and protocol-relative URLs, fragments,
+        and characters outside RFC 3986 paths and queries are rejected. An empty
+        value clears the override so the bridge uses /mcp.
+      type: string
+      example: /mcp
+      default: ''
+      maxLength: 2048
+      pattern: ^(/((%[0-9A-Fa-f]{2}|[A-Za-z0-9._~!$&'()*+,;=:@?-])(%[0-9A-Fa-f]{2}|[A-Za-z0-9._~!$&'()*+,;=:@?/-])*)?)?$
     zones_webmcp_packs:
       description: |-
         Optional per-zone override of which bundled WebMCP tool packs the
@@ -508444,6 +508479,7 @@ components:
                   - $ref: '#/components/schemas/zones_true_client_ip_header-2'
                   - $ref: '#/components/schemas/zones_waf-2'
                   - $ref: '#/components/schemas/zones_webmcp_enabled'
+                  - $ref: '#/components/schemas/zones_webmcp_mcp_url'
                   - $ref: '#/components/schemas/zones_webmcp_packs'
                   - $ref: '#/components/schemas/zones_webp'
                   - $ref: '#/components/schemas/zones_websockets'
