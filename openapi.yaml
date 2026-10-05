@@ -121286,13 +121286,11 @@ paths:
         - Zero Trust Write
       x-fern-sdk-group-name: zero-trust.casb.policies
       x-fern-sdk-method-name: update
-  /accounts/{account_id}/data-security/posture/policies/logs:
+  /accounts/{account_id}/data-security/posture/policy_logs:
     get:
-      operationId: ListPolicyLogs
-      summary: List policy invocation logs (deprecated)
+      operationId: ListPolicyLogEntries
+      summary: List policy invocation logs
       description: |
-        Deprecated: use `GET /accounts/{account_id}/data-security/posture/policy_logs`, which returns identical results. This path will be removed.
-
         Returns a list of policy invocation logs for the given account, sourced from ClickHouse via Ready Analytics. Each entry represents one execution of a policy against a finding instance, including the actions (remediation jobs and webhooks) it dispatched.
 
         Results are scoped to the requesting account's CASB integrations. The `integration_id` query parameter, when supplied, is intersected against the account's integration allowlist; values outside the allowlist are silently dropped.
@@ -121373,7 +121371,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/posture-api_error-response'
-      deprecated: true
       security:
         - api_token: []
       tags:
@@ -459617,7 +459614,7 @@ components:
         authentication_type:
           description: Type of authentication used for the webhook.
           type: string
-          example: Bearer Auth
+          example: HMAC-Signing
           enum:
             - Basic Auth
             - None
@@ -459635,8 +459632,6 @@ components:
           items:
             $ref: '#/components/schemas/posture-api_WebhookHeaderInput'
           example:
-            - key: Authorization
-              value: Bearer token123
             - key: X-Custom-Header
               value: value
         label:
@@ -459804,7 +459799,7 @@ components:
         authentication_type:
           description: Type of authentication to use for the test webhook request.
           type: string
-          example: Bearer Auth
+          example: HMAC-Signing
           enum:
             - Basic Auth
             - None
@@ -459822,8 +459817,6 @@ components:
           items:
             $ref: '#/components/schemas/posture-api_WebhookHeaderInput'
           example:
-            - key: Authorization
-              value: Bearer token123
             - key: X-Custom-Header
               value: value
         signing_secret:
@@ -460742,7 +460735,7 @@ components:
           type: boolean
           example: true
         finding_type_id:
-          description: The finding type this policy is associated with. Immutable after creation; changing it replaces the policy.
+          description: The finding type this policy is associated with. Immutable after creation; attempts to change it via update are rejected.
           type: string
           format: uuid
           example: 5a7d9e2f-1b3c-4d5e-8f6a-7b8c9d0e1f2a
@@ -461245,7 +461238,7 @@ components:
         authentication_type:
           description: Type of authentication used for the webhook.
           type: string
-          example: Bearer Auth
+          example: HMAC-Signing
           enum:
             - Basic Auth
             - None
@@ -461263,8 +461256,6 @@ components:
           items:
             $ref: '#/components/schemas/posture-api_WebhookHeaderInput'
           example:
-            - key: Authorization
-              value: Bearer token123
             - key: X-Custom-Header
               value: value
         label:
@@ -461393,7 +461384,7 @@ components:
         authentication_type:
           description: Type of authentication used for the webhook.
           type: string
-          example: Bearer Auth
+          example: HMAC-Signing
           enum:
             - Basic Auth
             - None
@@ -461419,7 +461410,7 @@ components:
               key:
                 description: Header key name (lowercase).
                 type: string
-                example: authorization
+                example: x-custom-header
               value:
                 description: Header value. This field is never returned in API responses for security reasons.
                 type: string
