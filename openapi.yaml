@@ -191140,6 +191140,10 @@ paths:
 
         Results are paginated. Use `filter` and `search` to narrow the list, `order_by` to
         sort it, and `fields` to reduce each result to only the properties you need.
+        Use `lookup` to find complete application names mentioned in a rule sentence,
+        ignoring case. Lookup does not correct misspellings. It ranks matches by
+        relevance and uses the same filters, fields, and pagination as listing.
+        `lookup` cannot be combined with `search`.
 
         The authenticated principal must have access to the account identified by
         `account_id`.
@@ -191154,30 +191158,29 @@ paths:
         - name: filter
           in: query
           description: |
-            Filter applications using key:value format. Supported filter keys:
-            - name: Filter by application name (e.g., name:HR)
-            - id: Filter by application ID (e.g., id:498)
-            - human_id: Filter by human-readable ID (e.g., human_id:HR)
-            - hostname: Filter by hostname or support domain (e.g., hostname:portal.example.com)
-            - source: Filter by application source name (e.g., source:cloudflare)
-            - ip_subnet: Filter by IP subnet using CIDR containment — returns applications where any stored subnet contains the search value (e.g., ip_subnet:10.0.1.5/32 matches apps with 10.0.0.0/16)
-            - category_id: Filter by category ID (e.g., category_id:12).
-            - category_name: Filter by category name (e.g., category_name:HR).
-            - supported: Filter by supported Cloudflare product (e.g., supported:ACCESS). Values: GATEWAY, ACCESS, CASB.
-            - review_status: Filter by the account's Gateway review status. Values: approved, unapproved, in_review, unreviewed.
-            .
+            Filter applications using `key:value` format. Supported filter keys:
+            - `name`: application name (for example, `name:HR`).
+            - `id`: application ID (for example, `id:498`).
+            - `human_id`: human-readable ID (for example, `human_id:HR`).
+            - `hostname`: hostname or support domain (for example, `hostname:portal.example.com`).
+            - `source`: application source name (for example, `source:cloudflare`).
+            - `ip_subnet`: CIDR containment; returns applications where a stored subnet contains the search value (for example, `ip_subnet:10.0.1.5/32` matches `10.0.0.0/16`).
+            - `category_id`: category ID (for example, `category_id:12`).
+            - `category_name`: category name (for example, `category_name:HR`).
+            - `supported`: supported Cloudflare product. Values: `GATEWAY`, `ACCESS`, `CASB`.
+            - `review_status`: account-specific Gateway review status. Values: `approved`, `unapproved`, `in_review`, `unreviewed`.
           schema:
             type: string
-          example: filter=name:HR&filter=source:cloudflare&filter=id:498
+          example: name:HR
         - name: limit
           in: query
-          description: Limit of number of results to return (max 250).
+          description: Number of results to return. Defaults to 25; values are clamped to 1–250.
           schema:
             type: integer
             default: 25
         - name: offset
           in: query
-          description: Offset of results to return.
+          description: Number of results to skip. Defaults to 0; negative values are clamped to 0.
           schema:
             type: integer
             default: 0
@@ -191187,7 +191190,7 @@ paths:
             Order results using field:direction format. Supported fields are name, id, human_id,
             category_id, application_type, application_confidence_score, and gen_ai_score.
             Supported directions are asc and desc. Ignored when search is provided; results are
-            ranked by relevance instead.
+            ranked by relevance instead. Also ignored when lookup is provided.
           schema:
             type: string
           example: name:asc
@@ -191199,15 +191202,29 @@ paths:
             maxLength: 200
             minLength: 2
           example: MyNewApp
+        - name: lookup
+          in: query
+          description: |
+            Find complete, case-insensitive application name mentions in a phrase or
+            rule sentence. Misspelled names do not match. Returns matching applications
+            ranked by relevance. Must be between 2 and 1000 characters. Uses the same
+            filters, fields, and pagination as listing. `search` cannot be combined
+            with lookup. Results are ranked by relevance, so `order_by` is ignored.
+          schema:
+            type: string
+            maxLength: 1000
+            minLength: 2
+          example: block access to Google Chat
         - name: fields
           in: query
           description: |
             Return only the listed properties on each application, as a comma-separated list.
-            Use this to keep responses small when you only need part of each application — for
+            Use this to keep responses small when you only need part of each application, for
             example populating a picker with `fields=id,name` instead of downloading every
             hostname and IP subnet.
 
-            Omit this parameter to receive the full application object.
+            Omit this parameter to receive the full application object, including
+            when lookup is used.
 
             `id` is always returned.
 
@@ -191257,12 +191274,12 @@ paths:
       tags:
         - Applications
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: accounts.applications.get
-      x-fern-sdk-method-name: applications
+      x-fern-sdk-group-name: accounts.applications
+      x-fern-sdk-method-name: list
     post:
       operationId: createResourceLibraryApplication
       summary: Create application
-      description: Create a custom application for an account.
+      description: Create a custom application for an account from a name, category, and optional network matchers.
       parameters:
         - name: account_id
           in: path
@@ -191352,10 +191369,11 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: accounts.applications
       x-fern-sdk-method-name: delete
+      x-forge-require-confirmation: This operation deletes the custom application and all of its versions. This action cannot be undone.
     get:
       operationId: getResourceLibraryApplicationById
       summary: Get application
-      description: Get application by ID.
+      description: Retrieve an application available to the account by its numeric application ID.
       parameters:
         - name: account_id
           in: path
@@ -191390,12 +191408,12 @@ paths:
       tags:
         - Applications
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: accounts.applications.get.by
-      x-fern-sdk-method-name: id
+      x-fern-sdk-group-name: accounts.applications
+      x-fern-sdk-method-name: get
     patch:
       operationId: updateResourceLibraryApplication
       summary: Update application
-      description: Replace the network matchers for a custom application and create a new version.
+      description: Replace the supplied network matchers for a custom application and create a new version. Omitted matcher lists remain unchanged; send an empty list to clear a matcher type.
       parameters:
         - name: account_id
           in: path
@@ -191442,7 +191460,7 @@ paths:
     get:
       operationId: getResourceLibraryCategories
       summary: List application categories
-      description: List application categories.
+      description: List the categories available for classifying applications. Results are paginated.
       parameters:
         - name: account_id
           in: path
@@ -191453,13 +191471,13 @@ paths:
           example: 023e105f4ecef8ad9ca31a8372d0c353
         - name: limit
           in: query
-          description: Limit of number of results to return.
+          description: Number of results to return. Defaults to 25; values are clamped to 1–250.
           schema:
             type: integer
             default: 25
         - name: offset
           in: query
-          description: Offset of results to return.
+          description: Number of results to skip. Defaults to 0; negative values are clamped to 0.
           schema:
             type: integer
             default: 0
@@ -191483,13 +191501,13 @@ paths:
       tags:
         - Category
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: accounts.categories.get
-      x-fern-sdk-method-name: categories
+      x-fern-sdk-group-name: accounts.categories
+      x-fern-sdk-method-name: list
   /accounts/{account_id}/resource-library/categories/{id}:
     get:
       operationId: getResourceLibraryCategoryById
       summary: Get application category
-      description: Get application category by ID.
+      description: Retrieve an application category by its numeric ID.
       parameters:
         - name: account_id
           in: path
@@ -191524,8 +191542,8 @@ paths:
       tags:
         - Category
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: accounts.categories.get.by
-      x-fern-sdk-method-name: id
+      x-fern-sdk-group-name: accounts.categories
+      x-fern-sdk-method-name: get
   /accounts/{account_id}/roles:
     get:
       operationId: account-roles-list-roles
@@ -398788,21 +398806,25 @@ components:
               type: object
               properties:
                 count:
-                  description: Returns the total number of results for the requested service.
+                  description: Returns the number of results in this response.
                   type: number
-                  example: 1
+                  example: 10
                 page:
-                  description: Returns the current page within paginated list of results.
+                  description: Returns the zero-based result offset, not a page number.
                   type: number
-                  example: 1
+                  example: 0
                 per_page:
-                  description: Returns the number of results per page of results.
+                  description: Returns the effective `limit` for this response.
                   type: number
-                  example: 20
+                  example: 25
                 total_count:
-                  description: Returns the total results available without any search parameters.
+                  description: Returns the number of results matching the request before pagination.
                   type: number
                   example: 2000
+                total_pages:
+                  description: Returns the number of pages at the effective `limit`, including 0 when there are no matches.
+                  type: number
+                  example: 80
           type: object
     alexandria_api-response-common:
       type: object
@@ -398932,11 +398954,11 @@ components:
         - foo.com
       x-stainless-collection-type: set
     alexandria_application_human_id:
-      description: Returns the human readable ID.
+      description: Human-readable identifier for the application.
       type: string
       example: HR
     alexandria_application_id:
-      description: Returns the application ID.
+      description: Numeric identifier for the application.
       type: integer
       format: int64
       example: 498
@@ -398952,7 +398974,7 @@ components:
         - 2001:db8::/48
       x-stainless-collection-type: set
     alexandria_application_list_item:
-      description: Describes one application in a list response. This endpoint returns every property below unless the `fields` query parameter narrows the response, so treat all of them except `id` as optional.
+      description: Describes one application in a list response. The response returns every property below unless `fields` narrows it. Treat all properties except `id` as optional.
       type: object
       properties:
         application_confidence_score:
@@ -399002,17 +399024,17 @@ components:
       required:
         - id
     alexandria_application_name:
-      description: Returns the application name.
+      description: Application name.
       type: string
       example: HR
     alexandria_application_port_protocols:
-      description: Port and protocol pairs matched by the application.
+      description: Ports matched by the application, in `protocol/port` or inclusive `protocol/start-end` format (for example, `tcp/443` or `udp/10000-20000`). TCP and UDP ports must be between 0 and 65535.
       type: array
       items:
         type: string
       example:
-        - tcp/80
         - tcp/443
+        - udp/10000-20000
       x-stainless-collection-type: set
     alexandria_application_reference:
       type: object
@@ -399119,7 +399141,7 @@ components:
       type: string
       example: Category description
     alexandria_category_id:
-      description: Returns the category ID.
+      description: Numeric identifier for an application category.
       type: integer
       format: int64
       example: 12
@@ -512312,9 +512334,9 @@ x-forge-commands:
     description: Account settings, members, roles, subscriptions, and API tokens for your Cloudflare account
     groups:
       applications:
-        description: Applications operations
+        description: List Cloudflare-curated and custom applications, and manage custom applications
       categories:
-        description: Categories operations
+        description: Browse the categories used to classify applications
       organizations:
         description: Move accounts between organizations
       profile:
