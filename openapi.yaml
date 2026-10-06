@@ -234678,6 +234678,130 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: workers.versions
       x-fern-sdk-method-name: get
+  /accounts/{account_id}/workers/workers/{worker_id}/versions/{version_id}/profile:
+    post:
+      operationId: profileWorkerVersion
+      summary: Profile Worker Version
+      description: Captures a CPU or heap profile from a recently active isolate running the specified Worker version. This endpoint requires the Worker profiling feature to be enabled for the account.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/workers_identifier'
+        - name: worker_id
+          in: path
+          required: true
+          schema:
+            description: Identifies the Worker by ID or name.
+            type: string
+        - name: version_id
+          in: path
+          required: true
+          schema:
+            description: Identifies the version by UUID or UUID prefix with a minimum length of eight characters. Use "latest" to select the most recently created version.
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                actor_id:
+                  description: Identifies the exact Durable Object actor to profile. Must be specified together with namespace_id. The actor must currently be active and running the requested Worker version.
+                  type: string
+                  pattern: ^[0-9a-fA-F]{64}$
+                duration_ms:
+                  description: Profile duration in milliseconds.
+                  type: integer
+                  format: int32
+                  maximum: 50000
+                  minimum: 1000
+                namespace_id:
+                  description: Identifies the Durable Object namespace containing the actor to profile. Must be specified together with actor_id.
+                  type: string
+                profile_type:
+                  type: string
+                  default: cpu
+                  enum:
+                    - cpu
+                    - heap
+              required:
+                - duration_ms
+      responses:
+        '200':
+          description: Compressed pprof profile data.
+          headers:
+            Content-Disposition:
+              schema:
+                type: string
+            Content-Encoding:
+              schema:
+                type: string
+                enum:
+                  - gzip
+          content:
+            application/vnd.google.protobuf:
+              schema:
+                type: string
+                format: binary
+        '400':
+          description: Invalid profiling request or unsupported Worker.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/workers_api-response-common-failure'
+        '401':
+          $ref: '#/components/responses/workers_ErrorAuth'
+        '403':
+          $ref: '#/components/responses/workers_ErrorAuth'
+        '404':
+          description: The Worker, a recent execution location, or a loaded isolate was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/workers_api-response-common-failure'
+        '429':
+          description: The profiling request rate limit was exceeded.
+          headers:
+            Retry-After:
+              schema:
+                type: integer
+                minimum: 0
+            X-RateLimit-Limit:
+              schema:
+                type: integer
+                minimum: 0
+            X-RateLimit-Remaining:
+              schema:
+                type: integer
+                minimum: 0
+            X-RateLimit-Reset:
+              schema:
+                type: integer
+                minimum: 0
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/workers_api-response-common-failure'
+        '500':
+          $ref: '#/components/responses/workers_ErrorInternalServer'
+        '503':
+          description: Worker profiling is temporarily unavailable.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/workers_api-response-common-failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Worker Profiling
+      x-fern-availability: alpha
+      x-fern-sdk-group-name: workers.versions
+      x-fern-sdk-method-name: profile
   /accounts/{account_id}/workers/workers/{worker_id}/versions/latest:
     get:
       operationId: getLatestWorkerVersion
@@ -499722,6 +499846,28 @@ components:
             - type: string
               x-auditable: true
               x-stainless-terraform-configurability: computed_optional
+        retry:
+          description: Retry policy for calls made to the Durable Object through this binding. Omitted or null properties use the runtime defaults. These limits are upper bounds and do not enable retries for otherwise ineligible calls.
+          type: object
+          additionalProperties: false
+          nullable: true
+          properties:
+            max_attempts:
+              description: Maximum number of retries after the initial request, not the total number of attempts. Defaults to 4. Zero disables retries.
+              type: integer
+              example: 4
+              maximum: 10
+              minimum: 0
+              nullable: true
+              x-auditable: true
+            timeout_ms:
+              description: Retry timeout in milliseconds, measured from the start of the call. No retry starts after it expires, and a retry still running when it expires is cancelled. This is not a request timeout; it does not limit the initial request, which is still subject to any timeouts set by your Worker. Defaults to 10000.
+              type: integer
+              example: 10000
+              maximum: 60000
+              minimum: 500
+              nullable: true
+              x-auditable: true
         script_name:
           description: The script where the Durable Object is defined, if it is external to this Worker.
           type: string
