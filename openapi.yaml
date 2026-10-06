@@ -31125,6 +31125,20 @@ paths:
                           properties:
                             created_from_aisearch_wizard:
                               type: boolean
+                            created_from_emdash_plugin:
+                              type: object
+                              additionalProperties: true
+                              properties:
+                                type:
+                                  type: string
+                                  enum:
+                                    - native
+                                    - rest
+                                version:
+                                  type: string
+                              required:
+                                - type
+                                - version
                             worker_domain:
                               type: string
                         modified_at:
@@ -31697,6 +31711,20 @@ paths:
                   properties:
                     created_from_aisearch_wizard:
                       type: boolean
+                    created_from_emdash_plugin:
+                      type: object
+                      additionalProperties: true
+                      properties:
+                        type:
+                          type: string
+                          enum:
+                            - native
+                            - rest
+                        version:
+                          type: string
+                      required:
+                        - type
+                        - version
                     worker_domain:
                       type: string
                   x-auditable: true
@@ -32211,6 +32239,20 @@ paths:
                         properties:
                           created_from_aisearch_wizard:
                             type: boolean
+                          created_from_emdash_plugin:
+                            type: object
+                            additionalProperties: true
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - native
+                                  - rest
+                              version:
+                                type: string
+                            required:
+                              - type
+                              - version
                           worker_domain:
                             type: string
                         x-auditable: true
@@ -32875,6 +32917,20 @@ paths:
                         properties:
                           created_from_aisearch_wizard:
                             type: boolean
+                          created_from_emdash_plugin:
+                            type: object
+                            additionalProperties: true
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - native
+                                  - rest
+                              version:
+                                type: string
+                            required:
+                              - type
+                              - version
                           worker_domain:
                             type: string
                         x-auditable: true
@@ -33513,6 +33569,20 @@ paths:
                         properties:
                           created_from_aisearch_wizard:
                             type: boolean
+                          created_from_emdash_plugin:
+                            type: object
+                            additionalProperties: true
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - native
+                                  - rest
+                              version:
+                                type: string
+                            required:
+                              - type
+                              - version
                           worker_domain:
                             type: string
                         x-auditable: true
@@ -34088,6 +34158,20 @@ paths:
                   properties:
                     created_from_aisearch_wizard:
                       type: boolean
+                    created_from_emdash_plugin:
+                      type: object
+                      additionalProperties: true
+                      properties:
+                        type:
+                          type: string
+                          enum:
+                            - native
+                            - rest
+                        version:
+                          type: string
+                      required:
+                        - type
+                        - version
                     worker_domain:
                       type: string
                   x-auditable: true
@@ -34615,6 +34699,20 @@ paths:
                         properties:
                           created_from_aisearch_wizard:
                             type: boolean
+                          created_from_emdash_plugin:
+                            type: object
+                            additionalProperties: true
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - native
+                                  - rest
+                              version:
+                                type: string
+                            required:
+                              - type
+                              - version
                           worker_domain:
                             type: string
                         x-auditable: true
@@ -35497,6 +35595,32 @@ paths:
                 required:
                   - success
                   - errors
+        '402':
+          description: Workers ai unified billing required.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                      required:
+                        - code
+                        - message
+                      type: object
+                  success:
+                    type: boolean
+                    enum:
+                      - false
+                required:
+                  - success
+                  - errors
         '404':
           description: Not Found
           content:
@@ -35524,7 +35648,14 @@ paths:
                   - success
                   - errors
         '429':
-          description: Monthly query quota exceeded.
+          description: Monthly query quota exceeded; Workers ai capacity temporarily exceeded
+          headers:
+            Retry-After:
+              description: Seconds to wait before retrying.
+              schema:
+                description: Seconds to wait before retrying.
+                type: string
+                example: '10'
           content:
             application/json:
               schema:
@@ -35533,15 +35664,69 @@ paths:
                   errors:
                     type: array
                     items:
-                      properties:
-                        code:
-                          type: number
-                        message:
-                          type: string
-                      required:
-                        - code
-                        - message
-                      type: object
+                      anyOf:
+                        - properties:
+                            code:
+                              type: number
+                              enum:
+                                - 7069
+                            message:
+                              type: string
+                          required:
+                            - code
+                            - message
+                          type: object
+                        - properties:
+                            code:
+                              type: number
+                              enum:
+                                - 7119
+                            message:
+                              type: string
+                          required:
+                            - code
+                            - message
+                          type: object
+                  success:
+                    type: boolean
+                    enum:
+                      - false
+                required:
+                  - success
+                  - errors
+        '502':
+          description: Ai gateway exception; Workers ai upstream error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      anyOf:
+                        - properties:
+                            code:
+                              type: number
+                              enum:
+                                - 7033
+                            message:
+                              type: string
+                          required:
+                            - code
+                            - message
+                          type: object
+                        - properties:
+                            code:
+                              type: number
+                              enum:
+                                - 7120
+                            message:
+                              type: string
+                          required:
+                            - code
+                            - message
+                          type: object
                   success:
                     type: boolean
                     enum:
@@ -36854,7 +37039,14 @@ paths:
                   - success
                   - errors
         '429':
-          description: Monthly query quota exceeded.
+          description: Monthly query quota exceeded; Workers ai capacity temporarily exceeded
+          headers:
+            Retry-After:
+              description: Seconds to wait before retrying.
+              schema:
+                description: Seconds to wait before retrying.
+                type: string
+                example: '10'
           content:
             application/json:
               schema:
@@ -36863,15 +37055,69 @@ paths:
                   errors:
                     type: array
                     items:
-                      properties:
-                        code:
-                          type: number
-                        message:
-                          type: string
-                      required:
-                        - code
-                        - message
-                      type: object
+                      anyOf:
+                        - properties:
+                            code:
+                              type: number
+                              enum:
+                                - 7069
+                            message:
+                              type: string
+                          required:
+                            - code
+                            - message
+                          type: object
+                        - properties:
+                            code:
+                              type: number
+                              enum:
+                                - 7119
+                            message:
+                              type: string
+                          required:
+                            - code
+                            - message
+                          type: object
+                  success:
+                    type: boolean
+                    enum:
+                      - false
+                required:
+                  - success
+                  - errors
+        '502':
+          description: Ai gateway exception; Workers ai upstream error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      anyOf:
+                        - properties:
+                            code:
+                              type: number
+                              enum:
+                                - 7033
+                            message:
+                              type: string
+                          required:
+                            - code
+                            - message
+                          type: object
+                        - properties:
+                            code:
+                              type: number
+                              enum:
+                                - 7120
+                            message:
+                              type: string
+                          required:
+                            - code
+                            - message
+                          type: object
                   success:
                     type: boolean
                     enum:
@@ -37296,6 +37542,7 @@ paths:
                 name:
                   type: string
                   pattern: ^[a-z0-9]([a-z0-9-]{0,26}[a-z0-9])?$
+                  x-fern-property-name: namespace
                 public_endpoint_params:
                   type: object
                   properties:
@@ -37604,7 +37851,6 @@ paths:
       x-forge-params:
         name:
           description: Name for the new namespace.
-          flagName: namespace
           positional: true
   /accounts/{account_id}/ai-search/namespaces/{name}:
     delete:
@@ -37624,6 +37870,7 @@ paths:
           schema:
             type: string
             example: production
+          x-fern-parameter-name: namespace
       responses:
         '200':
           description: Namespace deleted.
@@ -37714,7 +37961,6 @@ paths:
       x-forge-params:
         name:
           description: Namespace to delete.
-          flagName: namespace
       x-forge-require-confirmation: This operation permanently deletes the namespace.
     get:
       operationId: ai-search-fetch-namespace
@@ -37733,6 +37979,7 @@ paths:
           schema:
             type: string
             example: production
+          x-fern-parameter-name: namespace
       responses:
         '200':
           description: Namespace details.
@@ -37904,7 +38151,6 @@ paths:
       x-forge-params:
         name:
           description: Namespace to retrieve.
-          flagName: namespace
     put:
       operationId: ai-search-update-namespace
       summary: Update a namespace
@@ -37922,6 +38168,7 @@ paths:
           schema:
             type: string
             example: production
+          x-fern-parameter-name: namespace
       requestBody:
         content:
           application/json:
@@ -38241,7 +38488,6 @@ paths:
       x-forge-params:
         name:
           description: Namespace to update.
-          flagName: namespace
   /accounts/{account_id}/ai-search/namespaces/{name}/chat/completions:
     post:
       operationId: ai-search-namespace-multi-instance-chat-completion
@@ -38261,6 +38507,7 @@ paths:
           schema:
             type: string
           example: my-namespace
+          x-fern-parameter-name: namespace
       requestBody:
         content:
           application/json:
@@ -38691,6 +38938,32 @@ paths:
                 required:
                   - success
                   - errors
+        '402':
+          description: Workers ai unified billing required.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                      required:
+                        - code
+                        - message
+                      type: object
+                  success:
+                    type: boolean
+                    enum:
+                      - false
+                required:
+                  - success
+                  - errors
         '404':
           description: Not Found
           content:
@@ -38718,7 +38991,14 @@ paths:
                   - success
                   - errors
         '429':
-          description: Monthly query quota exceeded.
+          description: Monthly query quota exceeded; Workers ai capacity temporarily exceeded
+          headers:
+            Retry-After:
+              description: Seconds to wait before retrying.
+              schema:
+                description: Seconds to wait before retrying.
+                type: string
+                example: '10'
           content:
             application/json:
               schema:
@@ -38727,15 +39007,69 @@ paths:
                   errors:
                     type: array
                     items:
-                      properties:
-                        code:
-                          type: number
-                        message:
-                          type: string
-                      required:
-                        - code
-                        - message
-                      type: object
+                      anyOf:
+                        - properties:
+                            code:
+                              type: number
+                              enum:
+                                - 7069
+                            message:
+                              type: string
+                          required:
+                            - code
+                            - message
+                          type: object
+                        - properties:
+                            code:
+                              type: number
+                              enum:
+                                - 7119
+                            message:
+                              type: string
+                          required:
+                            - code
+                            - message
+                          type: object
+                  success:
+                    type: boolean
+                    enum:
+                      - false
+                required:
+                  - success
+                  - errors
+        '502':
+          description: Ai gateway exception; Workers ai upstream error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      anyOf:
+                        - properties:
+                            code:
+                              type: number
+                              enum:
+                                - 7033
+                            message:
+                              type: string
+                          required:
+                            - code
+                            - message
+                          type: object
+                        - properties:
+                            code:
+                              type: number
+                              enum:
+                                - 7120
+                            message:
+                              type: string
+                          required:
+                            - code
+                            - message
+                          type: object
                   success:
                     type: boolean
                     enum:
@@ -38764,7 +39098,6 @@ paths:
         name:
           default: default
           description: Namespace to use for this operation.
-          flagName: namespace
   /accounts/{account_id}/ai-search/namespaces/{name}/instances:
     get:
       operationId: ai-search-namespace-list-instances
@@ -38811,13 +39144,6 @@ paths:
             type: string
             maxLength: 253
             minLength: 1
-        - name: namespace
-          in: query
-          description: Filter by namespace.
-          schema:
-            description: Filter by namespace.
-            type: string
-            pattern: ^[a-z0-9]([a-z0-9-]{0,26}[a-z0-9])?$
         - name: order_by
           in: query
           description: Field to order results by.
@@ -38844,6 +39170,7 @@ paths:
           schema:
             type: string
           example: my-namespace
+          x-fern-parameter-name: namespace
       responses:
         '200':
           description: List of instances.
@@ -38992,6 +39319,20 @@ paths:
                           properties:
                             created_from_aisearch_wizard:
                               type: boolean
+                            created_from_emdash_plugin:
+                              type: object
+                              additionalProperties: true
+                              properties:
+                                type:
+                                  type: string
+                                  enum:
+                                    - native
+                                    - rest
+                                version:
+                                  type: string
+                              required:
+                                - type
+                                - version
                             worker_domain:
                               type: string
                         modified_at:
@@ -39385,9 +39726,6 @@ paths:
         name:
           default: default
           description: Namespace to use for this operation.
-          flagName: namespace
-        namespace:
-          hidden: true
     post:
       operationId: ai-search-namespace-create-instance
       summary: Create an AI Search instance (Search for Agents requires the default namespace).
@@ -39406,6 +39744,7 @@ paths:
           schema:
             type: string
           example: my-namespace
+          x-fern-parameter-name: namespace
       requestBody:
         content:
           application/json:
@@ -39573,6 +39912,20 @@ paths:
                   properties:
                     created_from_aisearch_wizard:
                       type: boolean
+                    created_from_emdash_plugin:
+                      type: object
+                      additionalProperties: true
+                      properties:
+                        type:
+                          type: string
+                          enum:
+                            - native
+                            - rest
+                        version:
+                          type: string
+                      required:
+                        - type
+                        - version
                     worker_domain:
                       type: string
                   x-auditable: true
@@ -40087,6 +40440,20 @@ paths:
                         properties:
                           created_from_aisearch_wizard:
                             type: boolean
+                          created_from_emdash_plugin:
+                            type: object
+                            additionalProperties: true
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - native
+                                  - rest
+                              version:
+                                type: string
+                            required:
+                              - type
+                              - version
                           worker_domain:
                             type: string
                         x-auditable: true
@@ -40546,7 +40913,6 @@ paths:
         name:
           default: default
           description: Namespace to use for this operation.
-          flagName: namespace
         source:
           description: R2 bucket name or HTTP(S) root website URL to index. When type is omitted, the source determines it.
         source_params:
@@ -40571,6 +40937,7 @@ paths:
           schema:
             type: string
             example: my-ai-search
+          x-fern-parameter-name: instance-id
         - name: name
           in: path
           description: Namespace name
@@ -40578,6 +40945,7 @@ paths:
           schema:
             type: string
           example: my-namespace
+          x-fern-parameter-name: namespace
       responses:
         '200':
           description: Returns the deleted instance.
@@ -40767,6 +41135,20 @@ paths:
                         properties:
                           created_from_aisearch_wizard:
                             type: boolean
+                          created_from_emdash_plugin:
+                            type: object
+                            additionalProperties: true
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - native
+                                  - rest
+                              version:
+                                type: string
+                            required:
+                              - type
+                              - version
                           worker_domain:
                             type: string
                         x-auditable: true
@@ -41196,11 +41578,9 @@ paths:
       x-forge-params:
         id:
           description: AI Search instance ID.
-          flagName: instance-id
         name:
           default: default
           description: Namespace to use for this operation.
-          flagName: namespace
       x-forge-require-confirmation: This operation permanently deletes the AI Search instance and all its indexed data.
     get:
       operationId: ai-search-namespace-fetch-instance
@@ -41219,6 +41599,7 @@ paths:
           schema:
             type: string
             example: my-ai-search
+          x-fern-parameter-name: instance-id
         - name: name
           in: path
           description: Namespace name
@@ -41226,6 +41607,7 @@ paths:
           schema:
             type: string
           example: my-namespace
+          x-fern-parameter-name: namespace
       responses:
         '200':
           description: Returns the instance.
@@ -41415,6 +41797,20 @@ paths:
                         properties:
                           created_from_aisearch_wizard:
                             type: boolean
+                          created_from_emdash_plugin:
+                            type: object
+                            additionalProperties: true
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - native
+                                  - rest
+                              version:
+                                type: string
+                            required:
+                              - type
+                              - version
                           worker_domain:
                             type: string
                         x-auditable: true
@@ -41818,11 +42214,9 @@ paths:
       x-forge-params:
         id:
           description: AI Search instance ID.
-          flagName: instance-id
         name:
           default: default
           description: Namespace to use for this operation.
-          flagName: namespace
     patch:
       operationId: ai-search-move-instance
       summary: Move an instance to a different namespace.
@@ -41842,6 +42236,7 @@ paths:
             description: Current namespace of the instance.
             type: string
             example: production
+          x-fern-parameter-name: source-namespace
         - name: id
           in: path
           description: Instance id.
@@ -41850,6 +42245,7 @@ paths:
             description: Instance id.
             type: string
             example: my-blog
+          x-fern-parameter-name: instance-id
       requestBody:
         content:
           application/json:
@@ -41861,6 +42257,7 @@ paths:
                   type: string
                   example: staging
                   pattern: ^[a-z0-9]([a-z0-9-]{0,26}[a-z0-9])?$
+                  x-fern-property-name: destination-namespace
               required:
                 - new_namespace
       responses:
@@ -41979,14 +42376,11 @@ paths:
       x-forge-params:
         id:
           description: AI Search instance ID.
-          flagName: instance-id
         name:
           default: default
           description: Namespace currently containing the instance.
-          flagName: source-namespace
         new_namespace:
           description: Namespace to move the instance into.
-          flagName: destination-namespace
     put:
       operationId: ai-search-namespace-update-instance
       summary: Update an AI Search instance (Search for Agents metadata requires the default namespace).
@@ -42004,6 +42398,7 @@ paths:
           schema:
             type: string
             example: my-ai-search
+          x-fern-parameter-name: instance-id
         - name: name
           in: path
           description: Namespace name
@@ -42011,6 +42406,7 @@ paths:
           schema:
             type: string
           example: my-namespace
+          x-fern-parameter-name: namespace
       requestBody:
         content:
           application/json:
@@ -42164,6 +42560,20 @@ paths:
                   properties:
                     created_from_aisearch_wizard:
                       type: boolean
+                    created_from_emdash_plugin:
+                      type: object
+                      additionalProperties: true
+                      properties:
+                        type:
+                          type: string
+                          enum:
+                            - native
+                            - rest
+                        version:
+                          type: string
+                      required:
+                        - type
+                        - version
                     worker_domain:
                       type: string
                   x-auditable: true
@@ -42691,6 +43101,20 @@ paths:
                         properties:
                           created_from_aisearch_wizard:
                             type: boolean
+                          created_from_emdash_plugin:
+                            type: object
+                            additionalProperties: true
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - native
+                                  - rest
+                              version:
+                                type: string
+                            required:
+                              - type
+                              - version
                           worker_domain:
                             type: string
                         x-auditable: true
@@ -43146,11 +43570,9 @@ paths:
       x-forge-params:
         id:
           description: AI Search instance ID.
-          flagName: instance-id
         name:
           default: default
           description: Namespace to use for this operation.
-          flagName: namespace
         source:
           description: R2 bucket name or HTTP(S) root website URL to index.
         source_params:
@@ -43173,6 +43595,7 @@ paths:
             minLength: 1
             pattern: ^[a-z0-9_]+(?:-[a-z0-9_]+)*$
             x-auditable: true
+          x-fern-parameter-name: instance-id
         - name: account_id
           in: path
           required: true
@@ -43186,6 +43609,7 @@ paths:
           schema:
             type: string
           example: my-namespace
+          x-fern-parameter-name: namespace
       requestBody:
         content:
           application/json:
@@ -43587,6 +44011,32 @@ paths:
                 required:
                   - success
                   - errors
+        '402':
+          description: Workers ai unified billing required.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                      required:
+                        - code
+                        - message
+                      type: object
+                  success:
+                    type: boolean
+                    enum:
+                      - false
+                required:
+                  - success
+                  - errors
         '404':
           description: Not Found
           content:
@@ -43614,7 +44064,14 @@ paths:
                   - success
                   - errors
         '429':
-          description: Monthly query quota exceeded.
+          description: Monthly query quota exceeded; Workers ai capacity temporarily exceeded
+          headers:
+            Retry-After:
+              description: Seconds to wait before retrying.
+              schema:
+                description: Seconds to wait before retrying.
+                type: string
+                example: '10'
           content:
             application/json:
               schema:
@@ -43623,15 +44080,69 @@ paths:
                   errors:
                     type: array
                     items:
-                      properties:
-                        code:
-                          type: number
-                        message:
-                          type: string
-                      required:
-                        - code
-                        - message
-                      type: object
+                      anyOf:
+                        - properties:
+                            code:
+                              type: number
+                              enum:
+                                - 7069
+                            message:
+                              type: string
+                          required:
+                            - code
+                            - message
+                          type: object
+                        - properties:
+                            code:
+                              type: number
+                              enum:
+                                - 7119
+                            message:
+                              type: string
+                          required:
+                            - code
+                            - message
+                          type: object
+                  success:
+                    type: boolean
+                    enum:
+                      - false
+                required:
+                  - success
+                  - errors
+        '502':
+          description: Ai gateway exception; Workers ai upstream error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      anyOf:
+                        - properties:
+                            code:
+                              type: number
+                              enum:
+                                - 7033
+                            message:
+                              type: string
+                          required:
+                            - code
+                            - message
+                          type: object
+                        - properties:
+                            code:
+                              type: number
+                              enum:
+                                - 7120
+                            message:
+                              type: string
+                          required:
+                            - code
+                            - message
+                          type: object
                   success:
                     type: boolean
                     enum:
@@ -43659,11 +44170,9 @@ paths:
       x-forge-params:
         id:
           description: AI Search instance ID.
-          flagName: instance-id
         name:
           default: default
           description: Namespace to use for this operation.
-          flagName: namespace
   /accounts/{account_id}/ai-search/namespaces/{name}/instances/{id}/items:
     get:
       operationId: ai-search-namespace-instance-list-items
@@ -43682,6 +44191,7 @@ paths:
             minLength: 1
             pattern: ^[a-z0-9_]+(?:-[a-z0-9_]+)*$
             x-auditable: true
+          x-fern-parameter-name: instance-id
         - name: account_id
           in: path
           required: true
@@ -43762,6 +44272,7 @@ paths:
           schema:
             type: string
           example: my-namespace
+          x-fern-parameter-name: namespace
       responses:
         '200':
           description: Returns the AI Search items.
@@ -43976,11 +44487,9 @@ paths:
       x-forge-params:
         id:
           description: AI Search instance ID.
-          flagName: instance-id
         name:
           default: default
           description: Namespace to use for this operation.
-          flagName: namespace
     post:
       operationId: ai-search-namespace-instance-upload-item
       summary: Upload Item.
@@ -43998,6 +44507,7 @@ paths:
             minLength: 1
             pattern: ^[a-z0-9_]+(?:-[a-z0-9_]+)*$
             x-auditable: true
+          x-fern-parameter-name: instance-id
         - name: account_id
           in: path
           required: true
@@ -44011,6 +44521,7 @@ paths:
           schema:
             type: string
           example: my-namespace
+          x-fern-parameter-name: namespace
       requestBody:
         content:
           multipart/form-data:
@@ -44025,7 +44536,7 @@ paths:
                   description: JSON string of custom metadata key-value pairs.
                   type: string
                 wait_for_completion:
-                  description: Wait for indexing to fully complete before responding. On RAGs with vector indexing enabled, this additionally waits for Vectorize ingestion confirmation (up to 40s) so the returned item reflects a queryable state. On timeout the item is returned in `running` state and the background alarm continues polling. Defaults to false.
+                  description: Wait for indexing before responding. After processing, vector-indexed instances use any time remaining in a 25s wait budget to confirm Vectorize ingestion. Processing itself is not interrupted and can exceed that budget. If confirmation times out, the current item state is returned and background indexing continues. Defaults to false.
                   type: boolean
                   default: false
               required:
@@ -44291,8 +44802,6 @@ paths:
                                 - 7095
                             message:
                               type: string
-                              enum:
-                                - item_write_rate_limited
                           required:
                             - code
                             - message
@@ -44301,11 +44810,9 @@ paths:
                             code:
                               type: number
                               enum:
-                                - 7111
+                                - 7116
                             message:
                               type: string
-                              enum:
-                                - monthly_ingestion_quota_exceeded
                           required:
                             - code
                             - message
@@ -44317,8 +44824,6 @@ paths:
                                 - 7112
                             message:
                               type: string
-                              enum:
-                                - monthly_storage_quota_exceeded
                           required:
                             - code
                             - message
@@ -44330,8 +44835,6 @@ paths:
                                 - 7114
                             message:
                               type: string
-                              enum:
-                                - ai_search_instance_overloaded
                           required:
                             - code
                             - message
@@ -44389,11 +44892,9 @@ paths:
       x-forge-params:
         id:
           description: AI Search instance ID.
-          flagName: instance-id
         name:
           default: default
           description: Namespace to use for this operation.
-          flagName: namespace
     put:
       operationId: ai-search-namespace-instance-create-or-update-item
       summary: Create or Update Item.
@@ -44411,6 +44912,7 @@ paths:
             minLength: 1
             pattern: ^[a-z0-9_]+(?:-[a-z0-9_]+)*$
             x-auditable: true
+          x-fern-parameter-name: instance-id
         - name: account_id
           in: path
           required: true
@@ -44424,6 +44926,7 @@ paths:
           schema:
             type: string
           example: my-namespace
+          x-fern-parameter-name: namespace
       requestBody:
         content:
           application/json:
@@ -44438,7 +44941,7 @@ paths:
                   enum:
                     - INDEX
                 wait_for_completion:
-                  description: Wait for indexing to fully complete before responding. On RAGs with vector indexing enabled, this additionally waits for Vectorize ingestion confirmation (up to 40s) so the returned item reflects a queryable state. On timeout the item is returned in `running` state and the background alarm continues polling. Defaults to false.
+                  description: Wait for indexing before responding. After processing, vector-indexed instances use any time remaining in a 25s wait budget to confirm Vectorize ingestion. Processing itself is not interrupted and can exceed that budget. If confirmation times out, the current item state is returned and background indexing continues. Defaults to false.
                   type: boolean
                   default: false
               required:
@@ -44639,11 +45142,9 @@ paths:
                             code:
                               type: number
                               enum:
-                                - 7111
+                                - 7116
                             message:
                               type: string
-                              enum:
-                                - monthly_ingestion_quota_exceeded
                           required:
                             - code
                             - message
@@ -44655,8 +45156,6 @@ paths:
                                 - 7112
                             message:
                               type: string
-                              enum:
-                                - monthly_storage_quota_exceeded
                           required:
                             - code
                             - message
@@ -44668,8 +45167,6 @@ paths:
                                 - 7114
                             message:
                               type: string
-                              enum:
-                                - ai_search_instance_overloaded
                           required:
                             - code
                             - message
@@ -44727,11 +45224,9 @@ paths:
       x-forge-params:
         id:
           description: AI Search instance ID.
-          flagName: instance-id
         name:
           default: default
           description: Namespace to use for this operation.
-          flagName: namespace
         next_action:
           default: INDEX
           hidden: true
@@ -44753,6 +45248,7 @@ paths:
             minLength: 1
             pattern: ^[a-z0-9_]+(?:-[a-z0-9_]+)*$
             x-auditable: true
+          x-fern-parameter-name: instance-id
         - name: item_id
           in: path
           required: true
@@ -44771,6 +45267,7 @@ paths:
           schema:
             type: string
           example: my-namespace
+          x-fern-parameter-name: namespace
       responses:
         '200':
           description: Item deleted successfully.
@@ -44897,14 +45394,11 @@ paths:
       x-forge-params:
         id:
           description: AI Search instance ID.
-          flagName: instance-id
         item_id:
           description: Indexed item ID.
-          flagName: item-id
         name:
           default: default
           description: Namespace to use for this operation.
-          flagName: namespace
     get:
       operationId: ai-search-namespace-instance-get-item
       summary: Get Item.
@@ -44922,6 +45416,7 @@ paths:
             minLength: 1
             pattern: ^[a-z0-9_]+(?:-[a-z0-9_]+)*$
             x-auditable: true
+          x-fern-parameter-name: instance-id
         - name: item_id
           in: path
           required: true
@@ -44940,6 +45435,7 @@ paths:
           schema:
             type: string
           example: my-namespace
+          x-fern-parameter-name: namespace
       responses:
         '200':
           description: Returns a AI Search Item detail.
@@ -45107,14 +45603,11 @@ paths:
       x-forge-params:
         id:
           description: AI Search instance ID.
-          flagName: instance-id
         item_id:
           description: Indexed item ID.
-          flagName: item-id
         name:
           default: default
           description: Namespace to use for this operation.
-          flagName: namespace
     patch:
       operationId: ai-search-namespace-instance-sync-item
       summary: Sync Item.
@@ -45132,6 +45625,7 @@ paths:
             minLength: 1
             pattern: ^[a-z0-9_]+(?:-[a-z0-9_]+)*$
             x-auditable: true
+          x-fern-parameter-name: instance-id
         - name: item_id
           in: path
           required: true
@@ -45150,6 +45644,7 @@ paths:
           schema:
             type: string
           example: my-namespace
+          x-fern-parameter-name: namespace
       requestBody:
         content:
           application/json:
@@ -45161,7 +45656,7 @@ paths:
                   enum:
                     - INDEX
                 wait_for_completion:
-                  description: Wait for indexing to fully complete before responding. On RAGs with vector indexing enabled, this additionally waits for Vectorize ingestion confirmation (up to 40s) so the returned item reflects a queryable state. On timeout the item is returned in `running` state and the background alarm continues polling. Defaults to false.
+                  description: Wait for indexing before responding. After processing, vector-indexed instances use any time remaining in a 25s wait budget to confirm Vectorize ingestion. Processing itself is not interrupted and can exceed that budget. If confirmation times out, the current item state is returned and background indexing continues. Defaults to false.
                   type: boolean
                   default: false
               required:
@@ -45340,11 +45835,9 @@ paths:
                             code:
                               type: number
                               enum:
-                                - 7111
+                                - 7116
                             message:
                               type: string
-                              enum:
-                                - monthly_ingestion_quota_exceeded
                           required:
                             - code
                             - message
@@ -45356,8 +45849,6 @@ paths:
                                 - 7112
                             message:
                               type: string
-                              enum:
-                                - monthly_storage_quota_exceeded
                           required:
                             - code
                             - message
@@ -45369,8 +45860,6 @@ paths:
                                 - 7114
                             message:
                               type: string
-                              enum:
-                                - ai_search_instance_overloaded
                           required:
                             - code
                             - message
@@ -45428,14 +45917,11 @@ paths:
       x-forge-params:
         id:
           description: AI Search instance ID.
-          flagName: instance-id
         item_id:
           description: Indexed item ID.
-          flagName: item-id
         name:
           default: default
           description: Namespace to use for this operation.
-          flagName: namespace
         next_action:
           default: INDEX
           hidden: true
@@ -45457,6 +45943,7 @@ paths:
             minLength: 1
             pattern: ^[a-z0-9_]+(?:-[a-z0-9_]+)*$
             x-auditable: true
+          x-fern-parameter-name: instance-id
         - name: item_id
           in: path
           required: true
@@ -45488,6 +45975,7 @@ paths:
           schema:
             type: string
           example: my-namespace
+          x-fern-parameter-name: namespace
       responses:
         '200':
           description: Returns the AI Search item chunks with text content.
@@ -45650,14 +46138,11 @@ paths:
       x-forge-params:
         id:
           description: AI Search instance ID.
-          flagName: instance-id
         item_id:
           description: Indexed item ID.
-          flagName: item-id
         name:
           default: default
           description: Namespace to use for this operation.
-          flagName: namespace
   /accounts/{account_id}/ai-search/namespaces/{name}/instances/{id}/items/{item_id}/download:
     get:
       operationId: ai-search-namespace-instance-get-item-content
@@ -45676,6 +46161,7 @@ paths:
             minLength: 1
             pattern: ^[a-z0-9_]+(?:-[a-z0-9_]+)*$
             x-auditable: true
+          x-fern-parameter-name: instance-id
         - name: item_id
           in: path
           required: true
@@ -45694,6 +46180,7 @@ paths:
           schema:
             type: string
           example: my-namespace
+          x-fern-parameter-name: namespace
       responses:
         '200':
           description: Raw file content.
@@ -45826,14 +46313,11 @@ paths:
       x-forge-params:
         id:
           description: AI Search instance ID.
-          flagName: instance-id
         item_id:
           description: Indexed item ID.
-          flagName: item-id
         name:
           default: default
           description: Namespace to use for this operation.
-          flagName: namespace
   /accounts/{account_id}/ai-search/namespaces/{name}/instances/{id}/items/{item_id}/logs:
     get:
       operationId: ai-search-namespace-instance-logs-item
@@ -45852,6 +46336,7 @@ paths:
             minLength: 1
             pattern: ^[a-z0-9_]+(?:-[a-z0-9_]+)*$
             x-auditable: true
+          x-fern-parameter-name: instance-id
         - name: item_id
           in: path
           required: true
@@ -45882,6 +46367,7 @@ paths:
           schema:
             type: string
           example: my-namespace
+          x-fern-parameter-name: namespace
       responses:
         '200':
           description: Returns the AI Search item logs.
@@ -46048,14 +46534,11 @@ paths:
       x-forge-params:
         id:
           description: AI Search instance ID.
-          flagName: instance-id
         item_id:
           description: Indexed item ID.
-          flagName: item-id
         name:
           default: default
           description: Namespace to use for this operation.
-          flagName: namespace
   /accounts/{account_id}/ai-search/namespaces/{name}/instances/{id}/jobs:
     get:
       operationId: ai-search-namespace-instance-list-jobs
@@ -46074,6 +46557,7 @@ paths:
             minLength: 1
             pattern: ^[a-z0-9_]+(?:-[a-z0-9_]+)*$
             x-auditable: true
+          x-fern-parameter-name: instance-id
         - name: account_id
           in: path
           required: true
@@ -46100,6 +46584,7 @@ paths:
           schema:
             type: string
           example: my-namespace
+          x-fern-parameter-name: namespace
       responses:
         '200':
           description: Returns a list of AI Search Jobs.
@@ -46260,11 +46745,9 @@ paths:
       x-forge-params:
         id:
           description: AI Search instance ID.
-          flagName: instance-id
         name:
           default: default
           description: Namespace to use for this operation.
-          flagName: namespace
     post:
       operationId: ai-search-namespace-instance-create-job
       summary: Create new job
@@ -46282,6 +46765,7 @@ paths:
             minLength: 1
             pattern: ^[a-z0-9_]+(?:-[a-z0-9_]+)*$
             x-auditable: true
+          x-fern-parameter-name: instance-id
         - name: account_id
           in: path
           required: true
@@ -46295,6 +46779,7 @@ paths:
           schema:
             type: string
           example: my-namespace
+          x-fern-parameter-name: namespace
       requestBody:
         content:
           application/json:
@@ -46473,11 +46958,9 @@ paths:
           description: Optional description for the indexing job.
         id:
           description: AI Search instance ID.
-          flagName: instance-id
         name:
           default: default
           description: Namespace to use for this operation.
-          flagName: namespace
   /accounts/{account_id}/ai-search/namespaces/{name}/instances/{id}/jobs/{job_id}:
     get:
       operationId: ai-search-namespace-instance-get-job
@@ -46496,6 +46979,7 @@ paths:
             minLength: 1
             pattern: ^[a-z0-9_]+(?:-[a-z0-9_]+)*$
             x-auditable: true
+          x-fern-parameter-name: instance-id
         - name: job_id
           in: path
           required: true
@@ -46514,6 +46998,7 @@ paths:
           schema:
             type: string
           example: my-namespace
+          x-fern-parameter-name: namespace
       responses:
         '200':
           description: Returns a AI Search Job Details.
@@ -46624,14 +47109,11 @@ paths:
       x-forge-params:
         id:
           description: AI Search instance ID.
-          flagName: instance-id
         job_id:
           description: Indexing job ID.
-          flagName: job-id
         name:
           default: default
           description: Namespace to use for this operation.
-          flagName: namespace
     patch:
       operationId: ai-search-namespace-instance-change-job-status
       summary: Cancel an indexing job.
@@ -46649,6 +47131,7 @@ paths:
             minLength: 1
             pattern: ^[a-z0-9_]+(?:-[a-z0-9_]+)*$
             x-auditable: true
+          x-fern-parameter-name: instance-id
         - name: job_id
           in: path
           required: true
@@ -46667,6 +47150,7 @@ paths:
           schema:
             type: string
           example: my-namespace
+          x-fern-parameter-name: namespace
       requestBody:
         content:
           application/json:
@@ -46818,14 +47302,11 @@ paths:
           hidden: true
         id:
           description: AI Search instance ID.
-          flagName: instance-id
         job_id:
           description: Indexing job ID.
-          flagName: job-id
         name:
           default: default
           description: Namespace to use for this operation.
-          flagName: namespace
       x-forge-require-confirmation: This operation cancels the running indexing job.
   /accounts/{account_id}/ai-search/namespaces/{name}/instances/{id}/jobs/{job_id}/logs:
     get:
@@ -46845,6 +47326,7 @@ paths:
             minLength: 1
             pattern: ^[a-z0-9_]+(?:-[a-z0-9_]+)*$
             x-auditable: true
+          x-fern-parameter-name: instance-id
         - name: job_id
           in: path
           required: true
@@ -46876,6 +47358,7 @@ paths:
           schema:
             type: string
           example: my-namespace
+          x-fern-parameter-name: namespace
       responses:
         '200':
           description: Returns a list of AI Search Job Logs.
@@ -47027,14 +47510,11 @@ paths:
       x-forge-params:
         id:
           description: AI Search instance ID.
-          flagName: instance-id
         job_id:
           description: Indexing job ID.
-          flagName: job-id
         name:
           default: default
           description: Namespace to use for this operation.
-          flagName: namespace
   /accounts/{account_id}/ai-search/namespaces/{name}/instances/{id}/purge_cache:
     post:
       operationId: ai-search-namespace-purge-instance-cache
@@ -47058,6 +47538,7 @@ paths:
             minLength: 1
             pattern: ^[a-z0-9_]+(?:-[a-z0-9_]+)*$
             x-auditable: true
+          x-fern-parameter-name: instance-id
         - name: name
           in: path
           description: Namespace name
@@ -47065,6 +47546,7 @@ paths:
           schema:
             type: string
           example: my-namespace
+          x-fern-parameter-name: namespace
       responses:
         '200':
           description: Cache purged successfully.
@@ -47123,11 +47605,9 @@ paths:
       x-forge-params:
         id:
           description: AI Search instance ID.
-          flagName: instance-id
         name:
           default: default
           description: Namespace to use for this operation.
-          flagName: namespace
   /accounts/{account_id}/ai-search/namespaces/{name}/instances/{id}/search:
     post:
       operationId: ai-search-namespace-instance-search
@@ -47146,6 +47626,7 @@ paths:
             minLength: 1
             pattern: ^[a-z0-9_]+(?:-[a-z0-9_]+)*$
             x-auditable: true
+          x-fern-parameter-name: instance-id
         - name: account_id
           in: path
           required: true
@@ -47159,6 +47640,7 @@ paths:
           schema:
             type: string
           example: my-namespace
+          x-fern-parameter-name: namespace
       requestBody:
         content:
           application/json:
@@ -47504,7 +47986,14 @@ paths:
                   - success
                   - errors
         '429':
-          description: Monthly query quota exceeded.
+          description: Monthly query quota exceeded; Workers ai capacity temporarily exceeded
+          headers:
+            Retry-After:
+              description: Seconds to wait before retrying.
+              schema:
+                description: Seconds to wait before retrying.
+                type: string
+                example: '10'
           content:
             application/json:
               schema:
@@ -47513,15 +48002,69 @@ paths:
                   errors:
                     type: array
                     items:
-                      properties:
-                        code:
-                          type: number
-                        message:
-                          type: string
-                      required:
-                        - code
-                        - message
-                      type: object
+                      anyOf:
+                        - properties:
+                            code:
+                              type: number
+                              enum:
+                                - 7069
+                            message:
+                              type: string
+                          required:
+                            - code
+                            - message
+                          type: object
+                        - properties:
+                            code:
+                              type: number
+                              enum:
+                                - 7119
+                            message:
+                              type: string
+                          required:
+                            - code
+                            - message
+                          type: object
+                  success:
+                    type: boolean
+                    enum:
+                      - false
+                required:
+                  - success
+                  - errors
+        '502':
+          description: Ai gateway exception; Workers ai upstream error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      anyOf:
+                        - properties:
+                            code:
+                              type: number
+                              enum:
+                                - 7033
+                            message:
+                              type: string
+                          required:
+                            - code
+                            - message
+                          type: object
+                        - properties:
+                            code:
+                              type: number
+                              enum:
+                                - 7120
+                            message:
+                              type: string
+                          required:
+                            - code
+                            - message
+                          type: object
                   success:
                     type: boolean
                     enum:
@@ -47549,11 +48092,9 @@ paths:
       x-forge-params:
         id:
           description: AI Search instance ID.
-          flagName: instance-id
         name:
           default: default
           description: Namespace to use for this operation.
-          flagName: namespace
         query:
           description: Text to search for.
           positional: true
@@ -47575,6 +48116,7 @@ paths:
             minLength: 1
             pattern: ^[a-z0-9_]+(?:-[a-z0-9_]+)*$
             x-auditable: true
+          x-fern-parameter-name: instance-id
         - name: account_id
           in: path
           required: true
@@ -47588,6 +48130,7 @@ paths:
           schema:
             type: string
           example: my-namespace
+          x-fern-parameter-name: namespace
       responses:
         '200':
           description: Returns the AI Search stats.
@@ -47703,11 +48246,9 @@ paths:
       x-forge-params:
         id:
           description: AI Search instance ID.
-          flagName: instance-id
         name:
           default: default
           description: Namespace to use for this operation.
-          flagName: namespace
   /accounts/{account_id}/ai-search/namespaces/{name}/search:
     post:
       operationId: ai-search-namespace-multi-instance-search
@@ -47727,6 +48268,7 @@ paths:
           schema:
             type: string
           example: my-namespace
+          x-fern-parameter-name: namespace
       requestBody:
         content:
           application/json:
@@ -48102,7 +48644,14 @@ paths:
                   - success
                   - errors
         '429':
-          description: Monthly query quota exceeded.
+          description: Monthly query quota exceeded; Workers ai capacity temporarily exceeded
+          headers:
+            Retry-After:
+              description: Seconds to wait before retrying.
+              schema:
+                description: Seconds to wait before retrying.
+                type: string
+                example: '10'
           content:
             application/json:
               schema:
@@ -48111,15 +48660,69 @@ paths:
                   errors:
                     type: array
                     items:
-                      properties:
-                        code:
-                          type: number
-                        message:
-                          type: string
-                      required:
-                        - code
-                        - message
-                      type: object
+                      anyOf:
+                        - properties:
+                            code:
+                              type: number
+                              enum:
+                                - 7069
+                            message:
+                              type: string
+                          required:
+                            - code
+                            - message
+                          type: object
+                        - properties:
+                            code:
+                              type: number
+                              enum:
+                                - 7119
+                            message:
+                              type: string
+                          required:
+                            - code
+                            - message
+                          type: object
+                  success:
+                    type: boolean
+                    enum:
+                      - false
+                required:
+                  - success
+                  - errors
+        '502':
+          description: Ai gateway exception; Workers ai upstream error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      anyOf:
+                        - properties:
+                            code:
+                              type: number
+                              enum:
+                                - 7033
+                            message:
+                              type: string
+                          required:
+                            - code
+                            - message
+                          type: object
+                        - properties:
+                            code:
+                              type: number
+                              enum:
+                                - 7120
+                            message:
+                              type: string
+                          required:
+                            - code
+                            - message
+                          type: object
                   success:
                     type: boolean
                     enum:
@@ -48148,7 +48751,6 @@ paths:
         name:
           default: default
           description: Namespace to use for this operation.
-          flagName: namespace
         query:
           description: Text to search for.
           positional: true
@@ -48337,10 +48939,12 @@ paths:
                 cf_api_id:
                   type: string
                   example: a1b2c3d4e5f6
+                  x-fern-property-name: api-token-id
                 cf_api_key:
                   type: string
                   example: abc123
                   writeOnly: true
+                  x-fern-property-name: api-token
                   x-sensitive: true
                 legacy:
                   type: boolean
@@ -48456,10 +49060,8 @@ paths:
       x-forge-params:
         cf_api_id:
           description: Cloudflare API token ID.
-          flagName: api-token-id
         cf_api_key:
           description: Cloudflare API token value.
-          flagName: api-token
         legacy:
           description: Whether the credential uses the legacy API key format.
         name:
@@ -48484,6 +49086,7 @@ paths:
             type: string
             format: uuid
             example: 62af0db3-c410-40b2-9ee3-0e93f6dd1de0
+          x-fern-parameter-name: token-id
       responses:
         '200':
           description: Token deleted.
@@ -48605,7 +49208,6 @@ paths:
       x-forge-params:
         id:
           description: Stored credential record ID.
-          flagName: token-id
       x-forge-require-confirmation: This operation permanently deletes the stored credential.
     get:
       operationId: ai-search-fetch-tokens
@@ -48625,6 +49227,7 @@ paths:
             type: string
             format: uuid
             example: 62af0db3-c410-40b2-9ee3-0e93f6dd1de0
+          x-fern-parameter-name: token-id
       responses:
         '200':
           description: Token details.
@@ -48760,7 +49363,6 @@ paths:
       x-forge-params:
         id:
           description: Stored credential record ID.
-          flagName: token-id
     put:
       operationId: ai-search-update-tokens
       summary: Update a token
@@ -48779,6 +49381,7 @@ paths:
             type: string
             format: uuid
             example: 62af0db3-c410-40b2-9ee3-0e93f6dd1de0
+          x-fern-parameter-name: token-id
       requestBody:
         content:
           application/json:
@@ -48788,10 +49391,12 @@ paths:
                 cf_api_id:
                   type: string
                   example: a1b2c3d4e5f6
+                  x-fern-property-name: api-token-id
                 cf_api_key:
                   type: string
                   example: abc123
                   writeOnly: true
+                  x-fern-property-name: api-token
                   x-sensitive: true
                 legacy:
                   type: boolean
@@ -48933,13 +49538,10 @@ paths:
       x-forge-params:
         cf_api_id:
           description: Cloudflare API token ID.
-          flagName: api-token-id
         cf_api_key:
           description: Cloudflare API token value.
-          flagName: api-token
         id:
           description: Stored credential record ID.
-          flagName: token-id
         legacy:
           description: Whether the credential uses the legacy API key format.
         name:
