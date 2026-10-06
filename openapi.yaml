@@ -182795,8 +182795,8 @@ paths:
                   storageClassMigration: '#/components/schemas/r2_create_storage_class_migration_job_request'
                 propertyName: jobType
               oneOf:
-                - $ref: '#/components/schemas/r2_r2_create_prefix_delete_job_request'
-                - $ref: '#/components/schemas/r2_r2_create_storage_class_migration_job_request'
+                - $ref: '#/components/schemas/r2_create_prefix_delete_job_request'
+                - $ref: '#/components/schemas/r2_create_storage_class_migration_job_request'
       responses:
         '200':
           description: The created job.
@@ -183420,7 +183420,7 @@ paths:
                       messages:
                         $ref: '#/components/schemas/r2_messages'
                       result:
-                        $ref: '#/components/schemas/r2_r2_prefix_delete_job'
+                        $ref: '#/components/schemas/r2_prefix_delete_job'
                       success:
                         description: Whether the API call was successful.
                         type: boolean
@@ -465789,6 +465789,47 @@ components:
           x-auditable: true
       required:
         - allowed
+    r2_create_prefix_delete_job_request:
+      description: Request body that creates a prefix-delete job.
+      type: object
+      properties:
+        jobType:
+          type: string
+          enum:
+            - prefixDelete
+        prefix:
+          description: |
+            Prefix matched against object keys. A non-empty value must end in `/`.
+            An empty string empties the entire bucket.
+          type: string
+          example: path/to/
+      additionalProperties: false
+      required:
+        - jobType
+        - prefix
+      title: Prefix Delete Job
+    r2_create_storage_class_migration_job_request:
+      description: Request body that creates a storage-class migration job.
+      type: object
+      properties:
+        destinationStorageClass:
+          type: string
+          enum:
+            - Standard
+            - InfrequentAccess
+        jobType:
+          type: string
+          enum:
+            - storageClassMigration
+        sourceStorageClass:
+          type: string
+          enum:
+            - Standard
+            - InfrequentAccess
+      additionalProperties: false
+      required:
+        - jobType
+      title: Storage Class Migration Job
     r2_domain_name:
       description: Name of the custom domain.
       type: string
@@ -466449,6 +466490,57 @@ components:
         payloadSize:
           description: Amount of storage used by object data.
           type: number
+    r2_prefix_delete_job:
+      description: |
+        Descriptor of a prefix-delete job. An empty prefix indicates a job that empties the
+        whole bucket.
+      type: object
+      properties:
+        endTime:
+          description: |
+            When the job finished. Absent while the job is still `ENQUEUED` or `RUNNING`.
+          type: string
+          format: date-time
+        id:
+          description: Unique identifier used to poll the job.
+          type: string
+        jobType:
+          description: The job kind.
+          type: string
+          enum:
+            - prefixDelete
+        prefixDelete:
+          description: Details specific to the prefix-delete job.
+          type: object
+          properties:
+            deletedObjects:
+              description: Number of objects deleted by the job so far.
+              type: integer
+              example: 0
+            isBucketClear:
+              description: |
+                True when the job was created to clear the entire bucket. This field can be absent
+                on jobs created before Empty Bucket job tracking was introduced.
+              type: boolean
+            prefix:
+              description: The prefix matched against object keys. An empty string means the entire bucket.
+              type: string
+              example: path/to/
+          required:
+            - prefix
+            - deletedObjects
+        startTime:
+          description: When the job was created.
+          type: string
+          format: date-time
+        status:
+          $ref: '#/components/schemas/r2_r2_bucket_job_status'
+      required:
+        - id
+        - jobType
+        - status
+        - startTime
+        - prefixDelete
     r2_queue_identifier:
       description: ID of the Cloudflare Queue that receives notifications for matching R2 object events.
       type: string
@@ -466510,8 +466602,8 @@ components:
           storageClassMigration: '#/components/schemas/r2_storage_class_migration_job'
         propertyName: jobType
       oneOf:
-        - $ref: '#/components/schemas/r2_r2_prefix_delete_job'
-        - $ref: '#/components/schemas/r2_r2_storage_class_migration_job'
+        - $ref: '#/components/schemas/r2_prefix_delete_job'
+        - $ref: '#/components/schemas/r2_storage_class_migration_job'
     r2_r2_bucket_job_status:
       description: Lifecycle status of a bucket background job.
       type: string
@@ -466534,47 +466626,6 @@ components:
           type: string
       required:
         - jobs
-    r2_r2_create_prefix_delete_job_request:
-      description: Request body that creates a prefix-delete job.
-      type: object
-      properties:
-        jobType:
-          type: string
-          enum:
-            - prefixDelete
-        prefix:
-          description: |
-            Prefix matched against object keys. A non-empty value must end in `/`.
-            An empty string empties the entire bucket.
-          type: string
-          example: path/to/
-      additionalProperties: false
-      required:
-        - jobType
-        - prefix
-      title: Prefix Delete Job
-    r2_r2_create_storage_class_migration_job_request:
-      description: Request body that creates a storage-class migration job.
-      type: object
-      properties:
-        destinationStorageClass:
-          type: string
-          enum:
-            - Standard
-            - InfrequentAccess
-        jobType:
-          type: string
-          enum:
-            - storageClassMigration
-        sourceStorageClass:
-          type: string
-          enum:
-            - Standard
-            - InfrequentAccess
-      additionalProperties: false
-      required:
-        - jobType
-      title: Storage Class Migration Job
     r2_r2_delete_object_result:
       description: Result of a successful object deletion.
       type: object
@@ -466677,57 +466728,6 @@ components:
           description: The MIME type of the object.
           type: string
           example: image/jpeg
-    r2_r2_prefix_delete_job:
-      description: |
-        Descriptor of a prefix-delete job. An empty prefix indicates a job that empties the
-        whole bucket.
-      type: object
-      properties:
-        endTime:
-          description: |
-            When the job finished. Absent while the job is still `ENQUEUED` or `RUNNING`.
-          type: string
-          format: date-time
-        id:
-          description: Unique identifier used to poll the job.
-          type: string
-        jobType:
-          description: The job kind.
-          type: string
-          enum:
-            - prefixDelete
-        prefixDelete:
-          description: Details specific to the prefix-delete job.
-          type: object
-          properties:
-            deletedObjects:
-              description: Number of objects deleted by the job so far.
-              type: integer
-              example: 0
-            isBucketClear:
-              description: |
-                True when the job was created to clear the entire bucket. This field can be absent
-                on jobs created before Empty Bucket job tracking was introduced.
-              type: boolean
-            prefix:
-              description: The prefix matched against object keys. An empty string means the entire bucket.
-              type: string
-              example: path/to/
-          required:
-            - prefix
-            - deletedObjects
-        startTime:
-          description: When the job was created.
-          type: string
-          format: date-time
-        status:
-          $ref: '#/components/schemas/r2_r2_bucket_job_status'
-      required:
-        - id
-        - jobType
-        - status
-        - startTime
-        - prefixDelete
     r2_r2_put_object_result:
       description: Result of a successful object upload.
       type: object
@@ -466755,84 +466755,6 @@ components:
           description: The version UUID of the uploaded object.
           type: string
           example: 3fd5b4a8-1234-5678-abcd-ef0123456789
-    r2_r2_storage_class_migration_job:
-      description: Descriptor of a bucket-wide storage-class migration job.
-      type: object
-      properties:
-        endTime:
-          description: |
-            When the job finished. Absent while the job is still `ENQUEUED` or `RUNNING`.
-          type: string
-          format: date-time
-        id:
-          description: Unique identifier used to poll the job.
-          type: string
-        jobType:
-          description: The job kind.
-          type: string
-          enum:
-            - storageClassMigration
-        startTime:
-          description: When the job was created.
-          type: string
-          format: date-time
-        status:
-          $ref: '#/components/schemas/r2_r2_bucket_job_status'
-        storageClassMigration:
-          type: object
-          properties:
-            destinationStorageClass:
-              description: |
-                The storage class objects are migrated to. The source and destination storage
-                classes always differ.
-              type: string
-              enum:
-                - Standard
-                - InfrequentAccess
-            failedBytes:
-              description: Payload bytes belonging to failed object versions.
-              type: integer
-              minimum: 0
-            failedObjects:
-              description: Number of object versions that failed migration.
-              type: integer
-              minimum: 0
-            migratedBytes:
-              description: Object payload bytes migrated successfully. Present for Metadata Worker jobs.
-              type: integer
-              minimum: 0
-            migratedMetadataBytes:
-              description: Object metadata bytes migrated successfully. Present for Metadata Worker jobs.
-              type: integer
-              minimum: 0
-            migratedObjects:
-              description: Number of object versions migrated successfully.
-              type: integer
-              minimum: 0
-            skippedBytes:
-              description: Payload bytes belonging to skipped object versions.
-              type: integer
-              minimum: 0
-            skippedObjects:
-              description: Number of object versions skipped.
-              type: integer
-              minimum: 0
-            sourceStorageClass:
-              description: The storage class objects are migrated from.
-              type: string
-              enum:
-                - Standard
-                - InfrequentAccess
-          required:
-            - sourceStorageClass
-            - destinationStorageClass
-            - migratedObjects
-      required:
-        - id
-        - jobType
-        - status
-        - startTime
-        - storageClassMigration
     r2_remove_custom_domain_response:
       type: object
       properties:
@@ -466952,6 +466874,84 @@ components:
         - Standard
         - InfrequentAccess
       x-auditable: true
+    r2_storage_class_migration_job:
+      description: Descriptor of a bucket-wide storage-class migration job.
+      type: object
+      properties:
+        endTime:
+          description: |
+            When the job finished. Absent while the job is still `ENQUEUED` or `RUNNING`.
+          type: string
+          format: date-time
+        id:
+          description: Unique identifier used to poll the job.
+          type: string
+        jobType:
+          description: The job kind.
+          type: string
+          enum:
+            - storageClassMigration
+        startTime:
+          description: When the job was created.
+          type: string
+          format: date-time
+        status:
+          $ref: '#/components/schemas/r2_r2_bucket_job_status'
+        storageClassMigration:
+          type: object
+          properties:
+            destinationStorageClass:
+              description: |
+                The storage class objects are migrated to. The source and destination storage
+                classes always differ.
+              type: string
+              enum:
+                - Standard
+                - InfrequentAccess
+            failedBytes:
+              description: Payload bytes belonging to failed object versions.
+              type: integer
+              minimum: 0
+            failedObjects:
+              description: Number of object versions that failed migration.
+              type: integer
+              minimum: 0
+            migratedBytes:
+              description: Object payload bytes migrated successfully. Present for Metadata Worker jobs.
+              type: integer
+              minimum: 0
+            migratedMetadataBytes:
+              description: Object metadata bytes migrated successfully. Present for Metadata Worker jobs.
+              type: integer
+              minimum: 0
+            migratedObjects:
+              description: Number of object versions migrated successfully.
+              type: integer
+              minimum: 0
+            skippedBytes:
+              description: Payload bytes belonging to skipped object versions.
+              type: integer
+              minimum: 0
+            skippedObjects:
+              description: Number of object versions skipped.
+              type: integer
+              minimum: 0
+            sourceStorageClass:
+              description: The storage class objects are migrated from.
+              type: string
+              enum:
+                - Standard
+                - InfrequentAccess
+          required:
+            - sourceStorageClass
+            - destinationStorageClass
+            - migratedObjects
+      required:
+        - id
+        - jobType
+        - status
+        - startTime
+        - storageClassMigration
     r2_temp_access_creds_request:
       type: object
       properties:
