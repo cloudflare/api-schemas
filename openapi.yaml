@@ -119518,6 +119518,7 @@ paths:
                             description: Total results available without any search parameters
                             type: number
                             example: 2000
+                    type: object
         4XX:
           description: List D1 databases response failure
           content:
@@ -119616,6 +119617,7 @@ paths:
                   - properties:
                       result:
                         $ref: '#/components/schemas/d1_database-details-response'
+                    type: object
         4XX:
           description: Database details response failure
           content:
@@ -119705,6 +119707,7 @@ paths:
                         enum:
                           - null
                         nullable: true
+                    type: object
         4XX:
           description: Delete D1 database response failure
           content:
@@ -119815,6 +119818,7 @@ paths:
                   - properties:
                       result:
                         $ref: '#/components/schemas/d1_database-details-response'
+                    type: object
         4XX:
           description: Database details response failure
           content:
@@ -119907,6 +119911,7 @@ paths:
                   - properties:
                       result:
                         $ref: '#/components/schemas/d1_database-details-response'
+                    type: object
         4XX:
           description: Update D1 database response failure
           content:
@@ -119965,7 +119970,6 @@ paths:
           required:
             default: true
           type: boolean
-      x-forge-hidden: true
     put:
       operationId: d1-update-database
       summary: Update D1 Database
@@ -119998,6 +120002,7 @@ paths:
                   - properties:
                       result:
                         $ref: '#/components/schemas/d1_database-details-response'
+                    type: object
         4XX:
           description: Update D1 database response failure
           content:
@@ -120163,6 +120168,7 @@ paths:
                             enum:
                               - export
                             x-auditable: true
+                    type: object
         '202':
           description: Polled successfully, task is currently running
           content:
@@ -120197,6 +120203,7 @@ paths:
                             enum:
                               - export
                             x-auditable: true
+                    type: object
         4XX:
           description: Poll failed (API error)
           content:
@@ -120393,6 +120400,7 @@ paths:
                           upload_url:
                             description: The R2 presigned URL to use for uploading. Only returned when for the 'init' action.
                             type: string
+                    type: object
         '202':
           description: Polled successfully, task is currently running
           content:
@@ -120427,6 +120435,7 @@ paths:
                             enum:
                               - import
                             x-auditable: true
+                    type: object
         4XX:
           description: Poll failed (API error)
           content:
@@ -120520,6 +120529,7 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/d1_query-result-response'
+                    type: object
         4XX:
           description: Query response failure
           content:
@@ -120615,6 +120625,7 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/d1_raw-result-response'
+                    type: object
         4XX:
           description: Query response failure
           content:
@@ -120712,6 +120723,7 @@ paths:
                         properties:
                           bookmark:
                             $ref: '#/components/schemas/d1_time-travel-bookmark'
+                    type: object
         4XX:
           description: Failed to retrieve bookmark
           content:
@@ -120810,6 +120822,7 @@ paths:
                   - properties:
                       result:
                         $ref: '#/components/schemas/d1_time-travel-restore-response'
+                    type: object
         4XX:
           description: Restore operation failed
           content:
@@ -418058,8 +418071,6 @@ components:
           $ref: '#/components/schemas/d1_messages'
         messages:
           $ref: '#/components/schemas/d1_messages'
-        result:
-          type: object
         success:
           description: Whether the API call was successful
           type: boolean
@@ -418402,6 +418413,7 @@ components:
           allOf:
             - $ref: '#/components/schemas/d1_time-travel-bookmark'
             - description: The new bookmark representing the state of the database after the restore operation.
+              type: string
         message:
           description: A message describing the result of the restore operation.
           type: string
@@ -418411,6 +418423,7 @@ components:
           allOf:
             - $ref: '#/components/schemas/d1_time-travel-bookmark'
             - description: The bookmark representing the state of the database before the restore operation. Can be used to undo the restore if needed.
+              type: string
     d1_time-travel-timestamp:
       description: An ISO 8601 timestamp used for time travel operations. The database will be restored to the nearest available bookmark at or before this timestamp.
       type: string
