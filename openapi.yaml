@@ -171039,8 +171039,10 @@ paths:
       description: |-
         Move an account into a destination organization, either assigning a standalone account
         to an organization or moving it between organizations in the same hierarchy. Availability
-        depends on the organization's capabilities. (Currently in Public Beta - see
-        https://developers.cloudflare.com/fundamentals/organizations/)
+        depends on the organization's capabilities.
+
+        Authentication: A Global API key is required. User API Tokens do not include the required
+        `com.cloudflare.api.account.move` permission.
       parameters:
         - name: account_id
           in: path
@@ -171101,7 +171103,7 @@ paths:
       tags:
         - Accounts
       x-api-token-group: null
-      x-fern-availability: beta
+      x-fern-availability: generally-available
       x-fern-sdk-group-name: accounts
       x-fern-sdk-method-name: move
   /accounts/{account_id}/mtls_certificates:
@@ -172809,6 +172811,9 @@ paths:
         The returned list will be in order from "root" to "leaf", where the "leaf"
         will be the organization that _immediately_ contains the specified
         account.
+
+        Authentication: Use a Global API key, or a user-owned API Token scoped to the account with
+        the `Account Settings Read` permission, which grants `com.cloudflare.api.account.read`.
       parameters:
         - name: account_id
           in: path
@@ -172852,6 +172857,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/organizations-api_V4ErrorResponse'
       security:
+        - api_token: []
         - api_email: []
           api_key: []
       tags:
@@ -178636,7 +178642,14 @@ paths:
     get:
       operationId: Accounts_getAccountProfile
       summary: Get account profile
-      description: Retrieves the business profile (name, email, phone, address, and external metadata) associated with this account's parent organization customer record. Profiles can be shared across accounts and organizations. Only available to members of an organization that contains the account.
+      description: |-
+        Retrieves the business profile (name, email, phone, address, and external metadata)
+        associated with this account's parent organization customer record. Profiles can be shared
+        across accounts and organizations. Only available to members of an organization that
+        contains the account.
+
+        Authentication: Use a Global API key, or a user-owned API Token scoped to the account with
+        the `Account Settings Read` permission, which grants `com.cloudflare.api.account.read`.
       parameters:
         - name: account_id
           in: path
@@ -178679,6 +178692,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/organizations-api_V4ErrorResponse'
       security:
+        - api_token: []
         - api_email: []
           api_key: []
       tags:
@@ -178719,7 +178733,15 @@ paths:
     put:
       operationId: Accounts_modifyAccountProfile
       summary: Update account profile
-      description: Updates the business profile (name, email, phone, address, and external metadata) associated with this account's parent organization customer record. Changes apply to every account and organization sharing that profile. Omitted or empty fields are left unchanged. Only available to members of an organization that contains the account. Requires Account Settings Write permission.
+      description: |-
+        Updates the business profile (name, email, phone, address, and external metadata) associated
+        with this account's parent organization customer record. Changes apply to every account and
+        organization sharing that profile. Omitted or empty fields are left unchanged. Only
+        available to members of an organization that contains the account.
+
+        Authentication: Use a Global API key, or a user-owned API Token scoped to the account with
+        the `Account Settings Write` permission, which grants
+        `com.cloudflare.api.account.update`.
       parameters:
         - name: account_id
           in: path
@@ -178743,6 +178765,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/organizations-api_V4ErrorResponse'
       security:
+        - api_token: []
         - api_email: []
           api_key: []
       tags:
@@ -243194,7 +243217,11 @@ paths:
     get:
       operationId: Organization_listOrganizations
       summary: List organizations the user has access to
-      description: Retrieve a list of organizations a particular user has access to. (Currently in Public Beta - see https://developers.cloudflare.com/fundamentals/organizations/)
+      description: |-
+        Retrieve a list of organizations a particular user has access to.
+
+        Authentication: Use a Global API key, or a User API Token with the `User Details Read` or
+        `User Details Write` permission.
       parameters:
         - $ref: '#/components/parameters/organizations-api_OrganizationListFiltersId'
         - $ref: '#/components/parameters/organizations-api_OrganizationListFiltersName'
@@ -243255,14 +243282,19 @@ paths:
       x-api-token-group:
         - User Details Write
         - User Details Read
-      x-fern-availability: beta
+      x-fern-availability: generally-available
       x-fern-sdk-group-name: organization
       x-fern-sdk-method-name: list
       x-forge-hidden: true
     post:
       operationId: Organizations_createUserOrganization
       summary: Create organization
-      description: Create a new organization for a user. Sub-organization creation availability depends on the organization's capabilities. (Currently in Public Beta - see https://developers.cloudflare.com/fundamentals/organizations/)
+      description: |-
+        Create a new organization for a user. Sub-organization creation availability depends on
+        the organization's capabilities.
+
+        Authentication: Use a Global API key, or a User API Token with the `User Details Write`
+        permission.
       requestBody:
         required: true
         content:
@@ -243304,13 +243336,14 @@ paths:
               schema:
                 $ref: '#/components/schemas/organizations-api_V4ErrorResponse'
       security:
+        - api_token: []
         - api_email: []
           api_key: []
       tags:
         - Organizations
       x-api-token-group:
         - User Details Write
-      x-fern-availability: beta
+      x-fern-availability: generally-available
       x-fern-sdk-group-name: organization
       x-fern-sdk-method-name: create
       x-forge-hidden: true
@@ -243321,9 +243354,13 @@ paths:
       description: |-
         Delete an organization. The organization MUST be empty before deleting.
         It must not contain any sub-organizations, accounts, members or users. Sub-organization
-        deletion availability depends on the organization's capabilities. (Currently in Public Beta - see https://developers.cloudflare.com/fundamentals/organizations/)
+        deletion availability depends on the organization's capabilities.
 
         **Access Control:** Restricted to enterprise organizations.
+
+        Authentication: A Global API key for a user with
+        `com.cloudflare.api.tenant.unit.update` is required. User API Tokens are not currently
+        supported.
       parameters:
         - name: organization_id
           in: path
@@ -243370,7 +243407,7 @@ paths:
           api_key: []
       tags:
         - Organizations
-      x-fern-availability: beta
+      x-fern-availability: generally-available
       x-fern-sdk-group-name: organization
       x-fern-sdk-method-name: delete
       x-forge-hidden: true
@@ -243378,7 +243415,12 @@ paths:
     get:
       operationId: Organizations_retrieve
       summary: Get organization
-      description: Retrieve the details of a certain organization. (Currently in Public Beta - see https://developers.cloudflare.com/fundamentals/organizations/)
+      description: |-
+        Retrieve the details of a certain organization.
+
+        Authentication: A Global API key for a user with
+        `com.cloudflare.api.tenant.unit.read` is required. User API Tokens are not currently
+        supported and return HTTP `403` with error code `10000`.
       parameters:
         - name: organization_id
           in: path
@@ -243425,14 +243467,19 @@ paths:
           api_key: []
       tags:
         - Organizations
-      x-fern-availability: beta
+      x-fern-availability: generally-available
       x-fern-sdk-group-name: organization
       x-fern-sdk-method-name: get
       x-forge-hidden: true
     put:
       operationId: Organizations_modify
       summary: Update organization
-      description: Update an organization's name. (Currently in Public Beta - see https://developers.cloudflare.com/fundamentals/organizations/)
+      description: |-
+        Update an organization's name.
+
+        Authentication: A Global API key for a user with
+        `com.cloudflare.api.tenant.unit.update` is required. User API Tokens are not currently
+        supported.
       parameters:
         - name: organization_id
           in: path
@@ -243488,7 +243535,7 @@ paths:
           api_key: []
       tags:
         - Organizations
-      x-fern-availability: beta
+      x-fern-availability: generally-available
       x-fern-sdk-group-name: organization
       x-fern-sdk-method-name: update
       x-forge-hidden: true
@@ -243498,8 +243545,11 @@ paths:
       summary: List organization accounts
       description: |-
         Retrieve the accounts immediately attached to a specific organization. Accounts
-        attached to sub-organizations are not included. (Currently in Public Beta - see
-        https://developers.cloudflare.com/fundamentals/organizations/)
+        attached to sub-organizations are not included.
+
+        Authentication: A Global API key for a user with
+        `com.cloudflare.api.tenant.unit.read` is required. User API Tokens are not currently
+        supported.
       parameters:
         - name: organization_id
           in: path
@@ -243660,7 +243710,7 @@ paths:
           api_key: []
       tags:
         - Organizations
-      x-fern-availability: beta
+      x-fern-availability: generally-available
       x-fern-sdk-group-name: organization.account
       x-fern-sdk-method-name: list
       x-forge-hidden: true
@@ -243723,7 +243773,12 @@ paths:
     put:
       operationId: Organizations_handleOrganizationInvite
       summary: Handle organization invite
-      description: Accept or reject an invitation to a specific organization. (Currently in Public Beta - see https://developers.cloudflare.com/fundamentals/organizations/)
+      description: |-
+        Accept or reject an invitation to a specific organization.
+
+        Authentication: A Global API key for the invited user is required. User API Tokens are not
+        currently supported. No additional permission is required; the invitation must belong to
+        the authenticated user.
       parameters:
         - name: organization_id
           in: path
@@ -243783,7 +243838,7 @@ paths:
           api_key: []
       tags:
         - Organizations
-      x-fern-availability: beta
+      x-fern-availability: generally-available
       x-fern-sdk-group-name: organization.invite
       x-fern-sdk-method-name: update
       x-forge-hidden: true
@@ -244327,7 +244382,12 @@ paths:
     get:
       operationId: Members_list
       summary: List organization members
-      description: List memberships for an Organization. (Currently in Public Beta - see https://developers.cloudflare.com/fundamentals/organizations/)
+      description: |-
+        List memberships for an Organization.
+
+        Authentication: A Global API key for a user with
+        `com.cloudflare.api.tenant.unit.member.list` is required. User API Tokens are not currently
+        supported.
       parameters:
         - name: organization_id
           in: path
@@ -244416,14 +244476,19 @@ paths:
           api_key: []
       tags:
         - OrganizationMembers
-      x-fern-availability: beta
+      x-fern-availability: generally-available
       x-fern-sdk-group-name: organization.member
       x-fern-sdk-method-name: list
       x-forge-hidden: true
     post:
       operationId: Members_create
       summary: Create organization member
-      description: Create a membership that grants access to a specific Organization. (Currently in Public Beta - see https://developers.cloudflare.com/fundamentals/organizations/)
+      description: |-
+        Create a membership that grants access to a specific Organization.
+
+        Authentication: A Global API key for a user with
+        `com.cloudflare.api.tenant.unit.member.create` is required. User API Tokens are not
+        currently supported.
       parameters:
         - name: organization_id
           in: path
@@ -244475,7 +244540,7 @@ paths:
           api_key: []
       tags:
         - OrganizationMembers
-      x-fern-availability: beta
+      x-fern-availability: generally-available
       x-fern-sdk-group-name: organization.member
       x-fern-sdk-method-name: create
       x-forge-hidden: true
@@ -244483,7 +244548,12 @@ paths:
     delete:
       operationId: Members_delete
       summary: Delete organization member
-      description: Delete a membership to a particular Organization. (Currently in Public Beta - see https://developers.cloudflare.com/fundamentals/organizations/)
+      description: |-
+        Delete a membership to a particular Organization.
+
+        Authentication: A Global API key for a user with
+        `com.cloudflare.api.tenant.unit.member.delete` is required. User API Tokens are not
+        currently supported.
       parameters:
         - name: organization_id
           in: path
@@ -244509,7 +244579,7 @@ paths:
           api_key: []
       tags:
         - OrganizationMembers
-      x-fern-availability: beta
+      x-fern-availability: generally-available
       x-fern-sdk-group-name: organization.member
       x-fern-sdk-method-name: delete
       x-forge-hidden: true
@@ -244517,7 +244587,12 @@ paths:
     get:
       operationId: Members_retrieve
       summary: Get organization member
-      description: Retrieve a single membership from an Organization. (Currently in Public Beta - see https://developers.cloudflare.com/fundamentals/organizations/)
+      description: |-
+        Retrieve a single membership from an Organization.
+
+        Authentication: A Global API key for a user with
+        `com.cloudflare.api.tenant.unit.member.read` is required. User API Tokens are not currently
+        supported.
       parameters:
         - name: organization_id
           in: path
@@ -244568,7 +244643,7 @@ paths:
           api_key: []
       tags:
         - OrganizationMembers
-      x-fern-availability: beta
+      x-fern-availability: generally-available
       x-fern-sdk-group-name: organization.member
       x-fern-sdk-method-name: get
       x-forge-hidden: true
@@ -244576,7 +244651,12 @@ paths:
     post:
       operationId: Members_batchCreate
       summary: Batch create organization members
-      description: Batch create multiple memberships that grant access to a specific Organization.
+      description: |-
+        Batch create multiple memberships that grant access to a specific Organization.
+
+        Authentication: A Global API key for a user with
+        `com.cloudflare.api.tenant.unit.member.create` is required. User API Tokens are not
+        currently supported.
       parameters:
         - name: organization_id
           in: path
@@ -244630,7 +244710,7 @@ paths:
           api_key: []
       tags:
         - OrganizationMembers
-      x-fern-availability: beta
+      x-fern-availability: generally-available
       x-fern-sdk-group-name: organization.member.batch
       x-fern-sdk-method-name: create
       x-forge-hidden: true
@@ -244638,7 +244718,12 @@ paths:
     get:
       operationId: Organizations_getProfile
       summary: Get organization profile
-      description: Get an organizations profile if it exists. (Currently in Public Beta - see https://developers.cloudflare.com/fundamentals/organizations/)
+      description: |-
+        Get an organizations profile if it exists.
+
+        Authentication: A Global API key for a user with
+        `com.cloudflare.api.tenant.unit.read` is required. User API Tokens are not currently
+        supported.
       parameters:
         - name: organization_id
           in: path
@@ -244664,14 +244749,19 @@ paths:
           api_key: []
       tags:
         - Organizations
-      x-fern-availability: beta
+      x-fern-availability: generally-available
       x-fern-sdk-group-name: organization.profile
       x-fern-sdk-method-name: get
       x-forge-hidden: true
     put:
       operationId: Organizations_modifyProfile
       summary: Modify organization profile.
-      description: Modify organization profile. (Currently in Public Beta - see https://developers.cloudflare.com/fundamentals/organizations/)
+      description: |-
+        Modify organization profile.
+
+        Authentication: A Global API key for a user with
+        `com.cloudflare.api.tenant.unit.update` is required. User API Tokens are not currently
+        supported.
       parameters:
         - name: organization_id
           in: path
@@ -244698,7 +244788,7 @@ paths:
           api_key: []
       tags:
         - Organizations
-      x-fern-availability: beta
+      x-fern-availability: generally-available
       x-fern-sdk-group-name: organization.profile
       x-fern-sdk-method-name: update
       x-forge-hidden: true
