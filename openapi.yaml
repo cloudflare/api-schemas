@@ -242274,7 +242274,14 @@ paths:
         - name: include_custom_attributes
           in: query
           description: |
-            Include a capped set of custom attribute names and types observed during the preceding seven days. Requires a nonempty dataset_name.
+            Include a capped set of custom attribute names and types observed during the preceding seven days, as `custom_attributes`. Requires a nonempty dataset_name. Deprecated in favor of `include_attributes`.
+          schema:
+            type: boolean
+            default: false
+        - name: include_attributes
+          in: query
+          description: |
+            Include a capped set of attribute names and types observed during the preceding seven days, as `attributes`. Requires a nonempty dataset_name. Replaces `include_custom_attributes`, which is deprecated.
           schema:
             type: boolean
             default: false
@@ -242320,7 +242327,7 @@ paths:
                 type: string
         '422':
           description: |
-            The request could not be processed. This is returned when the account tag is invalid or unknown, when `include_custom_attributes` is set without a `dataset_name`, when a Workers Analytics Engine `dataset_name` is supplied alongside `include_wae=false` or contains characters a dataset name cannot contain, or when the supplied criteria match no dataset that this deployment can describe — either because no such dataset exists or because it is not describable here. The message names the criteria that matched nothing.
+            The request could not be processed. This is returned when the account tag is invalid or unknown, when `include_custom_attributes` or `include_attributes` is set without a `dataset_name`, when a Workers Analytics Engine `dataset_name` is supplied alongside `include_wae=false` or contains characters a dataset name cannot contain, or when the supplied criteria match no dataset that this deployment can describe — either because no such dataset exists or because it is not describable here. The message names the criteria that matched nothing.
           content:
             text/plain:
               example: 'Input was invalid: There are no introspectable datasets matching the provided criteria (dataset_name=`events.nonexistent`)'
@@ -242507,7 +242514,7 @@ paths:
       operationId: sql-api-introspection
       summary: List available analytics datasets
       description: |
-        Returns the analytics dataset catalogue. By default, the response contains dataset names, titles, categories, descriptions, kinds, and hidden flags. Set `include_columns` to include each dataset's column names, descriptions, data types, and hidden flags. The caller must have Account Analytics Read permission on the account identified by `account_tag`. Dataset names, descriptions, and columns are the same for every authorized account. When `include_custom_attributes` is set, the response also includes custom attribute names and types discovered from that account's own data, which legitimately differs per caller. `hidden` marks catalogue entries a client should de-emphasise. It has no effect on access: hidden datasets and columns are returned here and remain fully queryable.
+        Returns the analytics dataset catalogue. By default, the response contains dataset names, titles, categories, descriptions, kinds, and hidden flags. Set `include_columns` to include each dataset's column names, descriptions, data types, and hidden flags. The caller must have Account Analytics Read permission on the account identified by `account_tag`. Dataset names, descriptions, and columns are the same for every authorized account. When `include_custom_attributes` or `include_attributes` is set, the response also includes attribute names and types discovered from that account's own data, which legitimately differs per caller. `attributes` is a replacement for `custom_attributes` that will eventually be removed; until then, set either flag independently to receive the corresponding field. `hidden` marks catalogue entries a client should de-emphasise. It has no effect on access: hidden datasets and columns are returned here and remain fully queryable.
 
         The catalogue lists the datasets this deployment is able to describe, which is not a fixed list. Some datasets are described by the service that owns them and are listed only where that service is available, so the same account may see a different catalogue in different environments, and datasets may appear or disappear without a change to this API. Clients should query the catalogue rather than hard-coding it, and should not treat a dataset's absence as proof that it does not exist.
 
@@ -242532,7 +242539,14 @@ paths:
         - name: include_custom_attributes
           in: query
           description: |
-            Include a capped set of custom attribute names and types observed during the preceding seven days. Requires a nonempty dataset_name.
+            Include a capped set of custom attribute names and types observed during the preceding seven days, as `custom_attributes`. Requires a nonempty dataset_name. Deprecated in favor of `include_attributes`.
+          schema:
+            type: boolean
+            default: false
+        - name: include_attributes
+          in: query
+          description: |
+            Include a capped set of attribute names and types observed during the preceding seven days, as `attributes`. Requires a nonempty dataset_name. Replaces `include_custom_attributes`, which is deprecated.
           schema:
             type: boolean
             default: false
@@ -242578,7 +242592,7 @@ paths:
                 type: string
         '422':
           description: |
-            The request could not be processed. This is returned when the account tag is invalid or unknown, when `include_custom_attributes` is set without a `dataset_name`, when a Workers Analytics Engine `dataset_name` is supplied alongside `include_wae=false` or contains characters a dataset name cannot contain, or when the supplied criteria match no dataset that this deployment can describe — either because no such dataset exists or because it is not describable here. The message names the criteria that matched nothing.
+            The request could not be processed. This is returned when the account tag is invalid or unknown, when `include_custom_attributes` or `include_attributes` is set without a `dataset_name`, when a Workers Analytics Engine `dataset_name` is supplied alongside `include_wae=false` or contains characters a dataset name cannot contain, or when the supplied criteria match no dataset that this deployment can describe — either because no such dataset exists or because it is not describable here. The message names the criteria that matched nothing.
           content:
             text/plain:
               example: 'Input was invalid: There are no introspectable datasets matching the provided criteria (dataset_name=`events.nonexistent`)'
@@ -402478,6 +402492,20 @@ components:
       required:
         - code
         - message
+    analytics-sql_Attribute:
+      type: object
+      properties:
+        data_type:
+          description: ClickHouse type of the attribute value.
+          type: string
+          example: String
+        name:
+          description: Attribute name.
+          type: string
+      additionalProperties: false
+      required:
+        - name
+        - data_type
     analytics-sql_ClickHouseJsonQueryResponse:
       type: object
       properties:
@@ -402599,6 +402627,11 @@ components:
     analytics-sql_IntrospectionDataset:
       type: object
       properties:
+        attributes:
+          description: Present when `include_attributes` is true and the dataset supports attributes. Replaces `custom_attributes`, which is deprecated; while both exist, the two fields carry identical data.
+          type: array
+          items:
+            $ref: '#/components/schemas/analytics-sql_Attribute'
         category:
           description: Human-readable dataset category from the catalogue metadata.
           type: string
@@ -402609,7 +402642,7 @@ components:
           items:
             $ref: '#/components/schemas/analytics-sql_IntrospectionColumn'
         custom_attributes:
-          description: Present when `include_custom_attributes` is true and the dataset supports custom attributes.
+          description: Present when `include_custom_attributes` is true and the dataset supports custom attributes. Deprecated in favor of `attributes`.
           type: array
           items:
             $ref: '#/components/schemas/analytics-sql_CustomAttribute'
