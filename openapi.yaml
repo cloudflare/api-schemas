@@ -459260,7 +459260,7 @@ components:
             type: object
             x-stainless-empty-object: true
         build_image_major_version:
-          description: The major version of the build image to use for Pages Functions.
+          description: The major version of the build image to use for Pages Functions. Version 1 is retired and its projects are moved to version 3. Once a project's builds have been moved, this is the version the builds run on and `build_image_auto_upgrade` is set on the project.
           type: integer
           example: 3
           x-auditable: true
@@ -459556,7 +459556,7 @@ components:
             type: object
             x-stainless-empty-object: true
         build_image_major_version:
-          description: The major version of the build image to use for Pages Functions.
+          description: The major version of the build image to use for Pages Functions. Version 1 is retired and its projects are moved to version 3. Once a project's builds have been moved, a request that sets version 1 is rejected.
           type: integer
           example: 3
           default: 3
@@ -460163,6 +460163,26 @@ components:
       properties:
         build_config:
           $ref: '#/components/schemas/pages_build_config'
+        build_image_auto_upgrade:
+          description: Present when the project is set to a retired build image major version and its builds have been moved to a newer one. `build_image_major_version` in `deployment_configs` then reports the version the builds run on.
+          type: object
+          properties:
+            from_version:
+              description: The retired build image major version the project is set to.
+              type: integer
+              example: 1
+              readOnly: true
+              x-auditable: true
+            to_version:
+              description: The build image major version the project's builds run on.
+              type: integer
+              example: 3
+              readOnly: true
+              x-auditable: true
+          readOnly: true
+          required:
+            - from_version
+            - to_version
         canonical_deployment:
           allOf:
             - $ref: '#/components/schemas/pages_deployment'
