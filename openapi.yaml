@@ -230364,7 +230364,7 @@ paths:
     get:
       operationId: usage.get
       summary: Get event count
-      description: Event counts broken down by dataset and service, bucketed by day, for up to 90 days. The top-level events field is the sum of all breakdown counts.
+      description: Event counts and sizes broken down by dataset and service, bucketed by day, for up to 90 days. The top-level events field is the sum of all breakdown counts.
       parameters:
         - name: from
           in: query
@@ -230414,7 +230414,7 @@ paths:
                     type: object
                     properties:
                       breakdown:
-                        description: Event counts grouped by dataset and service, bucketed by day.
+                        description: Event counts and sizes grouped by dataset and service, bucketed by day.
                         type: array
                         items:
                           properties:
@@ -230427,6 +230427,9 @@ paths:
                             dataset:
                               description: Dataset name (e.g. 'workers', 'queues').
                               type: string
+                            eventSize:
+                              description: ABR-adjusted total event size in bytes for this bucket.
+                              type: number
                             service:
                               description: Worker or service name that produced the events.
                               type: string
@@ -230435,6 +230438,7 @@ paths:
                             - dataset
                             - service
                             - count
+                            - eventSize
                           type: object
                       events:
                         description: Total ABR-adjusted event count for the period — sum of all breakdown bins.
@@ -498646,6 +498650,10 @@ components:
             errorTemplate:
               description: Templatized version of the error message used for grouping similar errors.
               type: string
+            eventSize:
+              description: Size of the stored telemetry event in bytes.
+              type: integer
+              minimum: 0
             fingerprint:
               description: Content-based fingerprint used to group similar events.
               type: string
