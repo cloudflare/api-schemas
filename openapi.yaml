@@ -81075,7 +81075,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: turnstile.widgets
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
     parameters:
       - name: account_id
         in: path
@@ -81154,7 +81153,9 @@ paths:
                 ephemeral_id:
                   $ref: '#/components/schemas/turnstile_ephemeral_id'
                 mode:
-                  $ref: '#/components/schemas/turnstile_widget_mode'
+                  allOf:
+                    - $ref: '#/components/schemas/turnstile_widget_mode'
+                  x-fern-property-name: widget-mode
                 name:
                   $ref: '#/components/schemas/turnstile_name'
                 offlabel:
@@ -81200,10 +81201,9 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: turnstile.widgets
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
       x-forge-params:
         mode:
-          flagName: widget-mode
+          description: Widget mode
   /accounts/{account_id}/challenges/widgets/{sitekey}:
     delete:
       operationId: accounts-turnstile-widget-delete
@@ -81240,7 +81240,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: turnstile.widgets
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
     get:
       operationId: accounts-turnstile-widget-get
       summary: Turnstile Widget Details
@@ -81278,7 +81277,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: turnstile.widgets
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
     parameters:
       - name: account_id
         in: path
@@ -81310,7 +81308,9 @@ paths:
                 ephemeral_id:
                   $ref: '#/components/schemas/turnstile_ephemeral_id'
                 mode:
-                  $ref: '#/components/schemas/turnstile_widget_mode'
+                  allOf:
+                    - $ref: '#/components/schemas/turnstile_widget_mode'
+                  x-fern-property-name: widget-mode
                 name:
                   $ref: '#/components/schemas/turnstile_name'
                 offlabel:
@@ -81352,10 +81352,9 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: turnstile.widgets
       x-fern-sdk-method-name: update
-      x-forge-hidden: true
       x-forge-params:
         mode:
-          flagName: widget-mode
+          description: Widget mode
   /accounts/{account_id}/challenges/widgets/{sitekey}/rotate_secret:
     parameters:
       - name: account_id
@@ -81416,7 +81415,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: turnstile.widgets
       x-fern-sdk-method-name: rotate-secret
-      x-forge-hidden: true
   /accounts/{account_id}/client-secret:
     post:
       operationId: account-billing-create-setup-intent
