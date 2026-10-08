@@ -11277,7 +11277,7 @@ paths:
                 memberships:
                   $ref: '#/components/schemas/addressing_membership_requests'
       responses:
-        '200':
+        '201':
           description: Create Address Map response
           content:
             application/json:
@@ -11508,7 +11508,7 @@ paths:
           schema:
             $ref: '#/components/schemas/addressing_account_identifier'
       responses:
-        '200':
+        '201':
           description: Add an account membership to an Address Map response
           content:
             application/json:
@@ -11531,6 +11531,113 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: addressing.address-maps.accounts
       x-fern-sdk-method-name: update
+  /accounts/{account_id}/addressing/address_maps/{address_map_id}/ips:
+    delete:
+      operationId: ip-address-management-address-maps-remove-multiple-ips-from-an-address-map
+      summary: Remove Multiple IPs from an Address Map
+      description: Remove multiple IPs from a particular address map.
+      parameters:
+        - name: address_map_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/addressing_address_map_identifier'
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/addressing_account_identifier'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                ips:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/addressing_ip_address'
+              required:
+                - ips
+      responses:
+        '200':
+          description: Remove Multiple IPs from an Address Map response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/addressing_api-response-collection'
+        4XX:
+          description: Remove Multiple IPs from an Address Map response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/addressing_api-response-collection'
+                  - $ref: '#/components/schemas/addressing_api-response-common-failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - IP Address Management Address Maps
+      x-api-token-group:
+        - Address Maps Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: addressing.address-maps.ips
+      x-fern-sdk-method-name: delete-bulk
+    post:
+      operationId: ip-address-management-address-maps-add-multiple-ips-to-an-address-map
+      summary: Add Multiple IPs to an Address Map
+      description: Add multiple IPs to a particular address map.
+      parameters:
+        - name: address_map_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/addressing_address_map_identifier'
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/addressing_account_identifier'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                ips:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/addressing_ip_address'
+              required:
+                - ips
+      responses:
+        '201':
+          description: Add Multiple IPs to an Address Map response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/addressing_api-response-collection'
+        4XX:
+          description: Add Multiple IPs to an Address Map response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/addressing_api-response-collection'
+                  - $ref: '#/components/schemas/addressing_api-response-common-failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - IP Address Management Address Maps
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: addressing.address-maps.ips
+      x-fern-sdk-method-name: update-bulk
   /accounts/{account_id}/addressing/address_maps/{address_map_id}/ips/{ip_address}:
     delete:
       operationId: ip-address-management-address-maps-remove-an-ip-from-an-address-map
@@ -11599,7 +11706,7 @@ paths:
           schema:
             $ref: '#/components/schemas/addressing_account_identifier'
       responses:
-        '200':
+        '201':
           description: Add an IP to an Address Map response
           content:
             application/json:
@@ -11624,6 +11731,113 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: addressing.address-maps.ips
       x-fern-sdk-method-name: update
+  /accounts/{account_id}/addressing/address_maps/{address_map_id}/zones:
+    delete:
+      operationId: ip-address-management-address-maps-remove-multiple-zones-from-an-address-map
+      summary: Remove Multiple Zones from an Address Map
+      description: Remove multiple zones as members of a particular address map.
+      parameters:
+        - name: address_map_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/addressing_address_map_identifier'
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/addressing_account_identifier'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                zones:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/addressing_zone_identifier'
+              required:
+                - zones
+      responses:
+        '200':
+          description: Remove Multiple Zones from an Address Map response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/addressing_api-response-collection'
+        4XX:
+          description: Remove Multiple Zones from an Address Map response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/addressing_api-response-collection'
+                  - $ref: '#/components/schemas/addressing_api-response-common-failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - IP Address Management Address Maps
+      x-api-token-group:
+        - Address Maps Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: addressing.address-maps.zones
+      x-fern-sdk-method-name: delete-bulk
+    post:
+      operationId: ip-address-management-address-maps-add-multiple-zones-to-an-address-map
+      summary: Add Multiple Zones to an Address Map
+      description: Add multiple zones as members of a particular address map.
+      parameters:
+        - name: address_map_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/addressing_address_map_identifier'
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/addressing_account_identifier'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                zones:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/addressing_zone_identifier'
+              required:
+                - zones
+      responses:
+        '201':
+          description: Add Multiple Zones to an Address Map response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/addressing_api-response-collection'
+        4XX:
+          description: Add Multiple Zones to an Address Map response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/addressing_api-response-collection'
+                  - $ref: '#/components/schemas/addressing_api-response-common-failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - IP Address Management Address Maps
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: addressing.address-maps.zones
+      x-fern-sdk-method-name: update-bulk
   /accounts/{account_id}/addressing/address_maps/{address_map_id}/zones/{member_zone_id}:
     delete:
       operationId: ip-address-management-address-maps-remove-a-zone-membership-from-an-address-map
@@ -11692,7 +11906,7 @@ paths:
           schema:
             $ref: '#/components/schemas/addressing_account_identifier'
       responses:
-        '200':
+        '201':
           description: Add a zone membership to an Address Map response
           content:
             application/json:
@@ -11752,6 +11966,43 @@ paths:
       x-fern-sdk-group-name: addressing.leases
       x-fern-sdk-method-name: list
   /accounts/{account_id}/addressing/loa_documents:
+    get:
+      operationId: ip-address-management-prefixes-list-loa-documents
+      summary: List LOA Documents
+      description: List all LOA documents uploaded under the account.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/addressing_account_identifier'
+      responses:
+        '200':
+          description: List LOA Documents response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/addressing_loa_document_collection'
+        4XX:
+          description: List LOA Documents response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/addressing_loa_document_collection'
+                  - $ref: '#/components/schemas/addressing_api-response-common-failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - IP Address Management Prefixes
+      x-api-token-group:
+        - Magic Transit Read
+        - Magic Transit Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: addressing.loa-documents
+      x-fern-sdk-method-name: list
     post:
       operationId: ip-address-management-prefixes-upload-loa-document
       summary: Upload LOA Document
@@ -12150,7 +12401,7 @@ paths:
             schema:
               $ref: '#/components/schemas/addressing_bgp_prefix_create'
       responses:
-        '200':
+        '201':
           description: Create BGP Prefix response
           content:
             application/json:
@@ -12698,7 +12949,7 @@ paths:
                 - cidr
                 - delegated_account_id
       responses:
-        '200':
+        '201':
           description: Create Prefix Delegation response
           content:
             application/json:
@@ -401572,6 +401823,34 @@ components:
       description: Cloudflare account ID of the account owning the lease.
       type: string
       example: 3a7d3de1d0682240cf046c7f50866cc5
+    addressing_loa_document:
+      type: object
+      properties:
+        account_id:
+          $ref: '#/components/schemas/addressing_account_identifier'
+        auto_generated:
+          $ref: '#/components/schemas/addressing_auto_generated'
+        created:
+          $ref: '#/components/schemas/addressing_timestamp'
+        filename:
+          $ref: '#/components/schemas/addressing_filename'
+        id:
+          $ref: '#/components/schemas/addressing_loa_document_identifier'
+        size_bytes:
+          $ref: '#/components/schemas/addressing_size_bytes'
+        verified:
+          $ref: '#/components/schemas/addressing_verified'
+        verified_at:
+          $ref: '#/components/schemas/addressing_verified_at'
+    addressing_loa_document_collection:
+      allOf:
+        - $ref: '#/components/schemas/addressing_api-response-collection'
+        - properties:
+            result:
+              type: array
+              items:
+                $ref: '#/components/schemas/addressing_loa_document'
+          type: object
     addressing_loa_document_identifier:
       description: Identifier for the uploaded LOA document.
       type: string
