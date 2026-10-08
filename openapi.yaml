@@ -230829,6 +230829,15 @@ paths:
             description: Unix timestamp in milliseconds for the end of the range.
             type: string
             minLength: 1
+        - name: tz
+          in: query
+          description: IANA timezone used to align daily bins to local midnight (e.g. 'America/Chicago'). Defaults to UTC.
+          schema:
+            description: IANA timezone used to align daily bins to local midnight (e.g. 'America/Chicago'). Defaults to UTC.
+            type: string
+            example: America/Chicago
+            maxLength: 64
+            minLength: 1
       responses:
         '200':
           description: Successful request
@@ -230866,7 +230875,7 @@ paths:
                         items:
                           properties:
                             bin:
-                              description: ISO-8601 timestamp for the start of the bucket.
+                              description: UTC timestamp for the start of the bucket. Bucket boundaries follow the requested tz.
                               type: string
                             count:
                               description: ABR-adjusted event count for this bucket.
