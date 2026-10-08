@@ -200992,10 +200992,6 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/workers-kv_identifier'
-      requestBody:
-        required: true
-        content:
-          application/json: {}
       responses:
         '200':
           description: Remove a Namespace response.
@@ -201173,9 +201169,9 @@ paths:
       x-api-token-group:
         - Workers KV Storage Write
       x-fern-availability: deprecated
+      x-fern-ignore: true
       x-fern-sdk-group-name: kv.bulk-deprecated
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
     put:
       operationId: workers-kv-namespace-write-multiple-key-value-pairs
       summary: Write multiple key-value pairs
@@ -201508,10 +201504,6 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/workers-kv_identifier'
-      requestBody:
-        required: true
-        content:
-          application/json: {}
       responses:
         '200':
           description: Delete key-value pair response.
@@ -498526,13 +498518,13 @@ components:
               expiration:
                 $ref: '#/components/schemas/workers-kv_expiration'
               metadata:
+                description: The metadata associated with the key.
                 allOf:
                   - $ref: '#/components/schemas/workers-kv_any'
-                  - description: The metadata associated with the key.
               value:
+                description: The value associated with the key.
                 allOf:
                   - $ref: '#/components/schemas/workers-kv_any'
-                  - description: The value associated with the key.
             required:
               - value
               - metadata
@@ -498668,11 +498660,11 @@ components:
       example: My-Key
       maxLength: 512
     workers-kv_list_metadata:
+      description: Arbitrary JSON that is associated with a key.
+      example:
+        someMetadataKey: someMetadataValue
       allOf:
         - $ref: '#/components/schemas/workers-kv_any'
-        - description: Arbitrary JSON that is associated with a key.
-          example:
-            someMetadataKey: someMetadataValue
     workers-kv_messages:
       type: array
       items:
@@ -498689,11 +498681,11 @@ components:
       example: []
       uniqueItems: true
     workers-kv_metadata:
+      description: Associates arbitrary JSON data with a key/value pair.
+      example:
+        someMetadataKey: someMetadataValue
       allOf:
         - $ref: '#/components/schemas/workers-kv_any'
-        - description: Associates arbitrary JSON data with a key/value pair.
-          example:
-            someMetadataKey: someMetadataValue
     workers-kv_namespace:
       type: object
       properties:
