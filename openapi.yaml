@@ -69203,6 +69203,53 @@ paths:
       x-fern-sdk-group-name: browser-extension.config.logs.extension-events
       x-fern-sdk-method-name: search
       x-stability: beta
+  /accounts/{account_id}/browser-extension/config/logs/extension-events/timeseries:
+    parameters:
+      - $ref: '#/components/parameters/brex_AccountId'
+    post:
+      operationId: accounts-browser-extension-config-extension-events-timeseries
+      summary: Query browser extension event timeseries
+      description: |
+        Returns browser extension event counts grouped by time bucket and the requested
+        `groupBy` fields. Accepts the same filters as event log search. When `resolution` is
+        omitted, ranges shorter than 10 days use `1 hours` buckets and ranges of 10 days or
+        more use `1 days`. Empty buckets are omitted. Results over 10000 slots return 400.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/brex_ExtensionEventsTimeseriesRequest'
+      responses:
+        '200':
+          description: Browser extension event timeseries response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/brex_ExtensionEventsTimeseriesResponse'
+        '400':
+          $ref: '#/components/responses/brex_BadRequest'
+        '401':
+          $ref: '#/components/responses/brex_Unauthorized'
+        '403':
+          $ref: '#/components/responses/brex_Forbidden'
+        '413':
+          $ref: '#/components/responses/brex_BadRequest'
+        '500':
+          $ref: '#/components/responses/brex_InternalServerError'
+        '502':
+          $ref: '#/components/responses/brex_InternalServerError'
+        '503':
+          $ref: '#/components/responses/brex_InternalServerError'
+      security:
+        - api_token: []
+      tags:
+        - Browser Extension Config
+      x-fern-availability: beta
+      x-fern-ignore: true
+      x-fern-sdk-group-name: browser-extension.config.logs.extension-events
+      x-fern-sdk-method-name: timeseries
+      x-stability: beta
   /accounts/{account_id}/browser-rendering/accessibilityTree:
     post:
       operationId: brapi-post_AccessibilityTree
@@ -409365,7 +409412,9 @@ components:
       type: object
       properties:
         config:
-          $ref: '#/components/schemas/brex_BrowserExtensionConfigInput'
+          allOf:
+            - $ref: '#/components/schemas/brex_BrowserExtensionConfigInput'
+          x-fern-property-name: browser-config
       required:
         - config
     brex_DeleteResponse:
@@ -409611,6 +409660,116 @@ components:
         - success
         - errors
         - messages
+    brex_ExtensionEventsTimeseriesRequest:
+      type: object
+      properties:
+        filters:
+          type: array
+          items:
+            $ref: '#/components/schemas/brex_ExtensionEventFilter'
+          maxItems: 20
+        from:
+          description: Start of the query range (inclusive).
+          type: string
+          format: date-time
+          maxLength: 64
+        groupBy:
+          description: |
+            Fields to group each bucket by. Each requested field is returned on every slot.
+            An empty array returns one total per bucket.
+          type: array
+          items:
+            enum:
+              - eventName
+              - action
+            type: string
+          default:
+            - eventName
+          maxItems: 2
+          uniqueItems: true
+        resolution:
+          description: |
+            Bucket size, for example `15 minutes`, `1 hours`, or `1 days`. Defaults to
+            `1 hours` for ranges shorter than 10 days and `1 days` otherwise. A request must not
+            produce more than 1440 buckets.
+          type: string
+          example: 1 hours
+          maxLength: 32
+          pattern: ^(hour|day|[1-9][0-9]{0,3} (minute|hour|day)s?)$
+        stats:
+          type: array
+          items:
+            enum:
+              - eventsTotal
+            type: string
+          default:
+            - eventsTotal
+          maxItems: 1
+          minItems: 1
+        to:
+          description: End of the query range (exclusive). The range must not exceed 30 days.
+          type: string
+          format: date-time
+          maxLength: 64
+      required:
+        - from
+        - to
+    brex_ExtensionEventsTimeseriesResponse:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/brex_ApiMessage'
+          maxItems: 0
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/brex_ApiMessage'
+        result:
+          $ref: '#/components/schemas/brex_ExtensionEventsTimeseriesResult'
+        success:
+          type: boolean
+          enum:
+            - true
+      required:
+        - result
+        - success
+        - errors
+        - messages
+    brex_ExtensionEventsTimeseriesResult:
+      type: object
+      properties:
+        resolution:
+          description: Bucket size used for the query.
+          type: string
+          example: 1 hours
+        slots:
+          type: array
+          items:
+            $ref: '#/components/schemas/brex_ExtensionEventsTimeseriesSlot'
+      required:
+        - resolution
+        - slots
+    brex_ExtensionEventsTimeseriesSlot:
+      type: object
+      properties:
+        action:
+          description: Present when `action` is in `groupBy`.
+          type: string
+        eventName:
+          description: Present when `eventName` is in `groupBy`.
+          type: string
+        eventsTotal:
+          type: integer
+          minimum: 0
+        timestamp:
+          description: Start of the time bucket.
+          type: string
+          format: date-time
+      required:
+        - timestamp
+        - eventsTotal
     brex_InstalledExtension:
       type: object
       properties:
@@ -409736,7 +409895,9 @@ components:
       type: object
       properties:
         config:
-          $ref: '#/components/schemas/brex_BrowserExtensionConfigInput'
+          allOf:
+            - $ref: '#/components/schemas/brex_BrowserExtensionConfigInput'
+          x-fern-property-name: browser-config
       required:
         - config
     builds_APIResponse:
