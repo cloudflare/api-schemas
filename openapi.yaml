@@ -44683,7 +44683,7 @@ paths:
                   - success
                   - result
         '400':
-          description: Invalid metadata format.
+          description: This operation requires a managed instance; Ai search is paused; File field is required; Filename exceeds maximum length; Unsupported file type; Invalid metadata format
           content:
             application/json:
               schema:
@@ -44692,15 +44692,73 @@ paths:
                   errors:
                     type: array
                     items:
-                      properties:
-                        code:
-                          type: number
-                        message:
-                          type: string
-                      required:
-                        - code
-                        - message
-                      type: object
+                      anyOf:
+                        - properties:
+                            code:
+                              type: number
+                              enum:
+                                - 7053
+                            message:
+                              type: string
+                          required:
+                            - code
+                            - message
+                          type: object
+                        - properties:
+                            code:
+                              type: number
+                              enum:
+                                - 7032
+                            message:
+                              type: string
+                          required:
+                            - code
+                            - message
+                          type: object
+                        - properties:
+                            code:
+                              type: number
+                              enum:
+                                - 7055
+                            message:
+                              type: string
+                          required:
+                            - code
+                            - message
+                          type: object
+                        - properties:
+                            code:
+                              type: number
+                              enum:
+                                - 7072
+                            message:
+                              type: string
+                          required:
+                            - code
+                            - message
+                          type: object
+                        - properties:
+                            code:
+                              type: number
+                              enum:
+                                - 7060
+                            message:
+                              type: string
+                          required:
+                            - code
+                            - message
+                          type: object
+                        - properties:
+                            code:
+                              type: number
+                              enum:
+                                - 7056
+                            message:
+                              type: string
+                          required:
+                            - code
+                            - message
+                          type: object
                   success:
                     type: boolean
                     enum:
@@ -44735,7 +44793,7 @@ paths:
                   - success
                   - errors
         '409':
-          description: Item key already exist.
+          description: Item key already exist; Ai search managed resources unavailable
           content:
             application/json:
               schema:
@@ -44744,15 +44802,29 @@ paths:
                   errors:
                     type: array
                     items:
-                      properties:
-                        code:
-                          type: number
-                        message:
-                          type: string
-                      required:
-                        - code
-                        - message
-                      type: object
+                      anyOf:
+                        - properties:
+                            code:
+                              type: number
+                              enum:
+                                - 7042
+                            message:
+                              type: string
+                          required:
+                            - code
+                            - message
+                          type: object
+                        - properties:
+                            code:
+                              type: number
+                              enum:
+                                - 7123
+                            message:
+                              type: string
+                          required:
+                            - code
+                            - message
+                          type: object
                   success:
                     type: boolean
                     enum:
@@ -45298,7 +45370,47 @@ paths:
                   - success
                   - result
         '400':
-          description: This operation requires a managed instance.
+          description: This operation requires a managed instance; Ai search is paused
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      anyOf:
+                        - properties:
+                            code:
+                              type: number
+                              enum:
+                                - 7053
+                            message:
+                              type: string
+                          required:
+                            - code
+                            - message
+                          type: object
+                        - properties:
+                            code:
+                              type: number
+                              enum:
+                                - 7032
+                            message:
+                              type: string
+                          required:
+                            - code
+                            - message
+                          type: object
+                  success:
+                    type: boolean
+                    enum:
+                      - false
+                required:
+                  - success
+                  - errors
+        '404':
+          description: Item not found.
           content:
             application/json:
               schema:
@@ -45323,8 +45435,8 @@ paths:
                 required:
                   - success
                   - errors
-        '404':
-          description: Item not found.
+        '409':
+          description: Ai search managed resources unavailable.
           content:
             application/json:
               schema:
@@ -46199,7 +46311,7 @@ paths:
                 type: string
                 format: binary
         '400':
-          description: Content download not available for external source items.
+          description: This operation requires a managed instance; Content download not available for external source items; Ai search is paused
           content:
             application/json:
               schema:
@@ -46208,15 +46320,40 @@ paths:
                   errors:
                     type: array
                     items:
-                      properties:
-                        code:
-                          type: number
-                        message:
-                          type: string
-                      required:
-                        - code
-                        - message
-                      type: object
+                      anyOf:
+                        - properties:
+                            code:
+                              type: number
+                              enum:
+                                - 7053
+                            message:
+                              type: string
+                          required:
+                            - code
+                            - message
+                          type: object
+                        - properties:
+                            code:
+                              type: number
+                              enum:
+                                - 7059
+                            message:
+                              type: string
+                          required:
+                            - code
+                            - message
+                          type: object
+                        - properties:
+                            code:
+                              type: number
+                              enum:
+                                - 7032
+                            message:
+                              type: string
+                          required:
+                            - code
+                            - message
+                          type: object
                   success:
                     type: boolean
                     enum:
@@ -46252,6 +46389,32 @@ paths:
                   - errors
         '404':
           description: Item not found.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                      required:
+                        - code
+                        - message
+                      type: object
+                  success:
+                    type: boolean
+                    enum:
+                      - false
+                required:
+                  - success
+                  - errors
+        '409':
+          description: Ai search managed resources unavailable.
           content:
             application/json:
               schema:
