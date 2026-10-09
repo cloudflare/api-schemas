@@ -147970,6 +147970,8 @@ paths:
                   $ref: '#/components/schemas/zero-trust-gateway_client-default'
                 dns_destination_ips_id:
                   $ref: '#/components/schemas/zero-trust-gateway_dns-destination-ips-id-write'
+                dns64_enabled:
+                  $ref: '#/components/schemas/zero-trust-gateway_dns64-enabled'
                 ecs_support:
                   $ref: '#/components/schemas/zero-trust-gateway_ecs-support'
                 endpoints:
@@ -148124,6 +148126,8 @@ paths:
                   $ref: '#/components/schemas/zero-trust-gateway_client-default'
                 dns_destination_ips_id:
                   $ref: '#/components/schemas/zero-trust-gateway_dns-destination-ips-id-write'
+                dns64_enabled:
+                  $ref: '#/components/schemas/zero-trust-gateway_dns64-enabled'
                 ecs_support:
                   $ref: '#/components/schemas/zero-trust-gateway_ecs-support'
                 endpoints:
@@ -507779,6 +507783,13 @@ components:
       required:
         - ip
       x-stainless-terraform-configurability: computed_optional
+    zero-trust-gateway_dns64-enabled:
+      description: Enable DNS64 synthesis for DNS queries matched to this location. When updating a location, omitting this field resets it to false.
+      type: boolean
+      example: false
+      default: false
+      x-auditable: true
+      x-stainless-terraform-configurability: optional
     zero-trust-gateway_doh_endpoint:
       type: object
       properties:
@@ -508345,6 +508356,8 @@ components:
           $ref: '#/components/schemas/zero-trust-gateway_dns-destination-ips-id-read'
         dns_destination_ipv6_block_id:
           $ref: '#/components/schemas/zero-trust-gateway_dns_destination_ipv6_block_id'
+        dns64_enabled:
+          $ref: '#/components/schemas/zero-trust-gateway_dns64-enabled'
         doh_subdomain:
           $ref: '#/components/schemas/zero-trust-gateway_subdomain'
         ecs_support:
