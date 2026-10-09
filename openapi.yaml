@@ -218801,7 +218801,7 @@ paths:
             $ref: '#/components/schemas/workers_script_name'
         - name: bindings_inherit
           in: query
-          description: When set to "strict", the upload will fail if any `inherit` type bindings cannot be resolved against the previous version of the script. Without this, unresolvable inherit bindings are silently dropped.
+          description: When set to "strict", the upload will fail with error 10057 if any `inherit` type bindings cannot be resolved against the latest uploaded version of the script, which may not be the deployed version. Without this, unresolvable inherit bindings are silently dropped.
           schema:
             type: string
             enum:
@@ -231793,7 +231793,7 @@ paths:
             $ref: '#/components/schemas/workers_script_name'
         - name: bindings_inherit
           in: query
-          description: When set to "strict", the upload will fail if any `inherit` type bindings cannot be resolved against the previous version of the Worker. Without this, unresolvable inherit bindings are silently dropped.
+          description: When set to "strict", the upload will fail with error 10057 if any `inherit` type bindings cannot be resolved against the latest uploaded version of the Worker, which may not be the deployed version. Without this, unresolvable inherit bindings are silently dropped.
           schema:
             type: string
             enum:
@@ -233380,7 +233380,7 @@ paths:
             $ref: '#/components/schemas/workers_script_name-2'
         - name: bindings_inherit
           in: query
-          description: When set to "strict", the upload will fail if any `inherit` type bindings cannot be resolved against the previous version of the Worker. Without this, unresolvable inherit bindings are silently dropped.
+          description: When set to "strict", the upload will fail with error 10057 if any `inherit` type bindings cannot be resolved against the latest uploaded version of the Worker, which may not be the deployed version. Without this, unresolvable inherit bindings are silently dropped.
           schema:
             type: string
             enum:
@@ -234655,12 +234655,14 @@ paths:
           schema:
             description: Identifier for the Worker, which can be ID or name.
             type: string
+          x-fern-parameter-name: worker
         - name: preview_id
           in: path
           required: true
           schema:
             description: Identifier for the Preview, which can be ID, slug, or URL-encoded name.
             type: string
+          x-fern-parameter-name: name
         - name: force
           in: query
           description: If true, delete the Preview even when other Workers still reference it. Service bindings in those Workers may be left broken. Durable Object namespaces implemented by the deleted Preview are deleted even if other Workers reference them.
@@ -234688,12 +234690,10 @@ paths:
         - Previews
       x-api-token-group:
         - Workers Scripts Write
-      x-fern-audiences:
-        - sdk
       x-fern-availability: beta
-      x-fern-sdk-group-name: workers.previews
+      x-fern-sdk-group-name: previews
       x-fern-sdk-method-name: delete
-      x-forge-require-confirmation: This will permanently delete the preview.
+      x-forge-require-confirmation: This operation permanently deletes the Preview.
     get:
       operationId: workers.previews.get
       summary: Get Preview
@@ -502710,9 +502710,9 @@ components:
             - inherit
           x-auditable: true
         version_id:
-          description: Identifier for the version to inherit the binding from, which can be the version ID or the literal "latest" to inherit from the latest version. Defaults to inheriting the binding from the latest version.
+          description: Identifier for the version to inherit the binding from. This can be a version ID, or the literal "latest" to inherit from the most recently uploaded version, which may not be the deployed version. Defaults to "latest". Only the Workers API version endpoints under `/accounts/{account_id}/workers/workers/{worker_id}/versions` accept a version ID. Other endpoints, including script upload and script version upload, accept only "latest" and reject a version ID with error 10057.
           type: string
-          example: 8969331f-7192-434c-9938-6aea24ed58bf
+          example: latest
           default: latest
           x-auditable: true
       required:
@@ -518257,6 +518257,8 @@ x-forge-commands:
         description: Inbound data streams that feed events into a pipeline for processing
   precursor:
     description: Precursor settings for a zone
+  previews:
+    description: Manage Worker Previews
   queues:
     description: Reliable message queuing between Workers — produce, consume, and batch-process messages at scale
     groups:
