@@ -297180,7 +297180,7 @@
             "in": "path",
             "required": true,
             "schema": {
-              "$ref": "#/components/schemas/request-tracer_identifier"
+              "$ref": "#/components/schemas/request-tracer_account_identifier"
             }
           }
         ],
@@ -297429,8 +297429,7 @@
         },
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "request-tracers.traces",
-        "x-fern-sdk-method-name": "create",
-        "x-forge-hidden": true
+        "x-fern-sdk-method-name": "create"
       }
     },
     "/accounts/{account_id}/resource-library/applications": {
@@ -706444,7 +706443,11 @@
         ]
       },
       "request-tracer_account_identifier": {
-        "$ref": "#/components/schemas/request-tracer_identifier"
+        "description": "Identifier.",
+        "type": "string",
+        "example": "023e105f4ecef8ad9ca31a8372d0c353",
+        "maxLength": 32,
+        "x-auditable": true
       },
       "request-tracer_api-response-common": {
         "type": "object",
@@ -706518,13 +706521,6 @@
           "result"
         ]
       },
-      "request-tracer_identifier": {
-        "description": "Identifier.",
-        "type": "string",
-        "example": "023e105f4ecef8ad9ca31a8372d0c353",
-        "maxLength": 32,
-        "x-auditable": true
-      },
       "request-tracer_messages": {
         "type": "array",
         "items": {
@@ -706533,19 +706529,8 @@
               "type": "integer",
               "minimum": 1000
             },
-            "documentation_url": {
-              "type": "string"
-            },
             "message": {
               "type": "string"
-            },
-            "source": {
-              "type": "object",
-              "properties": {
-                "pointer": {
-                  "type": "string"
-                }
-              }
             }
           },
           "required": [
@@ -706554,8 +706539,7 @@
           ],
           "type": "object",
           "uniqueItems": true
-        },
-        "example": []
+        }
       },
       "request-tracer_trace": {
         "type": "array",
