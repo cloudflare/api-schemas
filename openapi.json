@@ -13490,6 +13490,9 @@
                   "deny_unmatched_requests_exempted_zone_names": {
                     "$ref": "#/components/schemas/access_deny_unmatched_requests_exempted_zone_names"
                   },
+                  "disable_end_user_app_creation": {
+                    "$ref": "#/components/schemas/access_disable_end_user_app_creation"
+                  },
                   "is_ui_read_only": {
                     "$ref": "#/components/schemas/access_is_ui_read_only"
                   },
@@ -13613,6 +13616,9 @@
                   },
                   "deny_unmatched_requests_exempted_zone_names": {
                     "$ref": "#/components/schemas/access_deny_unmatched_requests_exempted_zone_names"
+                  },
+                  "disable_end_user_app_creation": {
+                    "$ref": "#/components/schemas/access_disable_end_user_app_creation"
                   },
                   "is_ui_read_only": {
                     "$ref": "#/components/schemas/access_is_ui_read_only"
@@ -15392,7 +15398,7 @@
                 "type": "object",
                 "properties": {
                   "previous_client_secret_expires_at": {
-                    "description": "The expiration of the previous `client_secret`. If not provided, it defaults to the current timestamp in order to immediately expire the previous secret.",
+                    "description": "The expiration of the previous `client_secret`. If not provided, it defaults to the current timestamp in order to immediately expire the previous secret. If the service token was reported as leaked, this must not be in the future; the leaked secret is discarded immediately.",
                     "type": "string",
                     "format": "date-time",
                     "example": "2014-01-01T05:20:00.12345Z",
@@ -16010,6 +16016,339 @@
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "zero-trust.access.user-populations",
         "x-fern-sdk-method-name": "update"
+      }
+    },
+    "/accounts/{account_id}/access/user_populations/{user_population_id}/users": {
+      "get": {
+        "operationId": "access-user-populations-list-users",
+        "summary": "List users in a user population",
+        "description": "Lists SCIM users in a user population.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/access_account_id"
+          },
+          {
+            "$ref": "#/components/parameters/access_user_population_id"
+          },
+          {
+            "$ref": "#/components/parameters/access_filter"
+          },
+          {
+            "$ref": "#/components/parameters/access_startIndex"
+          },
+          {
+            "$ref": "#/components/parameters/access_count"
+          },
+          {
+            "$ref": "#/components/parameters/access_attributes"
+          },
+          {
+            "$ref": "#/components/parameters/access_excludedAttributes"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List SCIM users response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/access_scim_user_collection_response"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "$ref": "#/components/responses/access_failure"
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Access user population users"
+        ],
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "zero-trust.access.user-populations.users",
+        "x-fern-sdk-method-name": "list"
+      },
+      "post": {
+        "operationId": "access-user-populations-create-user",
+        "summary": "Create a user population user",
+        "description": "Creates a SCIM user in a user population.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/access_account_id"
+          },
+          {
+            "$ref": "#/components/parameters/access_user_population_id"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/access_scim_user"
+              }
+            },
+            "application/scim+json": {
+              "schema": {
+                "$ref": "#/components/schemas/access_scim_user"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Create SCIM user response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/access_scim_user_single_response"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "$ref": "#/components/responses/access_failure"
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Access user population users"
+        ],
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "zero-trust.access.user-populations.users",
+        "x-fern-sdk-method-name": "create"
+      }
+    },
+    "/accounts/{account_id}/access/user_populations/{user_population_id}/users/{user_id}": {
+      "delete": {
+        "operationId": "access-user-populations-delete-user",
+        "summary": "Delete a user population user",
+        "description": "Deletes a SCIM user from a user population.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/access_account_id"
+          },
+          {
+            "$ref": "#/components/parameters/access_user_population_id"
+          },
+          {
+            "$ref": "#/components/parameters/access_user_id"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "The SCIM user was deleted."
+          },
+          "4XX": {
+            "$ref": "#/components/responses/access_failure"
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Access user population users"
+        ],
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "zero-trust.access.user-populations.users",
+        "x-fern-sdk-method-name": "delete"
+      },
+      "get": {
+        "operationId": "access-user-populations-get-user",
+        "summary": "Get a user population user",
+        "description": "Fetches a SCIM user from a user population.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/access_account_id"
+          },
+          {
+            "$ref": "#/components/parameters/access_user_population_id"
+          },
+          {
+            "$ref": "#/components/parameters/access_user_id"
+          },
+          {
+            "$ref": "#/components/parameters/access_attributes"
+          },
+          {
+            "$ref": "#/components/parameters/access_excludedAttributes"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get SCIM user response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/access_scim_user_single_response"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "$ref": "#/components/responses/access_failure"
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Access user population users"
+        ],
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "zero-trust.access.user-populations.users",
+        "x-fern-sdk-method-name": "get"
+      },
+      "patch": {
+        "operationId": "access-user-populations-update-user",
+        "summary": "Update a user population user",
+        "description": "Updates a SCIM user in a user population.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/access_account_id"
+          },
+          {
+            "$ref": "#/components/parameters/access_user_population_id"
+          },
+          {
+            "$ref": "#/components/parameters/access_user_id"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/access_scim_patch_request"
+              }
+            },
+            "application/scim+json": {
+              "schema": {
+                "$ref": "#/components/schemas/access_scim_patch_request"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Update SCIM user response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/access_scim_user_single_response"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "$ref": "#/components/responses/access_failure"
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Access user population users"
+        ],
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "zero-trust.access.user-populations.users",
+        "x-fern-sdk-method-name": "update"
+      },
+      "put": {
+        "operationId": "access-user-populations-replace-user",
+        "summary": "Replace a user population user",
+        "description": "Replaces a SCIM user in a user population.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/access_account_id"
+          },
+          {
+            "$ref": "#/components/parameters/access_user_population_id"
+          },
+          {
+            "$ref": "#/components/parameters/access_user_id"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/access_scim_user"
+              }
+            },
+            "application/scim+json": {
+              "schema": {
+                "$ref": "#/components/schemas/access_scim_user"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Replace SCIM user response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/access_scim_user_single_response"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "$ref": "#/components/responses/access_failure"
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Access user population users"
+        ],
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "zero-trust.access.user-populations.users",
+        "x-fern-sdk-method-name": "replace"
       }
     },
     "/accounts/{account_id}/access/users": {
@@ -578374,6 +578713,39 @@
           "$ref": "#/components/schemas/access_identifier"
         }
       },
+      "access_attributes": {
+        "in": "query",
+        "name": "attributes",
+        "schema": {
+          "description": "Comma-separated SCIM attributes to return.",
+          "type": "string"
+        }
+      },
+      "access_count": {
+        "in": "query",
+        "name": "count",
+        "schema": {
+          "description": "The maximum number of results to return.",
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "access_excludedAttributes": {
+        "in": "query",
+        "name": "excludedAttributes",
+        "schema": {
+          "description": "Comma-separated SCIM attributes to exclude from the response.",
+          "type": "string"
+        }
+      },
+      "access_filter": {
+        "in": "query",
+        "name": "filter",
+        "schema": {
+          "description": "A SCIM filter expression.",
+          "type": "string"
+        }
+      },
       "access_page": {
         "in": "query",
         "name": "page",
@@ -578391,6 +578763,25 @@
           "type": "integer",
           "default": 1000,
           "maximum": 1000
+        }
+      },
+      "access_startIndex": {
+        "in": "query",
+        "name": "startIndex",
+        "schema": {
+          "description": "The 1-based index of the first result to return.",
+          "type": "integer",
+          "default": 1,
+          "minimum": 1
+        }
+      },
+      "access_user_id": {
+        "in": "path",
+        "name": "user_id",
+        "required": true,
+        "schema": {
+          "description": "The SCIM user identifier.",
+          "type": "string"
         }
       },
       "access_user_population_id": {
@@ -587504,7 +587895,7 @@
         "x-sensitive": true
       },
       "access_client_secret_version": {
-        "description": "A version number identifying the current `client_secret` associated with the service token. Incrementing it triggers a rotation; the previous secret will still be accepted until the time indicated by `previous_client_secret_expires_at`.",
+        "description": "A version number identifying the current `client_secret` associated with the service token. Incrementing it triggers a rotation; the previous secret will still be accepted until the time indicated by `previous_client_secret_expires_at`. If the service token was reported as leaked, `previous_client_secret_expires_at` is not required, may not be in the future, and the previous secret is discarded immediately.",
         "type": "number",
         "default": 1,
         "x-auditable": true
@@ -588416,6 +588807,13 @@
           "asc"
         ]
       },
+      "access_disable_end_user_app_creation": {
+        "description": "Whether creation of end user applications is disabled for this organization.",
+        "type": "boolean",
+        "example": false,
+        "default": false,
+        "x-auditable": true
+      },
       "access_doh_jwt_duration": {
         "description": "The duration the DoH JWT is valid for. Must be in the format `300ms` or `2h45m`. Valid time units are: ns, us (or µs), ms, s, m, h.  Note that the maximum duration for this setting is the same as the key rotation period on the account. Default expiration is 24h",
         "type": "string",
@@ -588460,6 +588858,91 @@
           "email_domain"
         ],
         "title": "Email domain"
+      },
+      "access_duo": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/access_identity-provider"
+          },
+          {
+            "properties": {
+              "config": {
+                "type": "object",
+                "properties": {
+                  "client_id": {
+                    "description": "The client ID from the Duo Generic OIDC Relying Party metadata.",
+                    "type": "string",
+                    "example": "DIABC123678901234567"
+                  },
+                  "client_secret": {
+                    "description": "The client secret from the Duo Generic OIDC Relying Party metadata.",
+                    "type": "string",
+                    "example": "<your client secret>",
+                    "x-sensitive": true
+                  },
+                  "issuer_url": {
+                    "description": "The issuer URL from the Duo Generic OIDC Relying Party metadata.",
+                    "type": "string",
+                    "format": "uri",
+                    "example": "https://sso-abc1def2.sso.duosecurity.com/oidc/DIABC123678901234567",
+                    "x-auditable": true
+                  }
+                }
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "duo"
+                ]
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "title": "Duo"
+      },
+      "access_duo-2": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/access_identity-provider-2"
+          },
+          {
+            "properties": {
+              "config": {
+                "type": "object",
+                "properties": {
+                  "client_id": {
+                    "description": "The client ID from the Duo Generic OIDC Relying Party metadata.",
+                    "type": "string",
+                    "example": "DIABC123678901234567"
+                  },
+                  "client_secret": {
+                    "description": "The client secret from the Duo Generic OIDC Relying Party metadata.",
+                    "type": "string",
+                    "example": "<your client secret>",
+                    "x-sensitive": true
+                  },
+                  "issuer_url": {
+                    "description": "The issuer URL from the Duo Generic OIDC Relying Party metadata.",
+                    "type": "string",
+                    "format": "uri",
+                    "example": "https://sso-abc1def2.sso.duosecurity.com/oidc/DIABC123678901234567"
+                  }
+                }
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "duo"
+                ]
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "title": "Duo"
       },
       "access_duration": {
         "description": "The duration for how long the service token will be valid. Must be in the format `300ms` or `2h45m`, or the special value `forever` for non-expiring tokens. Valid time units are: ns, us (or µs), ms, s, m, h. The default is 1 year in hours (8760h).",
@@ -588598,7 +589081,7 @@
         "default": false
       },
       "access_enabled": {
-        "description": "Whether the service token is enabled. A disabled service token cannot be used to authenticate; both its current and previous `client_secret` stop being accepted, but the token itself is preserved and can be re-enabled at any time. Defaults to enabled when omitted on create.",
+        "description": "Whether the service token is enabled. A disabled service token cannot be used to authenticate; both its current and previous `client_secret` stop being accepted, but the token itself is preserved and can be re-enabled. A service token reported as leaked is disabled automatically and cannot be re-enabled until its secret is rotated; attempting to do so returns a 409. Defaults to enabled when omitted on create.",
         "type": "boolean",
         "x-auditable": true
       },
@@ -588990,7 +589473,7 @@
             "$ref": "#/components/schemas/access_name-8"
           },
           "session_duration": {
-            "$ref": "#/components/schemas/access_session_duration-4"
+            "$ref": "#/components/schemas/access_session_duration-2"
           },
           "type": {
             "$ref": "#/components/schemas/access_type-3"
@@ -589912,6 +590395,7 @@
               "google",
               "linkedin",
               "oidc",
+              "duo",
               "okta",
               "onelogin",
               "pingone",
@@ -590001,6 +590485,7 @@
               "google",
               "linkedin",
               "oidc",
+              "duo",
               "okta",
               "onelogin",
               "pingone",
@@ -590041,6 +590526,9 @@
           },
           {
             "$ref": "#/components/schemas/access_oidc"
+          },
+          {
+            "$ref": "#/components/schemas/access_duo"
           },
           {
             "$ref": "#/components/schemas/access_okta"
@@ -590093,6 +590581,9 @@
           },
           {
             "$ref": "#/components/schemas/access_oidc-2"
+          },
+          {
+            "$ref": "#/components/schemas/access_duo-2"
           },
           {
             "$ref": "#/components/schemas/access_okta-2"
@@ -590379,6 +590870,12 @@
               },
               "name": {
                 "$ref": "#/components/schemas/access_name-8"
+              },
+              "session_duration": {
+                "description": "The maximum duration of a connection to this application's targets. Connections are terminated once it elapses. Must be in the format `30m` or `2h45m`, in whole seconds. Valid time units are: s, m, h.",
+                "type": "string",
+                "example": "8h",
+                "default": "24h"
               },
               "type": {
                 "allOf": [
@@ -590706,6 +591203,26 @@
         "type": "string",
         "format": "date-time",
         "example": "2020-07-01T05:20:00Z"
+      },
+      "access_leak_report_url": {
+        "description": "Where the leaked `client_secret` was found, if provided by the reporter. Omitted if the token has not been reported as leaked.",
+        "type": "string",
+        "format": "uri",
+        "example": "https://github.com/example/repo/blob/main/config.yaml",
+        "readOnly": true
+      },
+      "access_leak_reported_at": {
+        "description": "When a secret scanning partner reported this service token's `client_secret` as leaked. A leaked service token is disabled and must be rotated before it can be re-enabled. Cleared once the secret is rotated. Omitted if the token has not been reported as leaked.",
+        "type": "string",
+        "format": "date-time",
+        "example": "2014-01-01T05:20:00.12345Z",
+        "readOnly": true
+      },
+      "access_leak_reporter": {
+        "description": "The secret scanning partner that reported the leak. Omitted if the token has not been reported as leaked.",
+        "type": "string",
+        "example": "github",
+        "readOnly": true
       },
       "access_limit": {
         "description": "The maximum number of update logs to retrieve.",
@@ -592145,6 +592662,9 @@
           "deny_unmatched_requests_exempted_zone_names": {
             "$ref": "#/components/schemas/access_deny_unmatched_requests_exempted_zone_names"
           },
+          "disable_end_user_app_creation": {
+            "$ref": "#/components/schemas/access_disable_end_user_app_creation"
+          },
           "is_ui_read_only": {
             "$ref": "#/components/schemas/access_is_ui_read_only"
           },
@@ -592850,7 +593370,7 @@
         "type": "integer"
       },
       "access_previous_client_secret_expires_at": {
-        "description": "The expiration of the previous `client_secret`. This can be modified at any point after a rotation. For example, you may extend it further into the future if you need more time to update services with the new secret; or move it into the past to immediately invalidate the previous token in case of compromise.",
+        "description": "The expiration of the previous `client_secret`. This can be modified at any point after a rotation. For example, you may extend it further into the future if you need more time to update services with the new secret; or move it into the past to immediately invalidate the previous token in case of compromise. Rotating a service token that was reported as leaked discards the previous secret entirely, so no grace period can be set.",
         "type": "string",
         "format": "date-time",
         "example": "2014-01-01T05:20:00.12345Z",
@@ -593092,6 +593612,9 @@
                       "$ref": "#/components/schemas/access_oidc"
                     },
                     {
+                      "$ref": "#/components/schemas/access_duo"
+                    },
+                    {
                       "$ref": "#/components/schemas/access_okta"
                     },
                     {
@@ -593318,6 +593841,9 @@
                     },
                     {
                       "$ref": "#/components/schemas/access_oidc-2"
+                    },
+                    {
+                      "$ref": "#/components/schemas/access_duo-2"
                     },
                     {
                       "$ref": "#/components/schemas/access_okta-2"
@@ -594939,6 +595465,20 @@
           }
         ]
       },
+      "access_scim_email": {
+        "type": "object",
+        "properties": {
+          "primary": {
+            "type": "boolean"
+          },
+          "type": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          }
+        }
+      },
       "access_scim_group_response": {
         "allOf": [
           {
@@ -594972,6 +595512,89 @@
           }
         ]
       },
+      "access_scim_meta": {
+        "type": "object",
+        "properties": {
+          "created": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "lastModified": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "location": {
+            "type": "string",
+            "format": "uri"
+          },
+          "resourceType": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          }
+        }
+      },
+      "access_scim_name": {
+        "type": "object",
+        "properties": {
+          "familyName": {
+            "type": "string"
+          },
+          "formatted": {
+            "type": "string"
+          },
+          "givenName": {
+            "type": "string"
+          },
+          "honorificPrefix": {
+            "type": "string"
+          },
+          "honorificSuffix": {
+            "type": "string"
+          },
+          "middleName": {
+            "type": "string"
+          }
+        }
+      },
+      "access_scim_patch_request": {
+        "type": "object",
+        "properties": {
+          "Operations": {
+            "type": "array",
+            "items": {
+              "properties": {
+                "op": {
+                  "type": "string",
+                  "enum": [
+                    "add",
+                    "remove",
+                    "replace"
+                  ]
+                },
+                "path": {
+                  "type": "string"
+                },
+                "value": {}
+              },
+              "required": [
+                "op"
+              ],
+              "type": "object"
+            }
+          },
+          "schemas": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "Operations"
+        ]
+      },
       "access_scim_update_logs_response": {
         "allOf": [
           {
@@ -594990,6 +595613,97 @@
           }
         ]
       },
+      "access_scim_user": {
+        "description": "A SCIM User resource. Additional SCIM extension attributes are supported.",
+        "type": "object",
+        "properties": {
+          "active": {
+            "type": "boolean"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "emails": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/access_scim_email"
+            }
+          },
+          "externalId": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string",
+            "readOnly": true
+          },
+          "meta": {
+            "$ref": "#/components/schemas/access_scim_meta"
+          },
+          "name": {
+            "$ref": "#/components/schemas/access_scim_name"
+          },
+          "schemas": {
+            "description": "The SCIM schemas that apply to this resource.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "userName": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      },
+      "access_scim_user_collection_response": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/access_api-response-single"
+          },
+          {
+            "properties": {
+              "result": {
+                "$ref": "#/components/schemas/access_scim_user_list_response"
+              }
+            },
+            "type": "object"
+          }
+        ]
+      },
+      "access_scim_user_list_response": {
+        "type": "object",
+        "properties": {
+          "Resources": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/access_scim_user"
+            }
+          },
+          "itemsPerPage": {
+            "type": "integer"
+          },
+          "schemas": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "startIndex": {
+            "type": "integer"
+          },
+          "totalResults": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "schemas",
+          "totalResults",
+          "startIndex",
+          "itemsPerPage",
+          "Resources"
+        ]
+      },
       "access_scim_user_response": {
         "allOf": [
           {
@@ -594999,6 +595713,22 @@
             "properties": {
               "result": {
                 "$ref": "#/components/schemas/access_users"
+              }
+            },
+            "type": "object"
+          }
+        ]
+      },
+      "access_scim_user_single_response": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/access_api-response-single"
+          },
+          {
+            "properties": {
+              "result": {
+                "$ref": "#/components/schemas/access_scim_user"
               }
             },
             "type": "object"
@@ -595198,7 +595928,8 @@
                 "not": {
                   "enum": [
                     "end_user"
-                  ]
+                  ],
+                  "type": "string"
                 },
                 "type": "string"
               }
@@ -595266,7 +595997,7 @@
             "$ref": "#/components/schemas/access_service_auth_401_redirect"
           },
           "session_duration": {
-            "$ref": "#/components/schemas/access_session_duration-4"
+            "$ref": "#/components/schemas/access_session_duration-2"
           },
           "skip_interstitial": {
             "$ref": "#/components/schemas/access_skip_interstitial"
@@ -595326,6 +596057,15 @@
               }
             ]
           },
+          "leak_report_url": {
+            "$ref": "#/components/schemas/access_leak_report_url"
+          },
+          "leak_reported_at": {
+            "$ref": "#/components/schemas/access_leak_reported_at"
+          },
+          "leak_reporter": {
+            "$ref": "#/components/schemas/access_leak_reporter"
+          },
           "name": {
             "$ref": "#/components/schemas/access_name-2"
           },
@@ -595365,6 +596105,15 @@
           },
           "last_seen_at": {
             "$ref": "#/components/schemas/access_timestamp"
+          },
+          "leak_report_url": {
+            "$ref": "#/components/schemas/access_leak_report_url"
+          },
+          "leak_reported_at": {
+            "$ref": "#/components/schemas/access_leak_reported_at"
+          },
+          "leak_reporter": {
+            "$ref": "#/components/schemas/access_leak_reporter"
           },
           "name": {
             "$ref": "#/components/schemas/access_name-17"
@@ -595441,7 +596190,7 @@
         "example": "24h"
       },
       "access_session_duration-2": {
-        "description": "The amount of time that tokens issued for this application will be valid. Must be in the format `300ms` or `2h45m`. Valid time units are: ns, us (or µs), ms, s, m, h. Note: unsupported for infrastructure type applications.",
+        "description": "The amount of time that tokens issued for this application will be valid. Must be in the format `300ms` or `2h45m`. Valid time units are: ns, us (or µs), ms, s, m, h.",
         "type": "string",
         "example": "24h",
         "default": "24h"
@@ -595451,12 +596200,6 @@
         "type": "string",
         "example": "24h",
         "nullable": true
-      },
-      "access_session_duration-4": {
-        "description": "The amount of time that tokens issued for this application will be valid. Must be in the format `300ms` or `2h45m`. Valid time units are: ns, us (or µs), ms, s, m, h.",
-        "type": "string",
-        "example": "24h",
-        "default": "24h"
       },
       "access_settings": {
         "type": "object",
