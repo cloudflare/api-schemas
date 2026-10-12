@@ -296541,7 +296541,7 @@
       "get": {
         "operationId": "getResourceLibraryApplications",
         "summary": "List applications",
-        "description": "List the applications available to an account, both the applications Cloudflare\ncurates and the custom applications the account has defined.\n\nResults are paginated. Use `filter` and `search` to narrow the list, `order_by` to\nsort it, and `fields` to reduce each result to only the properties you need.\nUse `lookup` to find complete application names mentioned in a rule sentence,\nignoring case. Lookup does not correct misspellings. It ranks matches by\nrelevance and uses the same filters, fields, and pagination as listing.\n`lookup` cannot be combined with `search`.\n\nThe authenticated principal must have access to the account identified by\n`account_id`.\n",
+        "description": "List the applications available to an account, both the applications Cloudflare\ncurates and the custom applications the account has defined.\n\nResults are paginated. Use `filter` and `search` to narrow the list, `order_by` to\nsort it, and `fields` to reduce each result to only the properties you need.\nUse `lookup` to find complete application names mentioned in a rule sentence,\nignoring case. Lookup does not correct misspellings. It ranks matches by\nrelevance and uses the same filters, fields, and pagination as listing.\n`lookup` cannot be combined with `search`.\n\nInvalid UTF-8 or a NUL character (U+0000) in any query parameter name or value\nreturns `400`.\n\nThe authenticated principal must have access to the account identified by\n`account_id`.\n",
         "parameters": [
           {
             "name": "account_id",
@@ -296603,7 +296603,7 @@
           {
             "name": "lookup",
             "in": "query",
-            "description": "Find complete, case-insensitive application name mentions in a phrase or\nrule sentence. Misspelled names do not match. Returns matching applications\nranked by relevance. Must be between 2 and 1000 characters. Uses the same\nfilters, fields, and pagination as listing. `search` cannot be combined\nwith lookup. Results are ranked by relevance, so `order_by` is ignored.\n",
+            "description": "Find complete, case-insensitive application name mentions in a phrase or\nrule sentence. Misspelled names do not match. Returns matching applications\nranked by relevance. Must be between 2 and 1000 characters, with no control\ncharacters other than tab and line breaks. Uses the same\nfilters, fields, and pagination as listing. `search` cannot be combined\nwith lookup. Results are ranked by relevance, so `order_by` is ignored.\nTo keep the text out of URLs, send it to `POST .../applications/lookup` instead.\n",
             "schema": {
               "type": "string",
               "maxLength": 1000,
@@ -296752,6 +296752,129 @@
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "accounts.applications",
         "x-fern-sdk-method-name": "create"
+      }
+    },
+    "/accounts/{account_id}/resource-library/applications/lookup": {
+      "post": {
+        "operationId": "lookupResourceLibraryApplications",
+        "summary": "Look up applications in a rule sentence",
+        "description": "Find complete application names mentioned in a rule sentence, ignoring case.\nLookup does not correct misspellings. Matches are ranked by relevance.\n\nThis endpoint takes the rule sentence in the request body, so the text stays out\nof URLs and request logs. Use it instead of the `lookup` query parameter on the\nlist endpoint when the text may contain sensitive content.\n\n`fields`, `limit`, and `filter` work the same way as on the list endpoint and are\npassed as query parameters. Results are not paged: `offset`, `order_by`, `search`,\nand `lookup` query parameters return `400`. Unknown request body properties also\nreturn `400`. Invalid UTF-8 or a NUL character (U+0000) in any query parameter\nname or value returns `400`.\n\nThe authenticated principal must have access to the account identified by\n`account_id`.\n",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "description": "Account ID.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "023e105f4ecef8ad9ca31a8372d0c353"
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "description": "Filter matches using the same `key:value` filters as the list endpoint.",
+            "schema": {
+              "type": "string"
+            },
+            "example": "supported:GATEWAY"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Maximum number of matches to return. Defaults to 25; values are clamped to 1–250.",
+            "schema": {
+              "type": "integer",
+              "default": 25
+            }
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "description": "Return only the listed properties on each application, as a comma-separated list.\nAccepts the same properties as the list endpoint. `id` is always returned.\nOmit this parameter to receive the full application object.\n",
+            "schema": {
+              "type": "string"
+            },
+            "example": "id,name"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/alexandria_lookup_applications_request"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Applications mentioned in the rule sentence, ranked by relevance.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/alexandria_get_applications_response"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The authenticated principal does not have access to the requested account.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/alexandria_api_response_common_failure"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Application review statuses could not be retrieved.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/alexandria_api_response_common_failure"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Application review statuses were requested but are not available.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/alexandria_api_response_common_failure"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Lookup applications response failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/alexandria_api_response_common_failure"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Applications"
+        ],
+        "x-fern-availability": "beta",
+        "x-fern-sdk-group-name": "accounts.applications",
+        "x-fern-sdk-method-name": "lookup"
       }
     },
     "/accounts/{account_id}/resource-library/applications/{id}": {
@@ -600458,7 +600581,7 @@
         "example": "Category name"
       },
       "alexandria_create_application_request": {
-        "description": "Defines a custom application. At least one hostname or IP subnet is required.\nSupport domains and port/protocol pairs do not satisfy this requirement.\n",
+        "description": "Defines a custom application. At least one hostname or IP subnet is required.\nSupport domains and port/protocol pairs do not satisfy this requirement.\nA NUL character (U+0000) in any string value returns `400`.\n",
         "type": "object",
         "properties": {
           "category_id": {
@@ -600685,6 +600808,22 @@
           }
         ]
       },
+      "alexandria_lookup_applications_request": {
+        "type": "object",
+        "properties": {
+          "lookup": {
+            "description": "Rule sentence to search for complete application names. Leading and trailing\nwhitespace is trimmed before the length is checked. Control characters other\nthan tab and line breaks return `400`.\n",
+            "type": "string",
+            "example": "block access to Google Chat",
+            "maxLength": 1000,
+            "minLength": 2
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "lookup"
+        ]
+      },
       "alexandria_messages": {
         "type": "array",
         "items": {
@@ -600718,7 +600857,7 @@
         "example": []
       },
       "alexandria_update_application_request": {
-        "description": "Update the network matchers for the application. The service preserves omitted\nmatcher lists; send an empty array to clear a list. The resulting application must\ncontain at least one hostname or IP subnet. Support domains and port/protocol pairs\ndo not satisfy this requirement.\n",
+        "description": "Update the network matchers for the application. The service preserves omitted\nmatcher lists; send an empty array to clear a list. The resulting application must\ncontain at least one hostname or IP subnet. Support domains and port/protocol pairs\ndo not satisfy this requirement.\nA NUL character (U+0000) in any string value returns `400`.\n",
         "type": "object",
         "properties": {
           "hostnames": {
