@@ -424630,6 +424630,7 @@ components:
             format: uuid
             type: string
           nullable: true
+          x-stainless-collection-type: set
         default_mode:
           description: 'Default traffic mode: ALLOW or BLOCK'
           type: string
@@ -424653,6 +424654,7 @@ components:
         on_error_action:
           description: Action for runtime Rego errors. Omit to use BLOCK.
           type: string
+          default: BLOCK
           enum:
             - BLOCK
             - SKIP
@@ -424663,9 +424665,11 @@ components:
             format: uuid
             type: string
           nullable: true
+          x-stainless-collection-type: set
         rego_raise_error:
           description: Whether OPA builtin failures are raised as runtime evaluation errors. Omit to use the default true value.
           type: boolean
+          default: true
         tags:
           description: Tags to attach. Keys are limited to 256 UTF-8 bytes and values to 1024 UTF-8 bytes.
           type: object
@@ -424688,11 +424692,12 @@ components:
             - ALLOW
             - BLOCK
         entries:
-          description: Domain entries for this ACL
+          description: Domain entries for this ACL. Each domain must appear at most once.
           type: array
           items:
             $ref: '#/components/schemas/cws_DomainACLEntry'
           nullable: true
+          x-stainless-collection-type: set
         name:
           description: Name of the domain ACL
           type: string
@@ -424755,14 +424760,18 @@ components:
           items:
             format: uuid
             type: string
+          default: []
           nullable: true
+          x-stainless-collection-type: set
         include_workload_ids:
           description: Workload IDs that include matching requests. Empty or omitted includes all requests before exclusions.
           type: array
           items:
             format: uuid
             type: string
+          default: []
           nullable: true
+          x-stainless-collection-type: set
         name:
           description: Name of the policy set
           type: string
@@ -424774,6 +424783,7 @@ components:
           items:
             $ref: '#/components/schemas/cws_PolicySetPolicyInput'
           nullable: true
+          x-stainless-collection-type: set
         tags:
           description: Tags to attach. Keys are limited to 256 UTF-8 bytes and values to 1024 UTF-8 bytes.
           type: object
@@ -424871,6 +424881,7 @@ components:
             format: uuid
             type: string
           nullable: true
+          x-stainless-collection-type: set
         created_at:
           type: string
           format: date-time
@@ -424912,6 +424923,7 @@ components:
             format: uuid
             type: string
           nullable: true
+          x-stainless-collection-type: set
         rego_raise_error:
           description: Whether OPA builtin failures are raised as runtime evaluation errors
           type: boolean
@@ -424950,11 +424962,12 @@ components:
             - ALLOW
             - BLOCK
         entries:
-          description: Per-domain action overrides
+          description: Per-domain action overrides. Each domain appears at most once.
           type: array
           items:
             $ref: '#/components/schemas/cws_DomainACLEntry'
           nullable: true
+          x-stainless-collection-type: set
         id:
           description: Server-assigned UUID
           type: string
@@ -425090,6 +425103,17 @@ components:
       required:
         - policy_fields
         - workload_fields
+    cws_JSONDocument:
+      anyOf:
+        - additionalProperties:
+            $ref: '#/components/schemas/cws_JSONValue'
+          type: object
+        - items:
+            $ref: '#/components/schemas/cws_JSONValue'
+          type: array
+        - type: string
+        - type: number
+        - type: boolean
     cws_JSONValue:
       anyOf:
         - additionalProperties:
@@ -425596,6 +425620,7 @@ components:
             format: uuid
             type: string
           nullable: true
+          x-stainless-collection-type: set
         id:
           description: Server-assigned UUID
           type: string
@@ -425608,6 +425633,7 @@ components:
             format: uuid
             type: string
           nullable: true
+          x-stainless-collection-type: set
         name:
           description: Human-readable name; unique per account
           type: string
@@ -425619,6 +425645,7 @@ components:
           items:
             $ref: '#/components/schemas/cws_PolicySetPolicy'
           nullable: true
+          x-stainless-collection-type: set
         tags:
           description: Tags attached to this policy set
           type: object
@@ -425674,9 +425701,9 @@ components:
           format: date-time
           readOnly: true
         data:
-          description: Arbitrary JSON document with at most 100 nesting levels. PostgreSQL-normalized JSON must not exceed 65536 bytes; exponent-form numbers count at expanded decimal size.
+          description: Arbitrary non-null JSON document with at most 100 nesting levels. Nested null values are supported. PostgreSQL-normalized JSON must not exceed 65536 bytes; exponent-form numbers count at expanded decimal size.
           allOf:
-            - $ref: '#/components/schemas/cws_JSONValue'
+            - $ref: '#/components/schemas/cws_JSONDocument'
           x-stainless-override-schema:
             type: unknown
         id:
@@ -425711,9 +425738,9 @@ components:
       type: object
       properties:
         data:
-          description: Arbitrary JSON payload with at most 100 nesting levels. PostgreSQL-normalized JSON must not exceed 65536 bytes; exponent-form numbers count at expanded decimal size.
+          description: Arbitrary non-null JSON payload with at most 100 nesting levels. Nested null values are supported. PostgreSQL-normalized JSON must not exceed 65536 bytes; exponent-form numbers count at expanded decimal size.
           allOf:
-            - $ref: '#/components/schemas/cws_JSONValue'
+            - $ref: '#/components/schemas/cws_JSONDocument'
           x-stainless-override-schema:
             type: unknown
         import_path:
@@ -426313,6 +426340,7 @@ components:
             format: uuid
             type: string
           nullable: true
+          x-stainless-collection-type: set
         default_mode:
           description: 'Default traffic mode: ALLOW or BLOCK'
           type: string
@@ -426346,6 +426374,7 @@ components:
             format: uuid
             type: string
           nullable: true
+          x-stainless-collection-type: set
         rego_raise_error:
           description: Whether OPA builtin failures are raised as runtime evaluation errors. Omit to preserve the current value.
           type: boolean
@@ -426371,11 +426400,12 @@ components:
             - ALLOW
             - BLOCK
         entries:
-          description: Replacement set of domain entries
+          description: Replacement set of domain entries. Each domain must appear at most once.
           type: array
           items:
             $ref: '#/components/schemas/cws_DomainACLEntry'
           nullable: true
+          x-stainless-collection-type: set
         name:
           description: Name of the domain ACL
           type: string
@@ -426438,14 +426468,18 @@ components:
           items:
             format: uuid
             type: string
+          default: []
           nullable: true
+          x-stainless-collection-type: set
         include_workload_ids:
           description: Replacement set of included workload IDs. Empty or omitted includes all requests before exclusions.
           type: array
           items:
             format: uuid
             type: string
+          default: []
           nullable: true
+          x-stainless-collection-type: set
         name:
           description: Name of the policy set
           type: string
@@ -426457,6 +426491,7 @@ components:
           items:
             $ref: '#/components/schemas/cws_PolicySetPolicyInput'
           nullable: true
+          x-stainless-collection-type: set
         tags:
           description: Replacement tag set. Omit to preserve existing tags; use {} to clear. Keys are limited to 256 UTF-8 bytes and values to 1024 UTF-8 bytes.
           type: object
