@@ -197071,6 +197071,9 @@ paths:
         relevance and uses the same filters, fields, and pagination as listing.
         `lookup` cannot be combined with `search`.
 
+        Invalid UTF-8 or a NUL character (U+0000) in any query parameter name or value
+        returns `400`.
+
         The authenticated principal must have access to the account identified by
         `account_id`.
       parameters:
@@ -197133,9 +197136,11 @@ paths:
           description: |
             Find complete, case-insensitive application name mentions in a phrase or
             rule sentence. Misspelled names do not match. Returns matching applications
-            ranked by relevance. Must be between 2 and 1000 characters. Uses the same
+            ranked by relevance. Must be between 2 and 1000 characters, with no control
+            characters other than tab and line breaks. Uses the same
             filters, fields, and pagination as listing. `search` cannot be combined
             with lookup. Results are ranked by relevance, so `order_by` is ignored.
+            To keep the text out of URLs, send it to `POST .../applications/lookup` instead.
           schema:
             type: string
             maxLength: 1000
@@ -197382,6 +197387,101 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: accounts.applications
       x-fern-sdk-method-name: update
+  /accounts/{account_id}/resource-library/applications/lookup:
+    post:
+      operationId: lookupResourceLibraryApplications
+      summary: Look up applications in a rule sentence
+      description: |
+        Find complete application names mentioned in a rule sentence, ignoring case.
+        Lookup does not correct misspellings. Matches are ranked by relevance.
+
+        This endpoint takes the rule sentence in the request body, so the text stays out
+        of URLs and request logs. Use it instead of the `lookup` query parameter on the
+        list endpoint when the text may contain sensitive content.
+
+        `fields`, `limit`, and `filter` work the same way as on the list endpoint and are
+        passed as query parameters. Results are not paged: `offset`, `order_by`, `search`,
+        and `lookup` query parameters return `400`. Unknown request body properties also
+        return `400`. Invalid UTF-8 or a NUL character (U+0000) in any query parameter
+        name or value returns `400`.
+
+        The authenticated principal must have access to the account identified by
+        `account_id`.
+      parameters:
+        - name: account_id
+          in: path
+          description: Account ID.
+          required: true
+          schema:
+            type: string
+          example: 023e105f4ecef8ad9ca31a8372d0c353
+        - name: filter
+          in: query
+          description: Filter matches using the same `key:value` filters as the list endpoint.
+          schema:
+            type: string
+          example: supported:GATEWAY
+        - name: limit
+          in: query
+          description: Maximum number of matches to return. Defaults to 25; values are clamped to 1–250.
+          schema:
+            type: integer
+            default: 25
+        - name: fields
+          in: query
+          description: |
+            Return only the listed properties on each application, as a comma-separated list.
+            Accepts the same properties as the list endpoint. `id` is always returned.
+            Omit this parameter to receive the full application object.
+          schema:
+            type: string
+          example: id,name
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/alexandria_lookup_applications_request'
+      responses:
+        '200':
+          description: Applications mentioned in the rule sentence, ranked by relevance.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/alexandria_get_applications_response'
+        '403':
+          description: The authenticated principal does not have access to the requested account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/alexandria_api_response_common_failure'
+        '502':
+          description: Application review statuses could not be retrieved.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/alexandria_api_response_common_failure'
+        '503':
+          description: Application review statuses were requested but are not available.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/alexandria_api_response_common_failure'
+        4XX:
+          description: Lookup applications response failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/alexandria_api_response_common_failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Applications
+      x-fern-availability: beta
+      x-fern-sdk-group-name: accounts.applications
+      x-fern-sdk-method-name: lookup
   /accounts/{account_id}/resource-library/categories:
     get:
       operationId: getResourceLibraryCategories
@@ -407961,6 +408061,7 @@ components:
       description: |
         Defines a custom application. At least one hostname or IP subnet is required.
         Support domains and port/protocol pairs do not satisfy this requirement.
+        A NUL character (U+0000) in any string value returns `400`.
       type: object
       properties:
         category_id:
@@ -408093,6 +408194,21 @@ components:
             result:
               $ref: '#/components/schemas/alexandria_category'
           type: object
+    alexandria_lookup_applications_request:
+      type: object
+      properties:
+        lookup:
+          description: |
+            Rule sentence to search for complete application names. Leading and trailing
+            whitespace is trimmed before the length is checked. Control characters other
+            than tab and line breaks return `400`.
+          type: string
+          example: block access to Google Chat
+          maxLength: 1000
+          minLength: 2
+      additionalProperties: false
+      required:
+        - lookup
     alexandria_messages:
       type: array
       items:
@@ -408121,6 +408237,7 @@ components:
         matcher lists; send an empty array to clear a list. The resulting application must
         contain at least one hostname or IP subnet. Support domains and port/protocol pairs
         do not satisfy this requirement.
+        A NUL character (U+0000) in any string value returns `400`.
       type: object
       properties:
         hostnames:
