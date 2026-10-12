@@ -204313,6 +204313,178 @@
         "x-fern-sdk-method-name": "update"
       }
     },
+    "/accounts/{account_id}/dlp/profiles/integration/{profile_id}": {
+      "delete": {
+        "operationId": "dlp-profiles-delete-integration-profile",
+        "summary": "Delete integration profile",
+        "description": "Deletes a DLP integration profile whose integration no longer exists. If the profile owns\nentries, `recursive=1` is required. This also deletes the entries and removes all references to\nthem, as listed by the references endpoint.",
+        "parameters": [
+          {
+            "name": "recursive",
+            "in": "query",
+            "description": "Set to `1` to also delete the entries owned by the profile and remove all references to\nthem, as listed by the references endpoint. Required if the profile owns any entries.\nDefaults to `0`.",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "maximum": 1,
+              "minimum": 0
+            }
+          },
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "profile_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Delete integration profile response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dlp_api-response-single"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/dlp_Empty"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Delete integration profile failure response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dlp_api-response-common-failure"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "tags": [
+          "DLP Profiles"
+        ],
+        "x-api-token-group": [
+          "Zero Trust Write"
+        ],
+        "x-fern-availability": "generally-available",
+        "x-fern-ignore": true,
+        "x-fern-sdk-group-name": "zero-trust.dlp.profiles.integration",
+        "x-fern-sdk-method-name": "delete",
+        "x-stainless-skip": [
+          "terraform"
+        ]
+      }
+    },
+    "/accounts/{account_id}/dlp/profiles/integration/{profile_id}/references": {
+      "get": {
+        "operationId": "dlp-profiles-list-integration-profile-references",
+        "summary": "List integration profile references",
+        "description": "Lists the profiles and data classes that reference the entries of a DLP integration profile,\nshows how each data class would change if the profile is deleted with `recursive=1`, and\nreports whether the integration that manages the profile still exists.",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "profile_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List integration profile references response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dlp_api-response-single"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/dlp_IntegrationProfileReferences"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "List integration profile references failure response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dlp_api-response-common-failure"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "tags": [
+          "DLP Profiles"
+        ],
+        "x-api-token-group": [
+          "Zero Trust Read",
+          "Zero Trust Write"
+        ],
+        "x-fern-availability": "generally-available",
+        "x-fern-ignore": true,
+        "x-fern-sdk-group-name": "zero-trust.dlp.profiles.integration.references",
+        "x-fern-sdk-method-name": "list",
+        "x-stainless-skip": [
+          "terraform"
+        ]
+      }
+    },
     "/accounts/{account_id}/dlp/profiles/predefined": {
       "post": {
         "operationId": "dlp-profiles-create-predefined-profile",
@@ -632068,6 +632240,25 @@
           "$ref": "#/components/schemas/dlp_DataClass"
         }
       },
+      "dlp_DataClassRef": {
+        "description": "A data class that references an entry.",
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "The ID of the data class.",
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "description": "The name of the data class.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      },
       "dlp_DataClassUpdate": {
         "type": "object",
         "properties": {
@@ -633295,6 +633486,35 @@
           "updated_at"
         ]
       },
+      "dlp_IntegrationProfileReferences": {
+        "description": "The profiles and data classes that reference the entries of an integration profile, and how\nthey will change if the profile is deleted with `recursive=1`.",
+        "type": "object",
+        "properties": {
+          "data_classes": {
+            "description": "Data classes that reference entries owned by this profile, sorted by ID.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/dlp_ReferencingDataClass"
+            }
+          },
+          "entries": {
+            "description": "Entries owned by this profile, sorted by ID.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/dlp_ReferencedIntegrationEntry"
+            }
+          },
+          "integration_exists": {
+            "description": "Whether the integration that manages this profile still exists in CASB. The profile cannot\nbe deleted while this is `true`.",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "integration_exists",
+          "entries",
+          "data_classes"
+        ]
+      },
       "dlp_Limits": {
         "type": "object",
         "properties": {
@@ -634346,6 +634566,71 @@
         "enum": [
           "Intent",
           "Content"
+        ]
+      },
+      "dlp_ReferencedIntegrationEntry": {
+        "description": "An entry owned by an integration profile, along with the profiles and data classes that\nreference it.",
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "The ID of the entry.",
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "description": "The name of the entry.",
+            "type": "string"
+          },
+          "referenced_by_data_classes": {
+            "description": "Data classes that reference this entry, sorted by ID.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/dlp_DataClassRef"
+            }
+          },
+          "referenced_by_profiles": {
+            "description": "Other profiles that share this entry, sorted by ID.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/dlp_EntryProfile"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "referenced_by_profiles",
+          "referenced_by_data_classes"
+        ]
+      },
+      "dlp_ReferencingDataClass": {
+        "description": "A data class that references an entry owned by an integration profile.",
+        "type": "object",
+        "properties": {
+          "current_expression": {
+            "description": "The expression of the data class before the profile is deleted.",
+            "type": "string"
+          },
+          "id": {
+            "description": "The ID of the data class.",
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "description": "The name of the data class.",
+            "type": "string"
+          },
+          "resulting_expression": {
+            "description": "The expression with every condition on this profile's entries removed, or `null` if no\ncondition would remain. The profile cannot be deleted until data classes with a `null`\nvalue are updated or deleted.",
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "current_expression",
+          "resulting_expression"
         ]
       },
       "dlp_RegexValidationQuery": {
@@ -766374,12 +766659,6 @@
         },
         "dlp.settings": {
           "description": "Data Loss Prevention - manage account-level settings"
-        },
-        "dlp.validators": {
-          "description": "Data Loss Prevention - list and retrieve content validators"
-        },
-        "dlp.validators.proximity-words": {
-          "description": "Data Loss Prevention - manage proximity-word validators"
         },
         "risk-scoring": {
           "description": "User Risk Scoring - retrieve and reset user risk scores"
