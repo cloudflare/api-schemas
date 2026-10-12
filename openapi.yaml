@@ -146916,7 +146916,7 @@ paths:
           in: query
           schema:
             $ref: '#/components/schemas/firewall_schemas-mode'
-          x-fern-parameter-name: action
+          x-fern-parameter-name: access-rule-mode
         - name: configuration.target
           in: query
           schema:
@@ -147017,7 +147017,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: firewall.access-rules
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
     post:
       operationId: ip-access-rules-for-an-account-create-an-ip-access-rule
       summary: Create an IP Access rule
@@ -147041,7 +147040,9 @@ paths:
                 configuration:
                   $ref: '#/components/schemas/firewall_configuration'
                 mode:
-                  $ref: '#/components/schemas/firewall_schemas-mode'
+                  allOf:
+                    - $ref: '#/components/schemas/firewall_schemas-mode'
+                  x-fern-property-name: access-rule-mode
                 notes:
                   default: ''
                   anyOf:
@@ -147081,10 +147082,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: firewall.access-rules
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
-      x-forge-params:
-        mode:
-          flagName: action
   /accounts/{account_id}/firewall/access_rules/rules/{rule_id}:
     delete:
       operationId: ip-access-rules-for-an-account-delete-an-ip-access-rule
@@ -147136,7 +147133,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: firewall.access-rules
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
       x-forge-require-confirmation: This operation deletes the account-level IP Access Rule and affects every zone in the account.
     get:
       operationId: ip-access-rules-for-an-account-get-an-ip-access-rule
@@ -147186,7 +147182,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: firewall.access-rules
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
     patch:
       operationId: ip-access-rules-for-an-account-update-an-ip-access-rule
       summary: Update an IP Access rule
@@ -147243,10 +147238,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: firewall.access-rules
       x-fern-sdk-method-name: edit
-      x-forge-hidden: true
-      x-forge-params:
-        mode:
-          flagName: action
   /accounts/{account_id}/flagship/apps:
     get:
       operationId: flagship_list_apps
@@ -349803,7 +349794,7 @@ paths:
           in: query
           schema:
             $ref: '#/components/schemas/firewall_schemas-mode'
-          x-fern-parameter-name: action
+          x-fern-parameter-name: access-rule-mode
         - name: configuration.target
           in: query
           schema:
@@ -349901,7 +349892,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: user.firewall.access-rules
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
     post:
       operationId: ip-access-rules-for-a-user-create-an-ip-access-rule
       summary: Create an IP Access rule
@@ -349919,7 +349909,9 @@ paths:
                 configuration:
                   $ref: '#/components/schemas/firewall_configuration'
                 mode:
-                  $ref: '#/components/schemas/firewall_schemas-mode'
+                  allOf:
+                    - $ref: '#/components/schemas/firewall_schemas-mode'
+                  x-fern-property-name: access-rule-mode
                 notes:
                   default: ''
                   anyOf:
@@ -349956,10 +349948,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: user.firewall.access-rules
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
-      x-forge-params:
-        mode:
-          flagName: action
   /user/firewall/access_rules/rules/{rule_id}:
     delete:
       operationId: ip-access-rules-for-a-user-delete-an-ip-access-rule
@@ -350003,7 +349991,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: user.firewall.access-rules
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
       x-forge-require-confirmation: This operation deletes the user-level IP Access Rule and affects every zone owned by the user.
     get:
       operationId: ip-access-rules-for-a-user-get-an-ip-access-rule
@@ -350045,7 +350032,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: user.firewall.access-rules
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
     patch:
       operationId: ip-access-rules-for-a-user-update-an-ip-access-rule
       summary: Update an IP Access rule
@@ -350064,7 +350050,9 @@ paths:
               type: object
               properties:
                 mode:
-                  $ref: '#/components/schemas/firewall_schemas-mode'
+                  allOf:
+                    - $ref: '#/components/schemas/firewall_schemas-mode'
+                  x-fern-property-name: access-rule-mode
                 notes:
                   $ref: '#/components/schemas/firewall_notes'
       responses:
@@ -350096,10 +350084,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: user.firewall.access-rules
       x-fern-sdk-method-name: edit
-      x-forge-hidden: true
-      x-forge-params:
-        mode:
-          flagName: action
   /user/invites:
     get:
       operationId: user'-s-invites-list-invitations
@@ -366790,7 +366774,6 @@ paths:
       x-fern-ignore: true
       x-fern-sdk-group-name: firewall.filters
       x-fern-sdk-method-name: bulk-delete
-      x-forge-hidden: true
     get:
       operationId: filters-list-filters
       summary: List filters
@@ -366880,7 +366863,6 @@ paths:
       x-fern-ignore: true
       x-fern-sdk-group-name: firewall.filters
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
     post:
       operationId: filters-create-filters
       summary: Create filters
@@ -366931,7 +366913,6 @@ paths:
       x-fern-ignore: true
       x-fern-sdk-group-name: firewall.filters
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
     put:
       operationId: filters-update-filters
       summary: Update filters
@@ -366981,7 +366962,6 @@ paths:
       x-fern-ignore: true
       x-fern-sdk-group-name: firewall.filters
       x-fern-sdk-method-name: bulk-update
-      x-forge-hidden: true
   /zones/{zone_id}/filters/{filter_id}:
     delete:
       operationId: filters-delete-a-filter
@@ -367029,7 +367009,6 @@ paths:
       x-fern-ignore: true
       x-fern-sdk-group-name: firewall.filters
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
     get:
       operationId: filters-get-a-filter
       summary: Get a filter
@@ -367077,7 +367056,6 @@ paths:
       x-fern-ignore: true
       x-fern-sdk-group-name: firewall.filters
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
     put:
       operationId: filters-update-a-filter
       summary: Update a filter
@@ -367130,7 +367108,6 @@ paths:
       x-fern-ignore: true
       x-fern-sdk-group-name: firewall.filters
       x-fern-sdk-method-name: update
-      x-forge-hidden: true
   /zones/{zone_id}/firewall/access_rules/rules:
     get:
       operationId: ip-access-rules-for-a-zone-list-ip-access-rules
@@ -367243,7 +367220,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: firewall.zone-access-rules
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
     post:
       operationId: ip-access-rules-for-a-zone-create-an-ip-access-rule
       summary: Create an IP Access rule
@@ -367267,7 +367243,9 @@ paths:
                 configuration:
                   $ref: '#/components/schemas/firewall_configuration'
                 mode:
-                  $ref: '#/components/schemas/firewall_schemas-mode'
+                  allOf:
+                    - $ref: '#/components/schemas/firewall_schemas-mode'
+                  x-fern-property-name: access-rule-mode
                 notes:
                   default: ''
                   anyOf:
@@ -367304,7 +367282,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: firewall.zone-access-rules
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
   /zones/{zone_id}/firewall/access_rules/rules/{rule_id}:
     delete:
       operationId: ip-access-rules-for-a-zone-delete-an-ip-access-rule
@@ -367368,7 +367345,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: firewall.zone-access-rules
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
       x-forge-require-confirmation: This operation deletes the zone-level IP Access Rule. If cascade is enabled, similar rules in other zones may also be deleted.
     patch:
       operationId: ip-access-rules-for-a-zone-update-an-ip-access-rule
@@ -367393,7 +367369,9 @@ paths:
               type: object
               properties:
                 mode:
-                  $ref: '#/components/schemas/firewall_schemas-mode'
+                  allOf:
+                    - $ref: '#/components/schemas/firewall_schemas-mode'
+                  x-fern-property-name: access-rule-mode
                 notes:
                   $ref: '#/components/schemas/firewall_notes'
       responses:
@@ -367425,7 +367403,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: firewall.zone-access-rules
       x-fern-sdk-method-name: edit
-      x-forge-hidden: true
   /zones/{zone_id}/firewall/lockdowns:
     get:
       operationId: zone-lockdown-list-zone-lockdown-rules
@@ -367532,7 +367509,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: firewall.lockdowns
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
     post:
       operationId: zone-lockdown-create-a-zone-lockdown-rule
       summary: Create a Zone Lockdown rule
@@ -367592,7 +367568,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: firewall.lockdowns
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
   /zones/{zone_id}/firewall/lockdowns/{lock_downs_id}:
     delete:
       operationId: zone-lockdown-delete-a-zone-lockdown-rule
@@ -367644,7 +367619,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: firewall.lockdowns
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
       x-forge-require-confirmation: This operation deletes the Zone Lockdown rule from the zone.
     get:
       operationId: zone-lockdown-get-a-zone-lockdown-rule
@@ -367691,7 +367665,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: firewall.lockdowns
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
     put:
       operationId: zone-lockdown-update-a-zone-lockdown-rule
       summary: Update a Zone Lockdown rule
@@ -367750,7 +367723,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: firewall.lockdowns
       x-fern-sdk-method-name: update
-      x-forge-hidden: true
   /zones/{zone_id}/firewall/rules:
     delete:
       operationId: firewall-rules-delete-firewall-rules
@@ -367807,7 +367779,6 @@ paths:
       x-fern-ignore: true
       x-fern-sdk-group-name: firewall.rules
       x-fern-sdk-method-name: bulk-delete
-      x-forge-hidden: true
     get:
       operationId: firewall-rules-list-firewall-rules
       summary: List firewall rules
@@ -367894,7 +367865,6 @@ paths:
       x-fern-ignore: true
       x-fern-sdk-group-name: firewall.rules
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
     patch:
       operationId: firewall-rules-update-priority-of-firewall-rules
       summary: Update priority of firewall rules
@@ -367951,7 +367921,6 @@ paths:
       x-fern-ignore: true
       x-fern-sdk-group-name: firewall.rules
       x-fern-sdk-method-name: bulk-edit
-      x-forge-hidden: true
     post:
       operationId: firewall-rules-create-firewall-rules
       summary: Create firewall rules
@@ -368010,7 +367979,6 @@ paths:
       x-fern-ignore: true
       x-fern-sdk-group-name: firewall.rules
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
     put:
       operationId: firewall-rules-update-firewall-rules
       summary: Update firewall rules
@@ -368067,7 +368035,6 @@ paths:
       x-fern-ignore: true
       x-fern-sdk-group-name: firewall.rules
       x-fern-sdk-method-name: bulk-update
-      x-forge-hidden: true
   /zones/{zone_id}/firewall/rules/{rule_id}:
     delete:
       operationId: firewall-rules-delete-a-firewall-rule
@@ -368127,7 +368094,6 @@ paths:
       x-fern-ignore: true
       x-fern-sdk-group-name: firewall.rules
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
     get:
       operationId: firewall-rules-get-a-firewall-rule
       summary: Get a firewall rule
@@ -368183,7 +368149,6 @@ paths:
       x-fern-ignore: true
       x-fern-sdk-group-name: firewall.rules
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
     patch:
       operationId: firewall-rules-update-priority-of-a-firewall-rule
       summary: Update priority of a firewall rule
@@ -368244,7 +368209,6 @@ paths:
       x-fern-ignore: true
       x-fern-sdk-group-name: firewall.rules
       x-fern-sdk-method-name: edit
-      x-forge-hidden: true
     put:
       operationId: firewall-rules-update-a-firewall-rule
       summary: Update a firewall rule
@@ -368311,7 +368275,6 @@ paths:
       x-fern-ignore: true
       x-fern-sdk-group-name: firewall.rules
       x-fern-sdk-method-name: update
-      x-forge-hidden: true
   /zones/{zone_id}/firewall/ua_rules:
     get:
       operationId: user-agent-blocking-rules-list-user-agent-blocking-rules
@@ -368385,7 +368348,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: firewall.ua-rules
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
     post:
       operationId: user-agent-blocking-rules-create-a-user-agent-blocking-rule
       summary: Create a User Agent Blocking rule
@@ -368408,7 +368370,9 @@ paths:
                 description:
                   $ref: '#/components/schemas/firewall_description'
                 mode:
-                  $ref: '#/components/schemas/firewall_schemas-mode'
+                  allOf:
+                    - $ref: '#/components/schemas/firewall_schemas-mode'
+                  x-fern-property-name: access-rule-mode
                 paused:
                   $ref: '#/components/schemas/firewall_schemas-paused'
               required:
@@ -368443,10 +368407,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: firewall.ua-rules
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
-      x-forge-params:
-        mode:
-          flagName: action
   /zones/{zone_id}/firewall/ua_rules/{ua_rule_id}:
     delete:
       operationId: user-agent-blocking-rules-delete-a-user-agent-blocking-rule
@@ -368500,7 +368460,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: firewall.ua-rules
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
       x-forge-require-confirmation: This operation deletes the User Agent Blocking rule from the zone.
     get:
       operationId: user-agent-blocking-rules-get-a-user-agent-blocking-rule
@@ -368547,7 +368506,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: firewall.ua-rules
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
     put:
       operationId: user-agent-blocking-rules-update-a-user-agent-blocking-rule
       summary: Update a User Agent Blocking rule
@@ -368577,7 +368535,9 @@ paths:
                 id:
                   $ref: '#/components/schemas/firewall_components-schemas-identifier'
                 mode:
-                  $ref: '#/components/schemas/firewall_schemas-mode'
+                  allOf:
+                    - $ref: '#/components/schemas/firewall_schemas-mode'
+                  x-fern-property-name: access-rule-mode
                 paused:
                   $ref: '#/components/schemas/firewall_schemas-paused'
               required:
@@ -368613,10 +368573,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: firewall.ua-rules
       x-fern-sdk-method-name: update
-      x-forge-hidden: true
-      x-forge-params:
-        mode:
-          flagName: action
   /zones/{zone_id}/firewall/waf/overrides:
     get:
       operationId: waf-overrides-list-waf-overrides
@@ -368672,7 +368628,6 @@ paths:
       x-fern-ignore: true
       x-fern-sdk-group-name: firewall.waf.overrides
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
     post:
       operationId: waf-overrides-create-a-waf-override
       summary: Create a WAF override
@@ -368722,7 +368677,6 @@ paths:
       x-fern-ignore: true
       x-fern-sdk-group-name: firewall.waf.overrides
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
   /zones/{zone_id}/firewall/waf/overrides/{overrides_id}:
     delete:
       operationId: waf-overrides-delete-a-waf-override
@@ -368767,7 +368721,6 @@ paths:
       x-fern-ignore: true
       x-fern-sdk-group-name: firewall.waf.overrides
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
     get:
       operationId: waf-overrides-get-a-waf-override
       summary: Get a WAF override
@@ -368812,7 +368765,6 @@ paths:
       x-fern-ignore: true
       x-fern-sdk-group-name: firewall.waf.overrides
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
     put:
       operationId: waf-overrides-update-waf-override
       summary: Update WAF override
@@ -368876,7 +368828,6 @@ paths:
       x-fern-ignore: true
       x-fern-sdk-group-name: firewall.waf.overrides
       x-fern-sdk-method-name: update
-      x-forge-hidden: true
   /zones/{zone_id}/firewall/waf/packages:
     get:
       operationId: waf-packages-list-waf-packages
@@ -368971,7 +368922,6 @@ paths:
       x-fern-ignore: true
       x-fern-sdk-group-name: firewall.waf.packages
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
   /zones/{zone_id}/firewall/waf/packages/{package_id}:
     get:
       operationId: waf-packages-get-a-waf-package
@@ -369023,7 +368973,6 @@ paths:
       x-fern-ignore: true
       x-fern-sdk-group-name: firewall.waf.packages
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
     patch:
       operationId: waf-packages-update-a-waf-package
       summary: Update a WAF package
@@ -369089,7 +369038,6 @@ paths:
       x-fern-ignore: true
       x-fern-sdk-group-name: firewall.waf.packages
       x-fern-sdk-method-name: edit
-      x-forge-hidden: true
   /zones/{zone_id}/firewall/waf/packages/{package_id}/groups:
     get:
       operationId: waf-rule-groups-list-waf-rule-groups
@@ -379685,7 +379633,6 @@ paths:
       x-fern-ignore: true
       x-fern-sdk-group-name: rate-limits
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
     post:
       operationId: rate-limits-for-a-zone-create-a-rate-limit
       summary: Create a rate limit
@@ -379741,7 +379688,6 @@ paths:
       x-fern-ignore: true
       x-fern-sdk-group-name: rate-limits
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
   /zones/{zone_id}/rate_limits/{rate_limit_id}:
     delete:
       operationId: rate-limits-for-a-zone-delete-a-rate-limit
@@ -379783,7 +379729,6 @@ paths:
       x-fern-ignore: true
       x-fern-sdk-group-name: rate-limits
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
     get:
       operationId: rate-limits-for-a-zone-get-a-rate-limit
       summary: Get a rate limit
@@ -379825,7 +379770,6 @@ paths:
       x-fern-ignore: true
       x-fern-sdk-group-name: rate-limits
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
     put:
       operationId: rate-limits-for-a-zone-update-a-rate-limit
       summary: Update a rate limit
@@ -379886,7 +379830,6 @@ paths:
       x-fern-ignore: true
       x-fern-sdk-group-name: rate-limits
       x-fern-sdk-method-name: edit
-      x-forge-hidden: true
   /zones/{zone_id}/rulesets:
     get:
       operationId: listZoneRulesets
