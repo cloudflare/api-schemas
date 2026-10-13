@@ -203935,11 +203935,17 @@ paths:
                 allOf:
                   - $ref: '#/components/schemas/resource-sharing_api-response-common-failure'
       security:
+        - api_token: []
         - api_email: []
           api_key: []
       tags:
         - Resource Sharing
-      x-api-token-group: null
+      x-api-token-group:
+        - Resource Sharing Read
+      x-cfPermissionsRequired:
+        enum:
+          - '#com.cloudflare.api.account.share.list'
+          - '#com.cloudflare.api.account.share.read'
       x-cfPlanAvailability:
         business: false
         enterprise: true
@@ -204090,11 +204096,16 @@ paths:
                 allOf:
                   - $ref: '#/components/schemas/resource-sharing_api-response-common-failure'
       security:
+        - api_token: []
         - api_email: []
           api_key: []
       tags:
         - Resource Sharing
-      x-api-token-group: null
+      x-api-token-group:
+        - Resource Sharing Read
+      x-cfPermissionsRequired:
+        enum:
+          - '#com.cloudflare.api.account.share.read'
       x-cfPlanAvailability:
         business: false
         enterprise: true
@@ -204303,7 +204314,7 @@ paths:
               $ref: '#/components/schemas/resource-sharing_update_share_excluded_recipients_request'
       responses:
         '204':
-          description: Empty body
+          description: Empty body.
         4XX:
           description: Update share excluded recipients failure.
           content:
@@ -204594,7 +204605,7 @@ paths:
               $ref: '#/components/schemas/resource-sharing_update_share_recipients_request'
       responses:
         '204':
-          description: Empty body
+          description: Empty body.
         4XX:
           description: Update share recipients failure.
           content:
@@ -394882,10 +394893,7 @@ components:
         minimum: 1
         multipleOf: 1
     resource-sharing_per_page:
-      description: |-
-        Number of objects to return per page. Defaults to `20` when `page`
-        is supplied without `per_page`. May be omitted entirely along with
-        `page` to receive a non-paginated response.
+      description: Number of objects to return per page. Defaults to `20` when `page` is supplied without `per_page`. May be omitted entirely along with `page` to receive a non-paginated response.
       in: query
       name: per_page
       schema:
@@ -483999,24 +484007,17 @@ components:
       type: object
       allOf:
         - $ref: '#/components/schemas/resource-sharing_api-response-common'
-        - properties:
-            result:
-              type: array
-              items: {}
-              nullable: true
-            result_info:
-              $ref: '#/components/schemas/resource-sharing_result_info'
+        - $ref: '#/components/schemas/resource-sharing_api-response-collection-info'
+    resource-sharing_api-response-collection-info:
+      type: object
+      properties:
+        result_info:
+          $ref: '#/components/schemas/resource-sharing_result_info'
     resource-sharing_api-response-common:
       type: object
       properties:
         errors:
           $ref: '#/components/schemas/resource-sharing_v4errors'
-        result:
-          anyOf:
-            - type: object
-            - items: {}
-              type: array
-            - type: string
         success:
           description: Whether the API call was successful.
           type: boolean
@@ -484256,18 +484257,24 @@ components:
       type: object
       allOf:
         - $ref: '#/components/schemas/resource-sharing_api-response-collection'
-        - properties:
-            result:
-              type: array
-              items:
-                $ref: '#/components/schemas/resource-sharing_share_excluded_recipient_object'
+        - $ref: '#/components/schemas/resource-sharing_share_excluded_recipient_response_collection_result'
+    resource-sharing_share_excluded_recipient_response_collection_result:
+      type: object
+      properties:
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/resource-sharing_share_excluded_recipient_object'
     resource-sharing_share_excluded_recipient_response_single:
       type: object
       allOf:
         - $ref: '#/components/schemas/resource-sharing_api-response-common'
-        - properties:
-            result:
-              $ref: '#/components/schemas/resource-sharing_share_excluded_recipient_object'
+        - $ref: '#/components/schemas/resource-sharing_share_excluded_recipient_response_single_result'
+    resource-sharing_share_excluded_recipient_response_single_result:
+      type: object
+      properties:
+        result:
+          $ref: '#/components/schemas/resource-sharing_share_excluded_recipient_object'
     resource-sharing_share_id:
       description: Share identifier tag.
       type: string
@@ -484384,18 +484391,24 @@ components:
       type: object
       allOf:
         - $ref: '#/components/schemas/resource-sharing_api-response-collection'
-        - properties:
-            result:
-              type: array
-              items:
-                $ref: '#/components/schemas/resource-sharing_share_recipient_object'
+        - $ref: '#/components/schemas/resource-sharing_share_recipient_response_collection_result'
+    resource-sharing_share_recipient_response_collection_result:
+      type: object
+      properties:
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/resource-sharing_share_recipient_object'
     resource-sharing_share_recipient_response_single:
       type: object
       allOf:
         - $ref: '#/components/schemas/resource-sharing_api-response-common'
-        - properties:
-            result:
-              $ref: '#/components/schemas/resource-sharing_share_recipient_object'
+        - $ref: '#/components/schemas/resource-sharing_share_recipient_response_single_result'
+    resource-sharing_share_recipient_response_single_result:
+      type: object
+      properties:
+        result:
+          $ref: '#/components/schemas/resource-sharing_share_recipient_object'
     resource-sharing_share_resource_object:
       properties:
         created:
@@ -484430,34 +484443,46 @@ components:
       type: object
       allOf:
         - $ref: '#/components/schemas/resource-sharing_api-response-collection'
-        - properties:
-            result:
-              type: array
-              items:
-                $ref: '#/components/schemas/resource-sharing_share_resource_object'
+        - $ref: '#/components/schemas/resource-sharing_share_resource_response_collection_result'
+    resource-sharing_share_resource_response_collection_result:
+      type: object
+      properties:
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/resource-sharing_share_resource_object'
     resource-sharing_share_resource_response_single:
       type: object
       allOf:
         - $ref: '#/components/schemas/resource-sharing_api-response-common'
-        - properties:
-            result:
-              $ref: '#/components/schemas/resource-sharing_share_resource_object'
+        - $ref: '#/components/schemas/resource-sharing_share_resource_response_single_result'
+    resource-sharing_share_resource_response_single_result:
+      type: object
+      properties:
+        result:
+          $ref: '#/components/schemas/resource-sharing_share_resource_object'
     resource-sharing_share_response_collection:
       type: object
       allOf:
         - $ref: '#/components/schemas/resource-sharing_api-response-collection'
-        - properties:
-            result:
-              type: array
-              items:
-                $ref: '#/components/schemas/resource-sharing_share_object'
+        - $ref: '#/components/schemas/resource-sharing_share_response_collection_result'
+    resource-sharing_share_response_collection_result:
+      type: object
+      properties:
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/resource-sharing_share_object'
     resource-sharing_share_response_single:
       type: object
       allOf:
         - $ref: '#/components/schemas/resource-sharing_api-response-common'
-        - properties:
-            result:
-              $ref: '#/components/schemas/resource-sharing_share_object'
+        - $ref: '#/components/schemas/resource-sharing_share_response_single_result'
+    resource-sharing_share_response_single_result:
+      type: object
+      properties:
+        result:
+          $ref: '#/components/schemas/resource-sharing_share_object'
     resource-sharing_share_status:
       type: string
       enum:
