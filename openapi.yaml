@@ -176261,9 +176261,6 @@ paths:
         Move an account into a destination organization, either assigning a standalone account
         to an organization or moving it between organizations in the same hierarchy. Availability
         depends on the organization's capabilities.
-
-        Authentication: A Global API key is required. User API Tokens do not include the required
-        `com.cloudflare.api.account.move` permission.
       parameters:
         - name: account_id
           in: path
@@ -178032,9 +178029,6 @@ paths:
         The returned list will be in order from "root" to "leaf", where the "leaf"
         will be the organization that _immediately_ contains the specified
         account.
-
-        Authentication: Use a Global API key, or a user-owned API Token scoped to the account with
-        the `Account Settings Read` permission, which grants `com.cloudflare.api.account.read`.
       parameters:
         - name: account_id
           in: path
@@ -178084,34 +178078,6 @@ paths:
       tags:
         - Accounts
       x-api-token-group:
-        - Trust and Safety Write
-        - Trust and Safety Read
-        - DNS View Write
-        - DNS View Read
-        - SCIM Provisioning
-        - Load Balancers Account Write
-        - Load Balancers Account Read
-        - 'Zero Trust: PII Read'
-        - DDoS Botnet Feed Write
-        - DDoS Botnet Feed Read
-        - Workers R2 Storage Write
-        - Workers R2 Storage Read
-        - DDoS Protection Write
-        - DDoS Protection Read
-        - Workers Tail Read
-        - Workers KV Storage Write
-        - Workers KV Storage Read
-        - Workers Scripts Write
-        - Workers Scripts Read
-        - 'Load Balancing: Monitors and Pools Write'
-        - 'Load Balancing: Monitors and Pools Read'
-        - Account Firewall Access Rules Write
-        - Account Firewall Access Rules Read
-        - DNS Firewall Write
-        - DNS Firewall Read
-        - Billing Write
-        - Billing Read
-        - Account Settings Write
         - Account Settings Read
       x-fern-availability: generally-available
       x-fern-sdk-group-name: accounts.organization
@@ -183868,9 +183834,6 @@ paths:
         associated with this account's parent organization customer record. Profiles can be shared
         across accounts and organizations. Only available to members of an organization that
         contains the account.
-
-        Authentication: Use a Global API key, or a user-owned API Token scoped to the account with
-        the `Account Settings Read` permission, which grants `com.cloudflare.api.account.read`.
       parameters:
         - name: account_id
           in: path
@@ -183919,34 +183882,6 @@ paths:
       tags:
         - Accounts
       x-api-token-group:
-        - Trust and Safety Write
-        - Trust and Safety Read
-        - DNS View Write
-        - DNS View Read
-        - SCIM Provisioning
-        - Load Balancers Account Write
-        - Load Balancers Account Read
-        - 'Zero Trust: PII Read'
-        - DDoS Botnet Feed Write
-        - DDoS Botnet Feed Read
-        - Workers R2 Storage Write
-        - Workers R2 Storage Read
-        - DDoS Protection Write
-        - DDoS Protection Read
-        - Workers Tail Read
-        - Workers KV Storage Write
-        - Workers KV Storage Read
-        - Workers Scripts Write
-        - Workers Scripts Read
-        - 'Load Balancing: Monitors and Pools Write'
-        - 'Load Balancing: Monitors and Pools Read'
-        - Account Firewall Access Rules Write
-        - Account Firewall Access Rules Read
-        - DNS Firewall Write
-        - DNS Firewall Read
-        - Billing Write
-        - Billing Read
-        - Account Settings Write
         - Account Settings Read
       x-fern-availability: generally-available
       x-fern-sdk-group-name: accounts.profile
@@ -183959,10 +183894,6 @@ paths:
         with this account's parent organization customer record. Changes apply to every account and
         organization sharing that profile. Omitted or empty fields are left unchanged. Only
         available to members of an organization that contains the account.
-
-        Authentication: Use a Global API key, or a user-owned API Token scoped to the account with
-        the `Account Settings Write` permission, which grants
-        `com.cloudflare.api.account.update`.
       parameters:
         - name: account_id
           in: path
@@ -249933,11 +249864,7 @@ paths:
     get:
       operationId: Organization_listOrganizations
       summary: List organizations the user has access to
-      description: |-
-        Retrieve a list of organizations a particular user has access to.
-
-        Authentication: Use a Global API key, or a User API Token with the `User Details Read` or
-        `User Details Write` permission.
+      description: Retrieve a list of organizations a particular user has access to.
       parameters:
         - $ref: '#/components/parameters/organizations-api_OrganizationListFiltersId'
         - $ref: '#/components/parameters/organizations-api_OrganizationListFiltersName'
@@ -249996,8 +249923,8 @@ paths:
       tags:
         - Organizations
       x-api-token-group:
-        - User Details Write
         - User Details Read
+        - User Details Write
       x-fern-availability: generally-available
       x-fern-sdk-group-name: organization
       x-fern-sdk-method-name: list
@@ -250008,9 +249935,6 @@ paths:
       description: |-
         Create a new organization for a user. Sub-organization creation availability depends on
         the organization's capabilities.
-
-        Authentication: Use a Global API key, or a User API Token with the `User Details Write`
-        permission.
       requestBody:
         required: true
         content:
@@ -250073,10 +249997,6 @@ paths:
         deletion availability depends on the organization's capabilities.
 
         **Access Control:** Restricted to enterprise organizations.
-
-        Authentication: A Global API key for a user with
-        `com.cloudflare.api.tenant.unit.update` is required. User API Tokens are not currently
-        supported.
       parameters:
         - name: organization_id
           in: path
@@ -250131,12 +250051,7 @@ paths:
     get:
       operationId: Organizations_retrieve
       summary: Get organization
-      description: |-
-        Retrieve the details of a certain organization.
-
-        Authentication: A Global API key for a user with
-        `com.cloudflare.api.tenant.unit.read` is required. User API Tokens are not currently
-        supported and return HTTP `403` with error code `10000`.
+      description: Retrieve the details of a certain organization.
       parameters:
         - name: organization_id
           in: path
@@ -250190,12 +250105,7 @@ paths:
     put:
       operationId: Organizations_modify
       summary: Update organization
-      description: |-
-        Update an organization's name.
-
-        Authentication: A Global API key for a user with
-        `com.cloudflare.api.tenant.unit.update` is required. User API Tokens are not currently
-        supported.
+      description: Update an organization's name.
       parameters:
         - name: organization_id
           in: path
@@ -250262,10 +250172,6 @@ paths:
       description: |-
         Retrieve the accounts immediately attached to a specific organization. Accounts
         attached to sub-organizations are not included.
-
-        Authentication: A Global API key for a user with
-        `com.cloudflare.api.tenant.unit.read` is required. User API Tokens are not currently
-        supported.
       parameters:
         - name: organization_id
           in: path
@@ -250494,9 +250400,8 @@ paths:
       description: |-
         Accept or reject an invitation to a specific organization.
 
-        Authentication: A Global API key for the invited user is required. User API Tokens are not
-        currently supported. No additional permission is required; the invitation must belong to
-        the authenticated user.
+        The credential must belong to the invited user. No additional API token permission is
+        required.
       parameters:
         - name: organization_id
           in: path
@@ -250552,6 +250457,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/organizations-api_V4ErrorResponse'
       security:
+        - api_token: []
         - api_email: []
           api_key: []
       tags:
@@ -251100,12 +251006,7 @@ paths:
     get:
       operationId: Members_list
       summary: List organization members
-      description: |-
-        List memberships for an Organization.
-
-        Authentication: A Global API key for a user with
-        `com.cloudflare.api.tenant.unit.member.list` is required. User API Tokens are not currently
-        supported.
+      description: List memberships for an Organization.
       parameters:
         - name: organization_id
           in: path
@@ -251201,12 +251102,7 @@ paths:
     post:
       operationId: Members_create
       summary: Create organization member
-      description: |-
-        Create a membership that grants access to a specific Organization.
-
-        Authentication: A Global API key for a user with
-        `com.cloudflare.api.tenant.unit.member.create` is required. User API Tokens are not
-        currently supported.
+      description: Create a membership that grants access to a specific Organization.
       parameters:
         - name: organization_id
           in: path
@@ -251266,12 +251162,7 @@ paths:
     delete:
       operationId: Members_delete
       summary: Delete organization member
-      description: |-
-        Delete a membership to a particular Organization.
-
-        Authentication: A Global API key for a user with
-        `com.cloudflare.api.tenant.unit.member.delete` is required. User API Tokens are not
-        currently supported.
+      description: Delete a membership to a particular Organization.
       parameters:
         - name: organization_id
           in: path
@@ -251305,12 +251196,7 @@ paths:
     get:
       operationId: Members_retrieve
       summary: Get organization member
-      description: |-
-        Retrieve a single membership from an Organization.
-
-        Authentication: A Global API key for a user with
-        `com.cloudflare.api.tenant.unit.member.read` is required. User API Tokens are not currently
-        supported.
+      description: Retrieve a single membership from an Organization.
       parameters:
         - name: organization_id
           in: path
@@ -251369,12 +251255,7 @@ paths:
     post:
       operationId: Members_batchCreate
       summary: Batch create organization members
-      description: |-
-        Batch create multiple memberships that grant access to a specific Organization.
-
-        Authentication: A Global API key for a user with
-        `com.cloudflare.api.tenant.unit.member.create` is required. User API Tokens are not
-        currently supported.
+      description: Batch create multiple memberships that grant access to a specific Organization.
       parameters:
         - name: organization_id
           in: path
@@ -251436,12 +251317,7 @@ paths:
     get:
       operationId: Organizations_getProfile
       summary: Get organization profile
-      description: |-
-        Get an organizations profile if it exists.
-
-        Authentication: A Global API key for a user with
-        `com.cloudflare.api.tenant.unit.read` is required. User API Tokens are not currently
-        supported.
+      description: Get an organizations profile if it exists.
       parameters:
         - name: organization_id
           in: path
@@ -251474,12 +251350,7 @@ paths:
     put:
       operationId: Organizations_modifyProfile
       summary: Modify organization profile.
-      description: |-
-        Modify organization profile.
-
-        Authentication: A Global API key for a user with
-        `com.cloudflare.api.tenant.unit.update` is required. User API Tokens are not currently
-        supported.
+      description: Modify organization profile.
       parameters:
         - name: organization_id
           in: path
