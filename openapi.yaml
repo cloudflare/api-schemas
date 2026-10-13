@@ -380481,8 +380481,8 @@ paths:
       operationId: precursor-for-a-zone-get-config
       summary: Get Zone Precursor Config
       description: |
-        Retrieve a zone's Precursor configuration: the zone-level
-        `default_mode` and the ordered list of `enforcement_rules`.
+        Retrieve a zone's Precursor configuration: the detection `mode`,
+        whether to `show_interstitial`, and the ordered list of `rules`.
       parameters:
         - name: zone_id
           in: path
@@ -380523,25 +380523,37 @@ paths:
       x-fern-sdk-group-name: precursor
       x-fern-sdk-method-name: get
       x-forge-hidden: true
+    parameters:
+      - name: Cloudflare-Version
+        in: header
+        description: Selects the split Precursor API schema.
+        required: true
+        schema:
+          type: string
+          default: '1.0'
+          enum:
+            - '1.0'
+          x-stainless-const: true
+          x-stainless-useDefault: true
     put:
       operationId: precursor-for-a-zone-update-config
       summary: Update Zone Precursor Config
       description: |
         Updates the Precursor configuration for a zone.
 
-        `default_mode` sets the zone-level enforcement mode. `enforcement_rules`
-        is the ordered list of rules that override enforcement for matching
-        requests.
+        `mode` controls whether Precursor detection is off, monitoring, or
+        armed. `show_interstitial` controls the zone-level response when armed.
+        `rules` is the ordered list of overrides for matching requests.
 
         This is a partial update: only the fields present in the request body
         are changed.
 
-        - Sending an empty array (`[]`) clears all enforcement rules.
-        - At least one of `default_mode` or `enforcement_rules` must be present;
-          an empty body (`{}`) is rejected with `400`.
+        - Sending an empty array (`[]`) clears all rules.
+        - At least one of `mode`, `show_interstitial`, or `rules` must be
+          present; an empty body (`{}`) is rejected with `400`.
         - Rule `id` is read-only (assigned by Cloudflare) and ignored on input.
-        - Rule `mode` must be `min-friction` or `max-security` (`off` is not a
-          valid rule mode; use `default_mode` to disable enforcement).
+        - Rule `show_interstitial` is required and controls the response for
+          requests that match that rule.
         - Rule `expression` is limited to 4000 characters. The limit applies to
           each rule individually, not to the combined size of all rules.
       parameters:
@@ -380555,31 +380567,32 @@ paths:
         content:
           application/json:
             examples:
-              min-friction:
-                summary: Zone-level min-friction enforcement
+              monitor:
+                summary: Monitor detections without affecting bot scores
                 value:
-                  default_mode: min-friction
+                  mode: monitor
               off:
                 summary: Disable precursor for the zone
                 value:
-                  default_mode: off
+                  mode: off
               rules-only:
-                summary: Replace rules only, leaving default_mode unchanged
+                summary: Replace rules while leaving zone-level settings unchanged
                 value:
-                  enforcement_rules:
-                    - description: Ease friction on the login path
+                  rules:
+                    - description: Show an interstitial on the login path
                       enabled: true
                       expression: http.request.uri.path eq "/login"
-                      mode: min-friction
+                      show_interstitial: true
               with-rules:
-                summary: max-security default with a min-friction override rule
+                summary: Arm detection and configure an interstitial override
                 value:
-                  default_mode: max-security
-                  enforcement_rules:
-                    - description: Ease friction on the login path
+                  mode: arm
+                  rules:
+                    - description: Show an interstitial on the login path
                       enabled: true
                       expression: http.request.uri.path eq "/login"
-                      mode: min-friction
+                      show_interstitial: true
+                  show_interstitial: false
             schema:
               $ref: '#/components/schemas/precursor_precursor_config'
       responses:
@@ -473641,68 +473654,6 @@ components:
       type: object
       allOf:
         - $ref: '#/components/schemas/precursor_api-response-common'
-    precursor_default_mode:
-      description: |
-        The zone-level Precursor enforcement mode applied to requests that do
-        not match a more specific enforcement rule.
-      type: string
-      example: off
-      default: off
-      deprecated: true
-      enum:
-        - off
-        - min-friction
-        - max-security
-      x-auditable: true
-    precursor_enforcement_rule:
-      type: object
-      properties:
-        description:
-          description: An informative description of the rule.
-          type: string
-          example: Ease friction on the login path
-          default: ''
-          x-auditable: true
-        enabled:
-          description: Whether the rule is active.
-          type: boolean
-          example: true
-          default: true
-          x-auditable: true
-        expression:
-          description: The filter expression that determines which requests the rule matches.
-          type: string
-          example: http.request.uri.path eq "/login"
-          maxLength: 4000
-          x-auditable: true
-        id:
-          description: The read-only identifier that Cloudflare assigns to the rule.
-          type: string
-          example: 3a03d665bac043e3a684e0d385a4b1e2
-          readOnly: true
-          x-auditable: true
-        mode:
-          $ref: '#/components/schemas/precursor_enforcement_rule_mode'
-      required:
-        - expression
-        - mode
-      title: Enforcement Rule
-    precursor_enforcement_rule_mode:
-      description: |
-        The override mode Precursor applies to requests matching an enforcement
-        rule. Unlike `default_mode`, this cannot be `off`.
-      type: string
-      example: max-security
-      enum:
-        - min-friction
-        - max-security
-      x-auditable: true
-    precursor_enforcement_rules:
-      description: The ordered list of enforcement rules for the zone.
-      type: array
-      items:
-        $ref: '#/components/schemas/precursor_enforcement_rule'
-      deprecated: true
     precursor_identifier:
       description: Identifier.
       type: string
@@ -473734,17 +473685,20 @@ components:
     precursor_precursor_config:
       type: object
       properties:
-        default_mode:
-          $ref: '#/components/schemas/precursor_default_mode'
-        enforcement_rules:
-          $ref: '#/components/schemas/precursor_enforcement_rules'
+        mode:
+          $ref: '#/components/schemas/precursor_precursor_mode'
+        rules:
+          $ref: '#/components/schemas/precursor_precursor_rules'
+        show_interstitial:
+          $ref: '#/components/schemas/precursor_show_interstitial'
       example:
-        default_mode: min-friction
-        enforcement_rules:
-          - description: Enforce max-security on the shop page
+        mode: arm
+        rules:
+          - description: Show an interstitial on the shop page
             enabled: true
             expression: http.request.uri.path eq "/shop"
-            mode: max-security
+            show_interstitial: true
+        show_interstitial: false
       minProperties: 1
       title: Precursor Config
     precursor_precursor_config_response_body:
@@ -473754,6 +473708,64 @@ components:
             result:
               $ref: '#/components/schemas/precursor_precursor_config'
           type: object
+    precursor_precursor_mode:
+      description: |
+        Controls Precursor detection for the zone. `off` disables detection,
+        `monitor` records detections without affecting bot scores, and `arm`
+        allows detections to affect bot scores.
+      type: string
+      example: off
+      default: off
+      enum:
+        - off
+        - monitor
+        - arm
+      x-auditable: true
+    precursor_precursor_rule:
+      type: object
+      properties:
+        description:
+          description: An informative description of the rule.
+          type: string
+          example: Show an interstitial on the login path
+          default: ''
+          x-auditable: true
+        enabled:
+          description: Whether the rule is active.
+          type: boolean
+          example: true
+          default: true
+          x-auditable: true
+        expression:
+          description: The filter expression that determines which requests the rule matches.
+          type: string
+          example: http.request.uri.path eq "/login"
+          maxLength: 4000
+          x-auditable: true
+        id:
+          description: The read-only identifier that Cloudflare assigns to the rule.
+          type: string
+          example: 3a03d665bac043e3a684e0d385a4b1e2
+          readOnly: true
+          x-auditable: true
+        show_interstitial:
+          $ref: '#/components/schemas/precursor_show_interstitial'
+      required:
+        - expression
+        - show_interstitial
+      title: Precursor Rule
+    precursor_precursor_rules:
+      description: The ordered list of Precursor rules for the zone.
+      type: array
+      items:
+        $ref: '#/components/schemas/precursor_precursor_rule'
+    precursor_show_interstitial:
+      description: |
+        Whether Precursor shows an interstitial when it takes action on a
+        request.
+      type: boolean
+      example: true
+      x-auditable: true
     public-ip_api-response-common:
       type: object
       properties:
