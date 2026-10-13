@@ -315826,6 +315826,15 @@
         "description": "Lists all tagged resources for an account.",
         "parameters": [
           {
+            "name": "include_navigation",
+            "in": "query",
+            "description": "Resolve current namespace Worker navigation by immutable child tag. Optional read-only navigation is omitted for deleted or unresolved children. Lookups are limited to this page, at most five concurrently, with a shared two-second budget. Tag identity, ETag, filters and pagination are unchanged; name filtering still uses the stored resource name. Defaults to false.",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
             "name": "account_id",
             "in": "path",
             "required": true,
@@ -707819,6 +707828,30 @@
         },
         "example": []
       },
+      "resource-tagging_namespace_worker_navigation": {
+        "description": "Read-only routing metadata resolved from EWC using the account and immutable\nnamespace Worker ID. Returned only by tagged-resource lists requested with\ninclude_navigation=true. Omitted when lookup is unavailable or the child\nhas been deleted. Never supplied on tag writes or stored as extra_data.\n",
+        "type": "object",
+        "properties": {
+          "namespace_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "namespace_name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "script_name": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "readOnly": true,
+        "required": [
+          "namespace_id",
+          "namespace_name",
+          "script_name"
+        ]
+      },
       "resource-tagging_resource_id": {
         "description": "Identifies the unique resource.",
         "type": "string",
@@ -709072,6 +709105,9 @@
         "allOf": [
           {
             "properties": {
+              "navigation": {
+                "$ref": "#/components/schemas/resource-tagging_namespace_worker_navigation"
+              },
               "type": {
                 "type": "string",
                 "enum": [
