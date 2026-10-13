@@ -31355,7 +31355,7 @@ paths:
       description: |-
         List all AI Search instances in the account.
 
-        Deprecated: use /accounts/{account_id}/ai-search/namespaces/{name}/instances (and descendant paths) instead.
+        Deprecated: use /accounts/{account_id}/ai-search/namespaces/{namespace}/instances (and descendant paths) instead.
       parameters:
         - name: account_id
           in: path
@@ -31982,7 +31982,7 @@ paths:
       description: |-
         Create a new AI Search instance with the given configuration. If type is omitted or null, a non-blank HTTP(S) source infers web-crawler and any other source infers r2; r2 sources must name an existing bucket. A missing or blank source without a type creates a managed upload-only instance.
 
-        Deprecated: use /accounts/{account_id}/ai-search/namespaces/{name}/instances (and descendant paths) instead.
+        Deprecated: use /accounts/{account_id}/ai-search/namespaces/{namespace}/instances (and descendant paths) instead.
       parameters:
         - name: account_id
           in: path
@@ -33185,7 +33185,7 @@ paths:
       description: |-
         Permanently delete an AI Search instance and all its indexed data.
 
-        Deprecated: use /accounts/{account_id}/ai-search/namespaces/{name}/instances (and descendant paths) instead.
+        Deprecated: use /accounts/{account_id}/ai-search/namespaces/{namespace}/instances (and descendant paths) instead.
       parameters:
         - name: account_id
           in: path
@@ -33837,7 +33837,7 @@ paths:
       description: |-
         Retrieve the configuration and status of an AI Search instance.
 
-        Deprecated: use /accounts/{account_id}/ai-search/namespaces/{name}/instances (and descendant paths) instead.
+        Deprecated: use /accounts/{account_id}/ai-search/namespaces/{namespace}/instances (and descendant paths) instead.
       parameters:
         - name: account_id
           in: path
@@ -34462,7 +34462,7 @@ paths:
       description: |-
         Update the configuration of an AI Search instance.
 
-        Deprecated: use /accounts/{account_id}/ai-search/namespaces/{name}/instances (and descendant paths) instead.
+        Deprecated: use /accounts/{account_id}/ai-search/namespaces/{namespace}/instances (and descendant paths) instead.
       parameters:
         - name: account_id
           in: path
@@ -35645,7 +35645,7 @@ paths:
       description: |-
         Performs a chat completion request against an AI Search instance, using indexed content as context for generating responses.
 
-        Deprecated: use /accounts/{account_id}/ai-search/namespaces/{name}/instances (and descendant paths) instead.
+        Deprecated: use /accounts/{account_id}/ai-search/namespaces/{namespace}/instances (and descendant paths) instead.
       parameters:
         - name: id
           in: path
@@ -36230,7 +36230,7 @@ paths:
       description: |-
         Lists indexing jobs for an AI Search instance.
 
-        Deprecated: use /accounts/{account_id}/ai-search/namespaces/{name}/instances (and descendant paths) instead.
+        Deprecated: use /accounts/{account_id}/ai-search/namespaces/{namespace}/instances (and descendant paths) instead.
       parameters:
         - name: id
           in: path
@@ -36428,7 +36428,7 @@ paths:
       description: |-
         Creates a new indexing job for an AI Search instance.
 
-        Deprecated: use /accounts/{account_id}/ai-search/namespaces/{name}/instances (and descendant paths) instead.
+        Deprecated: use /accounts/{account_id}/ai-search/namespaces/{namespace}/instances (and descendant paths) instead.
       parameters:
         - name: id
           in: path
@@ -36630,7 +36630,7 @@ paths:
       description: |-
         Retrieves details for a specific AI Search indexing job.
 
-        Deprecated: use /accounts/{account_id}/ai-search/namespaces/{name}/instances (and descendant paths) instead.
+        Deprecated: use /accounts/{account_id}/ai-search/namespaces/{namespace}/instances (and descendant paths) instead.
       parameters:
         - name: id
           in: path
@@ -36770,7 +36770,7 @@ paths:
       description: |-
         Cancel an in-progress indexing job for an AI Search instance.
 
-        Deprecated: use /accounts/{account_id}/ai-search/namespaces/{name}/instances (and descendant paths) instead.
+        Deprecated: use /accounts/{account_id}/ai-search/namespaces/{namespace}/instances (and descendant paths) instead.
       parameters:
         - name: id
           in: path
@@ -36950,7 +36950,7 @@ paths:
       description: |-
         Lists log entries for an AI Search indexing job.
 
-        Deprecated: use /accounts/{account_id}/ai-search/namespaces/{name}/instances (and descendant paths) instead.
+        Deprecated: use /accounts/{account_id}/ai-search/namespaces/{namespace}/instances (and descendant paths) instead.
       parameters:
         - name: id
           in: path
@@ -37145,7 +37145,7 @@ paths:
       description: |-
         Executes a semantic search query against an AI Search instance to find relevant indexed content.
 
-        Deprecated: use /accounts/{account_id}/ai-search/namespaces/{name}/instances (and descendant paths) instead.
+        Deprecated: use /accounts/{account_id}/ai-search/namespaces/{namespace}/instances (and descendant paths) instead.
       parameters:
         - name: id
           in: path
@@ -37622,7 +37622,7 @@ paths:
       description: |-
         Retrieve usage and indexing statistics for an AI Search instance.
 
-        Deprecated: use /accounts/{account_id}/ai-search/namespaces/{name}/instances (and descendant paths) instead.
+        Deprecated: use /accounts/{account_id}/ai-search/namespaces/{namespace}/instances (and descendant paths) instead.
       parameters:
         - name: id
           in: path
@@ -38327,7 +38327,7 @@ paths:
     delete:
       operationId: ai-search-delete-namespace
       summary: Delete a namespace
-      description: Permanently delete a namespace. The namespace must be empty (no instances), and the default namespace cannot be deleted.
+      description: Permanently delete a namespace. The namespace must be empty (no instances, including instances whose deletion is still in progress), and the default namespace cannot be deleted.
       parameters:
         - name: account_id
           in: path
@@ -38405,6 +38405,46 @@ paths:
                         - code
                         - message
                       type: object
+                  success:
+                    type: boolean
+                    enum:
+                      - false
+                required:
+                  - success
+                  - errors
+        '409':
+          description: Ai search instance deletion in progress; Namespace modified concurrently please retry
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      anyOf:
+                        - properties:
+                            code:
+                              type: number
+                              enum:
+                                - 7124
+                            message:
+                              type: string
+                          required:
+                            - code
+                            - message
+                          type: object
+                        - properties:
+                            code:
+                              type: number
+                              enum:
+                                - 7099
+                            message:
+                              type: string
+                          required:
+                            - code
+                            - message
+                          type: object
                   success:
                     type: boolean
                     enum:
@@ -39569,7 +39609,512 @@ paths:
         name:
           default: default
           description: Namespace to use for this operation.
-  /accounts/{account_id}/ai-search/namespaces/{name}/instances:
+  /accounts/{account_id}/ai-search/namespaces/{name}/search:
+    post:
+      operationId: ai-search-namespace-multi-instance-search
+      summary: Multi-Instance Search
+      description: Performs a semantic search query against multiple AI Search instances in parallel, merging the retrieved results into a single ranked response.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: string
+            example: c3dc5f0b34a14ff8e1b3ec04895e1b22
+        - name: name
+          in: path
+          description: Namespace name
+          required: true
+          schema:
+            type: string
+          example: my-namespace
+          x-fern-parameter-name: namespace
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                ai_search_options:
+                  type: object
+                  properties:
+                    cache:
+                      type: object
+                      properties:
+                        cache_threshold:
+                          type: string
+                          enum:
+                            - super_strict_match
+                            - close_enough
+                            - flexible_friend
+                            - anything_goes
+                        enabled:
+                          type: boolean
+                    custom_metadata:
+                      description: Metadata added to AI Gateway logs for requests triggered by this operation. Accepts up to 2 string, number, or boolean entries. Keys 'ai-search', 'task', 'origin', and keys beginning with 'cf.' are reserved.
+                      type: object
+                      example:
+                        test: true
+                        user_id: user-123
+                      additionalProperties:
+                        anyOf:
+                          - type: string
+                          - type: number
+                          - type: boolean
+                      maxProperties: 2
+                    instance_ids:
+                      type: array
+                      items:
+                        description: AI Search instance ID. Lowercase alphanumeric, hyphens, and underscores.
+                        example: my-ai-search
+                        maxLength: 64
+                        minLength: 1
+                        pattern: ^[a-z0-9_]+(?:-[a-z0-9_]+)*$
+                        type: string
+                        x-auditable: true
+                      minItems: 1
+                    query_rewrite:
+                      type: object
+                      properties:
+                        enabled:
+                          type: boolean
+                        model:
+                          description: A Workers AI model ID or an AI Gateway model ID compatible with the OpenAI Chat Completions API. An empty string uses the configured or default model.
+                          type: string
+                        rewrite_prompt:
+                          type: string
+                    reranking:
+                      type: object
+                      properties:
+                        enabled:
+                          type: boolean
+                        match_threshold:
+                          type: number
+                          default: 0.4
+                          maximum: 1
+                          minimum: 0
+                        model:
+                          type: string
+                    retrieval:
+                      type: object
+                      properties:
+                        boost_by:
+                          description: Metadata fields to boost search results by. Overrides the instance-level boost_by config. Direction defaults to 'asc' for numeric/datetime fields, 'exists' for text/boolean fields. Fields must match 'timestamp' or a defined custom_metadata field.
+                          type: array
+                          items:
+                            properties:
+                              direction:
+                                description: Boost direction. 'desc' = higher values rank higher (e.g. newer timestamps). 'asc' = lower values rank higher. 'exists' = boost chunks that have the field. 'not_exists' = boost chunks that lack the field. Optional — defaults to 'asc' for numeric/datetime fields, 'exists' for text/boolean fields.
+                                type: string
+                                enum:
+                                  - asc
+                                  - desc
+                                  - exists
+                                  - not_exists
+                              field:
+                                description: Metadata field name to boost by. Use 'timestamp' for document freshness, or any custom_metadata field. Numeric and datetime fields support all four directions (asc, desc, exists, not_exists); text/boolean fields only support exists/not_exists.
+                                type: string
+                                example: timestamp
+                                maxLength: 64
+                                minLength: 1
+                            required:
+                              - field
+                            type: object
+                          example:
+                            - direction: desc
+                              field: timestamp
+                          maxItems: 3
+                        context_expansion:
+                          type: integer
+                          default: 0
+                          maximum: 3
+                          minimum: 0
+                        filters:
+                          type: object
+                          additionalProperties: true
+                        fusion_method:
+                          type: string
+                          enum:
+                            - max
+                            - rrf
+                        keyword_match_mode:
+                          description: Controls which documents are candidates for BM25 scoring. 'and' restricts candidates to documents containing all query terms; 'or' includes any document containing at least one term, ranked by BM25 relevance. When omitted, falls back to the instance-level retrieval_options.keyword_match_mode, then to 'and'.
+                          type: string
+                          enum:
+                            - and
+                            - or
+                        match_threshold:
+                          type: number
+                          default: 0.4
+                          maximum: 1
+                          minimum: 0
+                        max_num_results:
+                          type: integer
+                          default: 10
+                          maximum: 50
+                          minimum: 1
+                        retrieval_type:
+                          type: string
+                          enum:
+                            - vector
+                            - keyword
+                            - hybrid
+                        return_on_failure:
+                          type: boolean
+                          default: true
+                  required:
+                    - instance_ids
+                messages:
+                  description: "OpenAI-compatible message array. For multimodal queries, set the last user message's `content` to an array of typed parts: `[{type:'text', text:'…'}, {type:'image_url', image_url:{url:'…'}}]`. Image inputs require the RAG's embedding_model to declare 'image' in supported_modalities."
+                  type: array
+                  items:
+                    additionalProperties: true
+                    properties:
+                      content:
+                        anyOf:
+                          - type: string
+                          - items:
+                              oneOf:
+                                - properties:
+                                    text:
+                                      type: string
+                                      minLength: 1
+                                    type:
+                                      type: string
+                                      enum:
+                                        - text
+                                  required:
+                                    - type
+                                    - text
+                                  type: object
+                                - properties:
+                                    image_url:
+                                      type: object
+                                      properties:
+                                        url:
+                                          type: string
+                                          maxLength: 20971520
+                                          minLength: 1
+                                      required:
+                                        - url
+                                    type:
+                                      type: string
+                                      enum:
+                                        - image_url
+                                  required:
+                                    - type
+                                    - image_url
+                                  type: object
+                                - properties:
+                                    file:
+                                      type: object
+                                      properties:
+                                        file_data:
+                                          type: string
+                                          maxLength: 13981144
+                                          minLength: 1
+                                        file_id:
+                                          type: string
+                                        filename:
+                                          type: string
+                                          maxLength: 255
+                                          minLength: 1
+                                      required:
+                                        - filename
+                                    type:
+                                      type: string
+                                      enum:
+                                        - file
+                                  required:
+                                    - type
+                                    - file
+                                  type: object
+                            minItems: 1
+                            type: array
+                          - enum:
+                              - null
+                            nullable: true
+                            type: string
+                      role:
+                        type: string
+                        enum:
+                          - system
+                          - developer
+                          - user
+                          - assistant
+                          - tool
+                    required:
+                      - role
+                      - content
+                    type: object
+                  minItems: 1
+                query:
+                  description: A simple text query string. Alternative to 'messages' — provide either this or 'messages', not both.
+                  minLength: 1
+                  type: string
+              required:
+                - ai_search_options
+      responses:
+        '200':
+          description: Returns the merged search results from all instances.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      chunks:
+                        type: array
+                        items:
+                          properties:
+                            id:
+                              type: string
+                            instance_id:
+                              type: string
+                            item:
+                              type: object
+                              properties:
+                                key:
+                                  type: string
+                                metadata:
+                                  type: object
+                                  additionalProperties: true
+                                timestamp:
+                                  type: number
+                              required:
+                                - key
+                            score:
+                              type: number
+                              maximum: 1
+                              minimum: 0
+                            scoring_details:
+                              type: object
+                              properties:
+                                fusion_method:
+                                  type: string
+                                  enum:
+                                    - rrf
+                                    - max
+                                keyword_rank:
+                                  type: number
+                                keyword_score:
+                                  type: number
+                                  minimum: 0
+                                reranking_score:
+                                  type: number
+                                  maximum: 1
+                                  minimum: 0
+                                vector_rank:
+                                  type: number
+                                vector_score:
+                                  type: number
+                                  maximum: 1
+                                  minimum: 0
+                            text:
+                              type: string
+                            type:
+                              type: string
+                          required:
+                            - id
+                            - type
+                            - score
+                            - text
+                            - instance_id
+                          type: object
+                      errors:
+                        type: array
+                        items:
+                          properties:
+                            instance_id:
+                              type: string
+                            message:
+                              type: string
+                          required:
+                            - instance_id
+                            - message
+                          type: object
+                      query_kind:
+                        type: string
+                        enum:
+                          - text
+                          - image
+                          - multimodal
+                      search_query:
+                        type: string
+                    required:
+                      - query_kind
+                      - chunks
+                  success:
+                    type: boolean
+                required:
+                  - success
+                  - result
+        '400':
+          description: Metadata filter unknown field.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                      required:
+                        - code
+                        - message
+                      type: object
+                  success:
+                    type: boolean
+                    enum:
+                      - false
+                required:
+                  - success
+                  - errors
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                      required:
+                        - code
+                        - message
+                      type: object
+                  success:
+                    type: boolean
+                    enum:
+                      - false
+                required:
+                  - success
+                  - errors
+        '429':
+          description: Monthly query quota exceeded; Workers ai capacity temporarily exceeded
+          headers:
+            Retry-After:
+              description: Seconds to wait before retrying.
+              schema:
+                description: Seconds to wait before retrying.
+                type: string
+                example: '10'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      anyOf:
+                        - properties:
+                            code:
+                              type: number
+                              enum:
+                                - 7069
+                            message:
+                              type: string
+                          required:
+                            - code
+                            - message
+                          type: object
+                        - properties:
+                            code:
+                              type: number
+                              enum:
+                                - 7119
+                            message:
+                              type: string
+                          required:
+                            - code
+                            - message
+                          type: object
+                  success:
+                    type: boolean
+                    enum:
+                      - false
+                required:
+                  - success
+                  - errors
+        '502':
+          description: Ai gateway exception; Workers ai upstream error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      anyOf:
+                        - properties:
+                            code:
+                              type: number
+                              enum:
+                                - 7033
+                            message:
+                              type: string
+                          required:
+                            - code
+                            - message
+                          type: object
+                        - properties:
+                            code:
+                              type: number
+                              enum:
+                                - 7120
+                            message:
+                              type: string
+                          required:
+                            - code
+                            - message
+                          type: object
+                  success:
+                    type: boolean
+                    enum:
+                      - false
+                required:
+                  - success
+                  - errors
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - AI Search Account Search
+      x-cfPermissionsRequired:
+        enum:
+          - com.cloudflare.api.account.ai-search
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: true
+        pro: true
+      x-fern-availability: beta
+      x-fern-sdk-group-name: ai-search
+      x-fern-sdk-method-name: multi-search
+      x-forge-params:
+        name:
+          default: default
+          description: Namespace to use for this operation.
+        query:
+          description: Text to search for.
+          positional: true
+  /accounts/{account_id}/ai-search/namespaces/{namespace}/instances:
     get:
       operationId: ai-search-namespace-list-instances
       summary: List AI Search instances.
@@ -39634,12 +40179,14 @@ paths:
             enum:
               - asc
               - desc
-        - name: name
+        - name: namespace
           in: path
           description: Namespace name
           required: true
           schema:
             type: string
+            default: default
+            x-stainless-terraform-configurability: computed_optional
           example: my-namespace
           x-fern-parameter-name: namespace
       responses:
@@ -40194,7 +40741,7 @@ paths:
       x-fern-sdk-group-name: ai-search
       x-fern-sdk-method-name: list
       x-forge-params:
-        name:
+        namespace:
           default: default
           description: Namespace to use for this operation.
     post:
@@ -40208,12 +40755,14 @@ paths:
           schema:
             type: string
             example: c3dc5f0b34a14ff8e1b3ec04895e1b22
-        - name: name
+        - name: namespace
           in: path
           description: Namespace name
           required: true
           schema:
             type: string
+            default: default
+            x-stainless-terraform-configurability: computed_optional
           example: my-namespace
           x-fern-parameter-name: namespace
       requestBody:
@@ -41406,7 +41955,7 @@ paths:
         id:
           description: Unique ID for the new AI Search instance.
           positional: true
-        name:
+        namespace:
           default: default
           description: Namespace to use for this operation.
         source:
@@ -41415,7 +41964,7 @@ paths:
           description: Optional data source settings as a JSON object.
         type:
           description: 'Data source type: r2 or web-crawler.'
-  /accounts/{account_id}/ai-search/namespaces/{name}/instances/{id}:
+  /accounts/{account_id}/ai-search/namespaces/{namespace}/instances/{id}:
     delete:
       operationId: ai-search-namespace-delete-instance
       summary: Delete an AI Search instance.
@@ -41434,12 +41983,14 @@ paths:
             type: string
             example: my-ai-search
           x-fern-parameter-name: instance-id
-        - name: name
+        - name: namespace
           in: path
           description: Namespace name
           required: true
           schema:
             type: string
+            default: default
+            x-stainless-terraform-configurability: computed_optional
           example: my-namespace
           x-fern-parameter-name: namespace
       responses:
@@ -42074,7 +42625,7 @@ paths:
       x-forge-params:
         id:
           description: AI Search instance ID.
-        name:
+        namespace:
           default: default
           description: Namespace to use for this operation.
       x-forge-require-confirmation: This operation permanently deletes the AI Search instance and all its indexed data.
@@ -42096,12 +42647,14 @@ paths:
             type: string
             example: my-ai-search
           x-fern-parameter-name: instance-id
-        - name: name
+        - name: namespace
           in: path
           description: Namespace name
           required: true
           schema:
             type: string
+            default: default
+            x-stainless-terraform-configurability: computed_optional
           example: my-namespace
           x-fern-parameter-name: namespace
       responses:
@@ -42710,7 +43263,7 @@ paths:
       x-forge-params:
         id:
           description: AI Search instance ID.
-        name:
+        namespace:
           default: default
           description: Namespace to use for this operation.
     patch:
@@ -42724,7 +43277,7 @@ paths:
           schema:
             type: string
             example: c3dc5f0b34a14ff8e1b3ec04895e1b22
-        - name: name
+        - name: namespace
           in: path
           description: Current namespace of the instance.
           required: true
@@ -42886,7 +43439,7 @@ paths:
       x-forge-params:
         id:
           description: AI Search instance ID.
-        name:
+        namespace:
           default: default
           description: Namespace currently containing the instance.
         new_namespace:
@@ -42909,12 +43462,14 @@ paths:
             type: string
             example: my-ai-search
           x-fern-parameter-name: instance-id
-        - name: name
+        - name: namespace
           in: path
           description: Namespace name
           required: true
           schema:
             type: string
+            default: default
+            x-stainless-terraform-configurability: computed_optional
           example: my-namespace
           x-fern-parameter-name: namespace
       requestBody:
@@ -44080,14 +44635,14 @@ paths:
       x-forge-params:
         id:
           description: AI Search instance ID.
-        name:
+        namespace:
           default: default
           description: Namespace to use for this operation.
         source:
           description: R2 bucket name or HTTP(S) root website URL to index.
         source_params:
           description: Optional data source settings as a JSON object.
-  /accounts/{account_id}/ai-search/namespaces/{name}/instances/{id}/chat/completions:
+  /accounts/{account_id}/ai-search/namespaces/{namespace}/instances/{id}/chat/completions:
     post:
       operationId: ai-search-namespace-instance-chat-completion
       summary: Chat Completions
@@ -44112,12 +44667,14 @@ paths:
           schema:
             type: string
             example: c3dc5f0b34a14ff8e1b3ec04895e1b22
-        - name: name
+        - name: namespace
           in: path
           description: Namespace name
           required: true
           schema:
             type: string
+            default: default
+            x-stainless-terraform-configurability: computed_optional
           example: my-namespace
           x-fern-parameter-name: namespace
       requestBody:
@@ -44680,10 +45237,10 @@ paths:
       x-forge-params:
         id:
           description: AI Search instance ID.
-        name:
+        namespace:
           default: default
           description: Namespace to use for this operation.
-  /accounts/{account_id}/ai-search/namespaces/{name}/instances/{id}/items:
+  /accounts/{account_id}/ai-search/namespaces/{namespace}/instances/{id}/items:
     get:
       operationId: ai-search-namespace-instance-list-items
       summary: Items List.
@@ -44775,12 +45332,14 @@ paths:
             description: Filter items by their exact key (object key / filename). Keys are unique per source, so combine with `source` to disambiguate across data sources.
             type: string
             maxLength: 1024
-        - name: name
+        - name: namespace
           in: path
           description: Namespace name
           required: true
           schema:
             type: string
+            default: default
+            x-stainless-terraform-configurability: computed_optional
           example: my-namespace
           x-fern-parameter-name: namespace
       responses:
@@ -44997,7 +45556,7 @@ paths:
       x-forge-params:
         id:
           description: AI Search instance ID.
-        name:
+        namespace:
           default: default
           description: Namespace to use for this operation.
     post:
@@ -45024,12 +45583,14 @@ paths:
           schema:
             type: string
             example: c3dc5f0b34a14ff8e1b3ec04895e1b22
-        - name: name
+        - name: namespace
           in: path
           description: Namespace name
           required: true
           schema:
             type: string
+            default: default
+            x-stainless-terraform-configurability: computed_optional
           example: my-namespace
           x-fern-parameter-name: namespace
       requestBody:
@@ -45474,7 +46035,7 @@ paths:
       x-forge-params:
         id:
           description: AI Search instance ID.
-        name:
+        namespace:
           default: default
           description: Namespace to use for this operation.
     put:
@@ -45501,12 +46062,14 @@ paths:
           schema:
             type: string
             example: c3dc5f0b34a14ff8e1b3ec04895e1b22
-        - name: name
+        - name: namespace
           in: path
           description: Namespace name
           required: true
           schema:
             type: string
+            default: default
+            x-stainless-terraform-configurability: computed_optional
           example: my-namespace
           x-fern-parameter-name: namespace
       requestBody:
@@ -45806,13 +46369,13 @@ paths:
       x-forge-params:
         id:
           description: AI Search instance ID.
-        name:
+        namespace:
           default: default
           description: Namespace to use for this operation.
         next_action:
           default: INDEX
           hidden: true
-  /accounts/{account_id}/ai-search/namespaces/{name}/instances/{id}/items/{item_id}:
+  /accounts/{account_id}/ai-search/namespaces/{namespace}/instances/{id}/items/{item_id}:
     delete:
       operationId: ai-search-namespace-instance-delete-item
       summary: Delete Item.
@@ -45842,12 +46405,14 @@ paths:
           schema:
             type: string
             example: c3dc5f0b34a14ff8e1b3ec04895e1b22
-        - name: name
+        - name: namespace
           in: path
           description: Namespace name
           required: true
           schema:
             type: string
+            default: default
+            x-stainless-terraform-configurability: computed_optional
           example: my-namespace
           x-fern-parameter-name: namespace
       responses:
@@ -46018,7 +46583,7 @@ paths:
           description: AI Search instance ID.
         item_id:
           description: Indexed item ID.
-        name:
+        namespace:
           default: default
           description: Namespace to use for this operation.
     get:
@@ -46050,12 +46615,14 @@ paths:
           schema:
             type: string
             example: c3dc5f0b34a14ff8e1b3ec04895e1b22
-        - name: name
+        - name: namespace
           in: path
           description: Namespace name
           required: true
           schema:
             type: string
+            default: default
+            x-stainless-terraform-configurability: computed_optional
           example: my-namespace
           x-fern-parameter-name: namespace
       responses:
@@ -46227,7 +46794,7 @@ paths:
           description: AI Search instance ID.
         item_id:
           description: Indexed item ID.
-        name:
+        namespace:
           default: default
           description: Namespace to use for this operation.
     patch:
@@ -46259,12 +46826,14 @@ paths:
           schema:
             type: string
             example: c3dc5f0b34a14ff8e1b3ec04895e1b22
-        - name: name
+        - name: namespace
           in: path
           description: Namespace name
           required: true
           schema:
             type: string
+            default: default
+            x-stainless-terraform-configurability: computed_optional
           example: my-namespace
           x-fern-parameter-name: namespace
       requestBody:
@@ -46541,13 +47110,13 @@ paths:
           description: AI Search instance ID.
         item_id:
           description: Indexed item ID.
-        name:
+        namespace:
           default: default
           description: Namespace to use for this operation.
         next_action:
           default: INDEX
           hidden: true
-  /accounts/{account_id}/ai-search/namespaces/{name}/instances/{id}/items/{item_id}/chunks:
+  /accounts/{account_id}/ai-search/namespaces/{namespace}/instances/{id}/items/{item_id}/chunks:
     get:
       operationId: ai-search-namespace-instance-list-item-chunks
       summary: List Item Chunks.
@@ -46590,12 +47159,14 @@ paths:
             type: integer
             default: 0
             minimum: 0
-        - name: name
+        - name: namespace
           in: path
           description: Namespace name
           required: true
           schema:
             type: string
+            default: default
+            x-stainless-terraform-configurability: computed_optional
           example: my-namespace
           x-fern-parameter-name: namespace
       responses:
@@ -46762,10 +47333,10 @@ paths:
           description: AI Search instance ID.
         item_id:
           description: Indexed item ID.
-        name:
+        namespace:
           default: default
           description: Namespace to use for this operation.
-  /accounts/{account_id}/ai-search/namespaces/{name}/instances/{id}/items/{item_id}/download:
+  /accounts/{account_id}/ai-search/namespaces/{namespace}/instances/{id}/items/{item_id}/download:
     get:
       operationId: ai-search-namespace-instance-get-item-content
       summary: Download Item Content.
@@ -46795,12 +47366,14 @@ paths:
           schema:
             type: string
             example: c3dc5f0b34a14ff8e1b3ec04895e1b22
-        - name: name
+        - name: namespace
           in: path
           description: Namespace name
           required: true
           schema:
             type: string
+            default: default
+            x-stainless-terraform-configurability: computed_optional
           example: my-namespace
           x-fern-parameter-name: namespace
       responses:
@@ -46988,10 +47561,10 @@ paths:
           description: AI Search instance ID.
         item_id:
           description: Indexed item ID.
-        name:
+        namespace:
           default: default
           description: Namespace to use for this operation.
-  /accounts/{account_id}/ai-search/namespaces/{name}/instances/{id}/items/{item_id}/logs:
+  /accounts/{account_id}/ai-search/namespaces/{namespace}/instances/{id}/items/{item_id}/logs:
     get:
       operationId: ai-search-namespace-instance-logs-item
       summary: Item Logs.
@@ -47033,12 +47606,14 @@ paths:
           schema:
             type: string
             maxLength: 512
-        - name: name
+        - name: namespace
           in: path
           description: Namespace name
           required: true
           schema:
             type: string
+            default: default
+            x-stainless-terraform-configurability: computed_optional
           example: my-namespace
           x-fern-parameter-name: namespace
       responses:
@@ -47209,10 +47784,10 @@ paths:
           description: AI Search instance ID.
         item_id:
           description: Indexed item ID.
-        name:
+        namespace:
           default: default
           description: Namespace to use for this operation.
-  /accounts/{account_id}/ai-search/namespaces/{name}/instances/{id}/jobs:
+  /accounts/{account_id}/ai-search/namespaces/{namespace}/instances/{id}/jobs:
     get:
       operationId: ai-search-namespace-instance-list-jobs
       summary: List Jobs
@@ -47250,12 +47825,14 @@ paths:
             default: 20
             maximum: 50
             minimum: 0
-        - name: name
+        - name: namespace
           in: path
           description: Namespace name
           required: true
           schema:
             type: string
+            default: default
+            x-stainless-terraform-configurability: computed_optional
           example: my-namespace
           x-fern-parameter-name: namespace
       responses:
@@ -47418,7 +47995,7 @@ paths:
       x-forge-params:
         id:
           description: AI Search instance ID.
-        name:
+        namespace:
           default: default
           description: Namespace to use for this operation.
     post:
@@ -47445,12 +48022,14 @@ paths:
           schema:
             type: string
             example: c3dc5f0b34a14ff8e1b3ec04895e1b22
-        - name: name
+        - name: namespace
           in: path
           description: Namespace name
           required: true
           schema:
             type: string
+            default: default
+            x-stainless-terraform-configurability: computed_optional
           example: my-namespace
           x-fern-parameter-name: namespace
       requestBody:
@@ -47631,10 +48210,10 @@ paths:
           description: Optional description for the indexing job.
         id:
           description: AI Search instance ID.
-        name:
+        namespace:
           default: default
           description: Namespace to use for this operation.
-  /accounts/{account_id}/ai-search/namespaces/{name}/instances/{id}/jobs/{job_id}:
+  /accounts/{account_id}/ai-search/namespaces/{namespace}/instances/{id}/jobs/{job_id}:
     get:
       operationId: ai-search-namespace-instance-get-job
       summary: Get a Job Details
@@ -47664,12 +48243,14 @@ paths:
           schema:
             type: string
             example: c3dc5f0b34a14ff8e1b3ec04895e1b22
-        - name: name
+        - name: namespace
           in: path
           description: Namespace name
           required: true
           schema:
             type: string
+            default: default
+            x-stainless-terraform-configurability: computed_optional
           example: my-namespace
           x-fern-parameter-name: namespace
       responses:
@@ -47784,7 +48365,7 @@ paths:
           description: AI Search instance ID.
         job_id:
           description: Indexing job ID.
-        name:
+        namespace:
           default: default
           description: Namespace to use for this operation.
     patch:
@@ -47816,12 +48397,14 @@ paths:
           schema:
             type: string
             example: c3dc5f0b34a14ff8e1b3ec04895e1b22
-        - name: name
+        - name: namespace
           in: path
           description: Namespace name
           required: true
           schema:
             type: string
+            default: default
+            x-stainless-terraform-configurability: computed_optional
           example: my-namespace
           x-fern-parameter-name: namespace
       requestBody:
@@ -47977,11 +48560,11 @@ paths:
           description: AI Search instance ID.
         job_id:
           description: Indexing job ID.
-        name:
+        namespace:
           default: default
           description: Namespace to use for this operation.
       x-forge-require-confirmation: This operation cancels the running indexing job.
-  /accounts/{account_id}/ai-search/namespaces/{name}/instances/{id}/jobs/{job_id}/logs:
+  /accounts/{account_id}/ai-search/namespaces/{namespace}/instances/{id}/jobs/{job_id}/logs:
     get:
       operationId: ai-search-namespace-instance-list-job-logs
       summary: List Job Logs
@@ -48024,12 +48607,14 @@ paths:
             default: 20
             maximum: 500
             minimum: 0
-        - name: name
+        - name: namespace
           in: path
           description: Namespace name
           required: true
           schema:
             type: string
+            default: default
+            x-stainless-terraform-configurability: computed_optional
           example: my-namespace
           x-fern-parameter-name: namespace
       responses:
@@ -48185,10 +48770,10 @@ paths:
           description: AI Search instance ID.
         job_id:
           description: Indexing job ID.
-        name:
+        namespace:
           default: default
           description: Namespace to use for this operation.
-  /accounts/{account_id}/ai-search/namespaces/{name}/instances/{id}/purge_cache:
+  /accounts/{account_id}/ai-search/namespaces/{namespace}/instances/{id}/purge_cache:
     post:
       operationId: ai-search-namespace-purge-instance-cache
       summary: Purge search cache.
@@ -48212,12 +48797,14 @@ paths:
             pattern: ^[a-z0-9_]+(?:-[a-z0-9_]+)*$
             x-auditable: true
           x-fern-parameter-name: instance-id
-        - name: name
+        - name: namespace
           in: path
           description: Namespace name
           required: true
           schema:
             type: string
+            default: default
+            x-stainless-terraform-configurability: computed_optional
           example: my-namespace
           x-fern-parameter-name: namespace
       responses:
@@ -48278,10 +48865,10 @@ paths:
       x-forge-params:
         id:
           description: AI Search instance ID.
-        name:
+        namespace:
           default: default
           description: Namespace to use for this operation.
-  /accounts/{account_id}/ai-search/namespaces/{name}/instances/{id}/search:
+  /accounts/{account_id}/ai-search/namespaces/{namespace}/instances/{id}/search:
     post:
       operationId: ai-search-namespace-instance-search
       summary: Search
@@ -48306,12 +48893,14 @@ paths:
           schema:
             type: string
             example: c3dc5f0b34a14ff8e1b3ec04895e1b22
-        - name: name
+        - name: namespace
           in: path
           description: Namespace name
           required: true
           schema:
             type: string
+            default: default
+            x-stainless-terraform-configurability: computed_optional
           example: my-namespace
           x-fern-parameter-name: namespace
       requestBody:
@@ -48765,13 +49354,13 @@ paths:
       x-forge-params:
         id:
           description: AI Search instance ID.
-        name:
+        namespace:
           default: default
           description: Namespace to use for this operation.
         query:
           description: Text to search for.
           positional: true
-  /accounts/{account_id}/ai-search/namespaces/{name}/instances/{id}/stats:
+  /accounts/{account_id}/ai-search/namespaces/{namespace}/instances/{id}/stats:
     get:
       operationId: ai-search-namespace-stats
       summary: Get instance statistics.
@@ -48796,12 +49385,14 @@ paths:
           schema:
             type: string
             example: c3dc5f0b34a14ff8e1b3ec04895e1b22
-        - name: name
+        - name: namespace
           in: path
           description: Namespace name
           required: true
           schema:
             type: string
+            default: default
+            x-stainless-terraform-configurability: computed_optional
           example: my-namespace
           x-fern-parameter-name: namespace
       responses:
@@ -48919,514 +49510,9 @@ paths:
       x-forge-params:
         id:
           description: AI Search instance ID.
-        name:
+        namespace:
           default: default
           description: Namespace to use for this operation.
-  /accounts/{account_id}/ai-search/namespaces/{name}/search:
-    post:
-      operationId: ai-search-namespace-multi-instance-search
-      summary: Multi-Instance Search
-      description: Performs a semantic search query against multiple AI Search instances in parallel, merging the retrieved results into a single ranked response.
-      parameters:
-        - name: account_id
-          in: path
-          required: true
-          schema:
-            type: string
-            example: c3dc5f0b34a14ff8e1b3ec04895e1b22
-        - name: name
-          in: path
-          description: Namespace name
-          required: true
-          schema:
-            type: string
-          example: my-namespace
-          x-fern-parameter-name: namespace
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                ai_search_options:
-                  type: object
-                  properties:
-                    cache:
-                      type: object
-                      properties:
-                        cache_threshold:
-                          type: string
-                          enum:
-                            - super_strict_match
-                            - close_enough
-                            - flexible_friend
-                            - anything_goes
-                        enabled:
-                          type: boolean
-                    custom_metadata:
-                      description: Metadata added to AI Gateway logs for requests triggered by this operation. Accepts up to 2 string, number, or boolean entries. Keys 'ai-search', 'task', 'origin', and keys beginning with 'cf.' are reserved.
-                      type: object
-                      example:
-                        test: true
-                        user_id: user-123
-                      additionalProperties:
-                        anyOf:
-                          - type: string
-                          - type: number
-                          - type: boolean
-                      maxProperties: 2
-                    instance_ids:
-                      type: array
-                      items:
-                        description: AI Search instance ID. Lowercase alphanumeric, hyphens, and underscores.
-                        example: my-ai-search
-                        maxLength: 64
-                        minLength: 1
-                        pattern: ^[a-z0-9_]+(?:-[a-z0-9_]+)*$
-                        type: string
-                        x-auditable: true
-                      minItems: 1
-                    query_rewrite:
-                      type: object
-                      properties:
-                        enabled:
-                          type: boolean
-                        model:
-                          description: A Workers AI model ID or an AI Gateway model ID compatible with the OpenAI Chat Completions API. An empty string uses the configured or default model.
-                          type: string
-                        rewrite_prompt:
-                          type: string
-                    reranking:
-                      type: object
-                      properties:
-                        enabled:
-                          type: boolean
-                        match_threshold:
-                          type: number
-                          default: 0.4
-                          maximum: 1
-                          minimum: 0
-                        model:
-                          type: string
-                    retrieval:
-                      type: object
-                      properties:
-                        boost_by:
-                          description: Metadata fields to boost search results by. Overrides the instance-level boost_by config. Direction defaults to 'asc' for numeric/datetime fields, 'exists' for text/boolean fields. Fields must match 'timestamp' or a defined custom_metadata field.
-                          type: array
-                          items:
-                            properties:
-                              direction:
-                                description: Boost direction. 'desc' = higher values rank higher (e.g. newer timestamps). 'asc' = lower values rank higher. 'exists' = boost chunks that have the field. 'not_exists' = boost chunks that lack the field. Optional — defaults to 'asc' for numeric/datetime fields, 'exists' for text/boolean fields.
-                                type: string
-                                enum:
-                                  - asc
-                                  - desc
-                                  - exists
-                                  - not_exists
-                              field:
-                                description: Metadata field name to boost by. Use 'timestamp' for document freshness, or any custom_metadata field. Numeric and datetime fields support all four directions (asc, desc, exists, not_exists); text/boolean fields only support exists/not_exists.
-                                type: string
-                                example: timestamp
-                                maxLength: 64
-                                minLength: 1
-                            required:
-                              - field
-                            type: object
-                          example:
-                            - direction: desc
-                              field: timestamp
-                          maxItems: 3
-                        context_expansion:
-                          type: integer
-                          default: 0
-                          maximum: 3
-                          minimum: 0
-                        filters:
-                          type: object
-                          additionalProperties: true
-                        fusion_method:
-                          type: string
-                          enum:
-                            - max
-                            - rrf
-                        keyword_match_mode:
-                          description: Controls which documents are candidates for BM25 scoring. 'and' restricts candidates to documents containing all query terms; 'or' includes any document containing at least one term, ranked by BM25 relevance. When omitted, falls back to the instance-level retrieval_options.keyword_match_mode, then to 'and'.
-                          type: string
-                          enum:
-                            - and
-                            - or
-                        match_threshold:
-                          type: number
-                          default: 0.4
-                          maximum: 1
-                          minimum: 0
-                        max_num_results:
-                          type: integer
-                          default: 10
-                          maximum: 50
-                          minimum: 1
-                        retrieval_type:
-                          type: string
-                          enum:
-                            - vector
-                            - keyword
-                            - hybrid
-                        return_on_failure:
-                          type: boolean
-                          default: true
-                  required:
-                    - instance_ids
-                messages:
-                  description: "OpenAI-compatible message array. For multimodal queries, set the last user message's `content` to an array of typed parts: `[{type:'text', text:'…'}, {type:'image_url', image_url:{url:'…'}}]`. Image inputs require the RAG's embedding_model to declare 'image' in supported_modalities."
-                  type: array
-                  items:
-                    additionalProperties: true
-                    properties:
-                      content:
-                        anyOf:
-                          - type: string
-                          - items:
-                              oneOf:
-                                - properties:
-                                    text:
-                                      type: string
-                                      minLength: 1
-                                    type:
-                                      type: string
-                                      enum:
-                                        - text
-                                  required:
-                                    - type
-                                    - text
-                                  type: object
-                                - properties:
-                                    image_url:
-                                      type: object
-                                      properties:
-                                        url:
-                                          type: string
-                                          maxLength: 20971520
-                                          minLength: 1
-                                      required:
-                                        - url
-                                    type:
-                                      type: string
-                                      enum:
-                                        - image_url
-                                  required:
-                                    - type
-                                    - image_url
-                                  type: object
-                                - properties:
-                                    file:
-                                      type: object
-                                      properties:
-                                        file_data:
-                                          type: string
-                                          maxLength: 13981144
-                                          minLength: 1
-                                        file_id:
-                                          type: string
-                                        filename:
-                                          type: string
-                                          maxLength: 255
-                                          minLength: 1
-                                      required:
-                                        - filename
-                                    type:
-                                      type: string
-                                      enum:
-                                        - file
-                                  required:
-                                    - type
-                                    - file
-                                  type: object
-                            minItems: 1
-                            type: array
-                          - enum:
-                              - null
-                            nullable: true
-                            type: string
-                      role:
-                        type: string
-                        enum:
-                          - system
-                          - developer
-                          - user
-                          - assistant
-                          - tool
-                    required:
-                      - role
-                      - content
-                    type: object
-                  minItems: 1
-                query:
-                  description: A simple text query string. Alternative to 'messages' — provide either this or 'messages', not both.
-                  minLength: 1
-                  type: string
-              required:
-                - ai_search_options
-      responses:
-        '200':
-          description: Returns the merged search results from all instances.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  result:
-                    type: object
-                    properties:
-                      chunks:
-                        type: array
-                        items:
-                          properties:
-                            id:
-                              type: string
-                            instance_id:
-                              type: string
-                            item:
-                              type: object
-                              properties:
-                                key:
-                                  type: string
-                                metadata:
-                                  type: object
-                                  additionalProperties: true
-                                timestamp:
-                                  type: number
-                              required:
-                                - key
-                            score:
-                              type: number
-                              maximum: 1
-                              minimum: 0
-                            scoring_details:
-                              type: object
-                              properties:
-                                fusion_method:
-                                  type: string
-                                  enum:
-                                    - rrf
-                                    - max
-                                keyword_rank:
-                                  type: number
-                                keyword_score:
-                                  type: number
-                                  minimum: 0
-                                reranking_score:
-                                  type: number
-                                  maximum: 1
-                                  minimum: 0
-                                vector_rank:
-                                  type: number
-                                vector_score:
-                                  type: number
-                                  maximum: 1
-                                  minimum: 0
-                            text:
-                              type: string
-                            type:
-                              type: string
-                          required:
-                            - id
-                            - type
-                            - score
-                            - text
-                            - instance_id
-                          type: object
-                      errors:
-                        type: array
-                        items:
-                          properties:
-                            instance_id:
-                              type: string
-                            message:
-                              type: string
-                          required:
-                            - instance_id
-                            - message
-                          type: object
-                      query_kind:
-                        type: string
-                        enum:
-                          - text
-                          - image
-                          - multimodal
-                      search_query:
-                        type: string
-                    required:
-                      - query_kind
-                      - chunks
-                  success:
-                    type: boolean
-                required:
-                  - success
-                  - result
-        '400':
-          description: Metadata filter unknown field.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  errors:
-                    type: array
-                    items:
-                      properties:
-                        code:
-                          type: number
-                        message:
-                          type: string
-                      required:
-                        - code
-                        - message
-                      type: object
-                  success:
-                    type: boolean
-                    enum:
-                      - false
-                required:
-                  - success
-                  - errors
-        '404':
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  errors:
-                    type: array
-                    items:
-                      properties:
-                        code:
-                          type: number
-                        message:
-                          type: string
-                      required:
-                        - code
-                        - message
-                      type: object
-                  success:
-                    type: boolean
-                    enum:
-                      - false
-                required:
-                  - success
-                  - errors
-        '429':
-          description: Monthly query quota exceeded; Workers ai capacity temporarily exceeded
-          headers:
-            Retry-After:
-              description: Seconds to wait before retrying.
-              schema:
-                description: Seconds to wait before retrying.
-                type: string
-                example: '10'
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  errors:
-                    type: array
-                    items:
-                      anyOf:
-                        - properties:
-                            code:
-                              type: number
-                              enum:
-                                - 7069
-                            message:
-                              type: string
-                          required:
-                            - code
-                            - message
-                          type: object
-                        - properties:
-                            code:
-                              type: number
-                              enum:
-                                - 7119
-                            message:
-                              type: string
-                          required:
-                            - code
-                            - message
-                          type: object
-                  success:
-                    type: boolean
-                    enum:
-                      - false
-                required:
-                  - success
-                  - errors
-        '502':
-          description: Ai gateway exception; Workers ai upstream error
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  errors:
-                    type: array
-                    items:
-                      anyOf:
-                        - properties:
-                            code:
-                              type: number
-                              enum:
-                                - 7033
-                            message:
-                              type: string
-                          required:
-                            - code
-                            - message
-                          type: object
-                        - properties:
-                            code:
-                              type: number
-                              enum:
-                                - 7120
-                            message:
-                              type: string
-                          required:
-                            - code
-                            - message
-                          type: object
-                  success:
-                    type: boolean
-                    enum:
-                      - false
-                required:
-                  - success
-                  - errors
-      security:
-        - api_token: []
-        - api_email: []
-          api_key: []
-      tags:
-        - AI Search Account Search
-      x-cfPermissionsRequired:
-        enum:
-          - com.cloudflare.api.account.ai-search
-      x-cfPlanAvailability:
-        business: true
-        enterprise: true
-        free: true
-        pro: true
-      x-fern-availability: beta
-      x-fern-sdk-group-name: ai-search
-      x-fern-sdk-method-name: multi-search
-      x-forge-params:
-        name:
-          default: default
-          description: Namespace to use for this operation.
-        query:
-          description: Text to search for.
-          positional: true
   /accounts/{account_id}/ai-search/tokens:
     get:
       operationId: ai-search-list-tokens
