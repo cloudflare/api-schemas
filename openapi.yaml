@@ -176915,6 +176915,7 @@ paths:
               - SALESFORCE
               - SERVICENOW
               - SLACK
+              - ZOOM
       responses:
         '200':
           description: Application details.
@@ -177010,6 +177011,7 @@ paths:
               - SALESFORCE
               - SERVICENOW
               - SLACK
+              - ZOOM
         - name: page
           in: query
           description: A page number within the paginated result set.
@@ -177110,6 +177112,7 @@ paths:
               - SALESFORCE
               - SERVICENOW
               - SLACK
+              - ZOOM
         - name: auth_method
           in: query
           description: Filter by auth method id. Get available ids from GET /v2/applications.
@@ -177277,12 +177280,20 @@ paths:
                           category: Productivity
                           display_name: Google Workspace
                           logo: https://dash.cloudflare.com/v2/static/google_workspace.png
+                        auth_method:
+                          display_name: Google Domain-Wide Delegation Service Account
+                          id: google_domain_wide_delegation_service_account
                         created: 2025-01-15T10:00:00Z
                         id: 019d2e6a-d995-7185-afbd-4feead9e42ec
                         is_paused: false
                         name: My Google Workspace
                         status: Healthy
                         updated: 2025-04-10T08:30:00Z
+                        use_cases:
+                          - id: casb
+                            is_enabled: true
+                          - id: ces
+                            is_enabled: false
                     result_info:
                       count: 1
                       next: null
@@ -466636,6 +466647,7 @@ components:
             * `SALESFORCE` - SALESFORCE
             * `SERVICENOW` - SERVICENOW
             * `SLACK` - SLACK
+            * `ZOOM` - ZOOM
           type: string
           enum:
             - ANTHROPIC
@@ -466653,6 +466665,7 @@ components:
             - SALESFORCE
             - SERVICENOW
             - SLACK
+            - ZOOM
         instructions:
           description: Setup instructions for the user.
           type: string
@@ -466742,6 +466755,7 @@ components:
             * `SALESFORCE` - SALESFORCE
             * `SERVICENOW` - SERVICENOW
             * `SLACK` - SLACK
+            * `ZOOM` - ZOOM
           type: string
           enum:
             - ANTHROPIC
@@ -466759,6 +466773,7 @@ components:
             - SALESFORCE
             - SERVICENOW
             - SLACK
+            - ZOOM
         logo:
           description: Logo path.
           type: string
@@ -466950,6 +466965,10 @@ components:
       description: A form field within a form_input step.
       type: object
       properties:
+        default_value:
+          description: Backend-computed value to pre-fill the field with.
+          type: string
+          nullable: true
         label:
           description: Human-readable field label.
           type: string
@@ -466960,6 +466979,9 @@ components:
           description: Placeholder text.
           type: string
           nullable: true
+        readonly:
+          description: Whether the field is backend-computed and must be rendered disabled.
+          type: boolean
         required:
           description: Whether field is required.
           type: boolean
@@ -467152,6 +467174,7 @@ components:
             * `SALESFORCE` - SALESFORCE
             * `SERVICENOW` - SERVICENOW
             * `SLACK` - SLACK
+            * `ZOOM` - ZOOM
           type: string
           enum:
             - ANTHROPIC
@@ -467169,6 +467192,7 @@ components:
             - SALESFORCE
             - SERVICENOW
             - SLACK
+            - ZOOM
         auth_method:
           description: Authentication method slug (uses default if omitted).
           type: string
@@ -467197,7 +467221,7 @@ components:
             minLength: 1
             type: string
         use_cases:
-          description: List of use case or feature slugs to enroll (e.g., ['casb', 'ces', 'auto_remediation']).
+          description: List of use case or feature slugs to enroll. At least one use case (casb, ces) is required; auto_remediation may be added alongside casb (e.g., ['casb', 'ces', 'auto_remediation']).
           type: array
           items:
             description: |-
@@ -467213,6 +467237,7 @@ components:
         - application
         - credentials
         - name
+        - use_cases
     one_IntegrationV2Detail:
       description: Serializer for v2 integration detail response with use cases.
       type: object
@@ -467328,6 +467353,19 @@ components:
             nullable: true
             type: string
           readOnly: true
+        auth_method:
+          description: The integration's authentication method.
+          type: object
+          nullable: true
+          properties:
+            display_name:
+              type: string
+            id:
+              type: string
+          readOnly: true
+          required:
+            - id
+            - display_name
         created:
           description: When the integration was created.
           type: string
@@ -467354,14 +467392,30 @@ components:
           type: string
           format: date-time
           readOnly: true
+        use_cases:
+          description: Use cases enabled for the integration.
+          type: array
+          items:
+            properties:
+              id:
+                type: string
+              is_enabled:
+                type: boolean
+            required:
+              - id
+              - is_enabled
+            type: object
+          readOnly: true
       required:
         - application
+        - auth_method
         - created
         - id
         - is_paused
         - name
         - status
         - updated
+        - use_cases
     one_PaginatedApplicationListList:
       type: object
       properties:
