@@ -267030,7 +267030,8 @@
                 "OPENAI",
                 "SALESFORCE",
                 "SERVICENOW",
-                "SLACK"
+                "SLACK",
+                "ZOOM"
               ]
             }
           }
@@ -267169,7 +267170,8 @@
                 "OPENAI",
                 "SALESFORCE",
                 "SERVICENOW",
-                "SLACK"
+                "SLACK",
+                "ZOOM"
               ]
             }
           },
@@ -267305,7 +267307,8 @@
                 "OPENAI",
                 "SALESFORCE",
                 "SERVICENOW",
-                "SLACK"
+                "SLACK",
+                "ZOOM"
               ]
             }
           },
@@ -267555,12 +267558,26 @@
                             "display_name": "Google Workspace",
                             "logo": "https://dash.cloudflare.com/v2/static/google_workspace.png"
                           },
+                          "auth_method": {
+                            "display_name": "Google Domain-Wide Delegation Service Account",
+                            "id": "google_domain_wide_delegation_service_account"
+                          },
                           "created": "2025-01-15T10:00:00Z",
                           "id": "019d2e6a-d995-7185-afbd-4feead9e42ec",
                           "is_paused": false,
                           "name": "My Google Workspace",
                           "status": "Healthy",
-                          "updated": "2025-04-10T08:30:00Z"
+                          "updated": "2025-04-10T08:30:00Z",
+                          "use_cases": [
+                            {
+                              "id": "casb",
+                              "is_enabled": true
+                            },
+                            {
+                              "id": "ces",
+                              "is_enabled": false
+                            }
+                          ]
                         }
                       ],
                       "result_info": {
@@ -683130,7 +683147,7 @@
             "type": "boolean"
           },
           "id": {
-            "description": "Vendor identifier.\n\n* `ANTHROPIC` - ANTHROPIC\n* `AWS` - AWS\n* `BITBUCKET` - BITBUCKET\n* `BOX` - BOX\n* `CONFLUENCE` - CONFLUENCE\n* `DROPBOX` - DROPBOX\n* `GITHUB` - GITHUB\n* `GOOGLE_CLOUD_PLATFORM` - GOOGLE_CLOUD_PLATFORM\n* `GOOGLE_WORKSPACE` - GOOGLE_WORKSPACE\n* `JIRA` - JIRA\n* `MICROSOFT_INTERNAL` - MICROSOFT_INTERNAL\n* `OPENAI` - OPENAI\n* `SALESFORCE` - SALESFORCE\n* `SERVICENOW` - SERVICENOW\n* `SLACK` - SLACK",
+            "description": "Vendor identifier.\n\n* `ANTHROPIC` - ANTHROPIC\n* `AWS` - AWS\n* `BITBUCKET` - BITBUCKET\n* `BOX` - BOX\n* `CONFLUENCE` - CONFLUENCE\n* `DROPBOX` - DROPBOX\n* `GITHUB` - GITHUB\n* `GOOGLE_CLOUD_PLATFORM` - GOOGLE_CLOUD_PLATFORM\n* `GOOGLE_WORKSPACE` - GOOGLE_WORKSPACE\n* `JIRA` - JIRA\n* `MICROSOFT_INTERNAL` - MICROSOFT_INTERNAL\n* `OPENAI` - OPENAI\n* `SALESFORCE` - SALESFORCE\n* `SERVICENOW` - SERVICENOW\n* `SLACK` - SLACK\n* `ZOOM` - ZOOM",
             "type": "string",
             "enum": [
               "ANTHROPIC",
@@ -683147,7 +683164,8 @@
               "OPENAI",
               "SALESFORCE",
               "SERVICENOW",
-              "SLACK"
+              "SLACK",
+              "ZOOM"
             ]
           },
           "instructions": {
@@ -683246,7 +683264,7 @@
             "type": "boolean"
           },
           "id": {
-            "description": "Vendor identifier (e.g. microsoft_internal, google_workspace).\n\n* `ANTHROPIC` - ANTHROPIC\n* `AWS` - AWS\n* `BITBUCKET` - BITBUCKET\n* `BOX` - BOX\n* `CONFLUENCE` - CONFLUENCE\n* `DROPBOX` - DROPBOX\n* `GITHUB` - GITHUB\n* `GOOGLE_CLOUD_PLATFORM` - GOOGLE_CLOUD_PLATFORM\n* `GOOGLE_WORKSPACE` - GOOGLE_WORKSPACE\n* `JIRA` - JIRA\n* `MICROSOFT_INTERNAL` - MICROSOFT_INTERNAL\n* `OPENAI` - OPENAI\n* `SALESFORCE` - SALESFORCE\n* `SERVICENOW` - SERVICENOW\n* `SLACK` - SLACK",
+            "description": "Vendor identifier (e.g. microsoft_internal, google_workspace).\n\n* `ANTHROPIC` - ANTHROPIC\n* `AWS` - AWS\n* `BITBUCKET` - BITBUCKET\n* `BOX` - BOX\n* `CONFLUENCE` - CONFLUENCE\n* `DROPBOX` - DROPBOX\n* `GITHUB` - GITHUB\n* `GOOGLE_CLOUD_PLATFORM` - GOOGLE_CLOUD_PLATFORM\n* `GOOGLE_WORKSPACE` - GOOGLE_WORKSPACE\n* `JIRA` - JIRA\n* `MICROSOFT_INTERNAL` - MICROSOFT_INTERNAL\n* `OPENAI` - OPENAI\n* `SALESFORCE` - SALESFORCE\n* `SERVICENOW` - SERVICENOW\n* `SLACK` - SLACK\n* `ZOOM` - ZOOM",
             "type": "string",
             "enum": [
               "ANTHROPIC",
@@ -683263,7 +683281,8 @@
               "OPENAI",
               "SALESFORCE",
               "SERVICENOW",
-              "SLACK"
+              "SLACK",
+              "ZOOM"
             ]
           },
           "logo": {
@@ -683515,6 +683534,11 @@
         "description": "A form field within a form_input step.",
         "type": "object",
         "properties": {
+          "default_value": {
+            "description": "Backend-computed value to pre-fill the field with.",
+            "type": "string",
+            "nullable": true
+          },
           "label": {
             "description": "Human-readable field label.",
             "type": "string"
@@ -683527,6 +683551,10 @@
             "description": "Placeholder text.",
             "type": "string",
             "nullable": true
+          },
+          "readonly": {
+            "description": "Whether the field is backend-computed and must be rendered disabled.",
+            "type": "boolean"
           },
           "required": {
             "description": "Whether field is required.",
@@ -683768,7 +683796,7 @@
         "type": "object",
         "properties": {
           "application": {
-            "description": "Vendor/application slug (e.g., GOOGLE_WORKSPACE).\n\n* `ANTHROPIC` - ANTHROPIC\n* `AWS` - AWS\n* `BITBUCKET` - BITBUCKET\n* `BOX` - BOX\n* `CONFLUENCE` - CONFLUENCE\n* `DROPBOX` - DROPBOX\n* `GITHUB` - GITHUB\n* `GOOGLE_CLOUD_PLATFORM` - GOOGLE_CLOUD_PLATFORM\n* `GOOGLE_WORKSPACE` - GOOGLE_WORKSPACE\n* `JIRA` - JIRA\n* `MICROSOFT_INTERNAL` - MICROSOFT_INTERNAL\n* `OPENAI` - OPENAI\n* `SALESFORCE` - SALESFORCE\n* `SERVICENOW` - SERVICENOW\n* `SLACK` - SLACK",
+            "description": "Vendor/application slug (e.g., GOOGLE_WORKSPACE).\n\n* `ANTHROPIC` - ANTHROPIC\n* `AWS` - AWS\n* `BITBUCKET` - BITBUCKET\n* `BOX` - BOX\n* `CONFLUENCE` - CONFLUENCE\n* `DROPBOX` - DROPBOX\n* `GITHUB` - GITHUB\n* `GOOGLE_CLOUD_PLATFORM` - GOOGLE_CLOUD_PLATFORM\n* `GOOGLE_WORKSPACE` - GOOGLE_WORKSPACE\n* `JIRA` - JIRA\n* `MICROSOFT_INTERNAL` - MICROSOFT_INTERNAL\n* `OPENAI` - OPENAI\n* `SALESFORCE` - SALESFORCE\n* `SERVICENOW` - SERVICENOW\n* `SLACK` - SLACK\n* `ZOOM` - ZOOM",
             "type": "string",
             "enum": [
               "ANTHROPIC",
@@ -683785,7 +683813,8 @@
               "OPENAI",
               "SALESFORCE",
               "SERVICENOW",
-              "SLACK"
+              "SLACK",
+              "ZOOM"
             ]
           },
           "auth_method": {
@@ -683823,7 +683852,7 @@
             }
           },
           "use_cases": {
-            "description": "List of use case or feature slugs to enroll (e.g., ['casb', 'ces', 'auto_remediation']).",
+            "description": "List of use case or feature slugs to enroll. At least one use case (casb, ces) is required; auto_remediation may be added alongside casb (e.g., ['casb', 'ces', 'auto_remediation']).",
             "type": "array",
             "items": {
               "description": "* `casb` - casb\n* `ces` - ces\n* `auto_remediation` - auto_remediation",
@@ -683839,7 +683868,8 @@
         "required": [
           "application",
           "credentials",
-          "name"
+          "name",
+          "use_cases"
         ]
       },
       "one_IntegrationV2Detail": {
@@ -683985,6 +684015,24 @@
             },
             "readOnly": true
           },
+          "auth_method": {
+            "description": "The integration's authentication method.",
+            "type": "object",
+            "nullable": true,
+            "properties": {
+              "display_name": {
+                "type": "string"
+              },
+              "id": {
+                "type": "string"
+              }
+            },
+            "readOnly": true,
+            "required": [
+              "id",
+              "display_name"
+            ]
+          },
           "created": {
             "description": "When the integration was created.",
             "type": "string",
@@ -684016,16 +684064,38 @@
             "type": "string",
             "format": "date-time",
             "readOnly": true
+          },
+          "use_cases": {
+            "description": "Use cases enabled for the integration.",
+            "type": "array",
+            "items": {
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "is_enabled": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "id",
+                "is_enabled"
+              ],
+              "type": "object"
+            },
+            "readOnly": true
           }
         },
         "required": [
           "application",
+          "auth_method",
           "created",
           "id",
           "is_paused",
           "name",
           "status",
-          "updated"
+          "updated",
+          "use_cases"
         ]
       },
       "one_PaginatedApplicationListList": {
