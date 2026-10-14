@@ -265142,7 +265142,12 @@
                 "type": "object",
                 "properties": {
                   "config": {
-                    "$ref": "#/components/schemas/moq_relay_config"
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/moq_relay_config"
+                      }
+                    ],
+                    "x-fern-property-name": "relay-config"
                   },
                   "name": {
                     "type": "string"
@@ -265176,7 +265181,7 @@
             }
           },
           "400": {
-            "description": "Bad request. Possible errors: 21003 (relay ID should be 32 hex characters), 21004 (failed to decode body, invalid JSON), 21011 (name must not be empty), 21013 (invalid upstream URL — must be an absolute moqt:// or https:// URL with a host).",
+            "description": "Bad request. Possible errors:\n- 21003: Relay ID should be 32 hex characters\n- 21004: Failed to decode body — invalid JSON\n- 21011: Name must not be empty\n- 21013: Invalid upstream URL — must be an absolute moqt:// or https:// URL with a host\n",
             "content": {
               "application/json": {
                 "schema": {
@@ -311389,8 +311394,7 @@
         ],
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "stream.videos",
-        "x-fern-sdk-method-name": "clip",
-        "x-forge-hidden": true
+        "x-fern-sdk-method-name": "clip"
       }
     },
     "/accounts/{account_id}/stream/copy": {
@@ -312216,8 +312220,7 @@
         ],
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "stream.live-inputs.outputs",
-        "x-fern-sdk-method-name": "list",
-        "x-forge-hidden": true
+        "x-fern-sdk-method-name": "list"
       },
       "post": {
         "operationId": "stream-live-inputs-create-a-new-output,-connected-to-a-live-input",
@@ -312285,8 +312288,7 @@
         ],
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "stream.live-inputs.outputs",
-        "x-fern-sdk-method-name": "create",
-        "x-forge-hidden": true
+        "x-fern-sdk-method-name": "create"
       }
     },
     "/accounts/{account_id}/stream/live_inputs/{live_input_identifier}/outputs/{output_identifier}": {
@@ -312350,7 +312352,6 @@
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "stream.live-inputs.outputs",
         "x-fern-sdk-method-name": "delete",
-        "x-forge-hidden": true,
         "x-forge-require-confirmation": "Delete this output? Any active broadcast to this target will be terminated."
       },
       "put": {
@@ -312430,8 +312431,7 @@
         ],
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "stream.live-inputs.outputs",
-        "x-fern-sdk-method-name": "update",
-        "x-forge-hidden": true
+        "x-fern-sdk-method-name": "update"
       }
     },
     "/accounts/{account_id}/stream/live_inputs/{live_input_identifier}/rotate_keys": {
@@ -312700,8 +312700,7 @@
         ],
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "stream.watermarks",
-        "x-fern-sdk-method-name": "list",
-        "x-forge-hidden": true
+        "x-fern-sdk-method-name": "list"
       },
       "post": {
         "operationId": "stream-watermark-profile-create-watermark-profiles-via-basic-upload",
@@ -312791,8 +312790,7 @@
         ],
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "stream.watermarks",
-        "x-fern-sdk-method-name": "create",
-        "x-forge-hidden": true
+        "x-fern-sdk-method-name": "create"
       }
     },
     "/accounts/{account_id}/stream/watermarks/{identifier}": {
@@ -312870,7 +312868,6 @@
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "stream.watermarks",
         "x-fern-sdk-method-name": "delete",
-        "x-forge-hidden": true,
         "x-forge-require-confirmation": "Remove this watermark profile? New upload requests referencing this profile will fail."
       },
       "get": {
@@ -312933,8 +312930,7 @@
         ],
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "stream.watermarks",
-        "x-fern-sdk-method-name": "get",
-        "x-forge-hidden": true
+        "x-fern-sdk-method-name": "get"
       }
     },
     "/accounts/{account_id}/stream/webhook": {
@@ -313359,8 +313355,7 @@
         ],
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "stream.videos.audio-tracks",
-        "x-fern-sdk-method-name": "list",
-        "x-forge-hidden": true
+        "x-fern-sdk-method-name": "list"
       }
     },
     "/accounts/{account_id}/stream/{identifier}/audio/copy": {
@@ -313430,8 +313425,7 @@
         ],
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "stream.videos.audio-tracks",
-        "x-fern-sdk-method-name": "copy",
-        "x-forge-hidden": true
+        "x-fern-sdk-method-name": "copy"
       }
     },
     "/accounts/{account_id}/stream/{identifier}/audio/{audio_identifier}": {
@@ -313503,7 +313497,6 @@
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "stream.videos.audio-tracks",
         "x-fern-sdk-method-name": "delete",
-        "x-forge-hidden": true,
         "x-forge-require-confirmation": "Permanently delete this audio track?"
       },
       "patch": {
@@ -313583,8 +313576,7 @@
         ],
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "stream.videos.audio-tracks",
-        "x-fern-sdk-method-name": "edit",
-        "x-forge-hidden": true
+        "x-fern-sdk-method-name": "edit"
       }
     },
     "/accounts/{account_id}/stream/{identifier}/captions": {
@@ -313648,8 +313640,7 @@
         ],
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "stream.videos.captions",
-        "x-fern-sdk-method-name": "list",
-        "x-forge-hidden": true
+        "x-fern-sdk-method-name": "list"
       }
     },
     "/accounts/{account_id}/stream/{identifier}/captions/{language}": {
@@ -313735,7 +313726,6 @@
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "stream.videos.captions.language",
         "x-fern-sdk-method-name": "delete",
-        "x-forge-hidden": true,
         "x-forge-require-confirmation": "Remove this caption?"
       },
       "get": {
@@ -313806,8 +313796,7 @@
         ],
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "stream.videos.captions.language",
-        "x-fern-sdk-method-name": "get",
-        "x-forge-hidden": true
+        "x-fern-sdk-method-name": "get"
       },
       "put": {
         "operationId": "stream-subtitles/-captions-upload-captions-or-subtitles",
@@ -313886,8 +313875,7 @@
         ],
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "stream.videos.captions.language",
-        "x-fern-sdk-method-name": "upload",
-        "x-forge-hidden": true
+        "x-fern-sdk-method-name": "upload"
       }
     },
     "/accounts/{account_id}/stream/{identifier}/captions/{language}/generate": {
@@ -313955,8 +313943,7 @@
         ],
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "stream.videos.captions.language",
-        "x-fern-sdk-method-name": "generate",
-        "x-forge-hidden": true
+        "x-fern-sdk-method-name": "generate"
       }
     },
     "/accounts/{account_id}/stream/{identifier}/captions/{language}/vtt": {
@@ -314029,8 +314016,7 @@
         ],
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "stream.videos.captions.language.vtt",
-        "x-fern-sdk-method-name": "get",
-        "x-forge-hidden": true
+        "x-fern-sdk-method-name": "get"
       }
     },
     "/accounts/{account_id}/stream/{identifier}/downloads": {
@@ -314094,7 +314080,6 @@
         "x-fern-availability": "deprecated",
         "x-fern-sdk-group-name": "stream.videos.downloads-default",
         "x-fern-sdk-method-name": "delete",
-        "x-forge-hidden": true,
         "x-forge-require-confirmation": "Remove this default download? It will need to be regenerated for future use."
       },
       "get": {
@@ -314157,8 +314142,7 @@
         ],
         "x-fern-availability": "deprecated",
         "x-fern-sdk-group-name": "stream.videos.downloads-default",
-        "x-fern-sdk-method-name": "list",
-        "x-forge-hidden": true
+        "x-fern-sdk-method-name": "list"
       },
       "post": {
         "operationId": "stream-mp4-downloads-create-downloads",
@@ -314216,8 +314200,7 @@
         ],
         "x-fern-availability": "deprecated",
         "x-fern-sdk-group-name": "stream.videos.downloads-default",
-        "x-fern-sdk-method-name": "create",
-        "x-forge-hidden": true
+        "x-fern-sdk-method-name": "create"
       }
     },
     "/accounts/{account_id}/stream/{identifier}/downloads/{download_type}": {
@@ -314420,8 +314403,7 @@
         ],
         "x-fern-availability": "deprecated",
         "x-fern-sdk-group-name": "stream.videos",
-        "x-fern-sdk-method-name": "embed",
-        "x-forge-hidden": true
+        "x-fern-sdk-method-name": "embed"
       }
     },
     "/accounts/{account_id}/stream/{identifier}/token": {
@@ -680182,6 +680164,7 @@
         ]
       },
       "moq_relay_config": {
+        "description": "Relay configuration. All sub-objects use whole-object replacement when\npresent; omitted sub-objects preserve the existing value.\n",
         "type": "object",
         "properties": {
           "upstreams": {
