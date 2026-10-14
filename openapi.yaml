@@ -151232,7 +151232,7 @@ paths:
     get:
       operationId: zero-trust-get-audit-ssh-settings
       summary: Get Zero Trust SSH settings
-      description: Retrieve all Zero Trust Audit SSH and SSH with Access for Infrastructure settings for an account.
+      description: Retrieve SSH with Access for Infrastructure settings for an account.
       parameters:
         - name: account_id
           in: path
@@ -151267,7 +151267,7 @@ paths:
     put:
       operationId: zero-trust-update-audit-ssh-settings
       summary: Update Zero Trust SSH settings
-      description: Update Zero Trust Audit SSH and SSH with Access for Infrastructure settings for an account.
+      description: Update SSH with Access for Infrastructure settings for an account.
       parameters:
         - name: account_id
           in: path
@@ -153397,7 +153397,7 @@ paths:
                   type: string
                 - pattern: ^id:.*$
                   type: string
-                - pattern: ^action:(on|off|allow|block|scan|noscan|safesearch|ytrestricted|isolate|noisolate|override|l4_override|audit_ssh|egress|resolve|quarantine|redirect|custom)$
+                - pattern: ^action:(on|off|allow|block|scan|noscan|safesearch|ytrestricted|isolate|noisolate|override|l4_override|egress|resolve|quarantine|redirect|custom)$
                   type: string
                 - pattern: ^enabled:(true|false)$
                   type: string
@@ -388132,7 +388132,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: spectrum.apps
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
     post:
       operationId: spectrum-applications-create-spectrum-application-using-a-name-for-the-origin
       summary: Create Spectrum application using a name for the origin
@@ -388173,7 +388172,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: spectrum.apps
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
   /zones/{zone_id}/spectrum/apps/{app_id}:
     delete:
       operationId: spectrum-applications-delete-spectrum-application
@@ -388214,7 +388212,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: spectrum.apps
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
     get:
       operationId: spectrum-applications-get-spectrum-application-configuration
       summary: Get Spectrum application configuration
@@ -388255,7 +388252,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: spectrum.apps
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
     put:
       operationId: spectrum-applications-update-spectrum-application-configuration-using-a-name-for-the-origin
       summary: Update Spectrum application configuration using a name for the origin
@@ -388301,7 +388297,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: spectrum.apps
       x-fern-sdk-method-name: update
-      x-forge-hidden: true
   /zones/{zone_id}/spectrum/protocols:
     get:
       operationId: spectrum-applications-list-spectrum-application-protocols
@@ -388338,7 +388333,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: spectrum.protocols
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
   /zones/{zone_id}/speed_api/availabilities:
     get:
       operationId: speed-get-availabilities
@@ -516416,17 +516410,6 @@ components:
           example: false
           nullable: true
           x-auditable: true
-          x-stainless-terraform-configurability: optional
-        audit_ssh:
-          description: Define the settings for the Audit SSH action. Settable only for `l4` rules with `audit_ssh` action.
-          type: object
-          nullable: true
-          properties:
-            command_logging:
-              description: Enable SSH command logging.
-              type: boolean
-              example: false
-              x-auditable: true
           x-stainless-terraform-configurability: optional
         biso_admin_controls:
           description: Configure browser isolation behavior. Settable only for `http` rules with the action set to `isolate`.
