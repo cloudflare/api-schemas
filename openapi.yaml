@@ -368318,6 +368318,7 @@ paths:
           in: query
           schema:
             $ref: '#/components/schemas/firewall_schemas-mode'
+          x-fern-parameter-name: access-rule-mode
         - name: configuration.target
           in: query
           schema:
@@ -443781,7 +443782,9 @@ components:
         id:
           $ref: '#/components/schemas/firewall_schemas-identifier'
         mode:
-          $ref: '#/components/schemas/firewall_schemas-mode'
+          allOf:
+            - $ref: '#/components/schemas/firewall_schemas-mode'
+          x-fern-property-name: access-rule-mode
         modified_on:
           description: The timestamp of when the rule was last modified.
           type: string
