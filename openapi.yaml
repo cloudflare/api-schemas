@@ -81396,7 +81396,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: tunnel
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
     post:
       operationId: cloudflare-tunnel-create-a-cloudflare-tunnel
       summary: Create a Cloudflare Tunnel
@@ -81453,7 +81452,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: tunnels
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
   /accounts/{account_id}/cfd_tunnel/{tunnel_id}:
     delete:
       operationId: cloudflare-tunnel-delete-a-cloudflare-tunnel
@@ -81499,7 +81497,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: tunnels
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
       x-forge-require-confirmation: This operation permanently deletes a Cloudflare Tunnel.
     get:
       operationId: cloudflare-tunnel-get-a-cloudflare-tunnel
@@ -81548,7 +81545,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: tunnels
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
     patch:
       operationId: cloudflare-tunnel-update-a-cloudflare-tunnel
       summary: Update a Cloudflare Tunnel
@@ -81604,7 +81600,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: tunnels
       x-fern-sdk-method-name: edit
-      x-forge-hidden: true
   /accounts/{account_id}/cfd_tunnel/{tunnel_id}/configurations:
     get:
       operationId: cloudflare-tunnel-configuration-get-configuration
@@ -81651,7 +81646,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: tunnels.config
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
     put:
       operationId: cloudflare-tunnel-configuration-put-configuration
       summary: Update Tunnel configuration
@@ -81675,7 +81669,9 @@ paths:
               type: object
               properties:
                 config:
-                  $ref: '#/components/schemas/tunnel_config'
+                  allOf:
+                    - $ref: '#/components/schemas/tunnel_config'
+                  x-fern-property-name: tunnel-config
       responses:
         '200':
           description: Put configuration response
@@ -81703,7 +81699,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: tunnels.config
       x-fern-sdk-method-name: update
-      x-forge-hidden: true
   /accounts/{account_id}/cfd_tunnel/{tunnel_id}/connections:
     delete:
       operationId: cloudflare-tunnel-clean-up-cloudflare-tunnel-connections
@@ -81753,7 +81748,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: tunnels.connections
       x-fern-sdk-method-name: cleanup
-      x-forge-hidden: true
       x-forge-require-confirmation: This operation removes Cloudflare Tunnel connections.
     get:
       operationId: cloudflare-tunnel-list-cloudflare-tunnel-connections
@@ -81802,7 +81796,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: tunnels.connections
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
   /accounts/{account_id}/cfd_tunnel/{tunnel_id}/connectors/{connector_id}:
     get:
       operationId: cloudflare-tunnel-get-cloudflare-tunnel-connector
@@ -81856,7 +81849,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: tunnels.connectors
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
   /accounts/{account_id}/cfd_tunnel/{tunnel_id}/management:
     post:
       operationId: cloudflare-tunnel-get-a-cloudflare-tunnel-management-token
@@ -81915,7 +81907,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: tunnels.management-token
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
   /accounts/{account_id}/cfd_tunnel/{tunnel_id}/token:
     get:
       operationId: cloudflare-tunnel-get-a-cloudflare-tunnel-token
@@ -81961,7 +81952,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: tunnels.token
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
   /accounts/{account_id}/challenges/widgets:
     get:
       operationId: accounts-turnstile-widgets-list
@@ -209548,7 +209538,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: network.routes.cidr
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
     post:
       operationId: tunnel-route-create-a-tunnel-route
       summary: Create a tunnel route
@@ -209605,7 +209594,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: network.routes.cidr
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
   /accounts/{account_id}/teamnet/routes/{route_id}:
     delete:
       operationId: tunnel-route-delete-a-tunnel-route
@@ -209651,7 +209639,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: network.routes.cidr
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
       x-forge-require-confirmation: This operation permanently deletes a private network route.
     get:
       operationId: tunnel-route-get-tunnel-route
@@ -209693,7 +209680,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: network.routes.cidr
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
     patch:
       operationId: tunnel-route-update-a-tunnel-route
       summary: Update a tunnel route
@@ -209752,7 +209738,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: network.routes.cidr
       x-fern-sdk-method-name: edit
-      x-forge-hidden: true
   /accounts/{account_id}/teamnet/routes/ip/{ip}:
     get:
       operationId: tunnel-route-get-tunnel-route-by-ip
@@ -209809,7 +209794,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: network.routes
       x-fern-sdk-method-name: resolve
-      x-forge-hidden: true
   /accounts/{account_id}/teamnet/routes/network/{ip_network_encoded}:
     delete:
       operationId: tunnel-route-delete-a-tunnel-route-with-cidr
@@ -210041,7 +210025,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: network.virtual-networks
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
     post:
       operationId: tunnel-virtual-network-create-a-virtual-network
       summary: Create a virtual network
@@ -210103,7 +210086,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: network.virtual-networks
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
   /accounts/{account_id}/teamnet/virtual_networks/{virtual_network_id}:
     delete:
       operationId: tunnel-virtual-network-delete
@@ -210148,7 +210130,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: network.virtual-networks
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
       x-forge-require-confirmation: This operation permanently deletes a virtual network.
     get:
       operationId: tunnel-virtual-network-get
@@ -210203,7 +210184,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: network.virtual-networks
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
     patch:
       operationId: tunnel-virtual-network-update
       summary: Update a virtual network
@@ -210260,7 +210240,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: network.virtual-networks
       x-fern-sdk-method-name: edit
-      x-forge-hidden: true
   /accounts/{account_id}/tokens:
     get:
       operationId: account-api-tokens-list-tokens
@@ -211719,7 +211698,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: tunnels
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
   /accounts/{account_id}/urlscanner/response/{response_id}:
     get:
       operationId: urlscanner-get-response-text
@@ -221649,7 +221627,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: mesh.nodes
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
     post:
       operationId: cloudflare-tunnel-create-a-warp-connector-tunnel
       summary: Create a Mesh node
@@ -221703,7 +221680,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: mesh.nodes
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
   /accounts/{account_id}/warp_connector/{tunnel_id}:
     delete:
       operationId: cloudflare-tunnel-delete-a-warp-connector-tunnel
@@ -221749,7 +221725,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: mesh.nodes
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
       x-forge-require-confirmation: This operation permanently deletes a Mesh node.
     get:
       operationId: cloudflare-tunnel-get-a-warp-connector-tunnel
@@ -221797,7 +221772,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: mesh.nodes
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
     patch:
       operationId: cloudflare-tunnel-update-a-warp-connector-tunnel
       summary: Update a Mesh node
@@ -221853,7 +221827,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: mesh.nodes
       x-fern-sdk-method-name: edit
-      x-forge-hidden: true
   /accounts/{account_id}/warp_connector/{tunnel_id}/configurations:
     get:
       operationId: cloudflare-tunnel-configuration-get-warp-connector-configuration
@@ -221898,7 +221871,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: mesh.nodes.configurations
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
     put:
       operationId: cloudflare-tunnel-configuration-update-warp-connector-configuration
       summary: Update Mesh node HA configuration
@@ -221946,7 +221918,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: mesh.nodes.configurations
       x-fern-sdk-method-name: update
-      x-forge-hidden: true
   /accounts/{account_id}/warp_connector/{tunnel_id}/connections:
     get:
       operationId: cloudflare-tunnel-list-warp-connector-tunnel-connections
@@ -221994,7 +221965,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: mesh.nodes.connections
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
   /accounts/{account_id}/warp_connector/{tunnel_id}/connectors/{connector_id}:
     get:
       operationId: cloudflare-tunnel-get-warp-connector-tunnel-connector
@@ -222047,7 +222017,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: mesh.nodes.connectors
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
   /accounts/{account_id}/warp_connector/{tunnel_id}/failover:
     put:
       operationId: cloudflare-tunnel-manual-failover-warp-connector-tunnel
@@ -222106,7 +222075,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: mesh.nodes
       x-fern-sdk-method-name: failover
-      x-forge-hidden: true
       x-forge-require-confirmation: This operation triggers a manual failover, changing the active connector for a Mesh node.
   /accounts/{account_id}/warp_connector/{tunnel_id}/token:
     get:
@@ -222154,7 +222122,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: mesh.nodes.token
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
   /accounts/{account_id}/workers/account-settings:
     get:
       operationId: worker-account-settings-fetch-worker-account-settings
@@ -247009,7 +246976,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: zero-trust.connectivity-settings
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
     patch:
       operationId: zero-trust-accounts-patch-connectivity-settings
       summary: Updates the Zero Trust Connectivity Settings
@@ -247056,7 +247022,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: zero-trust.connectivity-settings
       x-fern-sdk-method-name: edit
-      x-forge-hidden: true
   /accounts/{account_id}/zerotrust/routes/hostname:
     get:
       operationId: zero-trust-networks-route-hostname-list
@@ -247135,7 +247100,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: network.routes.hostname
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
     post:
       operationId: zero-trust-networks-route-hostname-create
       summary: Create hostname route
@@ -247187,7 +247151,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: network.routes.hostname
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
   /accounts/{account_id}/zerotrust/routes/hostname/{hostname_route_id}:
     delete:
       operationId: zero-trust-networks-route-hostname-delete
@@ -247232,7 +247195,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: network.routes.hostname
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
       x-forge-require-confirmation: This operation permanently deletes a hostname route.
     get:
       operationId: zero-trust-networks-route-hostname-get
@@ -247279,7 +247241,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: network.routes.hostname
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
     patch:
       operationId: zero-trust-networks-route-hostname-update
       summary: Update hostname route
@@ -247336,7 +247297,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: network.routes.hostname
       x-fern-sdk-method-name: edit
-      x-forge-hidden: true
   /accounts/{account_id}/zerotrust/subnets:
     get:
       operationId: zero-trust-networks-subnets-list
@@ -247436,8 +247396,47 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: network.subnets
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
   /accounts/{account_id}/zerotrust/subnets/cloudflare_source/{address_family}:
+    get:
+      operationId: zero-trust-networks-subnet-get-cloudflare-source
+      summary: Get Cloudflare Source Subnet
+      description: Returns the account's default Cloudflare Source subnet for the given address family.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/tunnel_account_id'
+        - name: address_family
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/tunnel_address_family'
+      responses:
+        '200':
+          description: Get Cloudflare Source Subnet response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/tunnel_subnet_response_single'
+        4XX:
+          description: Get Cloudflare Source Subnet response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/tunnel_subnet_response_single'
+                  - $ref: '#/components/schemas/tunnel_api-response-common-failure'
+      security:
+        - api_email: []
+          api_key: []
+        - api_token: []
+        - user_service_key: []
+      tags:
+        - Zero Trust Subnets
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: network.subnets.cloudflare-source
+      x-fern-sdk-method-name: get
     patch:
       operationId: zero-trust-networks-subnet-update-cloudflare-source
       summary: Update Cloudflare Source Subnet
@@ -247493,7 +247492,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: network.subnets.cloudflare-source
       x-fern-sdk-method-name: edit
-      x-forge-hidden: true
   /accounts/{account_id}/zerotrust/subnets/initial_resolved_ip/{address_family}:
     get:
       operationId: zero-trust-networks-subnet-get-initial-resolved-ip
@@ -247538,7 +247536,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: network.subnets.initial-resolved-ip
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
     put:
       operationId: zero-trust-networks-subnet-update-initial-resolved-ip
       summary: Update Initial Resolved IP Subnet
@@ -247594,7 +247591,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: network.subnets.initial-resolved-ip
       x-fern-sdk-method-name: edit
-      x-forge-hidden: true
   /accounts/{account_id}/zerotrust/subnets/warp:
     post:
       operationId: zero-trust-networks-subnet-create-warp
@@ -247660,7 +247656,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: network.subnets.warp
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
   /accounts/{account_id}/zerotrust/subnets/warp/{subnet_id}:
     delete:
       operationId: zero-trust-networks-subnet-delete-warp
@@ -247704,7 +247699,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: network.subnets.warp
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
       x-forge-require-confirmation: This operation permanently deletes a WARP IP subnet.
     get:
       operationId: zero-trust-networks-subnet-get-warp
@@ -247749,7 +247743,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: network.subnets.warp
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
     patch:
       operationId: zero-trust-networks-subnet-update-warp
       summary: Update WARP IP subnet
@@ -247812,7 +247805,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: network.subnets.warp
       x-fern-sdk-method-name: edit
-      x-forge-hidden: true
   /accounts/{account_id}/zt_risk_scoring/{user_id}:
     get:
       operationId: dlp-risk-score-summary-get-for-user
@@ -501514,6 +501506,7 @@ components:
             - additionalProperties: false
               description: Empty object for none/disabled modes.
               type: object
+          x-fern-property-name: mesh-config
         ha_mode:
           $ref: '#/components/schemas/tunnel_mesh_ha_mode'
       required:
