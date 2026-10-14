@@ -175791,7 +175791,9 @@ paths:
               type: object
               properties:
                 config:
-                  $ref: '#/components/schemas/moq_relay_config'
+                  allOf:
+                    - $ref: '#/components/schemas/moq_relay_config'
+                  x-fern-property-name: relay-config
                 name:
                   type: string
       responses:
@@ -175807,7 +175809,12 @@ paths:
                         $ref: '#/components/schemas/moq_relay'
                     type: object
         '400':
-          description: 'Bad request. Possible errors: 21003 (relay ID should be 32 hex characters), 21004 (failed to decode body, invalid JSON), 21011 (name must not be empty), 21013 (invalid upstream URL — must be an absolute moqt:// or https:// URL with a host).'
+          description: |
+            Bad request. Possible errors:
+            - 21003: Relay ID should be 32 hex characters
+            - 21004: Failed to decode body — invalid JSON
+            - 21011: Name must not be empty
+            - 21013: Invalid upstream URL — must be an absolute moqt:// or https:// URL with a host
           content:
             application/json:
               schema:
@@ -206778,7 +206785,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: stream.videos.audio-tracks
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
   /accounts/{account_id}/stream/{identifier}/audio/{audio_identifier}:
     delete:
       operationId: delete-audio-tracks
@@ -206824,7 +206830,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: stream.videos.audio-tracks
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
       x-forge-require-confirmation: Permanently delete this audio track?
     patch:
       operationId: edit-audio-tracks
@@ -206876,7 +206881,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: stream.videos.audio-tracks
       x-fern-sdk-method-name: edit
-      x-forge-hidden: true
   /accounts/{account_id}/stream/{identifier}/audio/copy:
     post:
       operationId: add-audio-track
@@ -206921,7 +206925,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: stream.videos.audio-tracks
       x-fern-sdk-method-name: copy
-      x-forge-hidden: true
   /accounts/{account_id}/stream/{identifier}/captions:
     get:
       operationId: stream-subtitles/-captions-list-captions-or-subtitles
@@ -206963,7 +206966,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: stream.videos.captions
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
   /accounts/{account_id}/stream/{identifier}/captions/{language}:
     delete:
       operationId: stream-subtitles/-captions-delete-captions-or-subtitles
@@ -207016,7 +207018,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: stream.videos.captions.language
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
       x-forge-require-confirmation: Remove this caption?
     get:
       operationId: stream-subtitles/-captions-get-caption-or-subtitle-for-language
@@ -207063,7 +207064,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: stream.videos.captions.language
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
     put:
       operationId: stream-subtitles/-captions-upload-captions-or-subtitles
       summary: Upload captions or subtitles
@@ -207114,7 +207114,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: stream.videos.captions.language
       x-fern-sdk-method-name: upload
-      x-forge-hidden: true
   /accounts/{account_id}/stream/{identifier}/captions/{language}/generate:
     post:
       operationId: stream-subtitles/-captions-generate-caption-or-subtitle-for-language
@@ -207158,7 +207157,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: stream.videos.captions.language
       x-fern-sdk-method-name: generate
-      x-forge-hidden: true
   /accounts/{account_id}/stream/{identifier}/captions/{language}/vtt:
     get:
       operationId: stream-subtitles/-captions-get-vtt-caption-or-subtitle
@@ -207209,7 +207207,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: stream.videos.captions.language.vtt
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
   /accounts/{account_id}/stream/{identifier}/downloads:
     delete:
       operationId: stream-mp4-downloads-delete-downloads
@@ -207250,7 +207247,6 @@ paths:
       x-fern-availability: deprecated
       x-fern-sdk-group-name: stream.videos.downloads-default
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
       x-forge-require-confirmation: Remove this default download? It will need to be regenerated for future use.
     get:
       operationId: stream-mp4-downloads-list-downloads
@@ -207292,7 +207288,6 @@ paths:
       x-fern-availability: deprecated
       x-fern-sdk-group-name: stream.videos.downloads-default
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
     post:
       operationId: stream-mp4-downloads-create-downloads
       summary: Create downloads
@@ -207330,7 +207325,6 @@ paths:
       x-fern-availability: deprecated
       x-fern-sdk-group-name: stream.videos.downloads-default
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
   /accounts/{account_id}/stream/{identifier}/downloads/{download_type}:
     delete:
       operationId: stream-downloads-delete-type-specific-downloads
@@ -207461,7 +207455,6 @@ paths:
       x-fern-availability: deprecated
       x-fern-sdk-group-name: stream.videos
       x-fern-sdk-method-name: embed
-      x-forge-hidden: true
   /accounts/{account_id}/stream/{identifier}/token:
     post:
       operationId: stream-videos-create-signed-url-tokens-for-videos
@@ -207548,7 +207541,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: stream.videos
       x-fern-sdk-method-name: clip
-      x-forge-hidden: true
   /accounts/{account_id}/stream/copy:
     post:
       operationId: stream-videos-upload-videos-from-a-url
@@ -208076,7 +208068,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: stream.live-inputs.outputs
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
     post:
       operationId: stream-live-inputs-create-a-new-output,-connected-to-a-live-input
       summary: Create a new output, connected to a live input
@@ -208120,7 +208111,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: stream.live-inputs.outputs
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
   /accounts/{account_id}/stream/live_inputs/{live_input_identifier}/outputs/{output_identifier}:
     delete:
       operationId: stream-live-inputs-delete-an-output
@@ -208162,7 +208152,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: stream.live-inputs.outputs
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
       x-forge-require-confirmation: Delete this output? Any active broadcast to this target will be terminated.
     put:
       operationId: stream-live-inputs-update-an-output
@@ -208214,7 +208203,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: stream.live-inputs.outputs
       x-fern-sdk-method-name: update
-      x-forge-hidden: true
   /accounts/{account_id}/stream/live_inputs/{live_input_identifier}/rotate_keys:
     post:
       operationId: stream-live-inputs-rotate-keys-for-a-live-input
@@ -208380,7 +208368,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: stream.watermarks
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
     post:
       operationId: stream-watermark-profile-create-watermark-profiles-via-basic-upload
       summary: Create watermark profiles via basic upload
@@ -208439,7 +208426,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: stream.watermarks
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
   /accounts/{account_id}/stream/watermarks/{identifier}:
     delete:
       operationId: stream-watermark-profile-delete-watermark-profiles
@@ -208487,7 +208473,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: stream.watermarks
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
       x-forge-require-confirmation: Remove this watermark profile? New upload requests referencing this profile will fail.
     get:
       operationId: stream-watermark-profile-watermark-profile-details
@@ -208529,7 +208514,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: stream.watermarks
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
   /accounts/{account_id}/stream/webhook:
     delete:
       operationId: stream-webhook-delete-webhooks
@@ -464624,6 +464608,9 @@ components:
         - name
         - config
     moq_relay_config:
+      description: |
+        Relay configuration. All sub-objects use whole-object replacement when
+        present; omitted sub-objects preserve the existing value.
       type: object
       properties:
         upstreams:
