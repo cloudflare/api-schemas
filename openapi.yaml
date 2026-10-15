@@ -138977,6 +138977,625 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: zero-trust.dlp.settings
       x-fern-sdk-method-name: update
+  /accounts/{account_id}/dlp/validators:
+    get:
+      operationId: dlp-validators-list-validators
+      summary: List validators
+      description: Lists the validators configured for the account, of every kind.
+      parameters:
+        - name: kind
+          in: query
+          description: Only return validators of this kind. Omit to return every kind.
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/dlp_ValidatorKind'
+            nullable: true
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List validators response.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/dlp_api-response-single'
+                  - properties:
+                      result:
+                        $ref: '#/components/schemas/dlp_ValidatorArray'
+                    type: object
+        4XX:
+          description: List validators failure response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dlp_api-response-common-failure'
+      security:
+        - api_email: []
+          api_key: []
+          api_token: []
+      tags:
+        - DLP Validators
+      x-api-token-group:
+        - Zero Trust Read
+        - Zero Trust Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.dlp.validators
+      x-fern-sdk-method-name: list
+  /accounts/{account_id}/dlp/validators/{validator_id}:
+    get:
+      operationId: dlp-validators-get-validator
+      summary: Get a validator
+      description: Fetches a validator of any kind by ID.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: validator_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Get validator response.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/dlp_api-response-single'
+                  - properties:
+                      result:
+                        $ref: '#/components/schemas/dlp_Validator'
+                    type: object
+        4XX:
+          description: Get validator failure response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dlp_api-response-common-failure'
+      security:
+        - api_email: []
+          api_key: []
+          api_token: []
+      tags:
+        - DLP Validators
+      x-api-token-group:
+        - Zero Trust Read
+        - Zero Trust Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.dlp.validators
+      x-fern-sdk-method-name: get
+  /accounts/{account_id}/dlp/validators/proximity_words:
+    get:
+      operationId: dlp-validators-list-proximity-words-validators
+      summary: List proximity word validators
+      description: Lists the `proximity_words` validators configured for the account.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List proximity word validators response.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/dlp_api-response-single'
+                  - properties:
+                      result:
+                        $ref: '#/components/schemas/dlp_ProximityWordValidatorArray'
+                    type: object
+        4XX:
+          description: List proximity word validators failure response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dlp_api-response-common-failure'
+      security:
+        - api_email: []
+          api_key: []
+          api_token: []
+      tags:
+        - DLP Validators
+      x-api-token-group:
+        - Zero Trust Read
+        - Zero Trust Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.dlp.validators.proximity-words
+      x-fern-sdk-method-name: list
+    post:
+      operationId: dlp-validators-create-proximity-words-validator
+      summary: Create a proximity word validator
+      description: |-
+        Creates a reusable list of weighted words that detection entries can attach to in order to
+        refine their matches. An account may own at most 100 validators across all kinds.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Attributes of the new validator.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/dlp_ProximityWordValidatorWrite'
+      responses:
+        '200':
+          description: Create proximity word validator response.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/dlp_api-response-single'
+                  - properties:
+                      result:
+                        $ref: '#/components/schemas/dlp_ProximityWordValidator'
+                    type: object
+        4XX:
+          description: Create proximity word validator failure response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dlp_api-response-common-failure'
+      security:
+        - api_email: []
+          api_key: []
+          api_token: []
+      tags:
+        - DLP Validators
+      x-api-token-group:
+        - Zero Trust Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.dlp.validators.proximity-words
+      x-fern-sdk-method-name: create
+  /accounts/{account_id}/dlp/validators/proximity_words/{validator_id}:
+    delete:
+      operationId: dlp-validators-delete-proximity-words-validator
+      summary: Delete a proximity word validator
+      description: |-
+        Deletes a `proximity_words` validator. Fails with `409` while any detection entry is still
+        attached to it; detach it from those entries first.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: validator_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Delete proximity word validator response.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/dlp_api-response-single'
+                  - properties:
+                      result:
+                        $ref: '#/components/schemas/dlp_Empty'
+                    type: object
+        4XX:
+          description: Delete proximity word validator failure response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dlp_api-response-common-failure'
+      security:
+        - api_email: []
+          api_key: []
+          api_token: []
+      tags:
+        - DLP Validators
+      x-api-token-group:
+        - Zero Trust Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.dlp.validators.proximity-words
+      x-fern-sdk-method-name: delete
+    get:
+      operationId: dlp-validators-get-proximity-words-validator
+      summary: Get a proximity word validator
+      description: Fetches a `proximity_words` validator by ID.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: validator_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Get proximity word validator response.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/dlp_api-response-single'
+                  - properties:
+                      result:
+                        $ref: '#/components/schemas/dlp_ProximityWordValidator'
+                    type: object
+        4XX:
+          description: Get proximity word validator failure response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dlp_api-response-common-failure'
+      security:
+        - api_email: []
+          api_key: []
+          api_token: []
+      tags:
+        - DLP Validators
+      x-api-token-group:
+        - Zero Trust Read
+        - Zero Trust Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.dlp.validators.proximity-words
+      x-fern-sdk-method-name: get
+    put:
+      operationId: dlp-validators-update-proximity-words-validator
+      summary: Update a proximity word validator
+      description: |-
+        Replaces the name and word list of a `proximity_words` validator. Attachments to detection
+        entries are owned from the entry side and are not affected.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: validator_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description: Attributes of the validator to update.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/dlp_ProximityWordValidatorWrite'
+      responses:
+        '200':
+          description: Update proximity word validator response.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/dlp_api-response-single'
+                  - properties:
+                      result:
+                        $ref: '#/components/schemas/dlp_ProximityWordValidator'
+                    type: object
+        4XX:
+          description: Update proximity word validator failure response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dlp_api-response-common-failure'
+      security:
+        - api_email: []
+          api_key: []
+          api_token: []
+      tags:
+        - DLP Validators
+      x-api-token-group:
+        - Zero Trust Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.dlp.validators.proximity-words
+      x-fern-sdk-method-name: update
+  /accounts/{account_id}/dlp/validators/worker:
+    get:
+      operationId: dlp-validators-list-worker-validators
+      summary: List worker validators
+      description: Lists the `worker` validators configured for the account.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List worker validators response.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/dlp_api-response-single'
+                  - properties:
+                      result:
+                        $ref: '#/components/schemas/dlp_WorkerValidatorArray'
+                    type: object
+        4XX:
+          description: List worker validators failure response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dlp_api-response-common-failure'
+      security:
+        - api_email: []
+          api_key: []
+          api_token: []
+      tags:
+        - DLP Validators
+      x-api-token-group:
+        - Zero Trust Read
+        - Zero Trust Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.dlp.validators.worker
+      x-fern-sdk-method-name: list
+    post:
+      operationId: dlp-validators-create-worker-validator
+      summary: Create a worker validator
+      description: |-
+        Registers a customer Worker as a validator. An account may own at most 100 validators across
+        all kinds.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Attributes of the new validator.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/dlp_WorkerValidatorWrite'
+      responses:
+        '200':
+          description: Create worker validator response.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/dlp_api-response-single'
+                  - properties:
+                      result:
+                        $ref: '#/components/schemas/dlp_WorkerValidator'
+                    type: object
+        4XX:
+          description: Create worker validator failure response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dlp_api-response-common-failure'
+      security:
+        - api_email: []
+          api_key: []
+          api_token: []
+      tags:
+        - DLP Validators
+      x-api-token-group:
+        - Zero Trust Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.dlp.validators.worker
+      x-fern-sdk-method-name: create
+  /accounts/{account_id}/dlp/validators/worker/{validator_id}:
+    delete:
+      operationId: dlp-validators-delete-worker-validator
+      summary: Delete a worker validator
+      description: |-
+        Deletes a `worker` validator. Fails with `409` while any detection entry is still attached to
+        it; detach it from those entries first.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: validator_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Delete worker validator response.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/dlp_api-response-single'
+                  - properties:
+                      result:
+                        $ref: '#/components/schemas/dlp_Empty'
+                    type: object
+        4XX:
+          description: Delete worker validator failure response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dlp_api-response-common-failure'
+      security:
+        - api_email: []
+          api_key: []
+          api_token: []
+      tags:
+        - DLP Validators
+      x-api-token-group:
+        - Zero Trust Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.dlp.validators.worker
+      x-fern-sdk-method-name: delete
+    get:
+      operationId: dlp-validators-get-worker-validator
+      summary: Get a worker validator
+      description: Fetches a `worker` validator by ID.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: validator_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Get worker validator response.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/dlp_api-response-single'
+                  - properties:
+                      result:
+                        $ref: '#/components/schemas/dlp_WorkerValidator'
+                    type: object
+        4XX:
+          description: Get worker validator failure response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dlp_api-response-common-failure'
+      security:
+        - api_email: []
+          api_key: []
+          api_token: []
+      tags:
+        - DLP Validators
+      x-api-token-group:
+        - Zero Trust Read
+        - Zero Trust Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.dlp.validators.worker
+      x-fern-sdk-method-name: get
+    put:
+      operationId: dlp-validators-update-worker-validator
+      summary: Update a worker validator
+      description: |-
+        Replaces the name, script tag and fallback verdict of a `worker` validator. Attachments to
+        detection entries are owned from the entry side and are not affected.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: validator_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description: Attributes of the validator to update.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/dlp_WorkerValidatorWrite'
+      responses:
+        '200':
+          description: Update worker validator response.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/dlp_api-response-single'
+                  - properties:
+                      result:
+                        $ref: '#/components/schemas/dlp_WorkerValidator'
+                    type: object
+        4XX:
+          description: Update worker validator failure response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dlp_api-response-common-failure'
+      security:
+        - api_email: []
+          api_key: []
+          api_token: []
+      tags:
+        - DLP Validators
+      x-api-token-group:
+        - Zero Trust Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.dlp.validators.worker
+      x-fern-sdk-method-name: update
+  /accounts/{account_id}/dlp/validators/worker/{validator_id}/status:
+    get:
+      operationId: dlp-validators-get-worker-validator-status
+      summary: Get a worker validator status
+      description: |-
+        Reports whether the validator's Worker can be used. Returns `worker_not_found` if the Worker
+        cannot be found, and `worker_error` if the Worker does not have a valid validation entrypoint
+        or is returning incorrect responses.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: validator_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Worker validator status response.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/dlp_api-response-single'
+                  - properties:
+                      result:
+                        $ref: '#/components/schemas/dlp_WorkerValidatorStatus'
+                    type: object
+        4XX:
+          description: Worker validator status failure response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dlp_api-response-common-failure'
+      security:
+        - api_email: []
+          api_key: []
+          api_token: []
+      tags:
+        - DLP Validators
+      x-api-token-group:
+        - Zero Trust Read
+        - Zero Trust Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.dlp.validators.worker.status
+      x-fern-sdk-method-name: get
   /accounts/{account_id}/dls/regional_services/prefix_bindings:
     get:
       operationId: publicListPrefixBindings
@@ -430811,6 +431430,22 @@ components:
           required:
             - type
           type: object
+    dlp_AttachedEntry:
+      description: A detection entry that uses a validator.
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          example: US Social Security Number
+        type:
+          $ref: '#/components/schemas/dlp_EntryType'
+      required:
+        - id
+        - name
+        - type
     dlp_Behavior:
       type: object
       properties:
@@ -430923,6 +431558,19 @@ components:
         updated_at:
           type: string
           format: date-time
+        validator_ids:
+          description: |-
+            Validators this entry references, by id, at most 10. An empty list means the entry
+            references none.
+
+            Returned by the entry endpoints. Not returned on entries embedded in other responses, such
+            as profiles.
+          type: array
+          items:
+            format: uuid
+            type: string
+          x-stainless-collection-type: set
+          x-stainless-terraform-configurability: computed_optional
       required:
         - id
         - name
@@ -430949,6 +431597,18 @@ components:
           type: string
         pattern:
           $ref: '#/components/schemas/dlp_Pattern'
+        validator_ids:
+          description: |-
+            Validators this entry should reference, by id, at most 10. Replaces the current set.
+
+            Optional, unlike the rest of this body: omitting it leaves the current attachments alone, so a
+            client that predates validators cannot detach them by accident. Send `[]` to detach.
+          type: array
+          items:
+            format: uuid
+            type: string
+          x-stainless-collection-type: set
+          x-stainless-terraform-configurability: computed_optional
       required:
         - name
         - pattern
@@ -431921,6 +432581,17 @@ components:
       required:
         - id
         - name
+    dlp_EntryType:
+      description: The type of a detection entry.
+      type: string
+      enum:
+        - custom
+        - custom_prompt_topic
+        - predefined
+        - integration
+        - exact_data
+        - document_fingerprint
+        - word_list
     dlp_EntryUpdate:
       allOf:
         - $ref: '#/components/schemas/dlp_EntryUpdateType'
@@ -432409,6 +433080,14 @@ components:
         profile_id:
           type: string
           format: uuid
+        validator_ids:
+          description: Validators the new entry should reference, by id, at most 10.
+          type: array
+          items:
+            format: uuid
+            type: string
+          x-stainless-collection-type: set
+          x-stainless-terraform-configurability: computed_optional
       required:
         - name
         - pattern
@@ -432865,6 +433544,105 @@ components:
       enum:
         - Intent
         - Content
+    dlp_ProximityWeight:
+      description: |-
+        How much a word contributes to a match's confidence when it is found nearby.
+
+        Separate from a profile's high/medium/low confidence threshold: this describes how telling the
+        word is, not how confident the resulting match is.
+      type: string
+      enum:
+        - strong
+        - moderate
+        - weak
+    dlp_ProximityWord:
+      description: A word that raises a match's confidence when it appears near the match.
+      type: object
+      properties:
+        weight:
+          $ref: '#/components/schemas/dlp_ProximityWeight'
+        word:
+          description: |-
+            The word or phrase to look for. Must contain 1–128 characters and is matched
+            case-insensitively.
+          type: string
+          example: social security number
+      required:
+        - word
+        - weight
+    dlp_ProximityWordValidator:
+      description: |-
+        A reusable list of weighted words. Attaching it to a detection entry raises the confidence of
+        that entry's matches when one of the words appears nearby, and lowers it when none do.
+      type: object
+      properties:
+        created_at:
+          type: string
+          format: date-time
+          x-stainless-terraform-configurability: computed
+        id:
+          type: string
+          format: uuid
+          x-stainless-terraform-configurability: computed
+        name:
+          description: A name for this validator, at most 50 characters.
+          type: string
+          example: HIPAA context words
+        referenced_by:
+          allOf:
+            - $ref: '#/components/schemas/dlp_ValidatorReferences'
+          x-stainless-terraform-configurability: computed
+        updated_at:
+          type: string
+          format: date-time
+          x-stainless-terraform-configurability: computed
+        words:
+          description: The words that raise confidence when found near a match.
+          type: array
+          items:
+            $ref: '#/components/schemas/dlp_ProximityWord'
+          x-stainless-collection-type: set
+      required:
+        - id
+        - name
+        - words
+        - referenced_by
+        - created_at
+        - updated_at
+    dlp_ProximityWordValidatorArray:
+      type: array
+      items:
+        $ref: '#/components/schemas/dlp_ProximityWordValidator'
+    dlp_ProximityWordValidatorWrite:
+      description: |-
+        The attributes of a proximity word validator.
+
+        A write replaces both fields in full, so `PUT` must send the complete word list, not just the
+        words that changed. The computed fields a `GET` returns (`id`, `kind`, `referenced_by`,
+        `created_at`, `updated_at`) are ignored if sent, so a response can be edited and submitted back
+        as-is.
+      type: object
+      properties:
+        name:
+          description: A name for this validator, at most 50 characters.
+          type: string
+          example: HIPAA context words
+        words:
+          description: |-
+            The words that raise confidence when found near a match, at most 100 per validator. Matching
+            ignores case, so the list may not contain the same word twice with different capitalisation.
+            Words are stored as sent.
+
+            For example, a validator for medical record numbers might use
+            `[{"word": "patient", "weight": "strong"}, {"word": "diagnosis", "weight": "moderate"},
+            {"word": "mrn", "weight": "weak"}]`.
+          type: array
+          items:
+            $ref: '#/components/schemas/dlp_ProximityWord'
+          x-stainless-collection-type: set
+      required:
+        - name
+        - words
     dlp_ReferencedIntegrationEntry:
       description: |-
         An entry owned by an integration profile, along with the profiles and data classes that
@@ -433337,6 +434115,68 @@ components:
       deprecated: true
       enum:
         - luhn
+    dlp_Validator:
+      description: |-
+        Reusable logic that a detection entry can attach to in order to refine its matches. The `kind`
+        field determines the rest of the body.
+      oneOf:
+        - allOf:
+            - $ref: '#/components/schemas/dlp_ProximityWordValidator'
+            - properties:
+                kind:
+                  type: string
+                  enum:
+                    - proximity_words
+                  x-stainless-terraform-configurability: computed
+              required:
+                - kind
+              type: object
+          title: Proximity Word Validator
+        - allOf:
+            - $ref: '#/components/schemas/dlp_WorkerValidator'
+            - properties:
+                kind:
+                  type: string
+                  enum:
+                    - worker
+                  x-stainless-terraform-configurability: computed
+              required:
+                - kind
+              type: object
+          title: Worker Validator
+    dlp_ValidatorArray:
+      type: array
+      items:
+        $ref: '#/components/schemas/dlp_Validator'
+    dlp_ValidatorKind:
+      description: The type of a validator, and the accepted values of the `kind` filter when listing.
+      type: string
+      enum:
+        - proximity_words
+        - worker
+    dlp_ValidatorReferences:
+      description: |-
+        What currently uses a validator. Deleting a validator that is still in use returns `409`, so
+        check this first.
+
+        Read-only. A validator is attached or detached by updating the detection entry that uses it, not
+        by writing this back.
+      type: object
+      properties:
+        entries:
+          description: The detection entries using this validator, ordered by name.
+          type: array
+          items:
+            $ref: '#/components/schemas/dlp_AttachedEntry'
+        entry_count:
+          description: Number of detection entries this validator is attached to.
+          type: integer
+          format: int32
+          example: 3
+          minimum: 0
+      required:
+        - entry_count
+        - entries
     dlp_WordListEntry:
       type: object
       properties:
@@ -433368,6 +434208,86 @@ components:
         - updated_at
         - word_list
         - enabled
+    dlp_WorkerDefault:
+      oneOf:
+        - type: number
+        - enum:
+            - veto
+          type: string
+    dlp_WorkerStatus:
+      type: string
+      enum:
+        - worker_not_found
+        - worker_error
+        - configured
+        - active
+    dlp_WorkerValidator:
+      description: A customer Worker registered as a validator.
+      type: object
+      properties:
+        created_at:
+          type: string
+          format: date-time
+          x-stainless-terraform-configurability: computed
+        default:
+          allOf:
+            - $ref: '#/components/schemas/dlp_WorkerDefault'
+        id:
+          type: string
+          format: uuid
+          x-stainless-terraform-configurability: computed
+        name:
+          description: A name for this validator, at most 50 characters.
+          type: string
+          example: Invoice Validator
+        referenced_by:
+          allOf:
+            - $ref: '#/components/schemas/dlp_ValidatorReferences'
+          x-stainless-terraform-configurability: computed
+        script_tag:
+          description: The public script tag of the customer's Worker that scores matches.
+          type: string
+          example: 0123456789abcdef0123456789abcdef
+        updated_at:
+          type: string
+          format: date-time
+          x-stainless-terraform-configurability: computed
+      required:
+        - id
+        - name
+        - script_tag
+        - referenced_by
+        - created_at
+        - updated_at
+    dlp_WorkerValidatorArray:
+      type: array
+      items:
+        $ref: '#/components/schemas/dlp_WorkerValidator'
+    dlp_WorkerValidatorStatus:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/dlp_WorkerStatus'
+      required:
+        - status
+    dlp_WorkerValidatorWrite:
+      description: The attributes of a worker validator.
+      type: object
+      properties:
+        default:
+          allOf:
+            - $ref: '#/components/schemas/dlp_WorkerDefault'
+        name:
+          description: A name for this validator, at most 50 characters.
+          type: string
+          example: Invoice scorer
+        script_tag:
+          description: The public script tag of the customer's Worker that scores matches.
+          type: string
+          example: 0123456789abcdef0123456789abcdef
+      required:
+        - name
+        - script_tag
     dlp_api-response-collection:
       type: object
       allOf:
@@ -527004,6 +527924,14 @@ x-forge-commands:
         description: Data Loss Prevention - manage sensitivity levels within sensitivity groups
       dlp.settings:
         description: Data Loss Prevention - manage account-level settings
+      dlp.validators:
+        description: Data Loss Prevention - list and retrieve content validators
+      dlp.validators.proximity-words:
+        description: Data Loss Prevention - manage proximity-word validators
+      dlp.validators.worker:
+        description: Data Loss Prevention - manage Worker validators
+      dlp.validators.worker.status:
+        description: Data Loss Prevention - retrieve Worker validator status
       risk-scoring:
         description: User Risk Scoring - retrieve and reset user risk scores
       risk-scoring.behaviours:
