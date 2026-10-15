@@ -133782,14 +133782,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/magic-transit_endpoint_health_check_response_single'
+                $ref: '#/components/schemas/magic-transit_endpoint_health_check_response_collection'
         4XX:
           description: Endpoint Health Check response failure.
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/magic-transit_api-response-common-failure'
+                $ref: '#/components/schemas/magic-transit_api-response-common-failure'
       security:
         - api_token: []
         - api_email: []
@@ -133806,7 +133805,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: diagnostics.endpoint-healthchecks
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
     post:
       operationId: diagnostics-endpoint-healthcheck-create
       summary: Endpoint Health Check
@@ -133835,8 +133833,7 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/magic-transit_api-response-common-failure'
+                $ref: '#/components/schemas/magic-transit_api-response-common-failure'
       security:
         - api_token: []
         - api_email: []
@@ -133853,7 +133850,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: diagnostics.endpoint-healthchecks
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
   /accounts/{account_id}/diagnostics/endpoint-healthchecks/{id}:
     delete:
       operationId: diagnostics-endpoint-healthcheck-delete
@@ -133882,8 +133878,7 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/magic-transit_api-response-common-failure'
+                $ref: '#/components/schemas/magic-transit_api-response-common-failure'
       security:
         - api_token: []
         - api_email: []
@@ -133898,7 +133893,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: diagnostics.endpoint-healthchecks
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
     get:
       operationId: diagnostics-endpoint-healthcheck-get
       summary: Get Endpoint Health Check
@@ -133926,9 +133920,7 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/magic-transit_traceroute_response_collection'
-                  - $ref: '#/components/schemas/magic-transit_api-response-common-failure'
+                $ref: '#/components/schemas/magic-transit_api-response-common-failure'
       security:
         - api_token: []
         - api_email: []
@@ -133945,11 +133937,10 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: diagnostics.endpoint-healthchecks
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
     put:
       operationId: diagnostics-endpoint-healthcheck-update
       summary: Update Endpoint Health Check
-      description: Update a Endpoint Health Check.
+      description: Update an Endpoint Health Check.
       parameters:
         - name: account_id
           in: path
@@ -133979,8 +133970,7 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/magic-transit_api-response-common-failure'
+                $ref: '#/components/schemas/magic-transit_api-response-common-failure'
       security:
         - api_token: []
         - api_email: []
@@ -133995,7 +133985,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: diagnostics.endpoint-healthchecks
       x-fern-sdk-method-name: update
-      x-forge-hidden: true
   /accounts/{account_id}/diagnostics/traceroute:
     post:
       operationId: diagnostics-traceroute
@@ -134012,6 +134001,7 @@ paths:
         content:
           application/json:
             schema:
+              type: object
               properties:
                 colos:
                   $ref: '#/components/schemas/magic-transit_colos'
@@ -134033,9 +134023,7 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/magic-transit_traceroute_response_collection'
-                  - $ref: '#/components/schemas/magic-transit_api-response-common-failure'
+                $ref: '#/components/schemas/magic-transit_api-response-common-failure'
       security:
         - api_token: []
         - api_email: []
@@ -134052,7 +134040,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: diagnostics.traceroutes
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
   /accounts/{account_id}/dlp/custom_prompt_topics:
     get:
       operationId: dlp-custom-prompt-topics-list
@@ -455793,15 +455780,11 @@ components:
               message: No route for the URI
           allOf:
             - $ref: '#/components/schemas/magic-transit_messages'
-          minLength: 1
+          minItems: 1
         messages:
-          example: []
-          allOf:
-            - $ref: '#/components/schemas/magic-transit_messages'
+          $ref: '#/components/schemas/magic-transit_messages'
         result:
           type: object
-          enum:
-            - null
           nullable: true
         success:
           description: Whether the API call was successful.
@@ -455880,12 +455863,12 @@ components:
         - check_type
         - endpoint
     magic-transit_endpoint_health_check_response:
-      type: object
       allOf:
         - $ref: '#/components/schemas/magic-transit_endpoint_health_check'
         - properties:
             id:
               $ref: '#/components/schemas/magic-transit_uuid'
+          type: object
       required:
         - id
         - check_type
@@ -455898,12 +455881,14 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/magic-transit_endpoint_health_check_response'
+          type: object
     magic-transit_endpoint_health_check_response_single:
       allOf:
         - $ref: '#/components/schemas/magic-transit_api-response-common'
         - properties:
             result:
               $ref: '#/components/schemas/magic-transit_endpoint_health_check_response'
+          type: object
     magic-transit_error:
       description: Errors resulting from collecting traceroute from colo to target.
       type: string
@@ -456100,7 +456085,7 @@ components:
       example:
         - 203.0.113.1
         - cloudflare.com
-      maxLength: 10
+      maxItems: 10
     magic-transit_traceroute_response_collection:
       allOf:
         - $ref: '#/components/schemas/magic-transit_api-response-common'
@@ -456109,6 +456094,7 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/magic-transit_target_result'
+          type: object
     magic-transit_traceroute_time_ms:
       description: Total time of traceroute in ms.
       type: integer
@@ -525502,7 +525488,7 @@ x-forge-commands:
     description: Network diagnostic tools — traceroutes from Cloudflare's edge and endpoint health checks
     groups:
       endpoint-healthchecks:
-        description: Monitor external endpoint availability with periodic HTTP/HTTPS health checks
+        description: Monitor endpoint reachability from Cloudflare with periodic ICMP health checks
       traceroutes:
         description: Run traceroutes from Cloudflare data centers to diagnose network path issues
   email-routing:
