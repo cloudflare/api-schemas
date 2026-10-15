@@ -197824,8 +197824,11 @@ paths:
         List the applications available to an account, both the applications Cloudflare
         curates and the custom applications the account has defined.
 
-        Results are paginated. Use `filter` and `search` to narrow the list, `order_by` to
-        sort it, and `fields` to reduce each result to only the properties you need.
+        Results are paginated. Page with `cursor` so that applications added or removed
+        between requests do not make other results repeat or go missing; `offset` paging can
+        repeat or miss results when the list changes between requests. Use `filter` and
+        `search` to narrow the list, `order_by` to sort it, and `fields` to reduce each result
+        to only the properties you need.
         Use `lookup` to find complete application names mentioned in a rule sentence,
         ignoring case. Lookup does not correct misspellings. It ranks matches by
         relevance and uses the same filters, fields, and pagination as listing.
@@ -197869,10 +197872,20 @@ paths:
             default: 25
         - name: offset
           in: query
-          description: Number of results to skip. Defaults to 0; negative values are clamped to 0.
+          description: Number of results to skip. Defaults to 0; negative values are clamped to 0. Ignored when `cursor` is provided.
           schema:
             type: integer
             default: 0
+        - name: cursor
+          in: query
+          description: |
+            Opaque value from `result_info.cursor` of the previous response. Returns the
+            results that follow it. Send the same `filter`, `search`, `lookup`, and
+            `order_by` values as the request that returned it; `limit` and `fields` may
+            change. An empty value is the same as no cursor. A modified cursor, or one used
+            with different values, returns `400`.
+          schema:
+            type: string
         - name: order_by
           in: query
           description: |
@@ -197947,7 +197960,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/alexandria_api_response_common_failure'
         '503':
-          description: Application review statuses were requested but are not available.
+          description: Application review statuses were requested but are not available, or a cursor was sent while cursor pagination is not available.
           content:
             application/json:
               schema:
@@ -198160,8 +198173,8 @@ paths:
         list endpoint when the text may contain sensitive content.
 
         `fields`, `limit`, and `filter` work the same way as on the list endpoint and are
-        passed as query parameters. Results are not paged: `offset`, `order_by`, `search`,
-        and `lookup` query parameters return `400`. Unknown request body properties also
+        passed as query parameters. Results are not paged: `offset`, `cursor`, `order_by`,
+        `search`, and `lookup` query parameters return `400`. Unknown request body properties also
         return `400`. Invalid UTF-8 or a NUL character (U+0000) in any query parameter
         name or value returns `400`.
 
@@ -198246,7 +198259,9 @@ paths:
     get:
       operationId: getResourceLibraryCategories
       summary: List application categories
-      description: List the categories available for classifying applications. Results are paginated.
+      description: |
+        List the categories available for classifying applications, ordered by name.
+        Results are paginated by `offset` or `cursor`.
       parameters:
         - name: account_id
           in: path
@@ -198263,10 +198278,19 @@ paths:
             default: 25
         - name: offset
           in: query
-          description: Number of results to skip. Defaults to 0; negative values are clamped to 0.
+          description: Number of results to skip. Defaults to 0; negative values are clamped to 0. Ignored when `cursor` is provided.
           schema:
             type: integer
             default: 0
+        - name: cursor
+          in: query
+          description: |
+            Opaque value from `result_info.cursor` of the previous response. Returns the
+            categories that follow it. `limit` may change between requests. An empty value
+            is the same as no cursor. A modified cursor, or one returned by a different list,
+            returns `400`.
+          schema:
+            type: string
       responses:
         '200':
           description: Get all application categories response.
@@ -198274,6 +198298,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/alexandria_get_categories_response'
+        '503':
+          description: A cursor was sent while cursor pagination is not available.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/alexandria_api_response_common_failure'
         4XX:
           description: Get application categories response failure.
           content:
@@ -408581,8 +408611,11 @@ components:
                   description: Returns the number of results in this response.
                   type: number
                   example: 10
+                cursor:
+                  description: Returns an opaque cursor for the next page when more results follow. Send it as the `cursor` query parameter. Omitted on the last page.
+                  type: string
                 page:
-                  description: Returns the zero-based result offset, not a page number.
+                  description: Returns the zero-based result offset, not a page number. Returns 0 when the request used a cursor.
                   type: number
                   example: 0
                 per_page:
@@ -409048,7 +409081,7 @@ components:
           type: object
     alexandria_get_categories_response:
       allOf:
-        - $ref: '#/components/schemas/alexandria_api-response-common'
+        - $ref: '#/components/schemas/alexandria_api-response-collection'
         - properties:
             result:
               $ref: '#/components/schemas/alexandria_categories'
