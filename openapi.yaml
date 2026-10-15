@@ -32126,11 +32126,13 @@ paths:
                   type: string
                   nullable: true
                   x-auditable: true
+                  x-stainless-terraform-configurability: computed_optional
                 ai_search_model:
                   description: A Workers AI model ID or an AI Gateway model ID compatible with the OpenAI Chat Completions API. An empty string uses the configured or default model.
                   type: string
                   nullable: true
                   x-auditable: true
+                  x-stainless-terraform-configurability: computed_optional
                 cache:
                   type: boolean
                   default: true
@@ -32193,6 +32195,7 @@ paths:
                   type: integer
                   minimum: 64
                   x-auditable: true
+                  x-stainless-terraform-configurability: computed_optional
                 custom_metadata:
                   type: array
                   items:
@@ -32218,6 +32221,7 @@ paths:
                   type: string
                   nullable: true
                   x-auditable: true
+                  x-stainless-terraform-configurability: computed_optional
                 fusion_method:
                   type: string
                   default: rrf
@@ -32228,9 +32232,9 @@ paths:
                 hybrid_search_enabled:
                   description: Deprecated — use index_method instead. Defaults to true for new instances; set false to create a vector-only instance.
                   type: boolean
-                  default: true
                   deprecated: true
                   x-auditable: true
+                  x-stainless-terraform-configurability: computed_optional
                 id:
                   description: AI Search instance ID. Lowercase alphanumeric, hyphens, and underscores.
                   type: string
@@ -32240,22 +32244,22 @@ paths:
                   pattern: ^[a-z0-9_]+(?:-[a-z0-9_]+)*$
                   x-auditable: true
                 index_method:
-                  description: Controls which storage backends indexing uses. Defaults to vector and keyword indexing for new instances.
+                  description: Controls which storage backends indexing uses. Defaults to vector and keyword indexing for new instances. When set, both vector and keyword are required.
                   type: object
-                  default:
-                    keyword: true
-                    vector: true
                   properties:
                     keyword:
                       description: Enable keyword (BM25) storage backend.
                       type: boolean
+                      x-stainless-terraform-configurability: computed_optional
                     vector:
                       description: Enable vector (embedding) storage backend.
                       type: boolean
+                      x-stainless-terraform-configurability: computed_optional
                   required:
                     - vector
                     - keyword
                   x-auditable: true
+                  x-stainless-terraform-configurability: computed_optional
                 indexing_options:
                   type: object
                   nullable: true
@@ -32272,6 +32276,7 @@ paths:
                       type: boolean
                       default: false
                   x-auditable: true
+                  x-stainless-terraform-configurability: computed_optional
                 max_num_results:
                   type: integer
                   default: 10
@@ -32326,6 +32331,7 @@ paths:
                       maxItems: 1
                       nullable: true
                       x-auditable: true
+                      x-stainless-terraform-configurability: computed_optional
                     default_domain_enabled:
                       description: When false, the instance is reachable only via a registered custom domain and the default <public_endpoint_id>.search.ai.cloudflare.com host returns 404. Requires at least one custom domain. Defaults to true. public_endpoint_params is replaced wholesale on update, so resend default_domain_enabled on every update to keep the default host off — omitting it resets to true.
                       type: boolean
@@ -32344,6 +32350,7 @@ paths:
                           description: Disable MCP endpoint for this public endpoint.
                           type: boolean
                           default: false
+                      x-stainless-terraform-configurability: computed_optional
                     rate_limit:
                       type: object
                       properties:
@@ -32359,6 +32366,7 @@ paths:
                           enum:
                             - fixed
                             - sliding
+                      x-stainless-terraform-configurability: computed_optional
                     search_endpoint:
                       type: object
                       properties:
@@ -32367,6 +32375,7 @@ paths:
                           type: boolean
                           default: false
                   x-auditable: true
+                  x-stainless-terraform-configurability: computed_optional
                 reranking:
                   type: boolean
                   default: false
@@ -32375,6 +32384,7 @@ paths:
                   type: string
                   nullable: true
                   x-auditable: true
+                  x-stainless-terraform-configurability: computed_optional
                 retrieval_options:
                   type: object
                   nullable: true
@@ -32392,6 +32402,7 @@ paths:
                               - desc
                               - exists
                               - not_exists
+                            x-stainless-terraform-configurability: computed_optional
                           field:
                             description: Metadata field name to boost by. Use 'timestamp' for document freshness, or any custom_metadata field. Numeric and datetime fields support all four directions (asc, desc, exists, not_exists); text/boolean fields only support exists/not_exists.
                             type: string
@@ -32411,22 +32422,26 @@ paths:
                       enum:
                         - and
                         - or
+                      x-stainless-terraform-configurability: computed_optional
                   x-auditable: true
+                  x-stainless-terraform-configurability: computed_optional
                 rewrite_model:
                   description: A Workers AI model ID or an AI Gateway model ID compatible with the OpenAI Chat Completions API. An empty string uses the configured or default model.
                   type: string
                   nullable: true
                   x-auditable: true
+                  x-stainless-terraform-configurability: computed_optional
                 rewrite_query:
                   type: boolean
                   default: false
                   x-auditable: true
                 score_threshold:
+                  description: Minimum similarity score a chunk must reach to be returned. Defaults to 0.4.
                   type: number
-                  default: 0.4
                   maximum: 1
                   minimum: 0
                   x-auditable: true
+                  x-stainless-terraform-configurability: computed_optional
                 source:
                   type: string
                   nullable: true
@@ -32578,9 +32593,9 @@ paths:
                             - sitemap
                             - discover
                   x-auditable: true
+                  x-stainless-terraform-configurability: computed_optional
                 sync_interval:
-                  description: 'Interval between automatic syncs, in seconds. Allowed values: 900 (15min), 1800 (30min), 3600 (1h), 7200 (2h), 14400 (4h), 21600 (6h), 43200 (12h), 86400 (24h).'
-                  default: 21600
+                  description: 'Interval between automatic syncs, in seconds. Allowed values: 900 (15min), 1800 (30min), 3600 (1h), 7200 (2h), 14400 (4h), 21600 (6h), 43200 (12h), 86400 (24h). Defaults to 21600 (6h); instances crawling a domain outside the account may be set to 86400.'
                   anyOf:
                     - enum:
                         - 900
@@ -32607,10 +32622,12 @@ paths:
                         - 86400
                       type: number
                   x-auditable: true
+                  x-stainless-terraform-configurability: computed_optional
                 token_id:
                   type: string
                   format: uuid
                   x-auditable: true
+                  x-stainless-terraform-configurability: computed_optional
                 type:
                   description: Source type. When omitted or null with a non-blank source, HTTP(S) URLs infer web-crawler and existing R2 bucket names infer r2. A missing or blank source without a type uses managed upload-only storage.
                   type: string
@@ -32620,6 +32637,7 @@ paths:
                     - null
                   nullable: true
                   x-auditable: true
+                  x-stainless-terraform-configurability: computed_optional
               required:
                 - id
       responses:
@@ -32637,11 +32655,13 @@ paths:
                         type: string
                         nullable: true
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       ai_search_model:
                         description: A Workers AI model ID or an AI Gateway model ID compatible with the OpenAI Chat Completions API. An empty string uses the configured or default model.
                         type: string
                         nullable: true
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       cache:
                         type: boolean
                         default: true
@@ -32700,6 +32720,7 @@ paths:
                         type: integer
                         minimum: 64
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       created_at:
                         type: string
                         format: date-time
@@ -32733,13 +32754,12 @@ paths:
                         type: string
                         nullable: true
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       enable:
                         type: boolean
-                        default: true
                         x-auditable: true
                       engine_version:
                         type: number
-                        default: 3
                         readOnly: true
                       fusion_method:
                         type: string
@@ -32751,9 +32771,9 @@ paths:
                       hybrid_search_enabled:
                         description: Deprecated — use index_method instead. Defaults to true for new instances; set false to create a vector-only instance.
                         type: boolean
-                        default: true
                         deprecated: true
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       id:
                         description: AI Search instance ID. Lowercase alphanumeric, hyphens, and underscores.
                         type: string
@@ -32763,22 +32783,22 @@ paths:
                         pattern: ^[a-z0-9_]+(?:-[a-z0-9_]+)*$
                         x-auditable: true
                       index_method:
-                        description: Controls which storage backends indexing uses. Defaults to vector and keyword indexing for new instances.
+                        description: Controls which storage backends indexing uses. Defaults to vector and keyword indexing for new instances. When set, both vector and keyword are required.
                         type: object
-                        default:
-                          keyword: true
-                          vector: true
                         properties:
                           keyword:
                             description: Enable keyword (BM25) storage backend.
                             type: boolean
+                            x-stainless-terraform-configurability: computed_optional
                           vector:
                             description: Enable vector (embedding) storage backend.
                             type: boolean
+                            x-stainless-terraform-configurability: computed_optional
                         required:
                           - vector
                           - keyword
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       indexing_options:
                         type: object
                         nullable: true
@@ -32795,6 +32815,7 @@ paths:
                             type: boolean
                             default: false
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       last_activity:
                         type: string
                         format: date-time
@@ -32843,8 +32864,8 @@ paths:
                         readOnly: true
                       paused:
                         type: boolean
-                        default: false
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       public_endpoint_id:
                         type: string
                         nullable: true
@@ -32875,6 +32896,7 @@ paths:
                             maxItems: 1
                             nullable: true
                             x-auditable: true
+                            x-stainless-terraform-configurability: computed_optional
                           default_domain_enabled:
                             description: When false, the instance is reachable only via a registered custom domain and the default <public_endpoint_id>.search.ai.cloudflare.com host returns 404. Requires at least one custom domain. Defaults to true. public_endpoint_params is replaced wholesale on update, so resend default_domain_enabled on every update to keep the default host off — omitting it resets to true.
                             type: boolean
@@ -32893,6 +32915,7 @@ paths:
                                 description: Disable MCP endpoint for this public endpoint.
                                 type: boolean
                                 default: false
+                            x-stainless-terraform-configurability: computed_optional
                           rate_limit:
                             type: object
                             properties:
@@ -32908,6 +32931,7 @@ paths:
                                 enum:
                                   - fixed
                                   - sliding
+                            x-stainless-terraform-configurability: computed_optional
                           search_endpoint:
                             type: object
                             properties:
@@ -32916,6 +32940,7 @@ paths:
                                 type: boolean
                                 default: false
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       reranking:
                         type: boolean
                         default: false
@@ -32924,6 +32949,7 @@ paths:
                         type: string
                         nullable: true
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       retrieval_options:
                         type: object
                         nullable: true
@@ -32941,6 +32967,7 @@ paths:
                                     - desc
                                     - exists
                                     - not_exists
+                                  x-stainless-terraform-configurability: computed_optional
                                 field:
                                   description: Metadata field name to boost by. Use 'timestamp' for document freshness, or any custom_metadata field. Numeric and datetime fields support all four directions (asc, desc, exists, not_exists); text/boolean fields only support exists/not_exists.
                                   type: string
@@ -32960,22 +32987,26 @@ paths:
                             enum:
                               - and
                               - or
+                            x-stainless-terraform-configurability: computed_optional
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       rewrite_model:
                         description: A Workers AI model ID or an AI Gateway model ID compatible with the OpenAI Chat Completions API. An empty string uses the configured or default model.
                         type: string
                         nullable: true
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       rewrite_query:
                         type: boolean
                         default: false
                         x-auditable: true
                       score_threshold:
+                        description: Minimum similarity score a chunk must reach to be returned. Defaults to 0.4.
                         type: number
-                        default: 0.4
                         maximum: 1
                         minimum: 0
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       source:
                         type: string
                         nullable: true
@@ -33127,13 +33158,12 @@ paths:
                                   - sitemap
                                   - discover
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       status:
                         type: string
-                        default: waiting
                         readOnly: true
                       sync_interval:
-                        description: 'Interval between automatic syncs, in seconds. Allowed values: 900 (15min), 1800 (30min), 3600 (1h), 7200 (2h), 14400 (4h), 21600 (6h), 43200 (12h), 86400 (24h).'
-                        default: 21600
+                        description: 'Interval between automatic syncs, in seconds. Allowed values: 900 (15min), 1800 (30min), 3600 (1h), 7200 (2h), 14400 (4h), 21600 (6h), 43200 (12h), 86400 (24h). Defaults to 21600 (6h); instances crawling a domain outside the account may be set to 86400.'
                         anyOf:
                           - enum:
                               - 900
@@ -33160,10 +33190,12 @@ paths:
                               - 86400
                             type: number
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       token_id:
                         type: string
                         format: uuid
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       type:
                         description: Source type. When omitted or null with a non-blank source, HTTP(S) URLs infer web-crawler and existing R2 bucket names infer r2. A missing or blank source without a type uses managed upload-only storage.
                         type: string
@@ -33173,6 +33205,7 @@ paths:
                           - null
                         nullable: true
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                     required:
                       - id
                       - created_at
@@ -33347,11 +33380,13 @@ paths:
                         type: string
                         nullable: true
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       ai_search_model:
                         description: A Workers AI model ID or an AI Gateway model ID compatible with the OpenAI Chat Completions API. An empty string uses the configured or default model.
                         type: string
                         nullable: true
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       cache:
                         type: boolean
                         default: true
@@ -33410,6 +33445,7 @@ paths:
                         type: integer
                         minimum: 64
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       created_at:
                         type: string
                         format: date-time
@@ -33443,13 +33479,12 @@ paths:
                         type: string
                         nullable: true
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       enable:
                         type: boolean
-                        default: true
                         x-auditable: true
                       engine_version:
                         type: number
-                        default: 3
                         readOnly: true
                       fusion_method:
                         type: string
@@ -33461,9 +33496,9 @@ paths:
                       hybrid_search_enabled:
                         description: Deprecated — use index_method instead. Defaults to true for new instances; set false to create a vector-only instance.
                         type: boolean
-                        default: true
                         deprecated: true
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       id:
                         description: AI Search instance ID. Lowercase alphanumeric, hyphens, and underscores.
                         type: string
@@ -33473,22 +33508,22 @@ paths:
                         pattern: ^[a-z0-9_]+(?:-[a-z0-9_]+)*$
                         x-auditable: true
                       index_method:
-                        description: Controls which storage backends indexing uses. Defaults to vector and keyword indexing for new instances.
+                        description: Controls which storage backends indexing uses. Defaults to vector and keyword indexing for new instances. When set, both vector and keyword are required.
                         type: object
-                        default:
-                          keyword: true
-                          vector: true
                         properties:
                           keyword:
                             description: Enable keyword (BM25) storage backend.
                             type: boolean
+                            x-stainless-terraform-configurability: computed_optional
                           vector:
                             description: Enable vector (embedding) storage backend.
                             type: boolean
+                            x-stainless-terraform-configurability: computed_optional
                         required:
                           - vector
                           - keyword
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       indexing_options:
                         type: object
                         nullable: true
@@ -33505,6 +33540,7 @@ paths:
                             type: boolean
                             default: false
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       last_activity:
                         type: string
                         format: date-time
@@ -33553,8 +33589,8 @@ paths:
                         readOnly: true
                       paused:
                         type: boolean
-                        default: false
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       public_endpoint_id:
                         type: string
                         nullable: true
@@ -33585,6 +33621,7 @@ paths:
                             maxItems: 1
                             nullable: true
                             x-auditable: true
+                            x-stainless-terraform-configurability: computed_optional
                           default_domain_enabled:
                             description: When false, the instance is reachable only via a registered custom domain and the default <public_endpoint_id>.search.ai.cloudflare.com host returns 404. Requires at least one custom domain. Defaults to true. public_endpoint_params is replaced wholesale on update, so resend default_domain_enabled on every update to keep the default host off — omitting it resets to true.
                             type: boolean
@@ -33603,6 +33640,7 @@ paths:
                                 description: Disable MCP endpoint for this public endpoint.
                                 type: boolean
                                 default: false
+                            x-stainless-terraform-configurability: computed_optional
                           rate_limit:
                             type: object
                             properties:
@@ -33618,6 +33656,7 @@ paths:
                                 enum:
                                   - fixed
                                   - sliding
+                            x-stainless-terraform-configurability: computed_optional
                           search_endpoint:
                             type: object
                             properties:
@@ -33626,6 +33665,7 @@ paths:
                                 type: boolean
                                 default: false
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       reranking:
                         type: boolean
                         default: false
@@ -33634,6 +33674,7 @@ paths:
                         type: string
                         nullable: true
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       retrieval_options:
                         type: object
                         nullable: true
@@ -33651,6 +33692,7 @@ paths:
                                     - desc
                                     - exists
                                     - not_exists
+                                  x-stainless-terraform-configurability: computed_optional
                                 field:
                                   description: Metadata field name to boost by. Use 'timestamp' for document freshness, or any custom_metadata field. Numeric and datetime fields support all four directions (asc, desc, exists, not_exists); text/boolean fields only support exists/not_exists.
                                   type: string
@@ -33670,22 +33712,26 @@ paths:
                             enum:
                               - and
                               - or
+                            x-stainless-terraform-configurability: computed_optional
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       rewrite_model:
                         description: A Workers AI model ID or an AI Gateway model ID compatible with the OpenAI Chat Completions API. An empty string uses the configured or default model.
                         type: string
                         nullable: true
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       rewrite_query:
                         type: boolean
                         default: false
                         x-auditable: true
                       score_threshold:
+                        description: Minimum similarity score a chunk must reach to be returned. Defaults to 0.4.
                         type: number
-                        default: 0.4
                         maximum: 1
                         minimum: 0
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       source:
                         type: string
                         nullable: true
@@ -33837,13 +33883,12 @@ paths:
                                   - sitemap
                                   - discover
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       status:
                         type: string
-                        default: waiting
                         readOnly: true
                       sync_interval:
-                        description: 'Interval between automatic syncs, in seconds. Allowed values: 900 (15min), 1800 (30min), 3600 (1h), 7200 (2h), 14400 (4h), 21600 (6h), 43200 (12h), 86400 (24h).'
-                        default: 21600
+                        description: 'Interval between automatic syncs, in seconds. Allowed values: 900 (15min), 1800 (30min), 3600 (1h), 7200 (2h), 14400 (4h), 21600 (6h), 43200 (12h), 86400 (24h). Defaults to 21600 (6h); instances crawling a domain outside the account may be set to 86400.'
                         anyOf:
                           - enum:
                               - 900
@@ -33870,10 +33915,12 @@ paths:
                               - 86400
                             type: number
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       token_id:
                         type: string
                         format: uuid
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       type:
                         description: Source type. When omitted or null with a non-blank source, HTTP(S) URLs infer web-crawler and existing R2 bucket names infer r2. A missing or blank source without a type uses managed upload-only storage.
                         type: string
@@ -33883,6 +33930,7 @@ paths:
                           - null
                         nullable: true
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                     required:
                       - id
                       - created_at
@@ -33999,11 +34047,13 @@ paths:
                         type: string
                         nullable: true
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       ai_search_model:
                         description: A Workers AI model ID or an AI Gateway model ID compatible with the OpenAI Chat Completions API. An empty string uses the configured or default model.
                         type: string
                         nullable: true
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       cache:
                         type: boolean
                         default: true
@@ -34062,6 +34112,7 @@ paths:
                         type: integer
                         minimum: 64
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       created_at:
                         type: string
                         format: date-time
@@ -34095,13 +34146,12 @@ paths:
                         type: string
                         nullable: true
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       enable:
                         type: boolean
-                        default: true
                         x-auditable: true
                       engine_version:
                         type: number
-                        default: 3
                         readOnly: true
                       fusion_method:
                         type: string
@@ -34113,9 +34163,9 @@ paths:
                       hybrid_search_enabled:
                         description: Deprecated — use index_method instead. Defaults to true for new instances; set false to create a vector-only instance.
                         type: boolean
-                        default: true
                         deprecated: true
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       id:
                         description: AI Search instance ID. Lowercase alphanumeric, hyphens, and underscores.
                         type: string
@@ -34125,22 +34175,22 @@ paths:
                         pattern: ^[a-z0-9_]+(?:-[a-z0-9_]+)*$
                         x-auditable: true
                       index_method:
-                        description: Controls which storage backends indexing uses. Defaults to vector and keyword indexing for new instances.
+                        description: Controls which storage backends indexing uses. Defaults to vector and keyword indexing for new instances. When set, both vector and keyword are required.
                         type: object
-                        default:
-                          keyword: true
-                          vector: true
                         properties:
                           keyword:
                             description: Enable keyword (BM25) storage backend.
                             type: boolean
+                            x-stainless-terraform-configurability: computed_optional
                           vector:
                             description: Enable vector (embedding) storage backend.
                             type: boolean
+                            x-stainless-terraform-configurability: computed_optional
                         required:
                           - vector
                           - keyword
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       indexing_options:
                         type: object
                         nullable: true
@@ -34157,6 +34207,7 @@ paths:
                             type: boolean
                             default: false
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       last_activity:
                         type: string
                         format: date-time
@@ -34205,8 +34256,8 @@ paths:
                         readOnly: true
                       paused:
                         type: boolean
-                        default: false
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       public_endpoint_id:
                         type: string
                         nullable: true
@@ -34237,6 +34288,7 @@ paths:
                             maxItems: 1
                             nullable: true
                             x-auditable: true
+                            x-stainless-terraform-configurability: computed_optional
                           default_domain_enabled:
                             description: When false, the instance is reachable only via a registered custom domain and the default <public_endpoint_id>.search.ai.cloudflare.com host returns 404. Requires at least one custom domain. Defaults to true. public_endpoint_params is replaced wholesale on update, so resend default_domain_enabled on every update to keep the default host off — omitting it resets to true.
                             type: boolean
@@ -34255,6 +34307,7 @@ paths:
                                 description: Disable MCP endpoint for this public endpoint.
                                 type: boolean
                                 default: false
+                            x-stainless-terraform-configurability: computed_optional
                           rate_limit:
                             type: object
                             properties:
@@ -34270,6 +34323,7 @@ paths:
                                 enum:
                                   - fixed
                                   - sliding
+                            x-stainless-terraform-configurability: computed_optional
                           search_endpoint:
                             type: object
                             properties:
@@ -34278,6 +34332,7 @@ paths:
                                 type: boolean
                                 default: false
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       reranking:
                         type: boolean
                         default: false
@@ -34286,6 +34341,7 @@ paths:
                         type: string
                         nullable: true
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       retrieval_options:
                         type: object
                         nullable: true
@@ -34303,6 +34359,7 @@ paths:
                                     - desc
                                     - exists
                                     - not_exists
+                                  x-stainless-terraform-configurability: computed_optional
                                 field:
                                   description: Metadata field name to boost by. Use 'timestamp' for document freshness, or any custom_metadata field. Numeric and datetime fields support all four directions (asc, desc, exists, not_exists); text/boolean fields only support exists/not_exists.
                                   type: string
@@ -34322,22 +34379,26 @@ paths:
                             enum:
                               - and
                               - or
+                            x-stainless-terraform-configurability: computed_optional
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       rewrite_model:
                         description: A Workers AI model ID or an AI Gateway model ID compatible with the OpenAI Chat Completions API. An empty string uses the configured or default model.
                         type: string
                         nullable: true
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       rewrite_query:
                         type: boolean
                         default: false
                         x-auditable: true
                       score_threshold:
+                        description: Minimum similarity score a chunk must reach to be returned. Defaults to 0.4.
                         type: number
-                        default: 0.4
                         maximum: 1
                         minimum: 0
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       source:
                         type: string
                         nullable: true
@@ -34489,13 +34550,12 @@ paths:
                                   - sitemap
                                   - discover
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       status:
                         type: string
-                        default: waiting
                         readOnly: true
                       sync_interval:
-                        description: 'Interval between automatic syncs, in seconds. Allowed values: 900 (15min), 1800 (30min), 3600 (1h), 7200 (2h), 14400 (4h), 21600 (6h), 43200 (12h), 86400 (24h).'
-                        default: 21600
+                        description: 'Interval between automatic syncs, in seconds. Allowed values: 900 (15min), 1800 (30min), 3600 (1h), 7200 (2h), 14400 (4h), 21600 (6h), 43200 (12h), 86400 (24h). Defaults to 21600 (6h); instances crawling a domain outside the account may be set to 86400.'
                         anyOf:
                           - enum:
                               - 900
@@ -34522,10 +34582,12 @@ paths:
                               - 86400
                             type: number
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       token_id:
                         type: string
                         format: uuid
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       type:
                         description: Source type. When omitted or null with a non-blank source, HTTP(S) URLs infer web-crawler and existing R2 bucket names infer r2. A missing or blank source without a type uses managed upload-only storage.
                         type: string
@@ -34535,6 +34597,7 @@ paths:
                           - null
                         nullable: true
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                     required:
                       - id
                       - created_at
@@ -34619,11 +34682,13 @@ paths:
                   type: string
                   nullable: true
                   x-auditable: true
+                  x-stainless-terraform-configurability: computed_optional
                 ai_search_model:
                   description: A Workers AI model ID or an AI Gateway model ID compatible with the OpenAI Chat Completions API. An empty string uses the configured or default model.
                   type: string
                   nullable: true
                   x-auditable: true
+                  x-stainless-terraform-configurability: computed_optional
                 cache:
                   type: boolean
                   default: true
@@ -34686,6 +34751,7 @@ paths:
                   type: integer
                   minimum: 64
                   x-auditable: true
+                  x-stainless-terraform-configurability: computed_optional
                 custom_metadata:
                   type: array
                   items:
@@ -34711,6 +34777,7 @@ paths:
                   type: string
                   nullable: true
                   x-auditable: true
+                  x-stainless-terraform-configurability: computed_optional
                 fusion_method:
                   type: string
                   default: rrf
@@ -34719,22 +34786,22 @@ paths:
                     - rrf
                   x-auditable: true
                 index_method:
-                  description: Controls which storage backends indexing uses. Defaults to vector and keyword indexing for new instances.
+                  description: Controls which storage backends indexing uses. Defaults to vector and keyword indexing for new instances. When set, both vector and keyword are required.
                   type: object
-                  default:
-                    keyword: true
-                    vector: true
                   properties:
                     keyword:
                       description: Enable keyword (BM25) storage backend.
                       type: boolean
+                      x-stainless-terraform-configurability: computed_optional
                     vector:
                       description: Enable vector (embedding) storage backend.
                       type: boolean
+                      x-stainless-terraform-configurability: computed_optional
                   required:
                     - vector
                     - keyword
                   x-auditable: true
+                  x-stainless-terraform-configurability: computed_optional
                 indexing_options:
                   type: object
                   nullable: true
@@ -34751,6 +34818,7 @@ paths:
                       type: boolean
                       default: false
                   x-auditable: true
+                  x-stainless-terraform-configurability: computed_optional
                 max_num_results:
                   type: integer
                   default: 10
@@ -34781,8 +34849,8 @@ paths:
                   x-auditable: true
                 paused:
                   type: boolean
-                  default: false
                   x-auditable: true
+                  x-stainless-terraform-configurability: computed_optional
                 public_endpoint_params:
                   type: object
                   properties:
@@ -34809,6 +34877,7 @@ paths:
                       maxItems: 1
                       nullable: true
                       x-auditable: true
+                      x-stainless-terraform-configurability: computed_optional
                     default_domain_enabled:
                       description: When false, the instance is reachable only via a registered custom domain and the default <public_endpoint_id>.search.ai.cloudflare.com host returns 404. Requires at least one custom domain. Defaults to true. public_endpoint_params is replaced wholesale on update, so resend default_domain_enabled on every update to keep the default host off — omitting it resets to true.
                       type: boolean
@@ -34827,6 +34896,7 @@ paths:
                           description: Disable MCP endpoint for this public endpoint.
                           type: boolean
                           default: false
+                      x-stainless-terraform-configurability: computed_optional
                     rate_limit:
                       type: object
                       properties:
@@ -34842,6 +34912,7 @@ paths:
                           enum:
                             - fixed
                             - sliding
+                      x-stainless-terraform-configurability: computed_optional
                     search_endpoint:
                       type: object
                       properties:
@@ -34850,6 +34921,7 @@ paths:
                           type: boolean
                           default: false
                   x-auditable: true
+                  x-stainless-terraform-configurability: computed_optional
                 reranking:
                   type: boolean
                   default: false
@@ -34858,6 +34930,7 @@ paths:
                   type: string
                   nullable: true
                   x-auditable: true
+                  x-stainless-terraform-configurability: computed_optional
                 retrieval_options:
                   type: object
                   nullable: true
@@ -34875,6 +34948,7 @@ paths:
                               - desc
                               - exists
                               - not_exists
+                            x-stainless-terraform-configurability: computed_optional
                           field:
                             description: Metadata field name to boost by. Use 'timestamp' for document freshness, or any custom_metadata field. Numeric and datetime fields support all four directions (asc, desc, exists, not_exists); text/boolean fields only support exists/not_exists.
                             type: string
@@ -34894,22 +34968,26 @@ paths:
                       enum:
                         - and
                         - or
+                      x-stainless-terraform-configurability: computed_optional
                   x-auditable: true
+                  x-stainless-terraform-configurability: computed_optional
                 rewrite_model:
                   description: A Workers AI model ID or an AI Gateway model ID compatible with the OpenAI Chat Completions API. An empty string uses the configured or default model.
                   type: string
                   nullable: true
                   x-auditable: true
+                  x-stainless-terraform-configurability: computed_optional
                 rewrite_query:
                   type: boolean
                   default: false
                   x-auditable: true
                 score_threshold:
+                  description: Minimum similarity score a chunk must reach to be returned. Defaults to 0.4.
                   type: number
-                  default: 0.4
                   maximum: 1
                   minimum: 0
                   x-auditable: true
+                  x-stainless-terraform-configurability: computed_optional
                 source:
                   type: string
                   nullable: true
@@ -35061,6 +35139,7 @@ paths:
                             - sitemap
                             - discover
                   x-auditable: true
+                  x-stainless-terraform-configurability: computed_optional
                 summarization:
                   type: boolean
                   default: false
@@ -35070,8 +35149,7 @@ paths:
                   nullable: true
                   x-auditable: true
                 sync_interval:
-                  description: 'Interval between automatic syncs, in seconds. Allowed values: 900 (15min), 1800 (30min), 3600 (1h), 7200 (2h), 14400 (4h), 21600 (6h), 43200 (12h), 86400 (24h).'
-                  default: 21600
+                  description: 'Interval between automatic syncs, in seconds. Allowed values: 900 (15min), 1800 (30min), 3600 (1h), 7200 (2h), 14400 (4h), 21600 (6h), 43200 (12h), 86400 (24h). Defaults to 21600 (6h); instances crawling a domain outside the account may be set to 86400.'
                   anyOf:
                     - enum:
                         - 900
@@ -35098,6 +35176,7 @@ paths:
                         - 86400
                       type: number
                   x-auditable: true
+                  x-stainless-terraform-configurability: computed_optional
                 system_prompt_ai_search:
                   type: string
                   nullable: true
@@ -35114,6 +35193,7 @@ paths:
                   type: string
                   format: uuid
                   x-auditable: true
+                  x-stainless-terraform-configurability: computed_optional
       responses:
         '200':
           description: Returns the updated instance.
@@ -35129,11 +35209,13 @@ paths:
                         type: string
                         nullable: true
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       ai_search_model:
                         description: A Workers AI model ID or an AI Gateway model ID compatible with the OpenAI Chat Completions API. An empty string uses the configured or default model.
                         type: string
                         nullable: true
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       cache:
                         type: boolean
                         default: true
@@ -35192,6 +35274,7 @@ paths:
                         type: integer
                         minimum: 64
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       created_at:
                         type: string
                         format: date-time
@@ -35225,13 +35308,12 @@ paths:
                         type: string
                         nullable: true
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       enable:
                         type: boolean
-                        default: true
                         x-auditable: true
                       engine_version:
                         type: number
-                        default: 3
                         readOnly: true
                       fusion_method:
                         type: string
@@ -35243,9 +35325,9 @@ paths:
                       hybrid_search_enabled:
                         description: Deprecated — use index_method instead. Defaults to true for new instances; set false to create a vector-only instance.
                         type: boolean
-                        default: true
                         deprecated: true
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       id:
                         description: AI Search instance ID. Lowercase alphanumeric, hyphens, and underscores.
                         type: string
@@ -35255,22 +35337,22 @@ paths:
                         pattern: ^[a-z0-9_]+(?:-[a-z0-9_]+)*$
                         x-auditable: true
                       index_method:
-                        description: Controls which storage backends indexing uses. Defaults to vector and keyword indexing for new instances.
+                        description: Controls which storage backends indexing uses. Defaults to vector and keyword indexing for new instances. When set, both vector and keyword are required.
                         type: object
-                        default:
-                          keyword: true
-                          vector: true
                         properties:
                           keyword:
                             description: Enable keyword (BM25) storage backend.
                             type: boolean
+                            x-stainless-terraform-configurability: computed_optional
                           vector:
                             description: Enable vector (embedding) storage backend.
                             type: boolean
+                            x-stainless-terraform-configurability: computed_optional
                         required:
                           - vector
                           - keyword
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       indexing_options:
                         type: object
                         nullable: true
@@ -35287,6 +35369,7 @@ paths:
                             type: boolean
                             default: false
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       last_activity:
                         type: string
                         format: date-time
@@ -35335,8 +35418,8 @@ paths:
                         readOnly: true
                       paused:
                         type: boolean
-                        default: false
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       public_endpoint_id:
                         type: string
                         nullable: true
@@ -35367,6 +35450,7 @@ paths:
                             maxItems: 1
                             nullable: true
                             x-auditable: true
+                            x-stainless-terraform-configurability: computed_optional
                           default_domain_enabled:
                             description: When false, the instance is reachable only via a registered custom domain and the default <public_endpoint_id>.search.ai.cloudflare.com host returns 404. Requires at least one custom domain. Defaults to true. public_endpoint_params is replaced wholesale on update, so resend default_domain_enabled on every update to keep the default host off — omitting it resets to true.
                             type: boolean
@@ -35385,6 +35469,7 @@ paths:
                                 description: Disable MCP endpoint for this public endpoint.
                                 type: boolean
                                 default: false
+                            x-stainless-terraform-configurability: computed_optional
                           rate_limit:
                             type: object
                             properties:
@@ -35400,6 +35485,7 @@ paths:
                                 enum:
                                   - fixed
                                   - sliding
+                            x-stainless-terraform-configurability: computed_optional
                           search_endpoint:
                             type: object
                             properties:
@@ -35408,6 +35494,7 @@ paths:
                                 type: boolean
                                 default: false
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       reranking:
                         type: boolean
                         default: false
@@ -35416,6 +35503,7 @@ paths:
                         type: string
                         nullable: true
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       retrieval_options:
                         type: object
                         nullable: true
@@ -35433,6 +35521,7 @@ paths:
                                     - desc
                                     - exists
                                     - not_exists
+                                  x-stainless-terraform-configurability: computed_optional
                                 field:
                                   description: Metadata field name to boost by. Use 'timestamp' for document freshness, or any custom_metadata field. Numeric and datetime fields support all four directions (asc, desc, exists, not_exists); text/boolean fields only support exists/not_exists.
                                   type: string
@@ -35452,22 +35541,26 @@ paths:
                             enum:
                               - and
                               - or
+                            x-stainless-terraform-configurability: computed_optional
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       rewrite_model:
                         description: A Workers AI model ID or an AI Gateway model ID compatible with the OpenAI Chat Completions API. An empty string uses the configured or default model.
                         type: string
                         nullable: true
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       rewrite_query:
                         type: boolean
                         default: false
                         x-auditable: true
                       score_threshold:
+                        description: Minimum similarity score a chunk must reach to be returned. Defaults to 0.4.
                         type: number
-                        default: 0.4
                         maximum: 1
                         minimum: 0
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       source:
                         type: string
                         nullable: true
@@ -35619,13 +35712,12 @@ paths:
                                   - sitemap
                                   - discover
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       status:
                         type: string
-                        default: waiting
                         readOnly: true
                       sync_interval:
-                        description: 'Interval between automatic syncs, in seconds. Allowed values: 900 (15min), 1800 (30min), 3600 (1h), 7200 (2h), 14400 (4h), 21600 (6h), 43200 (12h), 86400 (24h).'
-                        default: 21600
+                        description: 'Interval between automatic syncs, in seconds. Allowed values: 900 (15min), 1800 (30min), 3600 (1h), 7200 (2h), 14400 (4h), 21600 (6h), 43200 (12h), 86400 (24h). Defaults to 21600 (6h); instances crawling a domain outside the account may be set to 86400.'
                         anyOf:
                           - enum:
                               - 900
@@ -35652,10 +35744,12 @@ paths:
                               - 86400
                             type: number
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       token_id:
                         type: string
                         format: uuid
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       type:
                         description: Source type. When omitted or null with a non-blank source, HTTP(S) URLs infer web-crawler and existing R2 bucket names infer r2. A missing or blank source without a type uses managed upload-only storage.
                         type: string
@@ -35665,6 +35759,7 @@ paths:
                           - null
                         nullable: true
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                     required:
                       - id
                       - created_at
@@ -40948,11 +41043,13 @@ paths:
                   type: string
                   nullable: true
                   x-auditable: true
+                  x-stainless-terraform-configurability: computed_optional
                 ai_search_model:
                   description: A Workers AI model ID or an AI Gateway model ID compatible with the OpenAI Chat Completions API. An empty string uses the configured or default model.
                   type: string
                   nullable: true
                   x-auditable: true
+                  x-stainless-terraform-configurability: computed_optional
                 cache:
                   type: boolean
                   default: true
@@ -41015,6 +41112,7 @@ paths:
                   type: integer
                   minimum: 64
                   x-auditable: true
+                  x-stainless-terraform-configurability: computed_optional
                 custom_metadata:
                   type: array
                   items:
@@ -41040,6 +41138,7 @@ paths:
                   type: string
                   nullable: true
                   x-auditable: true
+                  x-stainless-terraform-configurability: computed_optional
                 fusion_method:
                   type: string
                   default: rrf
@@ -41050,9 +41149,9 @@ paths:
                 hybrid_search_enabled:
                   description: Deprecated — use index_method instead. Defaults to true for new instances; set false to create a vector-only instance.
                   type: boolean
-                  default: true
                   deprecated: true
                   x-auditable: true
+                  x-stainless-terraform-configurability: computed_optional
                 id:
                   description: AI Search instance ID. Lowercase alphanumeric, hyphens, and underscores.
                   type: string
@@ -41062,22 +41161,22 @@ paths:
                   pattern: ^[a-z0-9_]+(?:-[a-z0-9_]+)*$
                   x-auditable: true
                 index_method:
-                  description: Controls which storage backends indexing uses. Defaults to vector and keyword indexing for new instances.
+                  description: Controls which storage backends indexing uses. Defaults to vector and keyword indexing for new instances. When set, both vector and keyword are required.
                   type: object
-                  default:
-                    keyword: true
-                    vector: true
                   properties:
                     keyword:
                       description: Enable keyword (BM25) storage backend.
                       type: boolean
+                      x-stainless-terraform-configurability: computed_optional
                     vector:
                       description: Enable vector (embedding) storage backend.
                       type: boolean
+                      x-stainless-terraform-configurability: computed_optional
                   required:
                     - vector
                     - keyword
                   x-auditable: true
+                  x-stainless-terraform-configurability: computed_optional
                 indexing_options:
                   type: object
                   nullable: true
@@ -41094,6 +41193,7 @@ paths:
                       type: boolean
                       default: false
                   x-auditable: true
+                  x-stainless-terraform-configurability: computed_optional
                 max_num_results:
                   type: integer
                   default: 10
@@ -41148,6 +41248,7 @@ paths:
                       maxItems: 1
                       nullable: true
                       x-auditable: true
+                      x-stainless-terraform-configurability: computed_optional
                     default_domain_enabled:
                       description: When false, the instance is reachable only via a registered custom domain and the default <public_endpoint_id>.search.ai.cloudflare.com host returns 404. Requires at least one custom domain. Defaults to true. public_endpoint_params is replaced wholesale on update, so resend default_domain_enabled on every update to keep the default host off — omitting it resets to true.
                       type: boolean
@@ -41166,6 +41267,7 @@ paths:
                           description: Disable MCP endpoint for this public endpoint.
                           type: boolean
                           default: false
+                      x-stainless-terraform-configurability: computed_optional
                     rate_limit:
                       type: object
                       properties:
@@ -41181,6 +41283,7 @@ paths:
                           enum:
                             - fixed
                             - sliding
+                      x-stainless-terraform-configurability: computed_optional
                     search_endpoint:
                       type: object
                       properties:
@@ -41189,6 +41292,7 @@ paths:
                           type: boolean
                           default: false
                   x-auditable: true
+                  x-stainless-terraform-configurability: computed_optional
                 reranking:
                   type: boolean
                   default: false
@@ -41197,6 +41301,7 @@ paths:
                   type: string
                   nullable: true
                   x-auditable: true
+                  x-stainless-terraform-configurability: computed_optional
                 retrieval_options:
                   type: object
                   nullable: true
@@ -41214,6 +41319,7 @@ paths:
                               - desc
                               - exists
                               - not_exists
+                            x-stainless-terraform-configurability: computed_optional
                           field:
                             description: Metadata field name to boost by. Use 'timestamp' for document freshness, or any custom_metadata field. Numeric and datetime fields support all four directions (asc, desc, exists, not_exists); text/boolean fields only support exists/not_exists.
                             type: string
@@ -41233,22 +41339,26 @@ paths:
                       enum:
                         - and
                         - or
+                      x-stainless-terraform-configurability: computed_optional
                   x-auditable: true
+                  x-stainless-terraform-configurability: computed_optional
                 rewrite_model:
                   description: A Workers AI model ID or an AI Gateway model ID compatible with the OpenAI Chat Completions API. An empty string uses the configured or default model.
                   type: string
                   nullable: true
                   x-auditable: true
+                  x-stainless-terraform-configurability: computed_optional
                 rewrite_query:
                   type: boolean
                   default: false
                   x-auditable: true
                 score_threshold:
+                  description: Minimum similarity score a chunk must reach to be returned. Defaults to 0.4.
                   type: number
-                  default: 0.4
                   maximum: 1
                   minimum: 0
                   x-auditable: true
+                  x-stainless-terraform-configurability: computed_optional
                 source:
                   type: string
                   nullable: true
@@ -41400,9 +41510,9 @@ paths:
                             - sitemap
                             - discover
                   x-auditable: true
+                  x-stainless-terraform-configurability: computed_optional
                 sync_interval:
-                  description: 'Interval between automatic syncs, in seconds. Allowed values: 900 (15min), 1800 (30min), 3600 (1h), 7200 (2h), 14400 (4h), 21600 (6h), 43200 (12h), 86400 (24h).'
-                  default: 21600
+                  description: 'Interval between automatic syncs, in seconds. Allowed values: 900 (15min), 1800 (30min), 3600 (1h), 7200 (2h), 14400 (4h), 21600 (6h), 43200 (12h), 86400 (24h). Defaults to 21600 (6h); instances crawling a domain outside the account may be set to 86400.'
                   anyOf:
                     - enum:
                         - 900
@@ -41429,10 +41539,12 @@ paths:
                         - 86400
                       type: number
                   x-auditable: true
+                  x-stainless-terraform-configurability: computed_optional
                 token_id:
                   type: string
                   format: uuid
                   x-auditable: true
+                  x-stainless-terraform-configurability: computed_optional
                 type:
                   description: Source type. When omitted or null with a non-blank source, HTTP(S) URLs infer web-crawler and existing R2 bucket names infer r2. A missing or blank source without a type uses managed upload-only storage.
                   type: string
@@ -41442,6 +41554,7 @@ paths:
                     - null
                   nullable: true
                   x-auditable: true
+                  x-stainless-terraform-configurability: computed_optional
               required:
                 - id
       responses:
@@ -41459,11 +41572,13 @@ paths:
                         type: string
                         nullable: true
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       ai_search_model:
                         description: A Workers AI model ID or an AI Gateway model ID compatible with the OpenAI Chat Completions API. An empty string uses the configured or default model.
                         type: string
                         nullable: true
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       cache:
                         type: boolean
                         default: true
@@ -41522,6 +41637,7 @@ paths:
                         type: integer
                         minimum: 64
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       created_at:
                         type: string
                         format: date-time
@@ -41555,13 +41671,12 @@ paths:
                         type: string
                         nullable: true
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       enable:
                         type: boolean
-                        default: true
                         x-auditable: true
                       engine_version:
                         type: number
-                        default: 3
                         readOnly: true
                       fusion_method:
                         type: string
@@ -41573,9 +41688,9 @@ paths:
                       hybrid_search_enabled:
                         description: Deprecated — use index_method instead. Defaults to true for new instances; set false to create a vector-only instance.
                         type: boolean
-                        default: true
                         deprecated: true
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       id:
                         description: AI Search instance ID. Lowercase alphanumeric, hyphens, and underscores.
                         type: string
@@ -41585,22 +41700,22 @@ paths:
                         pattern: ^[a-z0-9_]+(?:-[a-z0-9_]+)*$
                         x-auditable: true
                       index_method:
-                        description: Controls which storage backends indexing uses. Defaults to vector and keyword indexing for new instances.
+                        description: Controls which storage backends indexing uses. Defaults to vector and keyword indexing for new instances. When set, both vector and keyword are required.
                         type: object
-                        default:
-                          keyword: true
-                          vector: true
                         properties:
                           keyword:
                             description: Enable keyword (BM25) storage backend.
                             type: boolean
+                            x-stainless-terraform-configurability: computed_optional
                           vector:
                             description: Enable vector (embedding) storage backend.
                             type: boolean
+                            x-stainless-terraform-configurability: computed_optional
                         required:
                           - vector
                           - keyword
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       indexing_options:
                         type: object
                         nullable: true
@@ -41617,6 +41732,7 @@ paths:
                             type: boolean
                             default: false
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       last_activity:
                         type: string
                         format: date-time
@@ -41665,8 +41781,8 @@ paths:
                         readOnly: true
                       paused:
                         type: boolean
-                        default: false
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       public_endpoint_id:
                         type: string
                         nullable: true
@@ -41697,6 +41813,7 @@ paths:
                             maxItems: 1
                             nullable: true
                             x-auditable: true
+                            x-stainless-terraform-configurability: computed_optional
                           default_domain_enabled:
                             description: When false, the instance is reachable only via a registered custom domain and the default <public_endpoint_id>.search.ai.cloudflare.com host returns 404. Requires at least one custom domain. Defaults to true. public_endpoint_params is replaced wholesale on update, so resend default_domain_enabled on every update to keep the default host off — omitting it resets to true.
                             type: boolean
@@ -41715,6 +41832,7 @@ paths:
                                 description: Disable MCP endpoint for this public endpoint.
                                 type: boolean
                                 default: false
+                            x-stainless-terraform-configurability: computed_optional
                           rate_limit:
                             type: object
                             properties:
@@ -41730,6 +41848,7 @@ paths:
                                 enum:
                                   - fixed
                                   - sliding
+                            x-stainless-terraform-configurability: computed_optional
                           search_endpoint:
                             type: object
                             properties:
@@ -41738,6 +41857,7 @@ paths:
                                 type: boolean
                                 default: false
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       reranking:
                         type: boolean
                         default: false
@@ -41746,6 +41866,7 @@ paths:
                         type: string
                         nullable: true
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       retrieval_options:
                         type: object
                         nullable: true
@@ -41763,6 +41884,7 @@ paths:
                                     - desc
                                     - exists
                                     - not_exists
+                                  x-stainless-terraform-configurability: computed_optional
                                 field:
                                   description: Metadata field name to boost by. Use 'timestamp' for document freshness, or any custom_metadata field. Numeric and datetime fields support all four directions (asc, desc, exists, not_exists); text/boolean fields only support exists/not_exists.
                                   type: string
@@ -41782,22 +41904,26 @@ paths:
                             enum:
                               - and
                               - or
+                            x-stainless-terraform-configurability: computed_optional
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       rewrite_model:
                         description: A Workers AI model ID or an AI Gateway model ID compatible with the OpenAI Chat Completions API. An empty string uses the configured or default model.
                         type: string
                         nullable: true
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       rewrite_query:
                         type: boolean
                         default: false
                         x-auditable: true
                       score_threshold:
+                        description: Minimum similarity score a chunk must reach to be returned. Defaults to 0.4.
                         type: number
-                        default: 0.4
                         maximum: 1
                         minimum: 0
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       source:
                         type: string
                         nullable: true
@@ -41949,13 +42075,12 @@ paths:
                                   - sitemap
                                   - discover
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       status:
                         type: string
-                        default: waiting
                         readOnly: true
                       sync_interval:
-                        description: 'Interval between automatic syncs, in seconds. Allowed values: 900 (15min), 1800 (30min), 3600 (1h), 7200 (2h), 14400 (4h), 21600 (6h), 43200 (12h), 86400 (24h).'
-                        default: 21600
+                        description: 'Interval between automatic syncs, in seconds. Allowed values: 900 (15min), 1800 (30min), 3600 (1h), 7200 (2h), 14400 (4h), 21600 (6h), 43200 (12h), 86400 (24h). Defaults to 21600 (6h); instances crawling a domain outside the account may be set to 86400.'
                         anyOf:
                           - enum:
                               - 900
@@ -41982,10 +42107,12 @@ paths:
                               - 86400
                             type: number
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       token_id:
                         type: string
                         format: uuid
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       type:
                         description: Source type. When omitted or null with a non-blank source, HTTP(S) URLs infer web-crawler and existing R2 bucket names infer r2. A missing or blank source without a type uses managed upload-only storage.
                         type: string
@@ -41995,6 +42122,7 @@ paths:
                           - null
                         nullable: true
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                     required:
                       - id
                       - created_at
@@ -42187,11 +42315,13 @@ paths:
                         type: string
                         nullable: true
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       ai_search_model:
                         description: A Workers AI model ID or an AI Gateway model ID compatible with the OpenAI Chat Completions API. An empty string uses the configured or default model.
                         type: string
                         nullable: true
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       cache:
                         type: boolean
                         default: true
@@ -42250,6 +42380,7 @@ paths:
                         type: integer
                         minimum: 64
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       created_at:
                         type: string
                         format: date-time
@@ -42283,13 +42414,12 @@ paths:
                         type: string
                         nullable: true
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       enable:
                         type: boolean
-                        default: true
                         x-auditable: true
                       engine_version:
                         type: number
-                        default: 3
                         readOnly: true
                       fusion_method:
                         type: string
@@ -42301,9 +42431,9 @@ paths:
                       hybrid_search_enabled:
                         description: Deprecated — use index_method instead. Defaults to true for new instances; set false to create a vector-only instance.
                         type: boolean
-                        default: true
                         deprecated: true
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       id:
                         description: AI Search instance ID. Lowercase alphanumeric, hyphens, and underscores.
                         type: string
@@ -42313,22 +42443,22 @@ paths:
                         pattern: ^[a-z0-9_]+(?:-[a-z0-9_]+)*$
                         x-auditable: true
                       index_method:
-                        description: Controls which storage backends indexing uses. Defaults to vector and keyword indexing for new instances.
+                        description: Controls which storage backends indexing uses. Defaults to vector and keyword indexing for new instances. When set, both vector and keyword are required.
                         type: object
-                        default:
-                          keyword: true
-                          vector: true
                         properties:
                           keyword:
                             description: Enable keyword (BM25) storage backend.
                             type: boolean
+                            x-stainless-terraform-configurability: computed_optional
                           vector:
                             description: Enable vector (embedding) storage backend.
                             type: boolean
+                            x-stainless-terraform-configurability: computed_optional
                         required:
                           - vector
                           - keyword
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       indexing_options:
                         type: object
                         nullable: true
@@ -42345,6 +42475,7 @@ paths:
                             type: boolean
                             default: false
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       last_activity:
                         type: string
                         format: date-time
@@ -42393,8 +42524,8 @@ paths:
                         readOnly: true
                       paused:
                         type: boolean
-                        default: false
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       public_endpoint_id:
                         type: string
                         nullable: true
@@ -42425,6 +42556,7 @@ paths:
                             maxItems: 1
                             nullable: true
                             x-auditable: true
+                            x-stainless-terraform-configurability: computed_optional
                           default_domain_enabled:
                             description: When false, the instance is reachable only via a registered custom domain and the default <public_endpoint_id>.search.ai.cloudflare.com host returns 404. Requires at least one custom domain. Defaults to true. public_endpoint_params is replaced wholesale on update, so resend default_domain_enabled on every update to keep the default host off — omitting it resets to true.
                             type: boolean
@@ -42443,6 +42575,7 @@ paths:
                                 description: Disable MCP endpoint for this public endpoint.
                                 type: boolean
                                 default: false
+                            x-stainless-terraform-configurability: computed_optional
                           rate_limit:
                             type: object
                             properties:
@@ -42458,6 +42591,7 @@ paths:
                                 enum:
                                   - fixed
                                   - sliding
+                            x-stainless-terraform-configurability: computed_optional
                           search_endpoint:
                             type: object
                             properties:
@@ -42466,6 +42600,7 @@ paths:
                                 type: boolean
                                 default: false
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       reranking:
                         type: boolean
                         default: false
@@ -42474,6 +42609,7 @@ paths:
                         type: string
                         nullable: true
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       retrieval_options:
                         type: object
                         nullable: true
@@ -42491,6 +42627,7 @@ paths:
                                     - desc
                                     - exists
                                     - not_exists
+                                  x-stainless-terraform-configurability: computed_optional
                                 field:
                                   description: Metadata field name to boost by. Use 'timestamp' for document freshness, or any custom_metadata field. Numeric and datetime fields support all four directions (asc, desc, exists, not_exists); text/boolean fields only support exists/not_exists.
                                   type: string
@@ -42510,22 +42647,26 @@ paths:
                             enum:
                               - and
                               - or
+                            x-stainless-terraform-configurability: computed_optional
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       rewrite_model:
                         description: A Workers AI model ID or an AI Gateway model ID compatible with the OpenAI Chat Completions API. An empty string uses the configured or default model.
                         type: string
                         nullable: true
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       rewrite_query:
                         type: boolean
                         default: false
                         x-auditable: true
                       score_threshold:
+                        description: Minimum similarity score a chunk must reach to be returned. Defaults to 0.4.
                         type: number
-                        default: 0.4
                         maximum: 1
                         minimum: 0
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       source:
                         type: string
                         nullable: true
@@ -42677,13 +42818,12 @@ paths:
                                   - sitemap
                                   - discover
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       status:
                         type: string
-                        default: waiting
                         readOnly: true
                       sync_interval:
-                        description: 'Interval between automatic syncs, in seconds. Allowed values: 900 (15min), 1800 (30min), 3600 (1h), 7200 (2h), 14400 (4h), 21600 (6h), 43200 (12h), 86400 (24h).'
-                        default: 21600
+                        description: 'Interval between automatic syncs, in seconds. Allowed values: 900 (15min), 1800 (30min), 3600 (1h), 7200 (2h), 14400 (4h), 21600 (6h), 43200 (12h), 86400 (24h). Defaults to 21600 (6h); instances crawling a domain outside the account may be set to 86400.'
                         anyOf:
                           - enum:
                               - 900
@@ -42710,10 +42850,12 @@ paths:
                               - 86400
                             type: number
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       token_id:
                         type: string
                         format: uuid
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       type:
                         description: Source type. When omitted or null with a non-blank source, HTTP(S) URLs infer web-crawler and existing R2 bucket names infer r2. A missing or blank source without a type uses managed upload-only storage.
                         type: string
@@ -42723,6 +42865,7 @@ paths:
                           - null
                         nullable: true
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                     required:
                       - id
                       - created_at
@@ -42850,11 +42993,13 @@ paths:
                         type: string
                         nullable: true
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       ai_search_model:
                         description: A Workers AI model ID or an AI Gateway model ID compatible with the OpenAI Chat Completions API. An empty string uses the configured or default model.
                         type: string
                         nullable: true
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       cache:
                         type: boolean
                         default: true
@@ -42913,6 +43058,7 @@ paths:
                         type: integer
                         minimum: 64
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       created_at:
                         type: string
                         format: date-time
@@ -42946,13 +43092,12 @@ paths:
                         type: string
                         nullable: true
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       enable:
                         type: boolean
-                        default: true
                         x-auditable: true
                       engine_version:
                         type: number
-                        default: 3
                         readOnly: true
                       fusion_method:
                         type: string
@@ -42964,9 +43109,9 @@ paths:
                       hybrid_search_enabled:
                         description: Deprecated — use index_method instead. Defaults to true for new instances; set false to create a vector-only instance.
                         type: boolean
-                        default: true
                         deprecated: true
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       id:
                         description: AI Search instance ID. Lowercase alphanumeric, hyphens, and underscores.
                         type: string
@@ -42976,22 +43121,22 @@ paths:
                         pattern: ^[a-z0-9_]+(?:-[a-z0-9_]+)*$
                         x-auditable: true
                       index_method:
-                        description: Controls which storage backends indexing uses. Defaults to vector and keyword indexing for new instances.
+                        description: Controls which storage backends indexing uses. Defaults to vector and keyword indexing for new instances. When set, both vector and keyword are required.
                         type: object
-                        default:
-                          keyword: true
-                          vector: true
                         properties:
                           keyword:
                             description: Enable keyword (BM25) storage backend.
                             type: boolean
+                            x-stainless-terraform-configurability: computed_optional
                           vector:
                             description: Enable vector (embedding) storage backend.
                             type: boolean
+                            x-stainless-terraform-configurability: computed_optional
                         required:
                           - vector
                           - keyword
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       indexing_options:
                         type: object
                         nullable: true
@@ -43008,6 +43153,7 @@ paths:
                             type: boolean
                             default: false
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       last_activity:
                         type: string
                         format: date-time
@@ -43056,8 +43202,8 @@ paths:
                         readOnly: true
                       paused:
                         type: boolean
-                        default: false
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       public_endpoint_id:
                         type: string
                         nullable: true
@@ -43088,6 +43234,7 @@ paths:
                             maxItems: 1
                             nullable: true
                             x-auditable: true
+                            x-stainless-terraform-configurability: computed_optional
                           default_domain_enabled:
                             description: When false, the instance is reachable only via a registered custom domain and the default <public_endpoint_id>.search.ai.cloudflare.com host returns 404. Requires at least one custom domain. Defaults to true. public_endpoint_params is replaced wholesale on update, so resend default_domain_enabled on every update to keep the default host off — omitting it resets to true.
                             type: boolean
@@ -43106,6 +43253,7 @@ paths:
                                 description: Disable MCP endpoint for this public endpoint.
                                 type: boolean
                                 default: false
+                            x-stainless-terraform-configurability: computed_optional
                           rate_limit:
                             type: object
                             properties:
@@ -43121,6 +43269,7 @@ paths:
                                 enum:
                                   - fixed
                                   - sliding
+                            x-stainless-terraform-configurability: computed_optional
                           search_endpoint:
                             type: object
                             properties:
@@ -43129,6 +43278,7 @@ paths:
                                 type: boolean
                                 default: false
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       reranking:
                         type: boolean
                         default: false
@@ -43137,6 +43287,7 @@ paths:
                         type: string
                         nullable: true
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       retrieval_options:
                         type: object
                         nullable: true
@@ -43154,6 +43305,7 @@ paths:
                                     - desc
                                     - exists
                                     - not_exists
+                                  x-stainless-terraform-configurability: computed_optional
                                 field:
                                   description: Metadata field name to boost by. Use 'timestamp' for document freshness, or any custom_metadata field. Numeric and datetime fields support all four directions (asc, desc, exists, not_exists); text/boolean fields only support exists/not_exists.
                                   type: string
@@ -43173,22 +43325,26 @@ paths:
                             enum:
                               - and
                               - or
+                            x-stainless-terraform-configurability: computed_optional
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       rewrite_model:
                         description: A Workers AI model ID or an AI Gateway model ID compatible with the OpenAI Chat Completions API. An empty string uses the configured or default model.
                         type: string
                         nullable: true
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       rewrite_query:
                         type: boolean
                         default: false
                         x-auditable: true
                       score_threshold:
+                        description: Minimum similarity score a chunk must reach to be returned. Defaults to 0.4.
                         type: number
-                        default: 0.4
                         maximum: 1
                         minimum: 0
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       source:
                         type: string
                         nullable: true
@@ -43340,13 +43496,12 @@ paths:
                                   - sitemap
                                   - discover
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       status:
                         type: string
-                        default: waiting
                         readOnly: true
                       sync_interval:
-                        description: 'Interval between automatic syncs, in seconds. Allowed values: 900 (15min), 1800 (30min), 3600 (1h), 7200 (2h), 14400 (4h), 21600 (6h), 43200 (12h), 86400 (24h).'
-                        default: 21600
+                        description: 'Interval between automatic syncs, in seconds. Allowed values: 900 (15min), 1800 (30min), 3600 (1h), 7200 (2h), 14400 (4h), 21600 (6h), 43200 (12h), 86400 (24h). Defaults to 21600 (6h); instances crawling a domain outside the account may be set to 86400.'
                         anyOf:
                           - enum:
                               - 900
@@ -43373,10 +43528,12 @@ paths:
                               - 86400
                             type: number
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       token_id:
                         type: string
                         format: uuid
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       type:
                         description: Source type. When omitted or null with a non-blank source, HTTP(S) URLs infer web-crawler and existing R2 bucket names infer r2. A missing or blank source without a type uses managed upload-only storage.
                         type: string
@@ -43386,6 +43543,7 @@ paths:
                           - null
                         nullable: true
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                     required:
                       - id
                       - created_at
@@ -43666,11 +43824,13 @@ paths:
                   type: string
                   nullable: true
                   x-auditable: true
+                  x-stainless-terraform-configurability: computed_optional
                 ai_search_model:
                   description: A Workers AI model ID or an AI Gateway model ID compatible with the OpenAI Chat Completions API. An empty string uses the configured or default model.
                   type: string
                   nullable: true
                   x-auditable: true
+                  x-stainless-terraform-configurability: computed_optional
                 cache:
                   type: boolean
                   default: true
@@ -43733,6 +43893,7 @@ paths:
                   type: integer
                   minimum: 64
                   x-auditable: true
+                  x-stainless-terraform-configurability: computed_optional
                 custom_metadata:
                   type: array
                   items:
@@ -43758,6 +43919,7 @@ paths:
                   type: string
                   nullable: true
                   x-auditable: true
+                  x-stainless-terraform-configurability: computed_optional
                 fusion_method:
                   type: string
                   default: rrf
@@ -43766,22 +43928,22 @@ paths:
                     - rrf
                   x-auditable: true
                 index_method:
-                  description: Controls which storage backends indexing uses. Defaults to vector and keyword indexing for new instances.
+                  description: Controls which storage backends indexing uses. Defaults to vector and keyword indexing for new instances. When set, both vector and keyword are required.
                   type: object
-                  default:
-                    keyword: true
-                    vector: true
                   properties:
                     keyword:
                       description: Enable keyword (BM25) storage backend.
                       type: boolean
+                      x-stainless-terraform-configurability: computed_optional
                     vector:
                       description: Enable vector (embedding) storage backend.
                       type: boolean
+                      x-stainless-terraform-configurability: computed_optional
                   required:
                     - vector
                     - keyword
                   x-auditable: true
+                  x-stainless-terraform-configurability: computed_optional
                 indexing_options:
                   type: object
                   nullable: true
@@ -43798,6 +43960,7 @@ paths:
                       type: boolean
                       default: false
                   x-auditable: true
+                  x-stainless-terraform-configurability: computed_optional
                 max_num_results:
                   type: integer
                   default: 10
@@ -43828,8 +43991,8 @@ paths:
                   x-auditable: true
                 paused:
                   type: boolean
-                  default: false
                   x-auditable: true
+                  x-stainless-terraform-configurability: computed_optional
                 public_endpoint_params:
                   type: object
                   properties:
@@ -43856,6 +44019,7 @@ paths:
                       maxItems: 1
                       nullable: true
                       x-auditable: true
+                      x-stainless-terraform-configurability: computed_optional
                     default_domain_enabled:
                       description: When false, the instance is reachable only via a registered custom domain and the default <public_endpoint_id>.search.ai.cloudflare.com host returns 404. Requires at least one custom domain. Defaults to true. public_endpoint_params is replaced wholesale on update, so resend default_domain_enabled on every update to keep the default host off — omitting it resets to true.
                       type: boolean
@@ -43874,6 +44038,7 @@ paths:
                           description: Disable MCP endpoint for this public endpoint.
                           type: boolean
                           default: false
+                      x-stainless-terraform-configurability: computed_optional
                     rate_limit:
                       type: object
                       properties:
@@ -43889,6 +44054,7 @@ paths:
                           enum:
                             - fixed
                             - sliding
+                      x-stainless-terraform-configurability: computed_optional
                     search_endpoint:
                       type: object
                       properties:
@@ -43897,6 +44063,7 @@ paths:
                           type: boolean
                           default: false
                   x-auditable: true
+                  x-stainless-terraform-configurability: computed_optional
                 reranking:
                   type: boolean
                   default: false
@@ -43905,6 +44072,7 @@ paths:
                   type: string
                   nullable: true
                   x-auditable: true
+                  x-stainless-terraform-configurability: computed_optional
                 retrieval_options:
                   type: object
                   nullable: true
@@ -43922,6 +44090,7 @@ paths:
                               - desc
                               - exists
                               - not_exists
+                            x-stainless-terraform-configurability: computed_optional
                           field:
                             description: Metadata field name to boost by. Use 'timestamp' for document freshness, or any custom_metadata field. Numeric and datetime fields support all four directions (asc, desc, exists, not_exists); text/boolean fields only support exists/not_exists.
                             type: string
@@ -43941,22 +44110,26 @@ paths:
                       enum:
                         - and
                         - or
+                      x-stainless-terraform-configurability: computed_optional
                   x-auditable: true
+                  x-stainless-terraform-configurability: computed_optional
                 rewrite_model:
                   description: A Workers AI model ID or an AI Gateway model ID compatible with the OpenAI Chat Completions API. An empty string uses the configured or default model.
                   type: string
                   nullable: true
                   x-auditable: true
+                  x-stainless-terraform-configurability: computed_optional
                 rewrite_query:
                   type: boolean
                   default: false
                   x-auditable: true
                 score_threshold:
+                  description: Minimum similarity score a chunk must reach to be returned. Defaults to 0.4.
                   type: number
-                  default: 0.4
                   maximum: 1
                   minimum: 0
                   x-auditable: true
+                  x-stainless-terraform-configurability: computed_optional
                 source:
                   type: string
                   nullable: true
@@ -44108,6 +44281,7 @@ paths:
                             - sitemap
                             - discover
                   x-auditable: true
+                  x-stainless-terraform-configurability: computed_optional
                 summarization:
                   type: boolean
                   default: false
@@ -44117,8 +44291,7 @@ paths:
                   nullable: true
                   x-auditable: true
                 sync_interval:
-                  description: 'Interval between automatic syncs, in seconds. Allowed values: 900 (15min), 1800 (30min), 3600 (1h), 7200 (2h), 14400 (4h), 21600 (6h), 43200 (12h), 86400 (24h).'
-                  default: 21600
+                  description: 'Interval between automatic syncs, in seconds. Allowed values: 900 (15min), 1800 (30min), 3600 (1h), 7200 (2h), 14400 (4h), 21600 (6h), 43200 (12h), 86400 (24h). Defaults to 21600 (6h); instances crawling a domain outside the account may be set to 86400.'
                   anyOf:
                     - enum:
                         - 900
@@ -44145,6 +44318,7 @@ paths:
                         - 86400
                       type: number
                   x-auditable: true
+                  x-stainless-terraform-configurability: computed_optional
                 system_prompt_ai_search:
                   type: string
                   nullable: true
@@ -44161,6 +44335,7 @@ paths:
                   type: string
                   format: uuid
                   x-auditable: true
+                  x-stainless-terraform-configurability: computed_optional
       responses:
         '200':
           description: Returns the updated instance.
@@ -44176,11 +44351,13 @@ paths:
                         type: string
                         nullable: true
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       ai_search_model:
                         description: A Workers AI model ID or an AI Gateway model ID compatible with the OpenAI Chat Completions API. An empty string uses the configured or default model.
                         type: string
                         nullable: true
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       cache:
                         type: boolean
                         default: true
@@ -44239,6 +44416,7 @@ paths:
                         type: integer
                         minimum: 64
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       created_at:
                         type: string
                         format: date-time
@@ -44272,13 +44450,12 @@ paths:
                         type: string
                         nullable: true
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       enable:
                         type: boolean
-                        default: true
                         x-auditable: true
                       engine_version:
                         type: number
-                        default: 3
                         readOnly: true
                       fusion_method:
                         type: string
@@ -44290,9 +44467,9 @@ paths:
                       hybrid_search_enabled:
                         description: Deprecated — use index_method instead. Defaults to true for new instances; set false to create a vector-only instance.
                         type: boolean
-                        default: true
                         deprecated: true
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       id:
                         description: AI Search instance ID. Lowercase alphanumeric, hyphens, and underscores.
                         type: string
@@ -44302,22 +44479,22 @@ paths:
                         pattern: ^[a-z0-9_]+(?:-[a-z0-9_]+)*$
                         x-auditable: true
                       index_method:
-                        description: Controls which storage backends indexing uses. Defaults to vector and keyword indexing for new instances.
+                        description: Controls which storage backends indexing uses. Defaults to vector and keyword indexing for new instances. When set, both vector and keyword are required.
                         type: object
-                        default:
-                          keyword: true
-                          vector: true
                         properties:
                           keyword:
                             description: Enable keyword (BM25) storage backend.
                             type: boolean
+                            x-stainless-terraform-configurability: computed_optional
                           vector:
                             description: Enable vector (embedding) storage backend.
                             type: boolean
+                            x-stainless-terraform-configurability: computed_optional
                         required:
                           - vector
                           - keyword
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       indexing_options:
                         type: object
                         nullable: true
@@ -44334,6 +44511,7 @@ paths:
                             type: boolean
                             default: false
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       last_activity:
                         type: string
                         format: date-time
@@ -44382,8 +44560,8 @@ paths:
                         readOnly: true
                       paused:
                         type: boolean
-                        default: false
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       public_endpoint_id:
                         type: string
                         nullable: true
@@ -44414,6 +44592,7 @@ paths:
                             maxItems: 1
                             nullable: true
                             x-auditable: true
+                            x-stainless-terraform-configurability: computed_optional
                           default_domain_enabled:
                             description: When false, the instance is reachable only via a registered custom domain and the default <public_endpoint_id>.search.ai.cloudflare.com host returns 404. Requires at least one custom domain. Defaults to true. public_endpoint_params is replaced wholesale on update, so resend default_domain_enabled on every update to keep the default host off — omitting it resets to true.
                             type: boolean
@@ -44432,6 +44611,7 @@ paths:
                                 description: Disable MCP endpoint for this public endpoint.
                                 type: boolean
                                 default: false
+                            x-stainless-terraform-configurability: computed_optional
                           rate_limit:
                             type: object
                             properties:
@@ -44447,6 +44627,7 @@ paths:
                                 enum:
                                   - fixed
                                   - sliding
+                            x-stainless-terraform-configurability: computed_optional
                           search_endpoint:
                             type: object
                             properties:
@@ -44455,6 +44636,7 @@ paths:
                                 type: boolean
                                 default: false
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       reranking:
                         type: boolean
                         default: false
@@ -44463,6 +44645,7 @@ paths:
                         type: string
                         nullable: true
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       retrieval_options:
                         type: object
                         nullable: true
@@ -44480,6 +44663,7 @@ paths:
                                     - desc
                                     - exists
                                     - not_exists
+                                  x-stainless-terraform-configurability: computed_optional
                                 field:
                                   description: Metadata field name to boost by. Use 'timestamp' for document freshness, or any custom_metadata field. Numeric and datetime fields support all four directions (asc, desc, exists, not_exists); text/boolean fields only support exists/not_exists.
                                   type: string
@@ -44499,22 +44683,26 @@ paths:
                             enum:
                               - and
                               - or
+                            x-stainless-terraform-configurability: computed_optional
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       rewrite_model:
                         description: A Workers AI model ID or an AI Gateway model ID compatible with the OpenAI Chat Completions API. An empty string uses the configured or default model.
                         type: string
                         nullable: true
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       rewrite_query:
                         type: boolean
                         default: false
                         x-auditable: true
                       score_threshold:
+                        description: Minimum similarity score a chunk must reach to be returned. Defaults to 0.4.
                         type: number
-                        default: 0.4
                         maximum: 1
                         minimum: 0
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       source:
                         type: string
                         nullable: true
@@ -44666,13 +44854,12 @@ paths:
                                   - sitemap
                                   - discover
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       status:
                         type: string
-                        default: waiting
                         readOnly: true
                       sync_interval:
-                        description: 'Interval between automatic syncs, in seconds. Allowed values: 900 (15min), 1800 (30min), 3600 (1h), 7200 (2h), 14400 (4h), 21600 (6h), 43200 (12h), 86400 (24h).'
-                        default: 21600
+                        description: 'Interval between automatic syncs, in seconds. Allowed values: 900 (15min), 1800 (30min), 3600 (1h), 7200 (2h), 14400 (4h), 21600 (6h), 43200 (12h), 86400 (24h). Defaults to 21600 (6h); instances crawling a domain outside the account may be set to 86400.'
                         anyOf:
                           - enum:
                               - 900
@@ -44699,10 +44886,12 @@ paths:
                               - 86400
                             type: number
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       token_id:
                         type: string
                         format: uuid
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                       type:
                         description: Source type. When omitted or null with a non-blank source, HTTP(S) URLs infer web-crawler and existing R2 bucket names infer r2. A missing or blank source without a type uses managed upload-only storage.
                         type: string
@@ -44712,6 +44901,7 @@ paths:
                           - null
                         nullable: true
                         x-auditable: true
+                        x-stainless-terraform-configurability: computed_optional
                     required:
                       - id
                       - created_at
