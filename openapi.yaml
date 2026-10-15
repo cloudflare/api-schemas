@@ -125903,6 +125903,128 @@ paths:
       x-fern-sdk-method-name: undelete
       x-forge-epilogue: This command acts on remote D1 Databases.
       x-forge-require-confirmation: After undeleting, Time Travel cannot restore the D1 database to a point in time at or before the undeletion.
+  /accounts/{account_id}/data-security/posture/asset_schemas:
+    get:
+      operationId: ListAssetSchemas
+      summary: List asset schemas
+      description: |-
+        Returns the catalog of asset classes available when authoring custom
+        findings, grouped by vendor. Optionally filter to a single vendor with
+        the `vendor` query parameter.
+      parameters:
+        - $ref: '#/components/parameters/posture-api_AccountTag'
+        - name: vendor
+          in: query
+          description: Restrict the result to a single vendor. Unknown values return 400.
+          schema:
+            type: string
+            enum:
+              - ANTHROPIC
+              - AWS
+              - BITBUCKET
+              - BOX
+              - CONFLUENCE
+              - DROPBOX
+              - GITHUB
+              - GOOGLE_CLOUD_PLATFORM
+              - GOOGLE_WORKSPACE
+              - JIRA
+              - MICROSOFT
+              - OPENAI
+              - SALESFORCE
+              - SERVICENOW
+              - SLACK
+              - WORKDAY
+              - ZOOM
+          example: GOOGLE_WORKSPACE
+      responses:
+        '200':
+          description: 'OK: Successful HTTP request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_AssetSchemaListResponse'
+        '400':
+          description: 'Bad Request: Invalid vendor parameter'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+        '401':
+          description: 'Unauthorized: Authentication required'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+        '403':
+          description: 'Forbidden: Insufficient permissions'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+      security:
+        - api_token: []
+      tags:
+        - asset_schemas
+      x-api-token-group:
+        - Zero Trust Read
+        - Zero Trust Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.casb.asset-schemas
+      x-fern-sdk-method-name: list
+      x-forge-hidden: true
+  /accounts/{account_id}/data-security/posture/asset_schemas/{asset_class}:
+    get:
+      operationId: GetAssetSchema
+      summary: Get asset schema by asset class
+      description: |-
+        Returns the fields and related attributes a custom finding type may reference
+        for the given asset class (JSON Schema). Used by the custom finding types builder.
+      parameters:
+        - $ref: '#/components/parameters/posture-api_AccountTag'
+        - name: asset_class
+          in: path
+          description: Asset class identifier (PascalCase), e.g. AnthropicApiKey.
+          required: true
+          schema:
+            type: string
+          example: AnthropicApiKey
+      responses:
+        '200':
+          description: 'OK: Successful HTTP request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_AssetSchemaResponse'
+        '401':
+          description: 'Unauthorized: Authentication required'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+        '403':
+          description: 'Forbidden: Insufficient permissions'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+        '404':
+          description: 'Not Found: Asset class not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+      security:
+        - api_token: []
+      tags:
+        - asset_schemas
+      x-api-token-group:
+        - Zero Trust Read
+        - Zero Trust Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.casb.asset-schemas
+      x-fern-sdk-method-name: get
+      x-forge-hidden: true
   /accounts/{account_id}/data-security/posture/content:
     get:
       operationId: ListContentAssets
@@ -126075,7 +126197,79 @@ paths:
         - $ref: '#/components/parameters/posture-api_Page'
         - $ref: '#/components/parameters/posture-api_PerPage'
         - $ref: '#/components/parameters/posture-api_FindingTypeVendors'
+        - name: types
+          in: query
+          description: Filter finding types by category type. Supports multiple comma-separated, case-insensitive values.
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/posture-api_FindingCategoryTypeEnum'
+          explode: false
+          style: form
+        - name: origins
+          in: query
+          description: Filter finding types by origin. Supports multiple comma-separated, case-insensitive values.
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/posture-api_FindingTypeOriginEnum'
+          explode: false
+          style: form
+        - name: severities
+          in: query
+          description: Filter finding types by severity. Supports multiple comma-separated, case-insensitive values.
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/posture-api_FindingTypeSeverityEnum'
+          explode: false
+          style: form
         - $ref: '#/components/parameters/posture-api_FindingTypeSearch'
+        - name: quarantined
+          in: query
+          description: When true, return only quarantined finding types; when false, return only non-quarantined finding types. Omit to return both.
+          schema:
+            type: boolean
+        - name: min_updated_at
+          in: query
+          description: Return only finding types updated at or after this RFC 3339 timestamp (inclusive).
+          schema:
+            type: string
+            format: date-time
+        - name: max_updated_at
+          in: query
+          description: Return only finding types updated at or before this RFC 3339 timestamp (inclusive).
+          schema:
+            type: string
+            format: date-time
+        - name: order
+          in: query
+          description: |-
+            Field to sort by (case-insensitive). Defaults to 'created'.
+            Name and vendor sorting is case-insensitive; vendor uses friendly provider names.
+            Ascending order: type Content then Posture; origin custom then system;
+            severity Low, Medium, High, Critical.
+          schema:
+            type: string
+            enum:
+              - created
+              - updated
+              - match_count
+              - name
+              - vendor
+              - type
+              - origin
+              - severity
+        - name: direction
+          in: query
+          description: |-
+            Sort direction for the primary field. Defaults to 'desc'.
+            Ties are resolved by case-insensitive name, then ID, both ascending regardless of direction.
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
       responses:
         '200':
           description: 'OK: Successful HTTP request'
@@ -126085,6 +126279,12 @@ paths:
                 $ref: '#/components/schemas/posture-api_paginated-finding-type-list'
         '400':
           description: 'Bad Request: Invalid request parameters'
+        '403':
+          description: 'Forbidden: The min_updated_at and max_updated_at filters are not available in this deployment'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
       security:
         - api_token: []
       tags:
@@ -126095,7 +126295,125 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: zero-trust.casb.finding-types
       x-fern-sdk-method-name: list
+    post:
+      operationId: CreateFindingType
+      summary: Create a custom finding type
+      description: Create a new custom finding type with policy definition.
+      parameters:
+        - $ref: '#/components/parameters/posture-api_AccountTag'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/posture-api_create-finding-type-request'
+      responses:
+        '201':
+          description: 'Created: Finding type created successfully'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_custom-finding-type-single-response'
+        '400':
+          description: 'Bad Request: Invalid request parameters'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+        '401':
+          description: 'Unauthorized: Authentication required'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+        '403':
+          description: 'Forbidden: Insufficient permissions'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+        '409':
+          description: 'Conflict: Finding type with this name already exists'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+        '422':
+          description: "Unprocessable Entity: the account's custom finding type limit is reached, or the finding type would exceed the per-integration limit for one of its integrations"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+      security:
+        - api_token: []
+      tags:
+        - finding_types
+      x-api-token-group:
+        - Zero Trust Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.casb.finding-types
+      x-fern-sdk-method-name: create
+      x-forge-hidden: true
   /accounts/{account_id}/data-security/posture/finding_types/{finding_type_id}:
+    delete:
+      operationId: DeleteFindingType
+      summary: Delete a custom finding type
+      description: |-
+        Delete an existing custom finding type.
+
+        **Security**: Only custom finding types (not system-managed) can be deleted.
+      parameters:
+        - $ref: '#/components/parameters/posture-api_AccountTag'
+        - $ref: '#/components/parameters/posture-api_FindingTypeId'
+      responses:
+        '204':
+          description: 'No Content: Finding type successfully deleted'
+        '400':
+          description: 'Bad Request: Invalid request parameters'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+        '401':
+          description: 'Unauthorized: Authentication required'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+        '403':
+          description: 'Forbidden: Cannot delete system-managed finding types'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+        '409':
+          description: 'Conflict: Finding type is referenced by one or more policies and cannot be deleted, or was modified concurrently'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+      security:
+        - api_token: []
+      tags:
+        - finding_types
+      x-api-token-group:
+        - Zero Trust Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.casb.finding-types
+      x-fern-sdk-method-name: delete
+      x-forge-hidden: true
     get:
       operationId: GetFindingType
       summary: Get finding by ID
@@ -126124,6 +126442,83 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: zero-trust.casb.finding-types
       x-fern-sdk-method-name: get
+    put:
+      operationId: UpdateFindingType
+      summary: Update a custom finding type
+      description: |-
+        Update an existing custom finding type.
+
+        **Immutable fields**: asset_vendor, asset_class, expression, and category cannot be changed after creation.
+
+        **Security**: Only custom finding types (not system-managed) can be updated.
+      parameters:
+        - $ref: '#/components/parameters/posture-api_AccountTag'
+        - $ref: '#/components/parameters/posture-api_FindingTypeId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/posture-api_update-finding-type-request'
+      responses:
+        '200':
+          description: 'OK: Finding type updated successfully'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_custom-finding-type-single-response'
+        '400':
+          description: 'Bad Request: Invalid request parameters'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+        '401':
+          description: 'Unauthorized: Authentication required'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+        '403':
+          description: 'Forbidden: Cannot modify system-managed finding types'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+        '404':
+          description: 'Not Found: Finding type not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+        '409':
+          description: 'Conflict: Version mismatch (optimistic locking)'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+        '422':
+          description: "Unprocessable Entity: widening this finding type's integration scope would exceed the per-integration limit for one of the affected integrations"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+      security:
+        - api_token: []
+      tags:
+        - finding_types
+      x-api-token-group:
+        - Zero Trust Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.casb.finding-types
+      x-fern-sdk-method-name: update
+      x-forge-hidden: true
   /accounts/{account_id}/data-security/posture/finding_types/{finding_type_id}/remediation_types:
     get:
       operationId: GetRemediationTypesForFindingType
@@ -126164,6 +126559,72 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: zero-trust.casb.finding-types.remediation-types
       x-fern-sdk-method-name: list
+  /accounts/{account_id}/data-security/posture/finding_types/validate:
+    post:
+      operationId: ValidateFindingType
+      summary: Validate a custom finding type
+      description: |-
+        Check a candidate custom finding type without creating it, so problems can
+        be corrected before publishing. The request body is the same shape as
+        `CreateFindingType`, and the candidate is checked against the same rules, so
+        a valid result means the definition itself is sound. It is not a reservation:
+        a create can still be rejected for a reason that does not belong to the
+        definition, such as the account already holding the maximum number of custom
+        finding types.
+
+        A candidate that fails validation is still a **200** with
+        `result.valid: false` and one entry in `result.errors` per problem — that is
+        the answer this endpoint exists to give. `4xx` is reserved for a request
+        that could not be processed at all, such as a body that will not parse.
+      parameters:
+        - $ref: '#/components/parameters/posture-api_AccountTag'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/posture-api_create-finding-type-request'
+      responses:
+        '200':
+          description: 'OK: Validation completed, whether or not the candidate is valid'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_ValidateFindingTypeResponse'
+        '400':
+          description: 'Bad Request: Request body could not be parsed'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+        '401':
+          description: 'Unauthorized: Authentication required'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+        '403':
+          description: 'Forbidden: Insufficient permissions to validate finding types'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+      security:
+        - api_token: []
+      tags:
+        - finding_types
+      x-api-token-group:
+        - Zero Trust Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.casb.finding-types
+      x-fern-sdk-method-name: validate
+      x-forge-hidden: true
   /accounts/{account_id}/data-security/posture/findings:
     get:
       operationId: ListFindings
@@ -394223,7 +394684,7 @@ components:
       schema:
         type: array
         items:
-          $ref: '#/components/schemas/posture-api_VendorsEnum'
+          $ref: '#/components/schemas/posture-api_FindingTypeVendorsEnum'
       style: form
     posture-api_Ignored:
       description: Filter for only the ignored findings. Set to false to only see "active" items
@@ -470967,41 +471428,280 @@ components:
       required:
         - name
         - value
+    posture-api_AssetSchemaDetail:
+      type: object
+      properties:
+        asset_class:
+          description: Asset class identifier (PascalCase), e.g. AnthropicApiKey.
+          type: string
+          example: AnthropicApiKey
+        schema:
+          description: |-
+            Fields and related attributes a custom finding type may reference for this asset
+            class, as a JSON Schema. Top-level properties are `asset` and, when related
+            resources exist, `associated`.
+          type: object
+          additionalProperties: true
+      required:
+        - asset_class
+        - schema
+    posture-api_AssetSchemaListResponse:
+      type: object
+      example:
+        errors: []
+        messages: []
+        result:
+          - asset_classes:
+              - asset_class: AnthropicApiKey
+              - asset_class: AnthropicUser
+              - asset_class: AnthropicWorkspace
+            vendor: ANTHROPIC
+          - asset_classes:
+              - asset_class: GitHubOrganization
+              - asset_class: GitHubRepository
+              - asset_class: GitHubUser
+            vendor: GITHUB
+        success: true
+      allOf:
+        - $ref: '#/components/schemas/posture-api_api-response-common'
+        - properties:
+            result:
+              description: Asset classes grouped by vendor, sorted by vendor enum.
+              type: array
+              items:
+                $ref: '#/components/schemas/posture-api_AssetSchemaVendorGroup'
+          type: object
+    posture-api_AssetSchemaResponse:
+      type: object
+      example:
+        errors: []
+        messages: []
+        result:
+          asset_class: AnthropicApiKey
+          schema:
+            type: object
+            properties:
+              asset:
+                type: object
+                properties:
+                  createdAt:
+                    type: string
+                    format: date-time
+                  externalId:
+                    type: string
+                  link:
+                    type: string
+                  name:
+                    type: string
+                  partialKeyHint:
+                    anyOf:
+                      - type: string
+                      - type: 'null'
+                  status:
+                    type: string
+                    enum:
+                      - active
+                      - inactive
+                      - archived
+                required:
+                  - name
+                  - externalId
+                  - link
+                  - status
+                  - createdAt
+              associated:
+                type: object
+                properties:
+                  createdBy:
+                    description: The user that created this API key.
+                    anyOf:
+                      - properties:
+                          addedAt:
+                            type: string
+                            format: date-time
+                          email:
+                            type: string
+                          externalId:
+                            type: string
+                          link:
+                            type: string
+                          name:
+                            type: string
+                          role:
+                            anyOf:
+                              - enum:
+                                  - user
+                                  - admin
+                                  - developer
+                                  - billing
+                                type: string
+                              - type: 'null'
+                        required:
+                          - name
+                          - externalId
+                          - link
+                          - email
+                          - addedAt
+                        type: object
+                      - type: 'null'
+                  workspace:
+                    description: The workspace this API key belongs to.
+                    anyOf:
+                      - properties:
+                          archivedAt:
+                            anyOf:
+                              - format: date-time
+                                type: string
+                              - type: 'null'
+                          createdAt:
+                            type: string
+                            format: date-time
+                          displayColor:
+                            anyOf:
+                              - type: string
+                              - type: 'null'
+                          externalId:
+                            type: string
+                          link:
+                            type: string
+                          name:
+                            type: string
+                        required:
+                          - name
+                          - externalId
+                          - link
+                          - createdAt
+                        type: object
+                      - type: 'null'
+            $schema: https://json-schema.org/draft/2020-12/schema
+            required:
+              - asset
+            title: anthropic_api_key
+        success: true
+      allOf:
+        - $ref: '#/components/schemas/posture-api_api-response-common'
+        - properties:
+            result:
+              $ref: '#/components/schemas/posture-api_AssetSchemaDetail'
+          type: object
+    posture-api_AssetSchemaSummary:
+      type: object
+      properties:
+        asset_class:
+          description: Asset class identifier (PascalCase), e.g. AnthropicUser.
+          type: string
+          example: AnthropicUser
+      required:
+        - asset_class
+    posture-api_AssetSchemaVendorGroup:
+      type: object
+      properties:
+        asset_classes:
+          description: Asset classes belonging to this vendor, sorted by asset_class.
+          type: array
+          items:
+            $ref: '#/components/schemas/posture-api_AssetSchemaSummary'
+        vendor:
+          description: Canonical vendor enum value, e.g. GOOGLE_WORKSPACE.
+          type: string
+          example: ANTHROPIC
+      required:
+        - vendor
+        - asset_classes
     posture-api_BaseFindingType:
       description: Basic finding type information.
       type: object
       properties:
+        applies_to_all_integrations:
+          description: Whether this finding type applies to every current and future integration of the vendor.
+          type: boolean
+        asset_class:
+          description: Asset class the finding type's policy evaluates.
+          type: string
+          example: GoogleWorkspaceFile
+        asset_vendor:
+          type: string
+          allOf:
+            - $ref: '#/components/schemas/posture-api_FindingTypeVendorsEnum'
+            - description: Canonical vendor enum value.
+              type: string
         category:
           type: object
           allOf:
             - $ref: '#/components/schemas/posture-api_FindingCategory'
             - readOnly: true
               type: object
+        created_at:
+          description: Timestamp when the finding type was created.
+          type: string
+          format: date-time
+          example: 2024-01-15T10:30:00Z
+          readOnly: true
         description:
           description: Detailed description of the finding.
           type: string
           example: This finding indicates that a file in your Slack workspace is publicly accessible.
           nullable: true
+        expression:
+          description: Rego expression backing this finding type. For custom finding types, generated package and import declarations are omitted. System expressions are returned unchanged.
+          type: string
         id:
           description: The unique identifier of the finding.
           type: string
           format: uuid
           example: a20895dd-9c3b-43bd-a608-71c98c6c2d94
           readOnly: true
+        integration_ids:
+          description: Integrations this finding type applies to when applies_to_all_integrations is false.
+          type: array
+          items:
+            format: uuid
+            type: string
+          example:
+            - 550e8400-e29b-41d4-a716-446655440000
+          uniqueItems: true
+        match_count:
+          description: Number of currently active finding instances across the account's integrations. Zero when none have been detected.
+          type: integer
+          format: int64
+          example: 142
+          readOnly: true
         name:
           description: The name of the finding.
           type: string
           example: Slack File Publicly Accessible
+        origin:
+          description: Whether the finding type is system-managed or customer-created.
+          type: string
+          enum:
+            - system
+            - custom
+          readOnly: true
+        quarantined:
+          description: Whether evaluation of this finding type is suspended by an operator. Present only when true.
+          type: boolean
+          readOnly: true
         severity:
           type: string
           allOf:
             - $ref: '#/components/schemas/posture-api_SeverityEnum'
             - description: Default severity used when no integration-specific severity override exists.
               type: string
+        updated_at:
+          description: Timestamp when the finding type was last updated.
+          type: string
+          format: date-time
+          example: 2024-01-15T10:30:00Z
+          readOnly: true
         vendor:
           description: The SaaS/Cloud vendor of the platform with which the finding is associated.
           type: string
           example: Google Workspace
+          readOnly: true
+        version:
+          description: Current version of the finding type. Incremented on each update.
+          type: integer
+          format: uint32
           readOnly: true
       required:
         - id
@@ -471911,6 +472611,84 @@ components:
         - remediation
         - severity
         - vendor
+    posture-api_FindingTypeOriginEnum:
+      description: Finding type origins for list filters.
+      type: string
+      example: system
+      enum:
+        - custom
+        - system
+    posture-api_FindingTypeSeverityEnum:
+      description: Finding type severities for list filters.
+      type: string
+      example: high
+      enum:
+        - critical
+        - high
+        - medium
+        - low
+    posture-api_FindingTypeValidationError:
+      type: object
+      properties:
+        code:
+          description: |-
+            Machine-readable identifier for the class of problem, when one is
+            available. Omitted otherwise.
+          type: string
+          example: REGO_COMPILE_ERROR
+        column:
+          description: |-
+            1-based column on `line`. Omitted when the problem could not be located in
+            the submitted source.
+          type: integer
+          example: 14
+        detail:
+          description: Description of the problem.
+          type: string
+          example: '"result" must be the string "pass" or "fail"'
+        field:
+          description: |-
+            Request field the problem belongs to, matching the property names of
+            `ValidateFindingTypeRequest`. Array properties are reported per entry with
+            a zero-based index, for example `integration_ids[0]`. Empty when the
+            problem cannot be attributed to a single submitted field.
+          type: string
+          example: expression
+        line:
+          description: |-
+            1-based line in `expression` where the problem was found. Omitted when
+            the problem could not be located in the submitted source.
+          type: integer
+          example: 3
+        message:
+          description: 'Deprecated: use `detail`.'
+          type: string
+          example: 'REGO_COMPILE_ERROR: undefined ref: input.asset.definitely_not_a_field (line 3, col 14)'
+          deprecated: true
+      required:
+        - detail
+        - message
+    posture-api_FindingTypeVendorsEnum:
+      description: Vendors whose assets a finding type can evaluate.
+      type: string
+      example: GOOGLE_WORKSPACE
+      enum:
+        - ANTHROPIC
+        - AWS
+        - BITBUCKET
+        - BOX
+        - CONFLUENCE
+        - DROPBOX
+        - GITHUB
+        - GOOGLE_CLOUD_PLATFORM
+        - GOOGLE_WORKSPACE
+        - JIRA
+        - MICROSOFT
+        - OPENAI
+        - SALESFORCE
+        - SERVICENOW
+        - SLACK
+        - ZOOM
     posture-api_IntegrationPolicy:
       description: Policy configuration for an integration.
       type: object
@@ -472935,6 +473713,31 @@ components:
         - destination_url
         - authentication_type
         - status
+    posture-api_ValidateFindingTypeResponse:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/posture-api_api-response-common'
+        - properties:
+            result:
+              $ref: '#/components/schemas/posture-api_ValidateFindingTypeResult'
+          type: object
+    posture-api_ValidateFindingTypeResult:
+      type: object
+      properties:
+        errors:
+          description: |-
+            Every problem found with the candidate, so all of them can be surfaced at
+            once. Empty when `valid` is true. Problems without a location come
+            first, followed by located problems ordered by `line`, then `column`.
+          type: array
+          items:
+            $ref: '#/components/schemas/posture-api_FindingTypeValidationError'
+        valid:
+          description: Whether the candidate finding type would be accepted as-is.
+          type: boolean
+      required:
+        - valid
+        - errors
     posture-api_Vendor:
       description: Information about a vendor/service provider.
       type: object
@@ -473354,6 +474157,89 @@ components:
         - success
         - errors
         - messages
+    posture-api_create-finding-type-request:
+      type: object
+      properties:
+        applies_to_all_integrations:
+          description: When true, this finding type applies to every current and future integration of the vendor.
+          type: boolean
+          example: true
+        asset_class:
+          description: Asset class this finding type applies to (PascalCase, e.g. GoogleWorkspaceFile)
+          type: string
+          example: GoogleWorkspaceFile
+        asset_vendor:
+          type: string
+          allOf:
+            - $ref: '#/components/schemas/posture-api_FindingTypeVendorsEnum'
+            - description: Canonical vendor enum for the platform whose assets this finding type evaluates.
+              type: string
+        description:
+          description: Human-readable description of the finding type. Cannot be empty. Maximum 4096 characters.
+          type: string
+          example: Detects files shared with too many users
+          maxLength: 4096
+        expression:
+          description: Rego expression body for the policy. `package cloudflare.casb.custom` and `import rego.v1` are added automatically. Do not include package or import declarations. This field cannot be changed after creation. Maximum 4096 characters.
+          type: string
+          example: result := "pass"
+          maxLength: 4096
+        integration_ids:
+          description: Required and non-empty when applies_to_all_integrations is false; omit when it is true.
+          type: array
+          items:
+            format: uuid
+            type: string
+          example:
+            - 550e8400-e29b-41d4-a716-446655440000
+          uniqueItems: true
+          x-stainless-terraform-configurability: computed_optional
+        name:
+          description: Human-readable name for the finding type. Maximum 256 characters.
+          type: string
+          example: Excessive File Sharing
+          maxLength: 256
+        severity:
+          type: string
+          allOf:
+            - $ref: '#/components/schemas/posture-api_SeverityEnum'
+            - description: Default severity used when no integration-specific severity override exists.
+              type: string
+      required:
+        - name
+        - description
+        - asset_vendor
+        - asset_class
+        - severity
+        - expression
+        - applies_to_all_integrations
+    posture-api_custom-finding-type-response:
+      allOf:
+        - $ref: '#/components/schemas/posture-api_BaseFindingType'
+        - required:
+            - id
+            - name
+            - description
+            - category
+            - vendor
+            - asset_vendor
+            - asset_class
+            - severity
+            - origin
+            - version
+            - expression
+            - applies_to_all_integrations
+            - created_at
+            - updated_at
+          type: object
+    posture-api_custom-finding-type-single-response:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/posture-api_api-response-common'
+        - properties:
+            result:
+              $ref: '#/components/schemas/posture-api_custom-finding-type-response'
+          type: object
     posture-api_error-response:
       description: Standard error response structure.
       type: object
@@ -473503,6 +474389,41 @@ components:
           description: Total results available without any search parameters.
           type: integer
           example: 2000
+    posture-api_update-finding-type-request:
+      type: object
+      properties:
+        applies_to_all_integrations:
+          description: When true, this finding type applies to every current and future integration of the vendor.
+          type: boolean
+          example: true
+        description:
+          description: Optional description of the finding type. Cannot be empty if provided. Maximum 4096 characters.
+          type: string
+          example: Detects files shared with too many users
+          maxLength: 4096
+        integration_ids:
+          description: Required and non-empty when applies_to_all_integrations is false; omit when it is true.
+          type: array
+          items:
+            format: uuid
+            type: string
+          example:
+            - 550e8400-e29b-41d4-a716-446655440000
+          uniqueItems: true
+          x-stainless-terraform-configurability: computed_optional
+        name:
+          description: Human-readable name for the finding type. Cannot be empty if provided. Maximum 256 characters.
+          type: string
+          example: Excessive File Sharing
+          maxLength: 256
+        severity:
+          type: string
+          allOf:
+            - $ref: '#/components/schemas/posture-api_SeverityEnum'
+            - description: Default severity used when no integration-specific severity override exists. Changing it reclassifies existing and future findings that do not have an override.
+              type: string
+      required:
+        - applies_to_all_integrations
     posture-api_webhook-list-response:
       type: object
       allOf:
