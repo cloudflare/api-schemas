@@ -33325,6 +33325,40 @@ paths:
                 required:
                   - success
                   - errors
+        '503':
+          description: Ai search temporarily unavailable.
+          headers:
+            Retry-After:
+              description: Seconds to wait before retrying.
+              required: true
+              schema:
+                description: Seconds to wait before retrying.
+                type: string
+                example: '1'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                      required:
+                        - code
+                        - message
+                      type: object
+                  success:
+                    type: boolean
+                    enum:
+                      - false
+                required:
+                  - success
+                  - errors
       deprecated: true
       security:
         - api_token: []
@@ -35847,6 +35881,40 @@ paths:
                 required:
                   - success
                   - errors
+        '503':
+          description: Ai search temporarily unavailable.
+          headers:
+            Retry-After:
+              description: Seconds to wait before retrying.
+              required: true
+              schema:
+                description: Seconds to wait before retrying.
+                type: string
+                example: '1'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                      required:
+                        - code
+                        - message
+                      type: object
+                  success:
+                    type: boolean
+                    enum:
+                      - false
+                required:
+                  - success
+                  - errors
       deprecated: true
       security:
         - api_token: []
@@ -36821,7 +36889,14 @@ paths:
                   - success
                   - errors
         '503':
-          description: Unable to connect to ai search.
+          description: Unable to connect to ai search; Ai search temporarily unavailable.
+          headers:
+            Retry-After:
+              description: Seconds to wait before retrying.
+              schema:
+                description: Seconds to wait before retrying.
+                type: string
+                example: '10'
           content:
             application/json:
               schema:
@@ -36830,15 +36905,29 @@ paths:
                   errors:
                     type: array
                     items:
-                      properties:
-                        code:
-                          type: number
-                        message:
-                          type: string
-                      required:
-                        - code
-                        - message
-                      type: object
+                      anyOf:
+                        - properties:
+                            code:
+                              type: number
+                              enum:
+                                - 7017
+                            message:
+                              type: string
+                          required:
+                            - code
+                            - message
+                          type: object
+                        - properties:
+                            code:
+                              type: number
+                              enum:
+                                - 7125
+                            message:
+                              type: string
+                          required:
+                            - code
+                            - message
+                          type: object
                   success:
                     type: boolean
                     enum:
@@ -42242,6 +42331,40 @@ paths:
                 required:
                   - success
                   - errors
+        '503':
+          description: Ai search temporarily unavailable.
+          headers:
+            Retry-After:
+              description: Seconds to wait before retrying.
+              required: true
+              schema:
+                description: Seconds to wait before retrying.
+                type: string
+                example: '1'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                      required:
+                        - code
+                        - message
+                      type: object
+                  success:
+                    type: boolean
+                    enum:
+                      - false
+                required:
+                  - success
+                  - errors
       security:
         - api_token: []
         - api_email: []
@@ -44965,6 +45088,40 @@ paths:
                   - errors
         '409':
           description: Instance status modified concurrently please retry.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                      required:
+                        - code
+                        - message
+                      type: object
+                  success:
+                    type: boolean
+                    enum:
+                      - false
+                required:
+                  - success
+                  - errors
+        '503':
+          description: Ai search temporarily unavailable.
+          headers:
+            Retry-After:
+              description: Seconds to wait before retrying.
+              required: true
+              schema:
+                description: Seconds to wait before retrying.
+                type: string
+                example: '1'
           content:
             application/json:
               schema:
@@ -48539,7 +48696,14 @@ paths:
                   - success
                   - errors
         '503':
-          description: Unable to connect to ai search.
+          description: Unable to connect to ai search; Ai search temporarily unavailable.
+          headers:
+            Retry-After:
+              description: Seconds to wait before retrying.
+              schema:
+                description: Seconds to wait before retrying.
+                type: string
+                example: '10'
           content:
             application/json:
               schema:
@@ -48548,15 +48712,29 @@ paths:
                   errors:
                     type: array
                     items:
-                      properties:
-                        code:
-                          type: number
-                        message:
-                          type: string
-                      required:
-                        - code
-                        - message
-                      type: object
+                      anyOf:
+                        - properties:
+                            code:
+                              type: number
+                              enum:
+                                - 7017
+                            message:
+                              type: string
+                          required:
+                            - code
+                            - message
+                          type: object
+                        - properties:
+                            code:
+                              type: number
+                              enum:
+                                - 7125
+                            message:
+                              type: string
+                          required:
+                            - code
+                            - message
+                          type: object
                   success:
                     type: boolean
                     enum:
@@ -49193,6 +49371,40 @@ paths:
                   - success
         '404':
           description: Ai search not found.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                      required:
+                        - code
+                        - message
+                      type: object
+                  success:
+                    type: boolean
+                    enum:
+                      - false
+                required:
+                  - success
+                  - errors
+        '503':
+          description: Ai search temporarily unavailable.
+          headers:
+            Retry-After:
+              description: Seconds to wait before retrying.
+              required: true
+              schema:
+                description: Seconds to wait before retrying.
+                type: string
+                example: '1'
           content:
             application/json:
               schema:
