@@ -142434,6 +142434,11 @@ paths:
           description: Filter by exact pattern value.
           schema:
             type: string
+        - name: expired
+          in: query
+          description: Filter to return only expired policies (`true`) or only policies that still apply (`false`). Omit to return both.
+          schema:
+            type: boolean
       responses:
         '200':
           description: List of allow policies.
@@ -142774,6 +142779,11 @@ paths:
           description: Filter by pattern value.
           schema:
             type: string
+        - name: expired
+          in: query
+          description: Filter to return only expired patterns (`true`) or only patterns that still apply (`false`). Omit to return both.
+          schema:
+            type: boolean
       responses:
         '200':
           description: List of blocked senders.
@@ -143113,6 +143123,11 @@ paths:
           description: Filter by exact policy name.
           schema:
             type: string
+        - name: expired
+          in: query
+          description: Filter to return only expired policies (`true`) or only policies that still apply (`false`). Omit to return both.
+          schema:
+            type: boolean
       responses:
         '200':
           description: List of content policies.
@@ -439637,6 +439652,13 @@ components:
           allOf:
             - $ref: '#/components/schemas/email-security_timestamp'
           readOnly: true
+        expires_at:
+          description: Timestamp at which the policy expires. After this time, Email Security ignores the policy. The value must lie in the future. Send `null` to clear the expiration.
+          type: string
+          format: date-time
+          example: 2027-01-01T00:00:00Z
+          nullable: true
+          x-auditable: true
         id:
           allOf:
             - $ref: '#/components/schemas/email-security_AllowPolicyId'
@@ -439776,6 +439798,13 @@ components:
           allOf:
             - $ref: '#/components/schemas/email-security_timestamp'
           readOnly: true
+        expires_at:
+          description: Timestamp at which the pattern expires. After this time, Email Security ignores the pattern. The value must lie in the future. Send `null` to clear the expiration.
+          type: string
+          format: date-time
+          example: 2027-01-01T00:00:00Z
+          nullable: true
+          x-auditable: true
         id:
           allOf:
             - $ref: '#/components/schemas/email-security_BlockedSenderId'
@@ -440151,6 +440180,13 @@ components:
           description: Whether the policy is active.
           type: boolean
           example: true
+          x-auditable: true
+        expires_at:
+          description: Timestamp at which the policy expires. After this time, Email Security ignores the policy. The value must lie in the future. Send `null` to clear the expiration.
+          type: string
+          format: date-time
+          example: 2027-01-01T00:00:00Z
+          nullable: true
           x-auditable: true
         id:
           allOf:
@@ -441029,10 +441065,12 @@ components:
           readOnly: true
           x-stainless-deprecation-message: Use `scanned_at` instead.
         validation:
-          type: object
-          allOf:
+          oneOf:
             - $ref: '#/components/schemas/email-security_Validation'
-          nullable: true
+            - enum:
+                - null
+              nullable: true
+              type: object
         x_originating_ip:
           type: string
           nullable: true
