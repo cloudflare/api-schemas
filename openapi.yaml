@@ -122641,7 +122641,7 @@ paths:
     post:
       operationId: cws-create-policy
       summary: Create a new policy
-      description: Creates a policy from inline Rego source and an entrypoint. Omit filter to apply the policy to every request.
+      description: Creates a policy from inline Rego source, an entrypoint, and a filter expression.
       parameters:
         - name: account_id
           in: path
@@ -122808,7 +122808,7 @@ paths:
     put:
       operationId: cws-update-policy
       summary: Update a policy
-      description: Replaces the policy's configuration. Omit filter to apply the policy to every request. Omit tags or use {} to clear them.
+      description: Replaces the policy's configuration. Omit tags or use {} to clear them.
       parameters:
         - name: account_id
           in: path
@@ -427025,11 +427025,10 @@ components:
           maxLength: 255
           pattern: ^[A-Za-z_][A-Za-z0-9_]*$
         filter:
-          description: Optional filter expression that determines whether this policy applies. Omit or set null to apply the policy to every request. Maximum 4096 UTF-8 bytes.
+          description: Filter expression that determines whether this policy applies. Maximum 4096 UTF-8 bytes.
           type: string
           maxLength: 4096
           minLength: 1
-          nullable: true
         name:
           description: Name of the policy
           type: string
@@ -427049,6 +427048,7 @@ components:
       additionalProperties: false
       required:
         - name
+        - filter
         - entrypoint
         - rego_source
     cws_CreatePolicySetInputBody:
@@ -427861,11 +427861,10 @@ components:
           maxLength: 255
           pattern: ^[A-Za-z_][A-Za-z0-9_]*$
         filter:
-          description: Optional filter expression that determines whether this policy applies. Null means the policy applies to every request. Maximum 4096 UTF-8 bytes.
+          description: Filter expression that determines whether this policy applies. Maximum 4096 UTF-8 bytes.
           type: string
           maxLength: 4096
           minLength: 1
-          nullable: true
         id:
           description: Server-assigned UUID
           type: string
@@ -428735,11 +428734,10 @@ components:
           maxLength: 255
           pattern: ^[A-Za-z_][A-Za-z0-9_]*$
         filter:
-          description: Optional filter expression that determines whether this policy applies. Omit or set null to apply the policy to every request. Maximum 4096 UTF-8 bytes.
+          description: Filter expression that determines whether this policy applies. Maximum 4096 UTF-8 bytes.
           type: string
           maxLength: 4096
           minLength: 1
-          nullable: true
         name:
           description: Name of the policy
           type: string
@@ -428759,6 +428757,7 @@ components:
       additionalProperties: false
       required:
         - name
+        - filter
         - entrypoint
         - rego_source
     cws_UpdatePolicySetInputBody:
