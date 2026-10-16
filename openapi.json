@@ -49077,6 +49077,57 @@
                 }
               }
             }
+          },
+          "503": {
+            "description": "Ai search temporarily unavailable.",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds to wait before retrying.",
+                "required": true,
+                "schema": {
+                  "description": "Seconds to wait before retrying.",
+                  "type": "string",
+                  "example": "1"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "properties": {
+                          "code": {
+                            "type": "number"
+                          },
+                          "message": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "code",
+                          "message"
+                        ],
+                        "type": "object"
+                      }
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "errors"
+                  ]
+                }
+              }
+            }
           }
         },
         "deprecated": true,
@@ -52560,6 +52611,57 @@
                 }
               }
             }
+          },
+          "503": {
+            "description": "Ai search temporarily unavailable.",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds to wait before retrying.",
+                "required": true,
+                "schema": {
+                  "description": "Seconds to wait before retrying.",
+                  "type": "string",
+                  "example": "1"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "properties": {
+                          "code": {
+                            "type": "number"
+                          },
+                          "message": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "code",
+                          "message"
+                        ],
+                        "type": "object"
+                      }
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "errors"
+                  ]
+                }
+              }
+            }
           }
         },
         "deprecated": true,
@@ -54011,7 +54113,17 @@
             }
           },
           "503": {
-            "description": "Unable to connect to ai search.",
+            "description": "Unable to connect to ai search; Ai search temporarily unavailable.",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds to wait before retrying.",
+                "schema": {
+                  "description": "Seconds to wait before retrying.",
+                  "type": "string",
+                  "example": "10"
+                }
+              }
+            },
             "content": {
               "application/json": {
                 "schema": {
@@ -54020,19 +54132,44 @@
                     "errors": {
                       "type": "array",
                       "items": {
-                        "properties": {
-                          "code": {
-                            "type": "number"
+                        "anyOf": [
+                          {
+                            "properties": {
+                              "code": {
+                                "type": "number",
+                                "enum": [
+                                  7017
+                                ]
+                              },
+                              "message": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "code",
+                              "message"
+                            ],
+                            "type": "object"
                           },
-                          "message": {
-                            "type": "string"
+                          {
+                            "properties": {
+                              "code": {
+                                "type": "number",
+                                "enum": [
+                                  7125
+                                ]
+                              },
+                              "message": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "code",
+                              "message"
+                            ],
+                            "type": "object"
                           }
-                        },
-                        "required": [
-                          "code",
-                          "message"
-                        ],
-                        "type": "object"
+                        ]
                       }
                     },
                     "success": {
@@ -59171,6 +59308,57 @@
                 }
               }
             }
+          },
+          "503": {
+            "description": "Ai search temporarily unavailable.",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds to wait before retrying.",
+                "required": true,
+                "schema": {
+                  "description": "Seconds to wait before retrying.",
+                  "type": "string",
+                  "example": "1"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "properties": {
+                          "code": {
+                            "type": "number"
+                          },
+                          "message": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "code",
+                          "message"
+                        ],
+                        "type": "object"
+                      }
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "errors"
+                  ]
+                }
+              }
+            }
           }
         },
         "security": [
@@ -62969,6 +63157,57 @@
           },
           "409": {
             "description": "Instance status modified concurrently please retry.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "properties": {
+                          "code": {
+                            "type": "number"
+                          },
+                          "message": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "code",
+                          "message"
+                        ],
+                        "type": "object"
+                      }
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "errors"
+                  ]
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Ai search temporarily unavailable.",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds to wait before retrying.",
+                "required": true,
+                "schema": {
+                  "description": "Seconds to wait before retrying.",
+                  "type": "string",
+                  "example": "1"
+                }
+              }
+            },
             "content": {
               "application/json": {
                 "schema": {
@@ -68286,7 +68525,17 @@
             }
           },
           "503": {
-            "description": "Unable to connect to ai search.",
+            "description": "Unable to connect to ai search; Ai search temporarily unavailable.",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds to wait before retrying.",
+                "schema": {
+                  "description": "Seconds to wait before retrying.",
+                  "type": "string",
+                  "example": "10"
+                }
+              }
+            },
             "content": {
               "application/json": {
                 "schema": {
@@ -68295,19 +68544,44 @@
                     "errors": {
                       "type": "array",
                       "items": {
-                        "properties": {
-                          "code": {
-                            "type": "number"
+                        "anyOf": [
+                          {
+                            "properties": {
+                              "code": {
+                                "type": "number",
+                                "enum": [
+                                  7017
+                                ]
+                              },
+                              "message": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "code",
+                              "message"
+                            ],
+                            "type": "object"
                           },
-                          "message": {
-                            "type": "string"
+                          {
+                            "properties": {
+                              "code": {
+                                "type": "number",
+                                "enum": [
+                                  7125
+                                ]
+                              },
+                              "message": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "code",
+                              "message"
+                            ],
+                            "type": "object"
                           }
-                        },
-                        "required": [
-                          "code",
-                          "message"
-                        ],
-                        "type": "object"
+                        ]
                       }
                     },
                     "success": {
@@ -69260,6 +69534,57 @@
           },
           "404": {
             "description": "Ai search not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "properties": {
+                          "code": {
+                            "type": "number"
+                          },
+                          "message": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "code",
+                          "message"
+                        ],
+                        "type": "object"
+                      }
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "errors"
+                  ]
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Ai search temporarily unavailable.",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds to wait before retrying.",
+                "required": true,
+                "schema": {
+                  "description": "Seconds to wait before retrying.",
+                  "type": "string",
+                  "example": "1"
+                }
+              }
+            },
             "content": {
               "application/json": {
                 "schema": {
