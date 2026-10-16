@@ -213084,6 +213084,14 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "expired",
+            "in": "query",
+            "description": "Filter to return only expired policies (`true`) or only policies that still apply (`false`). Omit to return both.",
+            "schema": {
+              "type": "boolean"
+            }
           }
         ],
         "responses": {
@@ -213660,6 +213668,14 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "expired",
+            "in": "query",
+            "description": "Filter to return only expired patterns (`true`) or only patterns that still apply (`false`). Omit to return both.",
+            "schema": {
+              "type": "boolean"
+            }
           }
         ],
         "responses": {
@@ -214231,6 +214247,14 @@
             "description": "Filter by exact policy name.",
             "schema": {
               "type": "string"
+            }
+          },
+          {
+            "name": "expired",
+            "in": "query",
+            "description": "Filter to return only expired policies (`true`) or only policies that still apply (`false`). Omit to return both.",
+            "schema": {
+              "type": "boolean"
             }
           }
         ],
@@ -644406,6 +644430,14 @@
             ],
             "readOnly": true
           },
+          "expires_at": {
+            "description": "Timestamp at which the policy expires. After this time, Email Security ignores the policy. The value must lie in the future. Send `null` to clear the expiration.",
+            "type": "string",
+            "format": "date-time",
+            "example": "2027-01-01T00:00:00Z",
+            "nullable": true,
+            "x-auditable": true
+          },
           "id": {
             "allOf": [
               {
@@ -644592,6 +644624,14 @@
               }
             ],
             "readOnly": true
+          },
+          "expires_at": {
+            "description": "Timestamp at which the pattern expires. After this time, Email Security ignores the pattern. The value must lie in the future. Send `null` to clear the expiration.",
+            "type": "string",
+            "format": "date-time",
+            "example": "2027-01-01T00:00:00Z",
+            "nullable": true,
+            "x-auditable": true
           },
           "id": {
             "allOf": [
@@ -645118,6 +645158,14 @@
             "description": "Whether the policy is active.",
             "type": "boolean",
             "example": true,
+            "x-auditable": true
+          },
+          "expires_at": {
+            "description": "Timestamp at which the policy expires. After this time, Email Security ignores the policy. The value must lie in the future. Send `null` to clear the expiration.",
+            "type": "string",
+            "format": "date-time",
+            "example": "2027-01-01T00:00:00Z",
+            "nullable": true,
             "x-auditable": true
           },
           "id": {
@@ -646328,13 +646376,18 @@
             "x-stainless-deprecation-message": "Use `scanned_at` instead."
           },
           "validation": {
-            "type": "object",
-            "allOf": [
+            "oneOf": [
               {
                 "$ref": "#/components/schemas/email-security_Validation"
+              },
+              {
+                "enum": [
+                  null
+                ],
+                "nullable": true,
+                "type": "object"
               }
-            ],
-            "nullable": true
+            ]
           },
           "x_originating_ip": {
             "type": "string",
