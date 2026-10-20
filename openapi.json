@@ -264498,7 +264498,7 @@
       "post": {
         "operationId": "createAccountVulnerabilityDiscoveryRepository",
         "summary": "Create repository",
-        "description": "Creates an upload repository or reserves an asynchronous deployed Worker import by name. Worker imports require Idempotency-Key.",
+        "description": "Creates an upload repository or reserves an asynchronous deployed Worker import by name. Worker imports require Idempotency-Key. Push upload source to `main` or specify the `branch` to scan in the scan request.",
         "parameters": [
           {
             "$ref": "#/components/parameters/managed-defense-vulnerability-discovery_OptionalIdempotencyKey"
@@ -264638,6 +264638,37 @@
           "404": {
             "$ref": "#/components/responses/managed-defense-vulnerability-discovery_NotFound"
           },
+          "409": {
+            "description": "The scan is still in progress (`report_not_ready`, code 10014).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/managed-defense-vulnerability-discovery_FailureResponse"
+                }
+              }
+            }
+          },
+          "410": {
+            "description": "The scan request was rejected and no report will be produced (`report_not_produced`, code 10020).",
+            "content": {
+              "application/json": {
+                "example": {
+                  "errors": [
+                    {
+                      "code": 10020,
+                      "message": "No report will be produced for this scan."
+                    }
+                  ],
+                  "messages": [],
+                  "result": null,
+                  "success": false
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/managed-defense-vulnerability-discovery_FailureResponse"
+                }
+              }
+            }
+          },
           "4XX": {
             "$ref": "#/components/responses/managed-defense-vulnerability-discovery_Failure"
           },
@@ -264671,6 +264702,56 @@
           "$ref": "#/components/parameters/managed-defense-vulnerability-discovery_ScanId"
         }
       ]
+    },
+    "/accounts/{account_id}/managed-defense/vulnerability-discovery/repos/{repo_id}/token": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/managed-defense-vulnerability-discovery_AccountId"
+        },
+        {
+          "$ref": "#/components/parameters/managed-defense-vulnerability-discovery_RepositoryId"
+        }
+      ],
+      "post": {
+        "operationId": "createAccountVulnerabilityDiscoveryRepositoryToken",
+        "summary": "Create upload token",
+        "description": "Creates a one-hour write token for an existing upload repository. Worker-imported repositories are system-managed and cannot receive upload tokens.",
+        "responses": {
+          "200": {
+            "description": "Upload token created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/managed-defense-vulnerability-discovery_RepositoryTokenResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/managed-defense-vulnerability-discovery_NotFound"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/managed-defense-vulnerability-discovery_Failure"
+          },
+          "5XX": {
+            "$ref": "#/components/responses/managed-defense-vulnerability-discovery_Failure"
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Vulnerability Discovery"
+        ],
+        "x-fern-sdk-group-name": "managed-defense.vulnerability-discovery.repositories",
+        "x-fern-sdk-method-name": "createToken"
+      }
     },
     "/accounts/{account_id}/managed-defense/vulnerability-discovery/scans": {
       "get": {
@@ -264735,7 +264816,7 @@
       "post": {
         "operationId": "createAccountVulnerabilityDiscoveryScan",
         "summary": "Create scan",
-        "description": "Submits repository intent for operator review. This endpoint does not immediately start execution. Worker-imported repositories must be ready; explicit `repo_hosts` must be authorized before the request is persisted.",
+        "description": "Submits repository intent for operator review. This endpoint does not immediately start execution. Worker-imported repositories must be ready; explicit repository host scopes must be authorized and explicit branch selections must exist before the request is persisted.",
         "parameters": [
           {
             "$ref": "#/components/parameters/managed-defense-vulnerability-discovery_OptionalIdempotencyKey"
@@ -264776,7 +264857,7 @@
             }
           },
           "422": {
-            "description": "An explicit repository hostname scope is invalid or unauthorized (`invalid_request`); no scan request is persisted.",
+            "description": "An explicit repository hostname scope or branch is invalid, unauthorized, or missing (`invalid_request`); no scan request is persisted.",
             "content": {
               "application/json": {
                 "schema": {
@@ -264876,6 +264957,37 @@
           },
           "404": {
             "$ref": "#/components/responses/managed-defense-vulnerability-discovery_NotFound"
+          },
+          "409": {
+            "description": "The scan is still in progress (`report_not_ready`, code 10014).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/managed-defense-vulnerability-discovery_FailureResponse"
+                }
+              }
+            }
+          },
+          "410": {
+            "description": "The scan request was rejected and no report will be produced (`report_not_produced`, code 10020).",
+            "content": {
+              "application/json": {
+                "example": {
+                  "errors": [
+                    {
+                      "code": 10020,
+                      "message": "No report will be produced for this scan."
+                    }
+                  ],
+                  "messages": [],
+                  "result": null,
+                  "success": false
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/managed-defense-vulnerability-discovery_FailureResponse"
+                }
+              }
+            }
           },
           "4XX": {
             "$ref": "#/components/responses/managed-defense-vulnerability-discovery_Failure"
@@ -676084,27 +676196,43 @@
       "managed-defense-vulnerability-discovery_CreateScan": {
         "type": "object",
         "properties": {
-          "repo_hosts": {
-            "description": "Explicit hostname scopes. Every hostname must be authorized for its repository before review admission; rejected scopes return 422 and do not persist a scan request.",
-            "type": "object",
-            "additionalProperties": {
-              "items": {
-                "maxLength": 253,
-                "minLength": 1,
-                "pattern": "^[A-Za-z0-9][A-Za-z0-9.-]*[A-Za-z0-9]$",
-                "type": "string"
-              },
-              "maxItems": 20,
-              "minItems": 1,
-              "type": "array",
-              "uniqueItems": true
-            }
-          },
           "repos": {
+            "description": "Repository names must be unique within a request.",
             "type": "array",
             "items": {
-              "format": "uuid",
-              "type": "string"
+              "additionalProperties": false,
+              "properties": {
+                "branch": {
+                  "description": "Branch to scan. Defaults to the repository's default branch.",
+                  "type": "string",
+                  "maxLength": 255,
+                  "minLength": 1,
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._/-]*$"
+                },
+                "hosts": {
+                  "description": "Explicit hostname scopes. Every hostname must be authorized for this repository before review admission; rejected scopes return 422 and do not persist a scan request.",
+                  "type": "array",
+                  "items": {
+                    "maxLength": 253,
+                    "minLength": 1,
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9.-]*[A-Za-z0-9]$",
+                    "type": "string"
+                  },
+                  "maxItems": 20,
+                  "minItems": 1,
+                  "uniqueItems": true
+                },
+                "name": {
+                  "type": "string",
+                  "maxLength": 255,
+                  "minLength": 1,
+                  "pattern": "^[a-zA-Z0-9_.-]+$"
+                }
+              },
+              "required": [
+                "name"
+              ],
+              "type": "object"
             },
             "maxItems": 100,
             "minItems": 1,
@@ -676155,6 +676283,7 @@
             "pattern": "^[A-Za-z0-9_.-]+$"
           },
           "readiness": {
+            "description": "Source state. `awaiting_source`: the upload repository's default branch has no commits yet. `processing`: an import is in progress. `ready`: source is available. `failed`: the Worker import failed or could not be verified.",
             "type": "string",
             "enum": [
               "awaiting_source",
@@ -676468,6 +676597,15 @@
             "maxLength": 4000,
             "minLength": 1
           },
+          "impact_ids": {
+            "description": "Accepted settled impact-charter premises cited by the finding. Optional on legacy report revisions.",
+            "type": "array",
+            "items": {
+              "pattern": "^impact-[0-9a-f]{12}$",
+              "type": "string"
+            },
+            "maxItems": 32
+          },
           "location": {
             "type": "object",
             "additionalProperties": false,
@@ -676594,6 +676732,15 @@
               "state",
               "references"
             ]
+          },
+          "threat_ids": {
+            "description": "Accepted settled threat-model premises cited by the finding. Optional on legacy report revisions.",
+            "type": "array",
+            "items": {
+              "pattern": "^threat-[0-9a-f]{12}$",
+              "type": "string"
+            },
+            "maxItems": 32
           },
           "title": {
             "type": "string",
@@ -677165,6 +677312,7 @@
             "pattern": "^[A-Za-z0-9_.-]+$"
           },
           "readiness": {
+            "description": "Source state. `awaiting_source`: the upload repository's default branch has no commits yet. `processing`: an import is in progress. `ready`: source is available. `failed`: the Worker import failed or could not be verified.",
             "type": "string",
             "enum": [
               "awaiting_source",
@@ -677316,6 +677464,24 @@
             },
             "required": [
               "result_info"
+            ],
+            "type": "object"
+          }
+        ]
+      },
+      "managed-defense-vulnerability-discovery_RepositoryTokenResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/managed-defense-vulnerability-discovery_SuccessResponse"
+          },
+          {
+            "properties": {
+              "result": {
+                "$ref": "#/components/schemas/managed-defense-vulnerability-discovery_UploadCredentials"
+              }
+            },
+            "required": [
+              "result"
             ],
             "type": "object"
           }
