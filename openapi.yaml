@@ -420231,14 +420231,18 @@ components:
         Create a Durable Object-managed Containers application. Each Durable Object
         creates and manages the lifecycle of its container instance. Supply `name`,
         `scheduling_policy`, and `durable_objects`, with optional `configuration` and
-        top-level `observability` settings. Deployment configuration, instance counts,
-        scaling, constraints, versions, and rollouts do not apply.
+        top-level `observability` settings. `constraints.jurisdiction` selects the
+        jurisdiction of the application's primary control-plane object at creation time.
+        Deployment configuration, instance counts, scaling, other placement constraints,
+        versions, and rollouts do not apply.
       type: object
       properties:
         configuration:
           description: Configuration for a Durable Object-managed application.
           allOf:
             - $ref: '#/components/schemas/cc_DurableObjectApplicationConfiguration'
+        constraints:
+          $ref: '#/components/schemas/cc_DurableObjectApplicationConstraints'
         durable_objects:
           description: The customer-owned Durable Object namespace that owns this application and its instances.
           allOf:
@@ -420474,6 +420478,8 @@ components:
           $ref: '#/components/schemas/cc_AccountID'
         configuration:
           $ref: '#/components/schemas/cc_DurableObjectApplicationConfiguration'
+        constraints:
+          $ref: '#/components/schemas/cc_DurableObjectApplicationConstraints'
         created_at:
           $ref: '#/components/schemas/cc_ISO8601Timestamp'
         durable_objects:
@@ -420509,6 +420515,22 @@ components:
         wrangler_ssh:
           $ref: '#/components/schemas/cc_WranglerSSHConfig'
       additionalProperties: false
+    cc_DurableObjectApplicationConstraints:
+      description: |
+        The jurisdiction of a Durable Object-managed application's primary control-plane object.
+        Set this when creating the application; it cannot be changed afterwards.
+        Other placement constraints are not supported by this scheduling policy.
+      type: object
+      properties:
+        jurisdiction:
+          type: string
+          enum:
+            - eu
+            - fedramp
+            - us
+      additionalProperties: false
+      required:
+        - jurisdiction
     cc_DurableObjectApplicationHealth:
       description: |
         Aggregate current activity for the latest observed placement of each instance.
