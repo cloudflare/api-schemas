@@ -419952,12 +419952,14 @@ components:
     cc_ApplicationID:
       description: An Application ID represents an identifier of an application.
       type: string
+      x-auditable: true
     cc_ApplicationJurisdiction:
       description: Restricts placement to datacenters in the selected jurisdiction. Choose "eu", "fedramp", or "us". When combined with regions, EU supports EEUR and WEUR while FedRAMP and US support ENAM and WNAM.
       type: string
     cc_ApplicationName:
       description: The application name.
       type: string
+      x-auditable: true
     cc_ApplicationObservability:
       description: |
         Settings for application observability such as logging. Supported fields depend
@@ -420301,6 +420303,7 @@ components:
         - registry_host
         - username
         - password
+      x-auditable: false
     cc_ContainersApplicationResponse:
       description: The public Containers API returns an application.
       oneOf:
@@ -420336,6 +420339,7 @@ components:
           enum:
             - full_auto
             - full_manual
+          x-auditable: true
         percentage:
           description: |
             Initial target version percentage (0-100). Version sync actively replaces instances to match.
@@ -420343,6 +420347,7 @@ components:
           type: integer
           maximum: 100
           minimum: 0
+          x-auditable: true
         step_percentage:
           description: |
             Percentage of rollout to increase in each step when "steps" is absent. Applicable values: 5, 10, 20, 25, 50, 100.
@@ -420356,6 +420361,7 @@ components:
             - 25
             - 50
             - 100
+          x-auditable: true
         steps:
           description: |
             Steps defining the rollout process, used when "step_percentage" is absent.
@@ -420374,6 +420380,7 @@ components:
           enum:
             - rolling
             - new_instances
+          x-auditable: true
         target_configuration:
           $ref: '#/components/schemas/cc_ModifyUserDeploymentConfiguration'
       required:
@@ -420404,10 +420411,13 @@ components:
         name:
           description: The name for this application.
           type: string
+          x-auditable: true
         observability:
           $ref: '#/components/schemas/cc_DurableObjectApplicationObservability'
         scheduling_policy:
-          $ref: '#/components/schemas/cc_DurableObjectApplicationSchedulingPolicy'
+          allOf:
+            - $ref: '#/components/schemas/cc_DurableObjectApplicationSchedulingPolicy'
+          x-auditable: true
       additionalProperties: false
       required:
         - name
@@ -420429,6 +420439,7 @@ components:
             `*-docker.pkg.dev` hostnames.
           type: string
           example: docker.io
+          x-auditable: true
         is_public:
           description: |
             Omit this field or set it to `false`. Public Docker Hub images do not require
@@ -420436,6 +420447,7 @@ components:
           type: boolean
           enum:
             - false
+          x-auditable: true
         kind:
           description: |
             Registry provider. This must match `domain`: `DockerHub` for `docker.io`,
@@ -420468,13 +420480,16 @@ components:
           description: The initial number of deployments to create.
           type: integer
           minimum: 0
+          x-auditable: true
         max_instances:
           description: Sets the maximum number of instances that the application can run.
           type: integer
           minimum: 0
+          x-auditable: true
         name:
           description: The name for this application.
           type: string
+          x-auditable: true
         observability:
           description: |
             Top-level observability settings for the application.
@@ -420484,7 +420499,9 @@ components:
         rollout_active_grace_period:
           $ref: '#/components/schemas/cc_ApplicationRolloutActiveGracePeriod'
         scheduling_policy:
-          $ref: '#/components/schemas/cc_ScheduledApplicationSchedulingPolicy'
+          allOf:
+            - $ref: '#/components/schemas/cc_ScheduledApplicationSchedulingPolicy'
+          x-auditable: true
       additionalProperties: false
       required:
         - name
@@ -420505,7 +420522,9 @@ components:
       type: object
       properties:
         domain:
-          $ref: '#/components/schemas/cc_Domain'
+          allOf:
+            - $ref: '#/components/schemas/cc_Domain'
+          x-auditable: true
       required:
         - domain
     cc_ContainersImageRegistryAuth:
@@ -420531,6 +420550,7 @@ components:
       required:
         - public_credential
         - private_credential
+      x-auditable: false
     cc_ContainersListApplications:
       description: The public Containers API returns a list of applications.
       type: array
@@ -420578,6 +420598,7 @@ components:
           description: Maximum number of instances that an autoscaling application can run.
           type: integer
           minimum: 0
+          x-auditable: true
         observability:
           description: |
             Top-level application observability settings. Scheduler-backed applications
@@ -420795,6 +420816,7 @@ components:
     cc_EnvironmentVariableValue:
       description: An environment variable value.
       type: string
+      x-auditable: false
     cc_EventName:
       description: |
         Name of the event that describes the kind event that happened.
@@ -420880,6 +420902,7 @@ components:
     cc_InstanceID:
       description: An instance ID represents an identifier of an instance configuration that maintains an underlying placement.
       type: string
+      x-auditable: true
     cc_InstanceType:
       description: |
         The instance type configures vCPU, memory, and disk.
@@ -420957,6 +420980,7 @@ components:
         enabled:
           type: boolean
           default: false
+          x-auditable: true
     cc_PlacementEvent:
       description: An event within a Placement or a Job.
       type: object
@@ -421002,6 +421026,7 @@ components:
     cc_RolloutID:
       description: An identifier for a specific rollout within an application.
       type: string
+      x-auditable: true
     cc_RolloutStep:
       description: Steps within the rollout process.
       type: object
@@ -421145,6 +421170,7 @@ components:
           $ref: '#/components/schemas/cc_SSHPublicKey'
       required:
         - public_key
+      x-auditable: false
     cc_V4BaseErrorResponse:
       type: object
       properties:
@@ -421207,11 +421233,13 @@ components:
         enabled:
           type: boolean
           default: true
+          x-auditable: true
         port:
           type: integer
           default: 22
           maximum: 65535
           minimum: 1
+          x-auditable: true
     client-side-security_api-get-response-collection:
       type: object
       allOf:
