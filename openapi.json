@@ -202727,7 +202727,8 @@
             "schema": {
               "type": "integer",
               "format": "int64"
-            }
+            },
+            "x-fern-parameter-name": "dataset-version"
           }
         ],
         "requestBody": {
@@ -202824,7 +202825,8 @@
             "schema": {
               "type": "integer",
               "format": "int64"
-            }
+            },
+            "x-fern-parameter-name": "dataset-version"
           }
         ],
         "requestBody": {
@@ -202924,7 +202926,8 @@
             "schema": {
               "type": "integer",
               "format": "int64"
-            }
+            },
+            "x-fern-parameter-name": "dataset-version"
           },
           {
             "name": "entry_id",
@@ -376162,8 +376165,7 @@
         ],
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "zero-trust.risk-scoring.behaviours",
-        "x-fern-sdk-method-name": "get",
-        "x-forge-hidden": true
+        "x-fern-sdk-method-name": "get"
       },
       "put": {
         "operationId": "dlp-risk-score-behaviors-put",
@@ -376240,8 +376242,7 @@
         ],
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "zero-trust.risk-scoring.behaviours",
-        "x-fern-sdk-method-name": "update",
-        "x-forge-hidden": true
+        "x-fern-sdk-method-name": "update"
       }
     },
     "/accounts/{account_id}/zt_risk_scoring/integrations": {
@@ -376309,8 +376310,7 @@
         ],
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "zero-trust.risk-scoring.integrations",
-        "x-fern-sdk-method-name": "list",
-        "x-forge-hidden": true
+        "x-fern-sdk-method-name": "list"
       },
       "post": {
         "operationId": "dlp-zt-risk-score-integration-create",
@@ -376385,8 +376385,7 @@
         ],
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "zero-trust.risk-scoring.integrations",
-        "x-fern-sdk-method-name": "create",
-        "x-forge-hidden": true
+        "x-fern-sdk-method-name": "create"
       }
     },
     "/accounts/{account_id}/zt_risk_scoring/integrations/reference_id/{reference_id}": {
@@ -376462,8 +376461,7 @@
         ],
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "zero-trust.risk-scoring.integrations.references",
-        "x-fern-sdk-method-name": "get",
-        "x-forge-hidden": true
+        "x-fern-sdk-method-name": "get"
       }
     },
     "/accounts/{account_id}/zt_risk_scoring/integrations/{integration_id}": {
@@ -376539,8 +376537,7 @@
         ],
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "zero-trust.risk-scoring.integrations",
-        "x-fern-sdk-method-name": "delete",
-        "x-forge-hidden": true
+        "x-fern-sdk-method-name": "delete"
       },
       "get": {
         "operationId": "dlp-zt-risk-score-integration-get",
@@ -376615,8 +376612,7 @@
         ],
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "zero-trust.risk-scoring.integrations",
-        "x-fern-sdk-method-name": "get",
-        "x-forge-hidden": true
+        "x-fern-sdk-method-name": "get"
       },
       "put": {
         "operationId": "dlp-zt-risk-score-integration-update",
@@ -376700,8 +376696,7 @@
         ],
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "zero-trust.risk-scoring.integrations",
-        "x-fern-sdk-method-name": "update",
-        "x-forge-hidden": true
+        "x-fern-sdk-method-name": "update"
       }
     },
     "/accounts/{account_id}/zt_risk_scoring/summary": {
@@ -376768,8 +376763,7 @@
         ],
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "zero-trust.risk-scoring.summary",
-        "x-fern-sdk-method-name": "get",
-        "x-forge-hidden": true
+        "x-fern-sdk-method-name": "get"
       }
     },
     "/accounts/{account_id}/zt_risk_scoring/{user_id}": {
@@ -376845,8 +376839,7 @@
         ],
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "zero-trust.risk-scoring",
-        "x-fern-sdk-method-name": "get",
-        "x-forge-hidden": true
+        "x-fern-sdk-method-name": "get"
       }
     },
     "/accounts/{account_id}/zt_risk_scoring/{user_id}/reset": {
@@ -376923,7 +376916,6 @@
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "zero-trust.risk-scoring",
         "x-fern-sdk-method-name": "reset",
-        "x-forge-hidden": true,
         "x-forge-require-confirmation": "This operation wipes risk-scoring history."
       }
     },
@@ -635492,34 +635484,63 @@
       "dlp_EntryUpdate": {
         "allOf": [
           {
-            "$ref": "#/components/schemas/dlp_EntryUpdateType"
-          },
-          {
-            "properties": {
-              "enabled": {
-                "type": "boolean"
-              }
-            },
-            "required": [
-              "enabled"
-            ],
-            "type": "object"
-          }
-        ]
-      },
-      "dlp_EntryUpdateType": {
-        "oneOf": [
-          {
-            "allOf": [
+            "oneOf": [
               {
-                "$ref": "#/components/schemas/dlp_CustomEntryUpdateType"
+                "properties": {
+                  "description": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "pattern": {
+                    "$ref": "#/components/schemas/dlp_Pattern"
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "custom"
+                    ]
+                  },
+                  "validator_ids": {
+                    "description": "Validators this entry should reference, by id, at most 10. Replaces the current set.\n\nOptional, unlike the rest of this body: omitting it leaves the current attachments alone, so a\nclient that predates validators cannot detach them by accident. Send `[]` to detach.",
+                    "type": "array",
+                    "items": {
+                      "format": "uuid",
+                      "type": "string"
+                    },
+                    "x-stainless-collection-type": "set",
+                    "x-stainless-terraform-configurability": "computed_optional"
+                  }
+                },
+                "required": [
+                  "name",
+                  "pattern",
+                  "type"
+                ],
+                "type": "object"
               },
               {
                 "properties": {
                   "type": {
                     "type": "string",
                     "enum": [
-                      "custom"
+                      "predefined"
+                    ]
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              },
+              {
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "integration"
                     ]
                   }
                 },
@@ -635532,29 +635553,12 @@
           },
           {
             "properties": {
-              "type": {
-                "type": "string",
-                "enum": [
-                  "predefined"
-                ]
+              "enabled": {
+                "type": "boolean"
               }
             },
             "required": [
-              "type"
-            ],
-            "type": "object"
-          },
-          {
-            "properties": {
-              "type": {
-                "type": "string",
-                "enum": [
-                  "integration"
-                ]
-              }
-            },
-            "required": [
-              "type"
+              "enabled"
             ],
             "type": "object"
           }
