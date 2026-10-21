@@ -136120,6 +136120,7 @@ paths:
           schema:
             type: integer
             format: int64
+          x-fern-parameter-name: dataset-version
       requestBody:
         description: Dataset. For custom wordlists this contains UTF-8 patterns separated by newline characters.
         required: true
@@ -136183,6 +136184,7 @@ paths:
           schema:
             type: integer
             format: int64
+          x-fern-parameter-name: dataset-version
       requestBody:
         description: array of new columns to create for this dataset version.
         required: true
@@ -136247,6 +136249,7 @@ paths:
           schema:
             type: integer
             format: int64
+          x-fern-parameter-name: dataset-version
         - name: entry_id
           in: path
           required: true
@@ -249448,7 +249451,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: zero-trust.risk-scoring
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
   /accounts/{account_id}/zt_risk_scoring/{user_id}/reset:
     post:
       operationId: dlp-risk-score-reset-post
@@ -249495,7 +249497,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: zero-trust.risk-scoring
       x-fern-sdk-method-name: reset
-      x-forge-hidden: true
       x-forge-require-confirmation: This operation wipes risk-scoring history.
   /accounts/{account_id}/zt_risk_scoring/behaviors:
     get:
@@ -249538,7 +249539,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: zero-trust.risk-scoring.behaviours
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
     put:
       operationId: dlp-risk-score-behaviors-put
       summary: Update configuration for risk behaviors
@@ -249586,7 +249586,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: zero-trust.risk-scoring.behaviours
       x-fern-sdk-method-name: update
-      x-forge-hidden: true
   /accounts/{account_id}/zt_risk_scoring/integrations:
     get:
       operationId: dlp-zt-risk-score-integration-list
@@ -249628,7 +249627,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: zero-trust.risk-scoring.integrations
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
     post:
       operationId: dlp-zt-risk-score-integration-create
       summary: Create new risk score integration.
@@ -249674,7 +249672,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: zero-trust.risk-scoring.integrations
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
   /accounts/{account_id}/zt_risk_scoring/integrations/{integration_id}:
     delete:
       operationId: dlp-zt-risk-score-integration-delete
@@ -249721,7 +249718,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: zero-trust.risk-scoring.integrations
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
     get:
       operationId: dlp-zt-risk-score-integration-get
       summary: Get risk score integration by id.
@@ -249768,7 +249764,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: zero-trust.risk-scoring.integrations
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
     put:
       operationId: dlp-zt-risk-score-integration-update
       summary: Update a risk score integration.
@@ -249820,7 +249815,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: zero-trust.risk-scoring.integrations
       x-fern-sdk-method-name: update
-      x-forge-hidden: true
   /accounts/{account_id}/zt_risk_scoring/integrations/reference_id/{reference_id}:
     get:
       operationId: dlp-zt-risk-score-integration-get-by-reference-id
@@ -249867,7 +249861,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: zero-trust.risk-scoring.integrations.references
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
   /accounts/{account_id}/zt_risk_scoring/summary:
     get:
       operationId: dlp-risk-score-summary-get
@@ -249908,7 +249901,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: zero-trust.risk-scoring.summary
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
   /accounts/{account_tag}/analytics/sql:
     get:
       operationId: sql-api-query-get-account-scoped
@@ -433236,40 +433228,57 @@ components:
         - word_list
     dlp_EntryUpdate:
       allOf:
-        - $ref: '#/components/schemas/dlp_EntryUpdateType'
+        - oneOf:
+            - properties:
+                description:
+                  type: string
+                  nullable: true
+                name:
+                  type: string
+                pattern:
+                  $ref: '#/components/schemas/dlp_Pattern'
+                type:
+                  type: string
+                  enum:
+                    - custom
+                validator_ids:
+                  description: |-
+                    Validators this entry should reference, by id, at most 10. Replaces the current set.
+
+                    Optional, unlike the rest of this body: omitting it leaves the current attachments alone, so a
+                    client that predates validators cannot detach them by accident. Send `[]` to detach.
+                  type: array
+                  items:
+                    format: uuid
+                    type: string
+                  x-stainless-collection-type: set
+                  x-stainless-terraform-configurability: computed_optional
+              required:
+                - name
+                - pattern
+                - type
+              type: object
+            - properties:
+                type:
+                  type: string
+                  enum:
+                    - predefined
+              required:
+                - type
+              type: object
+            - properties:
+                type:
+                  type: string
+                  enum:
+                    - integration
+              required:
+                - type
+              type: object
         - properties:
             enabled:
               type: boolean
           required:
             - enabled
-          type: object
-    dlp_EntryUpdateType:
-      oneOf:
-        - allOf:
-            - $ref: '#/components/schemas/dlp_CustomEntryUpdateType'
-            - properties:
-                type:
-                  type: string
-                  enum:
-                    - custom
-              required:
-                - type
-              type: object
-        - properties:
-            type:
-              type: string
-              enum:
-                - predefined
-          required:
-            - type
-          type: object
-        - properties:
-            type:
-              type: string
-              enum:
-                - integration
-          required:
-            - type
           type: object
     dlp_EntryWithSharedProfiles:
       allOf:
