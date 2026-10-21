@@ -617177,7 +617177,8 @@
       },
       "cc_ApplicationID": {
         "description": "An Application ID represents an identifier of an application.",
-        "type": "string"
+        "type": "string",
+        "x-auditable": true
       },
       "cc_ApplicationJurisdiction": {
         "description": "Restricts placement to datacenters in the selected jurisdiction. Choose \"eu\", \"fedramp\", or \"us\". When combined with regions, EU supports EEUR and WEUR while FedRAMP and US support ENAM and WNAM.",
@@ -617185,7 +617186,8 @@
       },
       "cc_ApplicationName": {
         "description": "The application name.",
-        "type": "string"
+        "type": "string",
+        "x-auditable": true
       },
       "cc_ApplicationObservability": {
         "description": "Settings for application observability such as logging. Supported fields depend\non the application's scheduling policy. Durable Object-managed applications\naccept only `logs.enabled`.\n",
@@ -617618,7 +617620,8 @@
           "registry_host",
           "username",
           "password"
-        ]
+        ],
+        "x-auditable": false
       },
       "cc_ContainersApplicationResponse": {
         "description": "The public Containers API returns an application.",
@@ -617657,13 +617660,15 @@
             "enum": [
               "full_auto",
               "full_manual"
-            ]
+            ],
+            "x-auditable": true
           },
           "percentage": {
             "description": "Initial target version percentage (0-100). Version sync actively replaces instances to match.\nRequired when strategy is \"new_instances\" and kind is \"full_manual\". When strategy is \"new_instances\" and kind is \"full_auto\", omitted percentage starts at 10% or the smallest percentage that targets at least one instance. Unused for \"rolling\".\n",
             "type": "integer",
             "maximum": 100,
-            "minimum": 0
+            "minimum": 0,
+            "x-auditable": true
           },
           "step_percentage": {
             "description": "Percentage of rollout to increase in each step when \"steps\" is absent. Applicable values: 5, 10, 20, 25, 50, 100.\nThese create rollouts with 20, 10, 5, 4, 2, 1 steps respectively.\nOnly valid for \"rolling\" strategy.\n",
@@ -617675,7 +617680,8 @@
               25,
               50,
               100
-            ]
+            ],
+            "x-auditable": true
           },
           "steps": {
             "description": "Steps defining the rollout process, used when \"step_percentage\" is absent.\nSpecify only one of \"step_percentage\" or \"steps\" when creating a rollout.\n\"steps\" allow granular control over each step.\nOnly valid for \"rolling\" strategy.\n",
@@ -617690,7 +617696,8 @@
             "enum": [
               "rolling",
               "new_instances"
-            ]
+            ],
+            "x-auditable": true
           },
           "target_configuration": {
             "$ref": "#/components/schemas/cc_ModifyUserDeploymentConfiguration"
@@ -617727,13 +617734,19 @@
           },
           "name": {
             "description": "The name for this application.",
-            "type": "string"
+            "type": "string",
+            "x-auditable": true
           },
           "observability": {
             "$ref": "#/components/schemas/cc_DurableObjectApplicationObservability"
           },
           "scheduling_policy": {
-            "$ref": "#/components/schemas/cc_DurableObjectApplicationSchedulingPolicy"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/cc_DurableObjectApplicationSchedulingPolicy"
+              }
+            ],
+            "x-auditable": true
           }
         },
         "additionalProperties": false,
@@ -617753,14 +617766,16 @@
           "domain": {
             "description": "Hostname of the private registry, without a scheme or image path. Supported\nhostnames are `docker.io`, AWS ECR hostnames, and Google Artifact Registry\n`*-docker.pkg.dev` hostnames.\n",
             "type": "string",
-            "example": "docker.io"
+            "example": "docker.io",
+            "x-auditable": true
           },
           "is_public": {
             "description": "Omit this field or set it to `false`. Public Docker Hub images do not require\nregistry configuration and cannot be added with this endpoint.\n",
             "type": "boolean",
             "enum": [
               false
-            ]
+            ],
+            "x-auditable": true
           },
           "kind": {
             "description": "Registry provider. This must match `domain`: `DockerHub` for `docker.io`,\n`ECR` for AWS ECR, or `GAR` for Google Artifact Registry.\n",
@@ -617803,16 +617818,19 @@
           "instances": {
             "description": "The initial number of deployments to create.",
             "type": "integer",
-            "minimum": 0
+            "minimum": 0,
+            "x-auditable": true
           },
           "max_instances": {
             "description": "Sets the maximum number of instances that the application can run.",
             "type": "integer",
-            "minimum": 0
+            "minimum": 0,
+            "x-auditable": true
           },
           "name": {
             "description": "The name for this application.",
-            "type": "string"
+            "type": "string",
+            "x-auditable": true
           },
           "observability": {
             "description": "Top-level observability settings for the application.\nThis field is mutually exclusive with configuration.observability.\n",
@@ -617826,7 +617844,12 @@
             "$ref": "#/components/schemas/cc_ApplicationRolloutActiveGracePeriod"
           },
           "scheduling_policy": {
-            "$ref": "#/components/schemas/cc_ScheduledApplicationSchedulingPolicy"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/cc_ScheduledApplicationSchedulingPolicy"
+              }
+            ],
+            "x-auditable": true
           }
         },
         "additionalProperties": false,
@@ -617855,7 +617878,12 @@
         "type": "object",
         "properties": {
           "domain": {
-            "$ref": "#/components/schemas/cc_Domain"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/cc_Domain"
+              }
+            ],
+            "x-auditable": true
           }
         },
         "required": [
@@ -617883,7 +617911,8 @@
         "required": [
           "public_credential",
           "private_credential"
-        ]
+        ],
+        "x-auditable": false
       },
       "cc_ContainersListApplications": {
         "description": "The public Containers API returns a list of applications.",
@@ -617942,7 +617971,8 @@
           "max_instances": {
             "description": "Maximum number of instances that an autoscaling application can run.",
             "type": "integer",
-            "minimum": 0
+            "minimum": 0,
+            "x-auditable": true
           },
           "observability": {
             "description": "Top-level application observability settings. Scheduler-backed applications\nhot-reload these settings across existing instances. An existing Durable\nObject-managed application accepts only `logs.enabled` and publishes these settings\nto runtime metadata without creating deployments or rollouts.\n",
@@ -618226,7 +618256,8 @@
       },
       "cc_EnvironmentVariableValue": {
         "description": "An environment variable value.",
-        "type": "string"
+        "type": "string",
+        "x-auditable": false
       },
       "cc_EventName": {
         "description": "Name of the event that describes the kind event that happened.\n  - SchedulerPlaced: It's the first event that creates a container placement. It happens when the Containers runtime was able to retrieve deployment resources and start verifying everything is correct.\n  - NetworkingIPAssigned: It's sent when the Containers runtime maps the IP to the container.\n  - VMStarted: It's sent when the Containers runtime starts the VM. The container might remain unhealthy at this point.\n  - ImagePulled: It's sent when the Containers runtime pulls the image successfully.\n  - ImagePullError: It's sent when the Containers runtime is having issues pulling the image. The message and details have more information on what happened for debugging.\n  - VMFailedToStart: It's sent when the Containers runtime was unable to boot the VM.\n  - VMStopping: It's sent when the scheduler is stopping the VM.\n  - VMStopped: It's sent when the VM finally exits.\n  - VMFailed: It's sent when the scheduling of the VM failed in the current location.\n  - RuntimeStartFailed: It's sent when the runtime hits an internal error.\n  - SSHStarted: It's sent when the container gains network connectivity and opens the SSH port. Containers only send this event when SSH keys exist.\n  - CheckUpdate: Sent when the status of a health or readiness check changes. This may also affect the health status of the placement.\n  - DurableObjectConnected: Sent when a durable object instance connects and gains control of the deployment.\n    This event is only sent for durable object deployments. It is sent after VMStarted.\n  - ContainerStarted: It's sent when the container starts running.\n",
@@ -618312,7 +618343,8 @@
       },
       "cc_InstanceID": {
         "description": "An instance ID represents an identifier of an instance configuration that maintains an underlying placement.",
-        "type": "string"
+        "type": "string",
+        "x-auditable": true
       },
       "cc_InstanceType": {
         "description": "The instance type configures vCPU, memory, and disk.\n\n- \"lite\": 1/16 vCPU, 256 MiB memory, 2 GB disk\n- \"basic\": 1/4 vCPU, 1 GiB memory, 4 GB disk\n- \"standard-1\": 1/2 vCPU, 4 GiB memory, 8 GB disk\n- \"standard-2\": 1 vCPU, 6 GiB memory, 12 GB disk\n- \"standard-3\": 2 vCPU, 8 GiB memory, 16 GB disk\n- \"standard-4\": 4 vCPU, 12 GiB memory, 20 GB disk\n",
@@ -618409,7 +618441,8 @@
         "properties": {
           "enabled": {
             "type": "boolean",
-            "default": false
+            "default": false,
+            "x-auditable": true
           }
         }
       },
@@ -618471,7 +618504,8 @@
       },
       "cc_RolloutID": {
         "description": "An identifier for a specific rollout within an application.",
-        "type": "string"
+        "type": "string",
+        "x-auditable": true
       },
       "cc_RolloutStep": {
         "description": "Steps within the rollout process.",
@@ -618667,7 +618701,8 @@
         },
         "required": [
           "public_key"
-        ]
+        ],
+        "x-auditable": false
       },
       "cc_V4BaseErrorResponse": {
         "type": "object",
@@ -618758,13 +618793,15 @@
         "properties": {
           "enabled": {
             "type": "boolean",
-            "default": true
+            "default": true,
+            "x-auditable": true
           },
           "port": {
             "type": "integer",
             "default": 22,
             "maximum": 65535,
-            "minimum": 1
+            "minimum": 1,
+            "x-auditable": true
           }
         }
       },
