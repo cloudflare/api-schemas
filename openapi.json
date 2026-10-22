@@ -379492,33 +379492,6 @@
         "x-fern-sdk-method-name": "datasets"
       }
     },
-    "/api/v4/health": {
-      "get": {
-        "operationId": "monolithHealthCheck",
-        "summary": "API health check",
-        "description": "Returns the operational health status of the Cloudflare API monolith.\nThis is an internal infrastructure health check endpoint and is not\nintended for customer use. It is permanently exempt from SDK and public\ndocs generation (see x-fern-ignore). Ref: APIOPS-12957.\n",
-        "responses": {
-          "200": {
-            "description": "The API is healthy.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/monolith_health_response"
-                }
-              }
-            }
-          }
-        },
-        "security": [],
-        "tags": [
-          "Health"
-        ],
-        "x-fern-availability": "generally-available",
-        "x-fern-ignore": true,
-        "x-fern-sdk-group-name": "health",
-        "x-fern-sdk-method-name": "check"
-      }
-    },
     "/billing/address-validation": {
       "post": {
         "operationId": "billing-validate-address",
@@ -685264,63 +685237,6 @@
         "example": "9f1839b6152d298aca64c4e906b6d074",
         "pattern": "^[0-9a-f]{32}$",
         "x-auditable": true
-      },
-      "monolith_health_response": {
-        "type": "object",
-        "properties": {
-          "errors": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/monolith_message"
-            }
-          },
-          "messages": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/monolith_message"
-            }
-          },
-          "result": {
-            "$ref": "#/components/schemas/monolith_health_result"
-          },
-          "success": {
-            "type": "boolean"
-          }
-        },
-        "required": [
-          "result",
-          "success",
-          "errors",
-          "messages"
-        ]
-      },
-      "monolith_health_result": {
-        "type": "object",
-        "properties": {
-          "healthy": {
-            "description": "Whether the API monolith is healthy.",
-            "type": "boolean"
-          }
-        },
-        "required": [
-          "healthy"
-        ]
-      },
-      "monolith_message": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "message": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "code",
-          "message"
-        ]
       },
       "moq_account_identifier": {
         "description": "Cloudflare account identifier.",
