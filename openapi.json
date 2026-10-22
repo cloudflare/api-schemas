@@ -20439,7 +20439,8 @@
                             "type": "object"
                           }
                         }
-                      }
+                      },
+                      "type": "object"
                     }
                   ]
                 }
@@ -20463,11 +20464,11 @@
         },
         "security": [
           {
-            "api_email": [],
-            "api_key": []
+            "api_token": []
           },
           {
-            "api_token": []
+            "api_email": [],
+            "api_key": []
           }
         ],
         "tags": [
@@ -20478,9 +20479,8 @@
           "DNS Write"
         ],
         "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "addressing.regional_hostnames.regions",
-        "x-fern-sdk-method-name": "list",
-        "x-forge-hidden": true
+        "x-fern-sdk-group-name": "addressing.regional-hostnames.regions",
+        "x-fern-sdk-method-name": "list"
       }
     },
     "/accounts/{account_id}/addressing/services": {
@@ -209140,6 +209140,7 @@
       "get": {
         "operationId": "publicListPrefixBindings",
         "summary": "List DLS prefix bindings for an account",
+        "description": "List the BYOIP prefix bindings configured for an account.",
         "parameters": [
           {
             "name": "account_id",
@@ -209232,14 +209233,18 @@
         "tags": [
           "Prefix Bindings"
         ],
+        "x-api-token-group": [
+          "DLS: Read",
+          "DLS: Write"
+        ],
         "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "dls.regional_services.prefix_bindings",
-        "x-fern-sdk-method-name": "list",
-        "x-forge-hidden": true
+        "x-fern-sdk-group-name": "dls.regional-services.prefix-bindings",
+        "x-fern-sdk-method-name": "list"
       },
       "post": {
         "operationId": "publicCreatePrefixBinding",
         "summary": "Create a DLS prefix binding",
+        "description": "Bind a CIDR from a BYOIP prefix to a region.\n\nThis requires the **IP Prefixes Write** permission in addition to **DLS Write**, because the binding is created against a BYOIP prefix in Addressing.",
         "parameters": [
           {
             "name": "account_id",
@@ -209334,16 +209339,20 @@
         "tags": [
           "Prefix Bindings"
         ],
+        "x-api-token-group": [
+          "DLS: Write",
+          "IP Prefixes: Write"
+        ],
         "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "dls.regional_services.prefix_bindings",
-        "x-fern-sdk-method-name": "create",
-        "x-forge-hidden": true
+        "x-fern-sdk-group-name": "dls.regional-services.prefix-bindings",
+        "x-fern-sdk-method-name": "create"
       }
     },
     "/accounts/{account_id}/dls/regional_services/prefix_bindings/{binding_id}": {
       "delete": {
         "operationId": "publicDeletePrefixBinding",
         "summary": "Delete a DLS prefix binding",
+        "description": "Delete a BYOIP prefix binding.\n\nLike creating a binding, this requires **IP Prefixes Write** in addition to **DLS Write**.",
         "parameters": [
           {
             "name": "account_id",
@@ -209428,14 +209437,18 @@
         "tags": [
           "Prefix Bindings"
         ],
+        "x-api-token-group": [
+          "DLS: Write",
+          "IP Prefixes: Write"
+        ],
         "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "dls.regional_services.prefix_bindings",
-        "x-fern-sdk-method-name": "delete",
-        "x-forge-hidden": true
+        "x-fern-sdk-group-name": "dls.regional-services.prefix-bindings",
+        "x-fern-sdk-method-name": "delete"
       },
       "get": {
         "operationId": "publicGetPrefixBinding",
         "summary": "Get a DLS prefix binding",
+        "description": "Retrieve a single BYOIP prefix binding by ID.",
         "parameters": [
           {
             "name": "account_id",
@@ -209520,14 +209533,18 @@
         "tags": [
           "Prefix Bindings"
         ],
+        "x-api-token-group": [
+          "DLS: Read",
+          "DLS: Write"
+        ],
         "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "dls.regional_services.prefix_bindings",
-        "x-fern-sdk-method-name": "get",
-        "x-forge-hidden": true
+        "x-fern-sdk-group-name": "dls.regional-services.prefix-bindings",
+        "x-fern-sdk-method-name": "get"
       },
       "patch": {
         "operationId": "publicPatchPrefixBinding",
         "summary": "Update a DLS prefix binding",
+        "description": "Update the region of an existing BYOIP prefix binding.\n\nLike creating a binding, this requires **IP Prefixes Write** in addition to **DLS Write**.",
         "parameters": [
           {
             "name": "account_id",
@@ -209632,16 +209649,20 @@
         "tags": [
           "Prefix Bindings"
         ],
+        "x-api-token-group": [
+          "DLS: Write",
+          "IP Prefixes: Write"
+        ],
         "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "dls.regional_services.prefix_bindings",
-        "x-fern-sdk-method-name": "edit",
-        "x-forge-hidden": true
+        "x-fern-sdk-group-name": "dls.regional-services.prefix-bindings",
+        "x-fern-sdk-method-name": "edit"
       }
     },
     "/accounts/{account_id}/dls/regions": {
       "get": {
         "operationId": "publicListRegions",
         "summary": "List DLS regions for an account",
+        "description": "List the DLS regions (managed and custom) available to an account.",
         "parameters": [
           {
             "name": "account_id",
@@ -209746,16 +209767,20 @@
         "tags": [
           "Regions"
         ],
+        "x-api-token-group": [
+          "DLS: Read",
+          "DLS: Write"
+        ],
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "dls.regions",
-        "x-fern-sdk-method-name": "list",
-        "x-forge-hidden": true
+        "x-fern-sdk-method-name": "list"
       }
     },
     "/accounts/{account_id}/dls/regions/{region_id}": {
       "get": {
         "operationId": "publicGetRegion",
         "summary": "Get a DLS region",
+        "description": "Retrieve a single DLS region (managed or custom) by ID or region key.",
         "parameters": [
           {
             "name": "account_id",
@@ -209841,10 +209866,13 @@
         "tags": [
           "Regions"
         ],
+        "x-api-token-group": [
+          "DLS: Read",
+          "DLS: Write"
+        ],
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "dls.regions",
-        "x-fern-sdk-method-name": "get",
-        "x-forge-hidden": true
+        "x-fern-sdk-method-name": "get"
       }
     },
     "/accounts/{account_id}/dns_firewall": {
@@ -524188,7 +524216,8 @@
                             "$ref": "#/components/schemas/dls_regional_hostname_response"
                           }
                         }
-                      }
+                      },
+                      "type": "object"
                     }
                   ]
                 }
@@ -524212,11 +524241,11 @@
         },
         "security": [
           {
-            "api_email": [],
-            "api_key": []
+            "api_token": []
           },
           {
-            "api_token": []
+            "api_email": [],
+            "api_key": []
           }
         ],
         "tags": [
@@ -524227,9 +524256,8 @@
           "DNS Write"
         ],
         "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "addressing.regional_hostnames",
-        "x-fern-sdk-method-name": "list",
-        "x-forge-hidden": true
+        "x-fern-sdk-group-name": "addressing.regional-hostnames",
+        "x-fern-sdk-method-name": "list"
       },
       "post": {
         "operationId": "dls-zone-regional-hostnames-create",
@@ -524304,11 +524332,11 @@
         },
         "security": [
           {
-            "api_email": [],
-            "api_key": []
+            "api_token": []
           },
           {
-            "api_token": []
+            "api_email": [],
+            "api_key": []
           }
         ],
         "tags": [
@@ -524318,9 +524346,8 @@
           "DNS Write"
         ],
         "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "addressing.regional_hostnames",
-        "x-fern-sdk-method-name": "create",
-        "x-forge-hidden": true
+        "x-fern-sdk-group-name": "addressing.regional-hostnames",
+        "x-fern-sdk-method-name": "create"
       }
     },
     "/zones/{zone_id}/addressing/regional_hostnames/{hostname}": {
@@ -524368,11 +524395,11 @@
         },
         "security": [
           {
-            "api_email": [],
-            "api_key": []
+            "api_token": []
           },
           {
-            "api_token": []
+            "api_email": [],
+            "api_key": []
           }
         ],
         "tags": [
@@ -524382,9 +524409,8 @@
           "DNS Write"
         ],
         "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "addressing.regional_hostnames",
-        "x-fern-sdk-method-name": "delete",
-        "x-forge-hidden": true
+        "x-fern-sdk-group-name": "addressing.regional-hostnames",
+        "x-fern-sdk-method-name": "delete"
       },
       "get": {
         "operationId": "dls-zone-regional-hostnames-fetch",
@@ -524438,11 +524464,11 @@
         },
         "security": [
           {
-            "api_email": [],
-            "api_key": []
+            "api_token": []
           },
           {
-            "api_token": []
+            "api_email": [],
+            "api_key": []
           }
         ],
         "tags": [
@@ -524453,9 +524479,8 @@
           "DNS Write"
         ],
         "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "addressing.regional_hostnames",
-        "x-fern-sdk-method-name": "get",
-        "x-forge-hidden": true
+        "x-fern-sdk-group-name": "addressing.regional-hostnames",
+        "x-fern-sdk-method-name": "get"
       },
       "patch": {
         "operationId": "dls-zone-regional-hostnames-patch",
@@ -524526,11 +524551,11 @@
         },
         "security": [
           {
-            "api_email": [],
-            "api_key": []
+            "api_token": []
           },
           {
-            "api_token": []
+            "api_email": [],
+            "api_key": []
           }
         ],
         "tags": [
@@ -524540,9 +524565,8 @@
           "DNS Write"
         ],
         "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "addressing.regional_hostnames",
-        "x-fern-sdk-method-name": "edit",
-        "x-forge-hidden": true
+        "x-fern-sdk-group-name": "addressing.regional-hostnames",
+        "x-fern-sdk-method-name": "edit"
       }
     },
     "/zones/{zone_id}/ai-audit/robots": {
@@ -638703,7 +638727,8 @@
             },
             "required": [
               "result"
-            ]
+            ],
+            "type": "object"
           }
         ]
       },
@@ -638805,7 +638830,8 @@
             },
             "required": [
               "result"
-            ]
+            ],
+            "type": "object"
           }
         ]
       },
@@ -639065,7 +639091,8 @@
             },
             "required": [
               "errors"
-            ]
+            ],
+            "type": "object"
           }
         ]
       },
@@ -639075,6 +639102,13 @@
           "code": {
             "type": "integer",
             "minimum": 1000
+          },
+          "error_chain": {
+            "description": "Optional upstream error context for APIv4 errors that wrap downstream service failures.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/dls_coded_message"
+            }
           },
           "message": {
             "type": "string"
@@ -639099,7 +639133,8 @@
                 },
                 "maxLength": 0
               }
-            }
+            },
+            "type": "object"
           }
         ]
       },
@@ -639167,10 +639202,12 @@
                 "$ref": "#/components/schemas/dls_timestamp"
               },
               {
-                "description": "When the regional hostname was created"
+                "description": "When the regional hostname was created",
+                "type": "string"
               },
               {
-                "example": "2014-01-01T05:20:00.12345Z"
+                "example": "2014-01-01T05:20:00.12345Z",
+                "type": "string"
               }
             ]
           },
