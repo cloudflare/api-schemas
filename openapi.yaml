@@ -161557,6 +161557,10 @@ paths:
       x-api-token-group:
         - Intel Write
         - Intel Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: intel.indicator-feeds.uploads
+      x-fern-sdk-method-name: get
+      x-forge-hidden: true
   /accounts/{account_id}/intel/indicator-feeds/permissions/add:
     put:
       operationId: custom-indicator-feeds-add-permission
@@ -428062,6 +428066,7 @@ components:
         - properties:
             result:
               $ref: '#/components/schemas/custom-indicator-feeds_indicator_feed_item'
+          type: object
     custom-indicator-feeds_create_provider_request:
       properties:
         account_id:
@@ -428072,6 +428077,7 @@ components:
           type: integer
           example: 12345
           x-auditable: true
+          x-fern-property-name: accountId_body
         name:
           description: The name of the provider
           type: string
@@ -428086,6 +428092,7 @@ components:
         - properties:
             result:
               $ref: '#/components/schemas/custom-indicator-feeds_create_provider_result'
+          type: object
     custom-indicator-feeds_create_provider_result:
       properties:
         account_id:
@@ -428144,6 +428151,7 @@ components:
         - properties:
             result:
               $ref: '#/components/schemas/custom-indicator-feeds_enqueue_upload'
+          type: object
     custom-indicator-feeds_feed_id:
       description: Indicator feed ID
       type: integer
@@ -428280,7 +428288,21 @@ components:
         - $ref: '#/components/schemas/custom-indicator-feeds_api-response-single'
         - properties:
             result:
-              $ref: '#/components/schemas/custom-indicator-feeds_indicator_feed_metadata'
+              example:
+                created_on: 2023-05-12T12:21:56.777653Z
+                description: user specified description 1
+                id: 1
+                is_attributable: false
+                is_downloadable: false
+                is_public: false
+                latest_upload_status: Complete
+                modified_on: 2023-06-18T03:13:34.123321Z
+                name: user_specified_name_1
+                provider_id: 1
+                provider_name: test_account
+              allOf:
+                - $ref: '#/components/schemas/custom-indicator-feeds_indicator_feed_metadata'
+          type: object
     custom-indicator-feeds_indicator_feed_response:
       allOf:
         - $ref: '#/components/schemas/custom-indicator-feeds_api-response-common'
@@ -428300,12 +428322,7 @@ components:
                   id: 2
                   modified_on: 2023-06-28T18:46:18.764425Z
                   name: user_specified_name_2
-    custom-indicator-feeds_indicator_feed_response_single:
-      allOf:
-        - $ref: '#/components/schemas/custom-indicator-feeds_api-response-single'
-        - properties:
-            result:
-              $ref: '#/components/schemas/custom-indicator-feeds_indicator_feed_item'
+          type: object
     custom-indicator-feeds_is_attributable:
       description: Whether the indicator feed can be attributed to a provider
       type: boolean
@@ -428473,6 +428490,7 @@ components:
                   is_downloadable: false
                   is_public: true
                   name: indicator_list_2
+          type: object
     custom-indicator-feeds_permissions_request:
       properties:
         account_tag:
@@ -428491,6 +428509,7 @@ components:
         - properties:
             result:
               $ref: '#/components/schemas/custom-indicator-feeds_permissions_update'
+          type: object
     custom-indicator-feeds_permissions_update:
       properties:
         success:
@@ -428551,6 +428570,7 @@ components:
         - properties:
             result:
               $ref: '#/components/schemas/custom-indicator-feeds_update_feed'
+          type: object
     custom-indicator-feeds_update_public_field_request:
       properties:
         description:
@@ -428584,6 +428604,7 @@ components:
         - properties:
             result:
               $ref: '#/components/schemas/custom-indicator-feeds_indicator_feed_item'
+          type: object
     custom-indicator-feeds_upload_status:
       type: object
       properties:
@@ -428649,6 +428670,7 @@ components:
         - properties:
             result:
               $ref: '#/components/schemas/custom-indicator-feeds_upload_status'
+          type: object
     custom-pages_api-response-collection:
       type: object
       allOf:
