@@ -13425,6 +13425,7 @@ paths:
                               type: string
                               example: Canada
                           type: object
+                    type: object
         4XX:
           description: Failure to list regions
           content:
@@ -13433,18 +13434,17 @@ paths:
                 allOf:
                   - $ref: '#/components/schemas/dls_api-response-common-failure'
       security:
+        - api_token: []
         - api_email: []
           api_key: []
-        - api_token: []
       tags:
         - DLS Regional Services
       x-api-token-group:
         - DNS Read
         - DNS Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: addressing.regional_hostnames.regions
+      x-fern-sdk-group-name: addressing.regional-hostnames.regions
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
   /accounts/{account_id}/addressing/services:
     get:
       operationId: ip-address-management-service-bindings-list-services
@@ -140103,6 +140103,7 @@ paths:
     get:
       operationId: publicListPrefixBindings
       summary: List DLS prefix bindings for an account
+      description: List the BYOIP prefix bindings configured for an account.
       parameters:
         - name: account_id
           in: path
@@ -140158,13 +140159,19 @@ paths:
           api_key: []
       tags:
         - Prefix Bindings
+      x-api-token-group:
+        - 'DLS: Read'
+        - 'DLS: Write'
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: dls.regional_services.prefix_bindings
+      x-fern-sdk-group-name: dls.regional-services.prefix-bindings
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
     post:
       operationId: publicCreatePrefixBinding
       summary: Create a DLS prefix binding
+      description: |-
+        Bind a CIDR from a BYOIP prefix to a region.
+
+        This requires the **IP Prefixes Write** permission in addition to **DLS Write**, because the binding is created against a BYOIP prefix in Addressing.
       parameters:
         - name: account_id
           in: path
@@ -140220,14 +140227,20 @@ paths:
           api_key: []
       tags:
         - Prefix Bindings
+      x-api-token-group:
+        - 'DLS: Write'
+        - 'IP Prefixes: Write'
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: dls.regional_services.prefix_bindings
+      x-fern-sdk-group-name: dls.regional-services.prefix-bindings
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
   /accounts/{account_id}/dls/regional_services/prefix_bindings/{binding_id}:
     delete:
       operationId: publicDeletePrefixBinding
       summary: Delete a DLS prefix binding
+      description: |-
+        Delete a BYOIP prefix binding.
+
+        Like creating a binding, this requires **IP Prefixes Write** in addition to **DLS Write**.
       parameters:
         - name: account_id
           in: path
@@ -140278,13 +140291,16 @@ paths:
           api_key: []
       tags:
         - Prefix Bindings
+      x-api-token-group:
+        - 'DLS: Write'
+        - 'IP Prefixes: Write'
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: dls.regional_services.prefix_bindings
+      x-fern-sdk-group-name: dls.regional-services.prefix-bindings
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
     get:
       operationId: publicGetPrefixBinding
       summary: Get a DLS prefix binding
+      description: Retrieve a single BYOIP prefix binding by ID.
       parameters:
         - name: account_id
           in: path
@@ -140335,13 +140351,19 @@ paths:
           api_key: []
       tags:
         - Prefix Bindings
+      x-api-token-group:
+        - 'DLS: Read'
+        - 'DLS: Write'
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: dls.regional_services.prefix_bindings
+      x-fern-sdk-group-name: dls.regional-services.prefix-bindings
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
     patch:
       operationId: publicPatchPrefixBinding
       summary: Update a DLS prefix binding
+      description: |-
+        Update the region of an existing BYOIP prefix binding.
+
+        Like creating a binding, this requires **IP Prefixes Write** in addition to **DLS Write**.
       parameters:
         - name: account_id
           in: path
@@ -140404,14 +140426,17 @@ paths:
           api_key: []
       tags:
         - Prefix Bindings
+      x-api-token-group:
+        - 'DLS: Write'
+        - 'IP Prefixes: Write'
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: dls.regional_services.prefix_bindings
+      x-fern-sdk-group-name: dls.regional-services.prefix-bindings
       x-fern-sdk-method-name: edit
-      x-forge-hidden: true
   /accounts/{account_id}/dls/regions:
     get:
       operationId: publicListRegions
       summary: List DLS regions for an account
+      description: List the DLS regions (managed and custom) available to an account.
       parameters:
         - name: account_id
           in: path
@@ -140475,14 +140500,17 @@ paths:
           api_key: []
       tags:
         - Regions
+      x-api-token-group:
+        - 'DLS: Read'
+        - 'DLS: Write'
       x-fern-availability: generally-available
       x-fern-sdk-group-name: dls.regions
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
   /accounts/{account_id}/dls/regions/{region_id}:
     get:
       operationId: publicGetRegion
       summary: Get a DLS region
+      description: Retrieve a single DLS region (managed or custom) by ID or region key.
       parameters:
         - name: account_id
           in: path
@@ -140534,10 +140562,12 @@ paths:
           api_key: []
       tags:
         - Regions
+      x-api-token-group:
+        - 'DLS: Read'
+        - 'DLS: Write'
       x-fern-availability: generally-available
       x-fern-sdk-group-name: dls.regions
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
   /accounts/{account_id}/dns_firewall:
     get:
       operationId: dns-firewall-list-dns-firewall-clusters
@@ -358094,6 +358124,7 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/dls_regional_hostname_response'
+                    type: object
         4XX:
           description: Failure to list hostnames
           content:
@@ -358102,18 +358133,17 @@ paths:
                 allOf:
                   - $ref: '#/components/schemas/dls_api-response-common-failure'
       security:
+        - api_token: []
         - api_email: []
           api_key: []
-        - api_token: []
       tags:
         - DLS Regional Services
       x-api-token-group:
         - DNS Read
         - DNS Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: addressing.regional_hostnames
+      x-fern-sdk-group-name: addressing.regional-hostnames
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
     post:
       operationId: dls-zone-regional-hostnames-create
       summary: Create Regional Hostname
@@ -358155,17 +358185,16 @@ paths:
                 allOf:
                   - $ref: '#/components/schemas/dls_api-response-common-failure'
       security:
+        - api_token: []
         - api_email: []
           api_key: []
-        - api_token: []
       tags:
         - DLS Regional Services
       x-api-token-group:
         - DNS Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: addressing.regional_hostnames
+      x-fern-sdk-group-name: addressing.regional-hostnames
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
   /zones/{zone_id}/addressing/regional_hostnames/{hostname}:
     delete:
       operationId: dls-zone-regional-hostnames-delete
@@ -358190,17 +358219,16 @@ paths:
                 allOf:
                   - $ref: '#/components/schemas/dls_api-response-common-failure'
       security:
+        - api_token: []
         - api_email: []
           api_key: []
-        - api_token: []
       tags:
         - DLS Regional Services
       x-api-token-group:
         - DNS Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: addressing.regional_hostnames
+      x-fern-sdk-group-name: addressing.regional-hostnames
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
     get:
       operationId: dls-zone-regional-hostnames-fetch
       summary: Fetch Regional Hostname
@@ -358228,18 +358256,17 @@ paths:
                 allOf:
                   - $ref: '#/components/schemas/dls_api-response-common-failure'
       security:
+        - api_token: []
         - api_email: []
           api_key: []
-        - api_token: []
       tags:
         - DLS Regional Services
       x-api-token-group:
         - DNS Read
         - DNS Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: addressing.regional_hostnames
+      x-fern-sdk-group-name: addressing.regional-hostnames
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
     patch:
       operationId: dls-zone-regional-hostnames-patch
       summary: Update Regional Hostname
@@ -358277,17 +358304,16 @@ paths:
                 allOf:
                   - $ref: '#/components/schemas/dls_api-response-common-failure'
       security:
+        - api_token: []
         - api_email: []
           api_key: []
-        - api_token: []
       tags:
         - DLS Regional Services
       x-api-token-group:
         - DNS Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: addressing.regional_hostnames
+      x-fern-sdk-group-name: addressing.regional-hostnames
       x-fern-sdk-method-name: edit
-      x-forge-hidden: true
   /zones/{zone_id}/ai-audit/robots:
     get:
       operationId: ai-audit-get-robots
@@ -435525,6 +435551,7 @@ components:
               $ref: '#/components/schemas/dls_RegionPublic'
           required:
             - result
+          type: object
     dls_PrefixBinding:
       type: object
       properties:
@@ -435595,6 +435622,7 @@ components:
               $ref: '#/components/schemas/dls_PrefixBinding'
           required:
             - result
+          type: object
     dls_RegionPublic:
       type: object
       properties:
@@ -435774,12 +435802,18 @@ components:
               $ref: '#/components/schemas/dls_none'
           required:
             - errors
+          type: object
     dls_coded_message:
       type: object
       properties:
         code:
           type: integer
           minimum: 1000
+        error_chain:
+          description: Optional upstream error context for APIv4 errors that wrap downstream service failures.
+          type: array
+          items:
+            $ref: '#/components/schemas/dls_coded_message'
         message:
           type: string
       required:
@@ -435794,6 +435828,7 @@ components:
               items:
                 $ref: '#/components/schemas/dls_coded_message'
               maxLength: 0
+          type: object
     dls_hostname:
       description: DNS hostname to be regionalized, must be a subdomain of the zone. Wildcards are supported for one level, e.g `*.example.com`
       type: string
@@ -435842,7 +435877,9 @@ components:
           allOf:
             - $ref: '#/components/schemas/dls_timestamp'
             - description: When the regional hostname was created
+              type: string
             - example: 2014-01-01T05:20:00.12345Z
+              type: string
         hostname:
           $ref: '#/components/schemas/dls_hostname'
         region_key:
