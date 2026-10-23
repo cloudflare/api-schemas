@@ -244255,56 +244255,12 @@ paths:
             description: Identifies the version by UUID or UUID prefix with a minimum length of eight characters. Use "latest" to select the most recently created version, which may not be deployed. Use "latest-deployed" to profile a version in the active deployment. Versions are tried in order of traffic share until one has a loaded isolate.
             type: string
       requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                actor_id:
-                  description: Identifies the exact Durable Object actor to profile. Must be specified together with namespace_id. The actor must currently be active and running the requested Worker version.
-                  type: string
-                  pattern: ^[0-9a-fA-F]{64}$
-                duration_ms:
-                  description: Profile duration in milliseconds.
-                  type: integer
-                  format: int32
-                  maximum: 50000
-                  minimum: 1000
-                namespace_id:
-                  description: Identifies the Durable Object namespace containing the actor to profile. Must be specified together with actor_id.
-                  type: string
-                profile_type:
-                  type: string
-                  default: cpu
-                  enum:
-                    - cpu
-                    - heap
-              required:
-                - duration_ms
+        $ref: '#/components/requestBodies/workers_WorkerProfileRequest'
       responses:
         '200':
-          description: Compressed pprof profile data.
-          headers:
-            Content-Disposition:
-              schema:
-                type: string
-            Content-Encoding:
-              schema:
-                type: string
-                enum:
-                  - gzip
-          content:
-            application/vnd.google.protobuf:
-              schema:
-                type: string
-                format: binary
+          $ref: '#/components/responses/workers_WorkerProfile'
         '400':
-          description: Invalid profiling request or unsupported Worker.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/workers_api-response-common-failure'
+          $ref: '#/components/responses/workers_WorkerProfileBadRequest'
         '401':
           $ref: '#/components/responses/workers_ErrorAuth'
         '403':
@@ -244341,11 +244297,7 @@ paths:
         '500':
           $ref: '#/components/responses/workers_ErrorInternalServer'
         '503':
-          description: Worker profiling is temporarily unavailable.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/workers_api-response-common-failure'
+          $ref: '#/components/responses/workers_WorkerProfileUnavailable'
       security:
         - api_token: []
         - api_email: []
@@ -529375,6 +529327,34 @@ components:
               - rules
             title: Snippet Rules
       required: true
+    workers_WorkerProfileRequest:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              actor_id:
+                description: Identifies the exact Durable Object actor to profile. Must be specified together with namespace_id. The actor must currently be active and running the requested version.
+                type: string
+                pattern: ^[0-9a-fA-F]{64}$
+              duration_ms:
+                description: Profile duration in milliseconds.
+                type: integer
+                format: int32
+                maximum: 50000
+                minimum: 1000
+              namespace_id:
+                description: Identifies the Durable Object namespace containing the actor to profile. Must be specified together with actor_id.
+                type: string
+              profile_type:
+                type: string
+                default: cpu
+                enum:
+                  - cpu
+                  - heap
+            required:
+              - duration_ms
+      required: true
     workers_namespace_upload:
       content:
         application/javascript:
@@ -531650,6 +531630,34 @@ components:
                 required:
                   - errors
                 type: object
+    workers_WorkerProfile:
+      description: Compressed pprof profile data.
+      headers:
+        Content-Disposition:
+          schema:
+            type: string
+        Content-Encoding:
+          schema:
+            type: string
+            enum:
+              - gzip
+      content:
+        application/vnd.google.protobuf:
+          schema:
+            type: string
+            format: binary
+    workers_WorkerProfileBadRequest:
+      description: Invalid profiling request or unsupported Worker.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/workers_api-response-common-failure'
+    workers_WorkerProfileUnavailable:
+      description: Worker profiling is temporarily unavailable.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/workers_api-response-common-failure'
   securitySchemes:
     api_email:
       in: header
