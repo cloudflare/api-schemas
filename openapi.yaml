@@ -495340,7 +495340,6 @@ components:
       required:
         - name
         - value
-        - scopes
     secrets-store_createStoreObject:
       properties:
         name:
@@ -495386,7 +495385,6 @@ components:
           $ref: '#/components/schemas/secrets-store_scopes'
       required:
         - name
-        - scopes
     secrets-store_identifier:
       description: Secret identifier tag.
       type: string
@@ -495394,6 +495392,25 @@ components:
       maxLength: 32
       readOnly: true
       x-auditable: true
+    secrets-store_inheritable_scopes:
+      description: The list of services that can use this secret, or null when the secret inherits its store's scopes. Set it to null in a patch to inherit again. An empty list lets no service use the secret.
+      type: array
+      items:
+        enum:
+          - workers
+          - ai_gateway
+          - dex
+          - access
+          - containers
+          - websearch
+        type: string
+      example:
+        - workers
+        - ai_gateway
+        - dex
+        - access
+        - websearch
+      nullable: true
     secrets-store_messages:
       type: array
       items:
@@ -495428,7 +495445,7 @@ components:
         comment:
           $ref: '#/components/schemas/secrets-store_comment'
         scopes:
-          $ref: '#/components/schemas/secrets-store_scopes'
+          $ref: '#/components/schemas/secrets-store_inheritable_scopes'
         value:
           $ref: '#/components/schemas/secrets-store_value'
     secrets-store_quota:
@@ -495444,7 +495461,7 @@ components:
               $ref: '#/components/schemas/secrets-store_secretsUsageObject'
           type: object
     secrets-store_scopes:
-      description: The list of services that can use this secret.
+      description: The list of services that can use this secret. Omit it on create or duplicate to inherit the store's scopes. An empty list lets no service use the secret.
       type: array
       items:
         enum:
@@ -495485,7 +495502,7 @@ components:
         name:
           $ref: '#/components/schemas/secrets-store_secret_name'
         scopes:
-          $ref: '#/components/schemas/secrets-store_scopes'
+          $ref: '#/components/schemas/secrets-store_inheritable_scopes'
         status:
           $ref: '#/components/schemas/secrets-store_SecretStatus'
         store_id:
