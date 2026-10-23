@@ -152010,7 +152010,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/flagship_Error'
+                $ref: '#/components/schemas/flagship_EvaluationError'
         '401':
           description: Unauthorized.
           content:
@@ -152028,19 +152028,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/flagship_Error'
+                $ref: '#/components/schemas/flagship_EvaluationError'
         '500':
           description: Evaluation error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/flagship_Error'
+                $ref: '#/components/schemas/flagship_EvaluationError'
         '503':
           description: Flag store temporarily unavailable.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/flagship_Error'
+                $ref: '#/components/schemas/flagship_EvaluationError'
       security:
         - api_token: []
         - api_email: []
@@ -152089,7 +152089,7 @@ paths:
               type: object
               properties:
                 context:
-                  description: Evaluation attributes keyed by name. Values may be any JSON value; the context supports up to 100 entries and 32 KB.
+                  description: Evaluation attributes keyed by name. Values may be any JSON value; the context supports up to 100 entries, nesting depth of 10, 10,000 values, and 32 KB.
                   type: object
                   default: {}
                   additionalProperties:
@@ -152115,7 +152115,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/flagship_Error'
+                $ref: '#/components/schemas/flagship_EvaluationError'
         '401':
           description: Unauthorized.
           content:
@@ -152133,19 +152133,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/flagship_Error'
+                $ref: '#/components/schemas/flagship_EvaluationError'
         '500':
           description: Evaluation error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/flagship_Error'
+                $ref: '#/components/schemas/flagship_EvaluationError'
         '503':
           description: Flag store temporarily unavailable.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/flagship_Error'
+                $ref: '#/components/schemas/flagship_EvaluationError'
       security:
         - api_token: []
         - api_email: []
@@ -152298,7 +152298,7 @@ paths:
     post:
       operationId: flagship_create_flag
       summary: Create flag
-      description: Creates a flag. Returns 409 if the key already exists. `type` is always inferred from variation values; legacy request-side values are ignored.
+      description: Creates a flag. Returns 409 if the key already exists. `type` is always inferred from variation values; legacy request-side values are ignored. Optional `metadata` can be attached at creation.
       parameters:
         - name: account_id
           in: path
@@ -152339,317 +152339,21 @@ paths:
                   maxLength: 64
                   minLength: 1
                   pattern: ^[a-zA-Z0-9_-]+$
+                metadata:
+                  description: Key-value metadata associated with the flag. `null` or an empty object clears existing metadata; omission semantics depend on the endpoint (PUT clears it, PATCH preserves it).
+                  type: object
+                  additionalProperties:
+                    anyOf:
+                      - type: boolean
+                      - type: string
+                      - type: number
+                  maxProperties: 32
+                  nullable: true
                 rules:
                   description: Targeting rules evaluated in ascending `priority`; the first matching rule wins. An empty array means the flag always serves `default_variation`.
                   type: array
                   items:
-                    additionalProperties: false
-                    properties:
-                      conditions:
-                        description: Conditions the context must satisfy for this rule to match. An empty array matches all contexts.
-                        type: array
-                        items:
-                          anyOf:
-                            - additionalProperties: false
-                              properties:
-                                attribute:
-                                  type: string
-                                  maxLength: 64
-                                  minLength: 1
-                                operator:
-                                  type: string
-                                  enum:
-                                    - equals
-                                    - not_equals
-                                    - greater_than
-                                    - less_than
-                                    - greater_than_or_equals
-                                    - less_than_or_equals
-                                    - contains
-                                    - starts_with
-                                    - ends_with
-                                    - in
-                                    - not_in
-                                    - has
-                                    - not_has
-                                value:
-                                  $ref: '#/components/schemas/flagship_JsonValue'
-                              required:
-                                - attribute
-                                - operator
-                                - value
-                              type: object
-                            - additionalProperties: false
-                              properties:
-                                clauses:
-                                  type: array
-                                  items:
-                                    anyOf:
-                                      - additionalProperties: false
-                                        properties:
-                                          attribute:
-                                            type: string
-                                            maxLength: 64
-                                            minLength: 1
-                                          operator:
-                                            type: string
-                                            enum:
-                                              - equals
-                                              - not_equals
-                                              - greater_than
-                                              - less_than
-                                              - greater_than_or_equals
-                                              - less_than_or_equals
-                                              - contains
-                                              - starts_with
-                                              - ends_with
-                                              - in
-                                              - not_in
-                                              - has
-                                              - not_has
-                                          value:
-                                            $ref: '#/components/schemas/flagship_JsonValue'
-                                        required:
-                                          - attribute
-                                          - operator
-                                          - value
-                                        type: object
-                                      - additionalProperties: false
-                                        properties:
-                                          clauses:
-                                            type: array
-                                            items:
-                                              anyOf:
-                                                - additionalProperties: false
-                                                  properties:
-                                                    attribute:
-                                                      type: string
-                                                      maxLength: 64
-                                                      minLength: 1
-                                                    operator:
-                                                      type: string
-                                                      enum:
-                                                        - equals
-                                                        - not_equals
-                                                        - greater_than
-                                                        - less_than
-                                                        - greater_than_or_equals
-                                                        - less_than_or_equals
-                                                        - contains
-                                                        - starts_with
-                                                        - ends_with
-                                                        - in
-                                                        - not_in
-                                                        - has
-                                                        - not_has
-                                                    value:
-                                                      $ref: '#/components/schemas/flagship_JsonValue'
-                                                  required:
-                                                    - attribute
-                                                    - operator
-                                                    - value
-                                                  type: object
-                                                - additionalProperties: false
-                                                  properties:
-                                                    clauses:
-                                                      type: array
-                                                      items:
-                                                        anyOf:
-                                                          - additionalProperties: false
-                                                            properties:
-                                                              attribute:
-                                                                type: string
-                                                                maxLength: 64
-                                                                minLength: 1
-                                                              operator:
-                                                                type: string
-                                                                enum:
-                                                                  - equals
-                                                                  - not_equals
-                                                                  - greater_than
-                                                                  - less_than
-                                                                  - greater_than_or_equals
-                                                                  - less_than_or_equals
-                                                                  - contains
-                                                                  - starts_with
-                                                                  - ends_with
-                                                                  - in
-                                                                  - not_in
-                                                                  - has
-                                                                  - not_has
-                                                              value:
-                                                                $ref: '#/components/schemas/flagship_JsonValue'
-                                                            required:
-                                                              - attribute
-                                                              - operator
-                                                              - value
-                                                            type: object
-                                                          - additionalProperties: false
-                                                            properties:
-                                                              clauses:
-                                                                type: array
-                                                                items:
-                                                                  anyOf:
-                                                                    - additionalProperties: false
-                                                                      properties:
-                                                                        attribute:
-                                                                          type: string
-                                                                          maxLength: 64
-                                                                          minLength: 1
-                                                                        operator:
-                                                                          type: string
-                                                                          enum:
-                                                                            - equals
-                                                                            - not_equals
-                                                                            - greater_than
-                                                                            - less_than
-                                                                            - greater_than_or_equals
-                                                                            - less_than_or_equals
-                                                                            - contains
-                                                                            - starts_with
-                                                                            - ends_with
-                                                                            - in
-                                                                            - not_in
-                                                                            - has
-                                                                            - not_has
-                                                                        value:
-                                                                          $ref: '#/components/schemas/flagship_JsonValue'
-                                                                      required:
-                                                                        - attribute
-                                                                        - operator
-                                                                        - value
-                                                                      type: object
-                                                                    - additionalProperties: false
-                                                                      properties:
-                                                                        clauses:
-                                                                          type: array
-                                                                          items:
-                                                                            anyOf:
-                                                                              - additionalProperties: false
-                                                                                properties:
-                                                                                  attribute:
-                                                                                    type: string
-                                                                                    maxLength: 64
-                                                                                    minLength: 1
-                                                                                  operator:
-                                                                                    type: string
-                                                                                    enum:
-                                                                                      - equals
-                                                                                      - not_equals
-                                                                                      - greater_than
-                                                                                      - less_than
-                                                                                      - greater_than_or_equals
-                                                                                      - less_than_or_equals
-                                                                                      - contains
-                                                                                      - starts_with
-                                                                                      - ends_with
-                                                                                      - in
-                                                                                      - not_in
-                                                                                      - has
-                                                                                      - not_has
-                                                                                  value:
-                                                                                    $ref: '#/components/schemas/flagship_JsonValue'
-                                                                                required:
-                                                                                  - attribute
-                                                                                  - operator
-                                                                                  - value
-                                                                                type: object
-                                                                              - additionalProperties: false
-                                                                                properties:
-                                                                                  clauses:
-                                                                                    type: array
-                                                                                    items:
-                                                                                      $ref: '#/components/schemas/flagship_JsonValue'
-                                                                                    minItems: 1
-                                                                                  logical_operator:
-                                                                                    type: string
-                                                                                    enum:
-                                                                                      - AND
-                                                                                      - OR
-                                                                                required:
-                                                                                  - logical_operator
-                                                                                  - clauses
-                                                                                type: object
-                                                                          minItems: 1
-                                                                        logical_operator:
-                                                                          type: string
-                                                                          enum:
-                                                                            - AND
-                                                                            - OR
-                                                                      required:
-                                                                        - logical_operator
-                                                                        - clauses
-                                                                      type: object
-                                                                minItems: 1
-                                                              logical_operator:
-                                                                type: string
-                                                                enum:
-                                                                  - AND
-                                                                  - OR
-                                                            required:
-                                                              - logical_operator
-                                                              - clauses
-                                                            type: object
-                                                      minItems: 1
-                                                    logical_operator:
-                                                      type: string
-                                                      enum:
-                                                        - AND
-                                                        - OR
-                                                  required:
-                                                    - logical_operator
-                                                    - clauses
-                                                  type: object
-                                            minItems: 1
-                                          logical_operator:
-                                            type: string
-                                            enum:
-                                              - AND
-                                              - OR
-                                        required:
-                                          - logical_operator
-                                          - clauses
-                                        type: object
-                                  minItems: 1
-                                logical_operator:
-                                  type: string
-                                  enum:
-                                    - AND
-                                    - OR
-                              required:
-                                - logical_operator
-                                - clauses
-                              type: object
-                      priority:
-                        description: "Evaluation order: the API evaluates rules with lower numbers first. Must be unique across the flag's rules."
-                        type: integer
-                        minimum: 1
-                      rollout:
-                        type: object
-                        additionalProperties: false
-                        properties:
-                          attribute:
-                            description: Context attribute used for sticky bucketing. Defaults to `targetingKey`. If absent at evaluation time, bucketing is random per request.
-                            type: string
-                            maxLength: 64
-                            minLength: 1
-                          percentage:
-                            description: Percentage of matching traffic (0–100, up to 2 decimal places) served this variation. For multi-way splits, use cumulative upper bounds across rules (e.g. 30, 70, 100).
-                            type: number
-                            maximum: 100
-                            minimum: 0
-                            multipleOf: 0.01
-                        required:
-                          - percentage
-                      serve_variation:
-                        description: Variation the API serves when this rule matches. Must be a key in `variations`.
-                        type: string
-                        minLength: 1
-                    required:
-                      - priority
-                      - conditions
-                      - serve_variation
-                    type: object
+                    $ref: '#/components/schemas/flagship_Rule'
                 type:
                   description: Deprecated compatibility field. Omit it; the API ignores this value and infers the type from the flag's variations.
                   type: string
@@ -152883,7 +152587,7 @@ paths:
     get:
       operationId: flagship_get_flag
       summary: Get flag
-      description: Returns the full flag definition including rules, variations, and audit fields.
+      description: Returns the full flag definition including rules, variations, metadata, and audit fields.
       parameters:
         - name: account_id
           in: path
@@ -152997,10 +152701,156 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: flagship.apps.flags
       x-fern-sdk-method-name: get
+    patch:
+      operationId: flagship_patch_flag
+      summary: Partially update flag
+      description: 'Applies a partial update to lightweight flag fields: `enabled`, `description`, `metadata`, and `default_variation`. Only fields present in the request body are modified; omitted fields are preserved. `metadata: null` or an empty object clears metadata. `default_variation` must exist in the current `variations`. Structural changes to `variations` and `rules` use PUT. A changelog entry is appended when the flag content actually changes.'
+      parameters:
+        - name: account_id
+          in: path
+          description: Cloudflare account ID that owns the Flagship app.
+          required: true
+          schema:
+            description: Cloudflare account ID that owns the Flagship app.
+            type: string
+        - name: app_id
+          in: path
+          description: Flagship app ID returned when the app was created.
+          required: true
+          schema:
+            description: Flagship app ID returned when the app was created.
+            type: string
+        - name: flag_key
+          in: path
+          description: Case-sensitive key identifying the flag within the app.
+          required: true
+          schema:
+            description: Case-sensitive key identifying the flag within the app.
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                default_variation:
+                  description: Variation the API serves when the flag is off, or when it's on but no rule matches the context. Must be a key in `variations`.
+                  type: string
+                  minLength: 1
+                description:
+                  description: Optional operator-facing description. It does not affect flag evaluation.
+                  type: string
+                  maxLength: 512
+                  nullable: true
+                enabled:
+                  description: When false, the flag bypasses all rules and always serves `default_variation`.
+                  type: boolean
+                metadata:
+                  description: Key-value metadata associated with the flag. `null` or an empty object clears existing metadata; omission semantics depend on the endpoint (PUT clears it, PATCH preserves it).
+                  type: object
+                  additionalProperties:
+                    anyOf:
+                      - type: boolean
+                      - type: string
+                      - type: number
+                  maxProperties: 32
+                  nullable: true
+              additionalProperties: false
+      responses:
+        '200':
+          description: Updated flag.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                      required:
+                        - message
+                      type: object
+                  messages:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                      required:
+                        - message
+                      type: object
+                  result:
+                    $ref: '#/components/schemas/flagship_Flag'
+                  success:
+                    type: boolean
+                required:
+                  - success
+                  - result
+                  - errors
+                  - messages
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/flagship_Error'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/flagship_Error'
+        '403':
+          description: Forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/flagship_Error'
+        '404':
+          description: Not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/flagship_Error'
+        '429':
+          description: Too many requests.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/flagship_Error'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/flagship_Error'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Flags
+      x-api-token-group:
+        - Flagship Write
+      x-cfPermissionsRequired:
+        enum:
+          - com.cloudflare.api.account.flagship.app.update
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: true
+        pro: true
+      x-fern-availability: beta
+      x-fern-sdk-group-name: flagship.apps.flags
+      x-fern-sdk-method-name: patch
     put:
       operationId: flagship_update_flag
       summary: Update flag
-      description: Replaces the entire flag definition. Omitted fields are dropped, not preserved — read before writing. The path key identifies the flag and cannot be renamed by changing the body `key`. Each update appends a changelog entry.
+      description: Replaces the entire flag definition. Omitted fields are cleared, not preserved — read before writing. The path key identifies the flag and cannot be renamed by changing the body `key`. A changelog entry is appended when the flag content actually changes; identical updates are no-ops.
       parameters:
         - name: account_id
           in: path
@@ -153048,317 +152898,21 @@ paths:
                   maxLength: 64
                   minLength: 1
                   pattern: ^[a-zA-Z0-9_-]+$
+                metadata:
+                  description: Key-value metadata associated with the flag. `null` or an empty object clears existing metadata; omission semantics depend on the endpoint (PUT clears it, PATCH preserves it).
+                  type: object
+                  additionalProperties:
+                    anyOf:
+                      - type: boolean
+                      - type: string
+                      - type: number
+                  maxProperties: 32
+                  nullable: true
                 rules:
                   description: Targeting rules evaluated in ascending `priority`; the first matching rule wins. An empty array means the flag always serves `default_variation`.
                   type: array
                   items:
-                    additionalProperties: false
-                    properties:
-                      conditions:
-                        description: Conditions the context must satisfy for this rule to match. An empty array matches all contexts.
-                        type: array
-                        items:
-                          anyOf:
-                            - additionalProperties: false
-                              properties:
-                                attribute:
-                                  type: string
-                                  maxLength: 64
-                                  minLength: 1
-                                operator:
-                                  type: string
-                                  enum:
-                                    - equals
-                                    - not_equals
-                                    - greater_than
-                                    - less_than
-                                    - greater_than_or_equals
-                                    - less_than_or_equals
-                                    - contains
-                                    - starts_with
-                                    - ends_with
-                                    - in
-                                    - not_in
-                                    - has
-                                    - not_has
-                                value:
-                                  $ref: '#/components/schemas/flagship_JsonValue'
-                              required:
-                                - attribute
-                                - operator
-                                - value
-                              type: object
-                            - additionalProperties: false
-                              properties:
-                                clauses:
-                                  type: array
-                                  items:
-                                    anyOf:
-                                      - additionalProperties: false
-                                        properties:
-                                          attribute:
-                                            type: string
-                                            maxLength: 64
-                                            minLength: 1
-                                          operator:
-                                            type: string
-                                            enum:
-                                              - equals
-                                              - not_equals
-                                              - greater_than
-                                              - less_than
-                                              - greater_than_or_equals
-                                              - less_than_or_equals
-                                              - contains
-                                              - starts_with
-                                              - ends_with
-                                              - in
-                                              - not_in
-                                              - has
-                                              - not_has
-                                          value:
-                                            $ref: '#/components/schemas/flagship_JsonValue'
-                                        required:
-                                          - attribute
-                                          - operator
-                                          - value
-                                        type: object
-                                      - additionalProperties: false
-                                        properties:
-                                          clauses:
-                                            type: array
-                                            items:
-                                              anyOf:
-                                                - additionalProperties: false
-                                                  properties:
-                                                    attribute:
-                                                      type: string
-                                                      maxLength: 64
-                                                      minLength: 1
-                                                    operator:
-                                                      type: string
-                                                      enum:
-                                                        - equals
-                                                        - not_equals
-                                                        - greater_than
-                                                        - less_than
-                                                        - greater_than_or_equals
-                                                        - less_than_or_equals
-                                                        - contains
-                                                        - starts_with
-                                                        - ends_with
-                                                        - in
-                                                        - not_in
-                                                        - has
-                                                        - not_has
-                                                    value:
-                                                      $ref: '#/components/schemas/flagship_JsonValue'
-                                                  required:
-                                                    - attribute
-                                                    - operator
-                                                    - value
-                                                  type: object
-                                                - additionalProperties: false
-                                                  properties:
-                                                    clauses:
-                                                      type: array
-                                                      items:
-                                                        anyOf:
-                                                          - additionalProperties: false
-                                                            properties:
-                                                              attribute:
-                                                                type: string
-                                                                maxLength: 64
-                                                                minLength: 1
-                                                              operator:
-                                                                type: string
-                                                                enum:
-                                                                  - equals
-                                                                  - not_equals
-                                                                  - greater_than
-                                                                  - less_than
-                                                                  - greater_than_or_equals
-                                                                  - less_than_or_equals
-                                                                  - contains
-                                                                  - starts_with
-                                                                  - ends_with
-                                                                  - in
-                                                                  - not_in
-                                                                  - has
-                                                                  - not_has
-                                                              value:
-                                                                $ref: '#/components/schemas/flagship_JsonValue'
-                                                            required:
-                                                              - attribute
-                                                              - operator
-                                                              - value
-                                                            type: object
-                                                          - additionalProperties: false
-                                                            properties:
-                                                              clauses:
-                                                                type: array
-                                                                items:
-                                                                  anyOf:
-                                                                    - additionalProperties: false
-                                                                      properties:
-                                                                        attribute:
-                                                                          type: string
-                                                                          maxLength: 64
-                                                                          minLength: 1
-                                                                        operator:
-                                                                          type: string
-                                                                          enum:
-                                                                            - equals
-                                                                            - not_equals
-                                                                            - greater_than
-                                                                            - less_than
-                                                                            - greater_than_or_equals
-                                                                            - less_than_or_equals
-                                                                            - contains
-                                                                            - starts_with
-                                                                            - ends_with
-                                                                            - in
-                                                                            - not_in
-                                                                            - has
-                                                                            - not_has
-                                                                        value:
-                                                                          $ref: '#/components/schemas/flagship_JsonValue'
-                                                                      required:
-                                                                        - attribute
-                                                                        - operator
-                                                                        - value
-                                                                      type: object
-                                                                    - additionalProperties: false
-                                                                      properties:
-                                                                        clauses:
-                                                                          type: array
-                                                                          items:
-                                                                            anyOf:
-                                                                              - additionalProperties: false
-                                                                                properties:
-                                                                                  attribute:
-                                                                                    type: string
-                                                                                    maxLength: 64
-                                                                                    minLength: 1
-                                                                                  operator:
-                                                                                    type: string
-                                                                                    enum:
-                                                                                      - equals
-                                                                                      - not_equals
-                                                                                      - greater_than
-                                                                                      - less_than
-                                                                                      - greater_than_or_equals
-                                                                                      - less_than_or_equals
-                                                                                      - contains
-                                                                                      - starts_with
-                                                                                      - ends_with
-                                                                                      - in
-                                                                                      - not_in
-                                                                                      - has
-                                                                                      - not_has
-                                                                                  value:
-                                                                                    $ref: '#/components/schemas/flagship_JsonValue'
-                                                                                required:
-                                                                                  - attribute
-                                                                                  - operator
-                                                                                  - value
-                                                                                type: object
-                                                                              - additionalProperties: false
-                                                                                properties:
-                                                                                  clauses:
-                                                                                    type: array
-                                                                                    items:
-                                                                                      $ref: '#/components/schemas/flagship_JsonValue'
-                                                                                    minItems: 1
-                                                                                  logical_operator:
-                                                                                    type: string
-                                                                                    enum:
-                                                                                      - AND
-                                                                                      - OR
-                                                                                required:
-                                                                                  - logical_operator
-                                                                                  - clauses
-                                                                                type: object
-                                                                          minItems: 1
-                                                                        logical_operator:
-                                                                          type: string
-                                                                          enum:
-                                                                            - AND
-                                                                            - OR
-                                                                      required:
-                                                                        - logical_operator
-                                                                        - clauses
-                                                                      type: object
-                                                                minItems: 1
-                                                              logical_operator:
-                                                                type: string
-                                                                enum:
-                                                                  - AND
-                                                                  - OR
-                                                            required:
-                                                              - logical_operator
-                                                              - clauses
-                                                            type: object
-                                                      minItems: 1
-                                                    logical_operator:
-                                                      type: string
-                                                      enum:
-                                                        - AND
-                                                        - OR
-                                                  required:
-                                                    - logical_operator
-                                                    - clauses
-                                                  type: object
-                                            minItems: 1
-                                          logical_operator:
-                                            type: string
-                                            enum:
-                                              - AND
-                                              - OR
-                                        required:
-                                          - logical_operator
-                                          - clauses
-                                        type: object
-                                  minItems: 1
-                                logical_operator:
-                                  type: string
-                                  enum:
-                                    - AND
-                                    - OR
-                              required:
-                                - logical_operator
-                                - clauses
-                              type: object
-                      priority:
-                        description: "Evaluation order: the API evaluates rules with lower numbers first. Must be unique across the flag's rules."
-                        type: integer
-                        minimum: 1
-                      rollout:
-                        type: object
-                        additionalProperties: false
-                        properties:
-                          attribute:
-                            description: Context attribute used for sticky bucketing. Defaults to `targetingKey`. If absent at evaluation time, bucketing is random per request.
-                            type: string
-                            maxLength: 64
-                            minLength: 1
-                          percentage:
-                            description: Percentage of matching traffic (0–100, up to 2 decimal places) served this variation. For multi-way splits, use cumulative upper bounds across rules (e.g. 30, 70, 100).
-                            type: number
-                            maximum: 100
-                            minimum: 0
-                            multipleOf: 0.01
-                        required:
-                          - percentage
-                      serve_variation:
-                        description: Variation the API serves when this rule matches. Must be a key in `variations`.
-                        type: string
-                        minLength: 1
-                    required:
-                      - priority
-                      - conditions
-                      - serve_variation
-                    type: object
+                    $ref: '#/components/schemas/flagship_Rule'
                 type:
                   description: Deprecated compatibility field. Omit it; the API ignores this value and infers the type from the flag's variations.
                   type: string
@@ -447846,6 +447400,36 @@ components:
         - created_at
         - updated_at
         - updated_by
+    flagship_BaseCondition:
+      type: object
+      properties:
+        attribute:
+          type: string
+          maxLength: 64
+          minLength: 1
+        operator:
+          type: string
+          enum:
+            - equals
+            - not_equals
+            - greater_than
+            - less_than
+            - greater_than_or_equals
+            - less_than_or_equals
+            - contains
+            - starts_with
+            - ends_with
+            - in
+            - not_in
+            - has
+            - not_has
+        value:
+          $ref: '#/components/schemas/flagship_JsonValue'
+      additionalProperties: false
+      required:
+        - attribute
+        - operator
+        - value
     flagship_ChangelogEntry:
       oneOf:
         - properties:
@@ -447904,6 +447488,26 @@ components:
       type: array
       items:
         $ref: '#/components/schemas/flagship_ChangelogEntry'
+    flagship_Condition:
+      anyOf:
+        - $ref: '#/components/schemas/flagship_BaseCondition'
+        - $ref: '#/components/schemas/flagship_LogicalCondition'
+    flagship_Condition1:
+      anyOf:
+        - $ref: '#/components/schemas/flagship_BaseCondition'
+        - $ref: '#/components/schemas/flagship_LogicalCondition1'
+    flagship_Condition2:
+      anyOf:
+        - $ref: '#/components/schemas/flagship_BaseCondition'
+        - $ref: '#/components/schemas/flagship_LogicalCondition2'
+    flagship_Condition3:
+      anyOf:
+        - $ref: '#/components/schemas/flagship_BaseCondition'
+        - $ref: '#/components/schemas/flagship_LogicalCondition3'
+    flagship_Condition4:
+      anyOf:
+        - $ref: '#/components/schemas/flagship_BaseCondition'
+        - $ref: '#/components/schemas/flagship_LogicalCondition4'
     flagship_DeleteAppResult:
       type: object
       properties:
@@ -447941,12 +447545,39 @@ components:
         - result
         - errors
         - messages
+    flagship_EvaluationError:
+      allOf:
+        - $ref: '#/components/schemas/flagship_Error'
+        - properties:
+            errorCode:
+              description: OpenFeature error code for the failed evaluation.
+              type: string
+              enum:
+                - PROVIDER_NOT_READY
+                - FLAG_NOT_FOUND
+                - PARSE_ERROR
+                - TYPE_MISMATCH
+                - TARGETING_KEY_MISSING
+                - INVALID_CONTEXT
+                - GENERAL
+          required:
+            - errorCode
+          type: object
     flagship_EvaluationResult:
       type: object
       properties:
         flagKey:
           description: Key of the evaluated flag.
           type: string
+        metadata:
+          description: Key-value metadata associated with the flag. Returned only when the flag has metadata.
+          type: object
+          additionalProperties:
+            anyOf:
+              - type: boolean
+              - type: string
+              - type: number
+          maxProperties: 32
         reason:
           description: Reason the evaluator selected this variation.
           type: string
@@ -447965,6 +447596,39 @@ components:
         - flagKey
         - variant
         - reason
+    flagship_EvaluationRule:
+      type: object
+      properties:
+        conditions:
+          description: Conditions the context must satisfy for this rule to match. An empty array matches all contexts.
+          type: array
+          items:
+            $ref: '#/components/schemas/flagship_Condition'
+        rollout:
+          type: object
+          additionalProperties: false
+          properties:
+            attribute:
+              description: Context attribute used for sticky bucketing. Defaults to `targetingKey`. If absent at evaluation time, bucketing is random per request.
+              type: string
+              maxLength: 64
+              minLength: 1
+            percentage:
+              description: Percentage of matching traffic (0–100, up to 2 decimal places) served this variation. For multi-way splits, use cumulative upper bounds across rules (e.g. 30, 70, 100).
+              type: number
+              maximum: 100
+              minimum: 0
+              multipleOf: 0.01
+          required:
+            - percentage
+        serve_variation:
+          description: Variation the API serves when this rule matches. Must be a key in `variations`.
+          type: string
+          minLength: 1
+      additionalProperties: false
+      required:
+        - conditions
+        - serve_variation
     flagship_Flag:
       type: object
       properties:
@@ -447986,317 +447650,20 @@ components:
           maxLength: 64
           minLength: 1
           pattern: ^[a-zA-Z0-9_-]+$
+        metadata:
+          description: Key-value metadata associated with the flag. Returned only when the flag has metadata.
+          type: object
+          additionalProperties:
+            anyOf:
+              - type: boolean
+              - type: string
+              - type: number
+          maxProperties: 32
         rules:
           description: Targeting rules evaluated in ascending `priority`; the first matching rule wins. An empty array means the flag always serves `default_variation`.
           type: array
           items:
-            additionalProperties: false
-            properties:
-              conditions:
-                description: Conditions the context must satisfy for this rule to match. An empty array matches all contexts.
-                type: array
-                items:
-                  anyOf:
-                    - additionalProperties: false
-                      properties:
-                        attribute:
-                          type: string
-                          maxLength: 64
-                          minLength: 1
-                        operator:
-                          type: string
-                          enum:
-                            - equals
-                            - not_equals
-                            - greater_than
-                            - less_than
-                            - greater_than_or_equals
-                            - less_than_or_equals
-                            - contains
-                            - starts_with
-                            - ends_with
-                            - in
-                            - not_in
-                            - has
-                            - not_has
-                        value:
-                          $ref: '#/components/schemas/flagship_JsonValue'
-                      required:
-                        - attribute
-                        - operator
-                        - value
-                      type: object
-                    - additionalProperties: false
-                      properties:
-                        clauses:
-                          type: array
-                          items:
-                            anyOf:
-                              - additionalProperties: false
-                                properties:
-                                  attribute:
-                                    type: string
-                                    maxLength: 64
-                                    minLength: 1
-                                  operator:
-                                    type: string
-                                    enum:
-                                      - equals
-                                      - not_equals
-                                      - greater_than
-                                      - less_than
-                                      - greater_than_or_equals
-                                      - less_than_or_equals
-                                      - contains
-                                      - starts_with
-                                      - ends_with
-                                      - in
-                                      - not_in
-                                      - has
-                                      - not_has
-                                  value:
-                                    $ref: '#/components/schemas/flagship_JsonValue'
-                                required:
-                                  - attribute
-                                  - operator
-                                  - value
-                                type: object
-                              - additionalProperties: false
-                                properties:
-                                  clauses:
-                                    type: array
-                                    items:
-                                      anyOf:
-                                        - additionalProperties: false
-                                          properties:
-                                            attribute:
-                                              type: string
-                                              maxLength: 64
-                                              minLength: 1
-                                            operator:
-                                              type: string
-                                              enum:
-                                                - equals
-                                                - not_equals
-                                                - greater_than
-                                                - less_than
-                                                - greater_than_or_equals
-                                                - less_than_or_equals
-                                                - contains
-                                                - starts_with
-                                                - ends_with
-                                                - in
-                                                - not_in
-                                                - has
-                                                - not_has
-                                            value:
-                                              $ref: '#/components/schemas/flagship_JsonValue'
-                                          required:
-                                            - attribute
-                                            - operator
-                                            - value
-                                          type: object
-                                        - additionalProperties: false
-                                          properties:
-                                            clauses:
-                                              type: array
-                                              items:
-                                                anyOf:
-                                                  - additionalProperties: false
-                                                    properties:
-                                                      attribute:
-                                                        type: string
-                                                        maxLength: 64
-                                                        minLength: 1
-                                                      operator:
-                                                        type: string
-                                                        enum:
-                                                          - equals
-                                                          - not_equals
-                                                          - greater_than
-                                                          - less_than
-                                                          - greater_than_or_equals
-                                                          - less_than_or_equals
-                                                          - contains
-                                                          - starts_with
-                                                          - ends_with
-                                                          - in
-                                                          - not_in
-                                                          - has
-                                                          - not_has
-                                                      value:
-                                                        $ref: '#/components/schemas/flagship_JsonValue'
-                                                    required:
-                                                      - attribute
-                                                      - operator
-                                                      - value
-                                                    type: object
-                                                  - additionalProperties: false
-                                                    properties:
-                                                      clauses:
-                                                        type: array
-                                                        items:
-                                                          anyOf:
-                                                            - additionalProperties: false
-                                                              properties:
-                                                                attribute:
-                                                                  type: string
-                                                                  maxLength: 64
-                                                                  minLength: 1
-                                                                operator:
-                                                                  type: string
-                                                                  enum:
-                                                                    - equals
-                                                                    - not_equals
-                                                                    - greater_than
-                                                                    - less_than
-                                                                    - greater_than_or_equals
-                                                                    - less_than_or_equals
-                                                                    - contains
-                                                                    - starts_with
-                                                                    - ends_with
-                                                                    - in
-                                                                    - not_in
-                                                                    - has
-                                                                    - not_has
-                                                                value:
-                                                                  $ref: '#/components/schemas/flagship_JsonValue'
-                                                              required:
-                                                                - attribute
-                                                                - operator
-                                                                - value
-                                                              type: object
-                                                            - additionalProperties: false
-                                                              properties:
-                                                                clauses:
-                                                                  type: array
-                                                                  items:
-                                                                    anyOf:
-                                                                      - additionalProperties: false
-                                                                        properties:
-                                                                          attribute:
-                                                                            type: string
-                                                                            maxLength: 64
-                                                                            minLength: 1
-                                                                          operator:
-                                                                            type: string
-                                                                            enum:
-                                                                              - equals
-                                                                              - not_equals
-                                                                              - greater_than
-                                                                              - less_than
-                                                                              - greater_than_or_equals
-                                                                              - less_than_or_equals
-                                                                              - contains
-                                                                              - starts_with
-                                                                              - ends_with
-                                                                              - in
-                                                                              - not_in
-                                                                              - has
-                                                                              - not_has
-                                                                          value:
-                                                                            $ref: '#/components/schemas/flagship_JsonValue'
-                                                                        required:
-                                                                          - attribute
-                                                                          - operator
-                                                                          - value
-                                                                        type: object
-                                                                      - additionalProperties: false
-                                                                        properties:
-                                                                          clauses:
-                                                                            type: array
-                                                                            items:
-                                                                              $ref: '#/components/schemas/flagship_JsonValue'
-                                                                            minItems: 1
-                                                                          logical_operator:
-                                                                            type: string
-                                                                            enum:
-                                                                              - AND
-                                                                              - OR
-                                                                        required:
-                                                                          - logical_operator
-                                                                          - clauses
-                                                                        type: object
-                                                                  minItems: 1
-                                                                logical_operator:
-                                                                  type: string
-                                                                  enum:
-                                                                    - AND
-                                                                    - OR
-                                                              required:
-                                                                - logical_operator
-                                                                - clauses
-                                                              type: object
-                                                        minItems: 1
-                                                      logical_operator:
-                                                        type: string
-                                                        enum:
-                                                          - AND
-                                                          - OR
-                                                    required:
-                                                      - logical_operator
-                                                      - clauses
-                                                    type: object
-                                              minItems: 1
-                                            logical_operator:
-                                              type: string
-                                              enum:
-                                                - AND
-                                                - OR
-                                          required:
-                                            - logical_operator
-                                            - clauses
-                                          type: object
-                                    minItems: 1
-                                  logical_operator:
-                                    type: string
-                                    enum:
-                                      - AND
-                                      - OR
-                                required:
-                                  - logical_operator
-                                  - clauses
-                                type: object
-                          minItems: 1
-                        logical_operator:
-                          type: string
-                          enum:
-                            - AND
-                            - OR
-                      required:
-                        - logical_operator
-                        - clauses
-                      type: object
-              priority:
-                description: "Evaluation order: the API evaluates rules with lower numbers first. Must be unique across the flag's rules."
-                type: integer
-                minimum: 1
-              rollout:
-                type: object
-                additionalProperties: false
-                properties:
-                  attribute:
-                    description: Context attribute used for sticky bucketing. Defaults to `targetingKey`. If absent at evaluation time, bucketing is random per request.
-                    type: string
-                    maxLength: 64
-                    minLength: 1
-                  percentage:
-                    description: Percentage of matching traffic (0–100, up to 2 decimal places) served this variation. For multi-way splits, use cumulative upper bounds across rules (e.g. 30, 70, 100).
-                    type: number
-                    maximum: 100
-                    minimum: 0
-                    multipleOf: 0.01
-                required:
-                  - percentage
-              serve_variation:
-                description: Variation the API serves when this rule matches. Must be a key in `variations`.
-                type: string
-                minLength: 1
-            required:
-              - priority
-              - conditions
-              - serve_variation
-            type: object
+            $ref: '#/components/schemas/flagship_Rule'
         type:
           description: Server-inferred value type shared by all of the flag's variations.
           type: string
@@ -448343,311 +447710,19 @@ components:
                 maxLength: 64
                 minLength: 1
                 pattern: ^[a-zA-Z0-9_-]+$
+              metadata:
+                description: Key-value metadata associated with the flag. Returned only when the flag has metadata.
+                type: object
+                additionalProperties:
+                  anyOf:
+                    - type: boolean
+                    - type: string
+                    - type: number
+                maxProperties: 32
               rules:
                 type: array
                 items:
-                  additionalProperties: false
-                  properties:
-                    conditions:
-                      description: Conditions the context must satisfy for this rule to match. An empty array matches all contexts.
-                      type: array
-                      items:
-                        anyOf:
-                          - additionalProperties: false
-                            properties:
-                              attribute:
-                                type: string
-                                maxLength: 64
-                                minLength: 1
-                              operator:
-                                type: string
-                                enum:
-                                  - equals
-                                  - not_equals
-                                  - greater_than
-                                  - less_than
-                                  - greater_than_or_equals
-                                  - less_than_or_equals
-                                  - contains
-                                  - starts_with
-                                  - ends_with
-                                  - in
-                                  - not_in
-                                  - has
-                                  - not_has
-                              value:
-                                $ref: '#/components/schemas/flagship_JsonValue'
-                            required:
-                              - attribute
-                              - operator
-                              - value
-                            type: object
-                          - additionalProperties: false
-                            properties:
-                              clauses:
-                                type: array
-                                items:
-                                  anyOf:
-                                    - additionalProperties: false
-                                      properties:
-                                        attribute:
-                                          type: string
-                                          maxLength: 64
-                                          minLength: 1
-                                        operator:
-                                          type: string
-                                          enum:
-                                            - equals
-                                            - not_equals
-                                            - greater_than
-                                            - less_than
-                                            - greater_than_or_equals
-                                            - less_than_or_equals
-                                            - contains
-                                            - starts_with
-                                            - ends_with
-                                            - in
-                                            - not_in
-                                            - has
-                                            - not_has
-                                        value:
-                                          $ref: '#/components/schemas/flagship_JsonValue'
-                                      required:
-                                        - attribute
-                                        - operator
-                                        - value
-                                      type: object
-                                    - additionalProperties: false
-                                      properties:
-                                        clauses:
-                                          type: array
-                                          items:
-                                            anyOf:
-                                              - additionalProperties: false
-                                                properties:
-                                                  attribute:
-                                                    type: string
-                                                    maxLength: 64
-                                                    minLength: 1
-                                                  operator:
-                                                    type: string
-                                                    enum:
-                                                      - equals
-                                                      - not_equals
-                                                      - greater_than
-                                                      - less_than
-                                                      - greater_than_or_equals
-                                                      - less_than_or_equals
-                                                      - contains
-                                                      - starts_with
-                                                      - ends_with
-                                                      - in
-                                                      - not_in
-                                                      - has
-                                                      - not_has
-                                                  value:
-                                                    $ref: '#/components/schemas/flagship_JsonValue'
-                                                required:
-                                                  - attribute
-                                                  - operator
-                                                  - value
-                                                type: object
-                                              - additionalProperties: false
-                                                properties:
-                                                  clauses:
-                                                    type: array
-                                                    items:
-                                                      anyOf:
-                                                        - additionalProperties: false
-                                                          properties:
-                                                            attribute:
-                                                              type: string
-                                                              maxLength: 64
-                                                              minLength: 1
-                                                            operator:
-                                                              type: string
-                                                              enum:
-                                                                - equals
-                                                                - not_equals
-                                                                - greater_than
-                                                                - less_than
-                                                                - greater_than_or_equals
-                                                                - less_than_or_equals
-                                                                - contains
-                                                                - starts_with
-                                                                - ends_with
-                                                                - in
-                                                                - not_in
-                                                                - has
-                                                                - not_has
-                                                            value:
-                                                              $ref: '#/components/schemas/flagship_JsonValue'
-                                                          required:
-                                                            - attribute
-                                                            - operator
-                                                            - value
-                                                          type: object
-                                                        - additionalProperties: false
-                                                          properties:
-                                                            clauses:
-                                                              type: array
-                                                              items:
-                                                                anyOf:
-                                                                  - additionalProperties: false
-                                                                    properties:
-                                                                      attribute:
-                                                                        type: string
-                                                                        maxLength: 64
-                                                                        minLength: 1
-                                                                      operator:
-                                                                        type: string
-                                                                        enum:
-                                                                          - equals
-                                                                          - not_equals
-                                                                          - greater_than
-                                                                          - less_than
-                                                                          - greater_than_or_equals
-                                                                          - less_than_or_equals
-                                                                          - contains
-                                                                          - starts_with
-                                                                          - ends_with
-                                                                          - in
-                                                                          - not_in
-                                                                          - has
-                                                                          - not_has
-                                                                      value:
-                                                                        $ref: '#/components/schemas/flagship_JsonValue'
-                                                                    required:
-                                                                      - attribute
-                                                                      - operator
-                                                                      - value
-                                                                    type: object
-                                                                  - additionalProperties: false
-                                                                    properties:
-                                                                      clauses:
-                                                                        type: array
-                                                                        items:
-                                                                          anyOf:
-                                                                            - additionalProperties: false
-                                                                              properties:
-                                                                                attribute:
-                                                                                  type: string
-                                                                                  maxLength: 64
-                                                                                  minLength: 1
-                                                                                operator:
-                                                                                  type: string
-                                                                                  enum:
-                                                                                    - equals
-                                                                                    - not_equals
-                                                                                    - greater_than
-                                                                                    - less_than
-                                                                                    - greater_than_or_equals
-                                                                                    - less_than_or_equals
-                                                                                    - contains
-                                                                                    - starts_with
-                                                                                    - ends_with
-                                                                                    - in
-                                                                                    - not_in
-                                                                                    - has
-                                                                                    - not_has
-                                                                                value:
-                                                                                  $ref: '#/components/schemas/flagship_JsonValue'
-                                                                              required:
-                                                                                - attribute
-                                                                                - operator
-                                                                                - value
-                                                                              type: object
-                                                                            - additionalProperties: false
-                                                                              properties:
-                                                                                clauses:
-                                                                                  type: array
-                                                                                  items:
-                                                                                    $ref: '#/components/schemas/flagship_JsonValue'
-                                                                                  minItems: 1
-                                                                                logical_operator:
-                                                                                  type: string
-                                                                                  enum:
-                                                                                    - AND
-                                                                                    - OR
-                                                                              required:
-                                                                                - logical_operator
-                                                                                - clauses
-                                                                              type: object
-                                                                        minItems: 1
-                                                                      logical_operator:
-                                                                        type: string
-                                                                        enum:
-                                                                          - AND
-                                                                          - OR
-                                                                    required:
-                                                                      - logical_operator
-                                                                      - clauses
-                                                                    type: object
-                                                              minItems: 1
-                                                            logical_operator:
-                                                              type: string
-                                                              enum:
-                                                                - AND
-                                                                - OR
-                                                          required:
-                                                            - logical_operator
-                                                            - clauses
-                                                          type: object
-                                                    minItems: 1
-                                                  logical_operator:
-                                                    type: string
-                                                    enum:
-                                                      - AND
-                                                      - OR
-                                                required:
-                                                  - logical_operator
-                                                  - clauses
-                                                type: object
-                                          minItems: 1
-                                        logical_operator:
-                                          type: string
-                                          enum:
-                                            - AND
-                                            - OR
-                                      required:
-                                        - logical_operator
-                                        - clauses
-                                      type: object
-                                minItems: 1
-                              logical_operator:
-                                type: string
-                                enum:
-                                  - AND
-                                  - OR
-                            required:
-                              - logical_operator
-                              - clauses
-                            type: object
-                    rollout:
-                      type: object
-                      additionalProperties: false
-                      properties:
-                        attribute:
-                          description: Context attribute used for sticky bucketing. Defaults to `targetingKey`. If absent at evaluation time, bucketing is random per request.
-                          type: string
-                          maxLength: 64
-                          minLength: 1
-                        percentage:
-                          description: Percentage of matching traffic (0–100, up to 2 decimal places) served this variation. For multi-way splits, use cumulative upper bounds across rules (e.g. 30, 70, 100).
-                          type: number
-                          maximum: 100
-                          minimum: 0
-                          multipleOf: 0.01
-                      required:
-                        - percentage
-                    serve_variation:
-                      description: Variation the API serves when this rule matches. Must be a key in `variations`.
-                      type: string
-                      minLength: 1
-                  required:
-                    - conditions
-                    - serve_variation
-                  type: object
+                  $ref: '#/components/schemas/flagship_EvaluationRule'
               variations:
                 description: Map of variation name to value. All values share the same type (boolean, string, number, or JSON object/array), and each serialized value stays within 10KB.
                 type: object
@@ -448678,6 +447753,91 @@ components:
         - items:
             $ref: '#/components/schemas/flagship_JsonValue'
           type: array
+    flagship_LogicalCondition:
+      type: object
+      properties:
+        clauses:
+          type: array
+          items:
+            $ref: '#/components/schemas/flagship_Condition1'
+          minItems: 1
+        logical_operator:
+          type: string
+          enum:
+            - AND
+            - OR
+      additionalProperties: false
+      required:
+        - logical_operator
+        - clauses
+    flagship_LogicalCondition1:
+      type: object
+      properties:
+        clauses:
+          type: array
+          items:
+            $ref: '#/components/schemas/flagship_Condition2'
+          minItems: 1
+        logical_operator:
+          type: string
+          enum:
+            - AND
+            - OR
+      additionalProperties: false
+      required:
+        - logical_operator
+        - clauses
+    flagship_LogicalCondition2:
+      type: object
+      properties:
+        clauses:
+          type: array
+          items:
+            $ref: '#/components/schemas/flagship_Condition3'
+          minItems: 1
+        logical_operator:
+          type: string
+          enum:
+            - AND
+            - OR
+      additionalProperties: false
+      required:
+        - logical_operator
+        - clauses
+    flagship_LogicalCondition3:
+      type: object
+      properties:
+        clauses:
+          type: array
+          items:
+            $ref: '#/components/schemas/flagship_Condition4'
+          minItems: 1
+        logical_operator:
+          type: string
+          enum:
+            - AND
+            - OR
+      additionalProperties: false
+      required:
+        - logical_operator
+        - clauses
+    flagship_LogicalCondition4:
+      type: object
+      properties:
+        clauses:
+          type: array
+          items:
+            $ref: '#/components/schemas/flagship_BaseCondition'
+          minItems: 1
+        logical_operator:
+          type: string
+          enum:
+            - AND
+            - OR
+      additionalProperties: false
+      required:
+        - logical_operator
+        - clauses
     flagship_ResultInfo:
       type: object
       properties:
@@ -448692,6 +447852,44 @@ components:
       required:
         - count
         - cursor
+    flagship_Rule:
+      type: object
+      properties:
+        conditions:
+          description: Conditions the context must satisfy for this rule to match. An empty array matches all contexts.
+          type: array
+          items:
+            $ref: '#/components/schemas/flagship_Condition'
+        priority:
+          description: "Evaluation order: the API evaluates rules with lower numbers first. Must be unique across the flag's rules."
+          type: integer
+          minimum: 1
+        rollout:
+          type: object
+          additionalProperties: false
+          properties:
+            attribute:
+              description: Context attribute used for sticky bucketing. Defaults to `targetingKey`. If absent at evaluation time, bucketing is random per request.
+              type: string
+              maxLength: 64
+              minLength: 1
+            percentage:
+              description: Percentage of matching traffic (0–100, up to 2 decimal places) served this variation. For multi-way splits, use cumulative upper bounds across rules (e.g. 30, 70, 100).
+              type: number
+              maximum: 100
+              minimum: 0
+              multipleOf: 0.01
+          required:
+            - percentage
+        serve_variation:
+          description: Variation the API serves when this rule matches. Must be a key in `variations`.
+          type: string
+          minLength: 1
+      additionalProperties: false
+      required:
+        - priority
+        - conditions
+        - serve_variation
     fraud_api-response-common:
       type: object
       properties:
