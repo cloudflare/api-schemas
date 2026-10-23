@@ -2131,6 +2131,25 @@
               }
             }
           },
+          "429": {
+            "description": "The submitter is over an enforced intake rate limit; the report was not created",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds to wait before the next submission can be accepted.",
+                "schema": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/abuse-reports_RateLimitedErrorResponse"
+                }
+              }
+            }
+          },
           "500": {
             "description": "Report submitted with an error",
             "content": {
@@ -590316,6 +590335,47 @@
       "abuse-reports_PortsProtocolError": {
         "description": "Provided value has invalid size",
         "type": "string"
+      },
+      "abuse-reports_RateLimitedError": {
+        "description": "rate_limited: the submitter is over an enforced intake rate limit for its account or for a reported domain. The report was not created. Retry after the number of seconds in the Retry-After response header.\n",
+        "type": "string"
+      },
+      "abuse-reports_RateLimitedErrorResponse": {
+        "type": "object",
+        "properties": {
+          "err_code": {
+            "$ref": "#/components/schemas/abuse-reports_RateLimitedError"
+          },
+          "error_code": {
+            "$ref": "#/components/schemas/abuse-reports_RateLimitedError"
+          },
+          "msg": {
+            "description": "The error message for the error",
+            "type": "string"
+          },
+          "request": {
+            "type": "object",
+            "properties": {
+              "act": {
+                "$ref": "#/components/schemas/abuse-reports_SubmissionReportType"
+              }
+            },
+            "required": [
+              "act"
+            ]
+          },
+          "result": {
+            "description": "Always 'error'",
+            "type": "string"
+          }
+        },
+        "required": [
+          "request",
+          "result",
+          "msg",
+          "err_code",
+          "error_code"
+        ]
       },
       "abuse-reports_RegistrarWhoIsFields": {
         "description": "RDP-mandated fields for registrar WHOIS data disclosure requests.",
