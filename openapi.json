@@ -294789,6 +294789,9 @@
           "201": {
             "$ref": "#/components/responses/realtimekit_AddParticipant"
           },
+          "400": {
+            "$ref": "#/components/responses/realtimekit_GenericError"
+          },
           "500": {
             "$ref": "#/components/responses/realtimekit_GenericError"
           }
@@ -295038,6 +295041,80 @@
       }
     },
     "/accounts/{account_id}/realtime/kit/{app_id}/meetings/{meeting_id}/participants/{participant_id}/token": {
+      "delete": {
+        "operationId": "revoke_token",
+        "summary": "Revoke participant's authentication token",
+        "description": "Revokes a previously issued participant authentication token without deleting the participant. Other tokens issued to the participant remain valid.",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/realtimekit_account_identifier"
+            }
+          },
+          {
+            "name": "app_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/realtimekit_app_id"
+            }
+          },
+          {
+            "name": "meeting_id",
+            "in": "path",
+            "description": "ID of the meeting. You can fetch the meeting ID using the create a meeting API.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "participant_id",
+            "in": "path",
+            "description": "ID of the participant. You can fetch the participant ID using the add a participant API.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/realtimekit_RevokeParticipantTokenBody"
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/realtimekit_RevokeToken"
+          },
+          "400": {
+            "$ref": "#/components/responses/realtimekit_GenericError"
+          },
+          "403": {
+            "$ref": "#/components/responses/realtimekit_GenericError"
+          },
+          "500": {
+            "$ref": "#/components/responses/realtimekit_GenericError"
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          }
+        ],
+        "tags": [
+          "Meetings"
+        ],
+        "x-api-token-group": [
+          "Realtime Admin",
+          "Realtime"
+        ],
+        "x-fern-availability": "beta",
+        "x-fern-sdk-group-name": "realtime.kit.meetings.participants.tokens",
+        "x-fern-sdk-method-name": "revoke"
+      },
       "post": {
         "operationId": "regenerate_token",
         "summary": "Refresh participant's authentication token",
@@ -295079,9 +295156,15 @@
             }
           }
         ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/realtimekit_RefreshParticipantTokenBody"
+        },
         "responses": {
           "200": {
             "$ref": "#/components/responses/realtimekit_RegenToken"
+          },
+          "400": {
+            "$ref": "#/components/responses/realtimekit_GenericError"
           },
           "500": {
             "$ref": "#/components/responses/realtimekit_GenericError"
@@ -704957,9 +705040,17 @@
                 "description": "HTTP status code of the error.",
                 "type": "number"
               },
+              "details": {
+                "description": "Additional context about the error, when available."
+              },
               "message": {
                 "description": "Error message describing what went wrong.",
                 "type": "string"
+              },
+              "reason": {
+                "description": "Stable machine-readable reason for the error, when available.",
+                "type": "string",
+                "example": "participant_token_expired"
               }
             },
             "required": [
@@ -705302,6 +705393,24 @@
           "updated_at"
         ],
         "title": "Participant"
+      },
+      "realtimekit_ParticipantTokenValidity": {
+        "description": "Validity window of the participant authentication token. The window is [not_before, expires_on) and cannot be longer than 100 days. Defaults to a token valid from now for 100 days.",
+        "type": "object",
+        "properties": {
+          "expires_on": {
+            "description": "RFC 3339 timestamp with a timezone at or after which the token cannot be used. Must be in the future. Defaults to not_before plus 100 days.",
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-10-01T11:00:00Z"
+          },
+          "not_before": {
+            "description": "RFC 3339 timestamp with a timezone before which the token cannot be used. Defaults to the current time. May be in the past.",
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-10-01T09:00:00Z"
+          }
+        }
       },
       "realtimekit_ParticipantsList": {
         "type": "object",
@@ -770156,6 +770265,9 @@
                   "description": "Name of the preset to apply to this participant.",
                   "type": "string",
                   "default": "group_call_host"
+                },
+                "token": {
+                  "$ref": "#/components/schemas/realtimekit_ParticipantTokenValidity"
                 }
               },
               "required": [
@@ -770416,6 +770528,15 @@
         "description": "Request body for muting participants in an active session. At least one of `participant_ids` or `custom_participant_ids` must contain a value.",
         "required": true
       },
+      "realtimekit_RefreshParticipantTokenBody": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/realtimekit_ParticipantTokenValidity"
+            }
+          }
+        }
+      },
       "realtimekit_ReplaceParticipantBody": {
         "content": {
           "application/json": {
@@ -770445,6 +770566,26 @@
               "required": [
                 "preset_name",
                 "custom_participant_id"
+              ]
+            }
+          }
+        },
+        "required": true
+      },
+      "realtimekit_RevokeParticipantTokenBody": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "token": {
+                  "description": "The participant authentication token to revoke.",
+                  "type": "string",
+                  "x-sensitive": true
+                }
+              },
+              "required": [
+                "token"
               ]
             }
           }
@@ -773095,6 +773236,18 @@
                         },
                         {
                           "properties": {
+                            "expires_on": {
+                              "description": "Time at which the token stops being valid, in UTC. Returned when adding a participant.",
+                              "type": "string",
+                              "format": "date-time",
+                              "example": "2026-10-01T11:00:00Z"
+                            },
+                            "not_before": {
+                              "description": "Time from which the token is valid, in UTC. Returned when adding a participant.",
+                              "type": "string",
+                              "format": "date-time",
+                              "example": "2026-10-01T09:00:00Z"
+                            },
                             "token": {
                               "description": "The participant's auth token that can be used for joining a meeting from the client side.",
                               "type": "string",
@@ -773937,8 +774090,57 @@
                     "data": {
                       "type": "object",
                       "properties": {
+                        "expires_on": {
+                          "description": "Time at which the token stops being valid, in UTC.",
+                          "type": "string",
+                          "format": "date-time",
+                          "example": "2026-10-01T11:00:00Z"
+                        },
+                        "not_before": {
+                          "description": "Time from which the token is valid, in UTC.",
+                          "type": "string",
+                          "format": "date-time",
+                          "example": "2026-10-01T09:00:00Z"
+                        },
                         "token": {
                           "description": "Regenerated participant's authentication token.",
+                          "type": "string",
+                          "x-sensitive": true
+                        }
+                      },
+                      "required": [
+                        "token",
+                        "not_before",
+                        "expires_on"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "type": "object"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "realtimekit_RevokeToken": {
+        "description": "Success response",
+        "content": {
+          "application/json": {
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/realtimekit_GenericSuccessResponse"
+                },
+                {
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "token": {
+                          "description": "The revoked participant authentication token.",
                           "type": "string",
                           "x-sensitive": true
                         }
