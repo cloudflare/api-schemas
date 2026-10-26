@@ -132675,6 +132675,12 @@ paths:
                   - success
                   - errors
                   - messages
+        '409':
+          description: The device tags were modified concurrently. Retry the request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/teams-devices_v4_error_response'
         4XX:
           description: Client error response.
           content:
@@ -501557,6 +501563,12 @@ components:
       description: Global Acceleration settings for China. When configured, WARP clients connect to the Global Accelerator addresses instead of the default ones. Please contact your account representative to enable this feature on your account. See https://developers.cloudflare.com/china-network/concepts/global-acceleration/.
       type: object
       properties:
+        allow_manual_override:
+          description: Whether WARP users may manually override the automatic Global Acceleration decision. Defaults to true when not provided.
+          type: boolean
+          example: true
+          default: true
+          x-auditable: true
         api_endpoints:
           description: IP:port entries for the API endpoints.
           type: array
@@ -502258,6 +502270,11 @@ components:
           type: string
           example: Mark VII
           nullable: true
+          x-auditable: true
+        multiuser:
+          description: True if this device is in [multi-user mode](https://developers.cloudflare.com/cloudflare-one/connections/connect-devices/warp/deployment/mdm-deployment/windows-multiuser/).
+          type: boolean
+          example: true
           x-auditable: true
         name:
           description: The name of the device.
