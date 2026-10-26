@@ -148457,7 +148457,6 @@ paths:
           - com.cloudflare.api.account.email.domain.list
       x-fern-sdk-group-name: email-domains
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
     post:
       operationId: email-domains-create
       summary: Create an Email Domain
@@ -148564,7 +148563,6 @@ paths:
           - com.cloudflare.api.account.email.domain.create
       x-fern-sdk-group-name: email-domains
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
   /accounts/{account_id}/email/domains/{email_domain_id}:
     delete:
       operationId: email-domains-delete
@@ -148662,7 +148660,6 @@ paths:
           - com.cloudflare.api.account.email.domain.delete
       x-fern-sdk-group-name: email-domains
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
     get:
       operationId: email-domains-get
       summary: Get an Email Domain
@@ -148757,7 +148754,6 @@ paths:
           - com.cloudflare.api.account.email.domain.read
       x-fern-sdk-group-name: email-domains
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
   /accounts/{account_id}/email/domains/{email_domain_id}/verify:
     post:
       operationId: email-domains-verify
@@ -148870,7 +148866,6 @@ paths:
           - com.cloudflare.api.account.email.domain.update
       x-fern-sdk-group-name: email-domains
       x-fern-sdk-method-name: verify
-      x-forge-hidden: true
   /accounts/{account_id}/email/routing/addresses:
     get:
       operationId: email-routing-destination-addresses-list-destination-addresses
@@ -446541,7 +446536,7 @@ components:
           allOf:
             - $ref: '#/components/schemas/email_ReputationThreshold'
         suspension_after_hours:
-          description: The grace period before suspension. The value must be a whole number of days.
+          description: The grace period before suspension. The value must be a whole number of days. It applies only while grace_started_at is set; when grace_started_at is null, the account is not counting down to an automatic suspension.
           type: integer
           format: int64
           example: 168
@@ -446956,7 +446951,7 @@ components:
       type: object
       properties:
         name:
-          description: The domain name within the zone. A wildcard is allowed only as the complete leftmost label (`*.example.com`) and requires the account wildcard Email Sending entitlement.
+          description: The domain name within the zone. A wildcard is allowed only as the complete leftmost label (`*.example.com`) and requires the account wildcard Email Sending entitlement. The derived Return-Path hostname, including its bounce prefix, must be at most 201 characters after ASCII conversion; wildcards use the base hostname.
           type: string
           example: sub.example.com
       required:
@@ -447218,7 +447213,7 @@ components:
       type: object
       properties:
         reason:
-          description: 'Machine-readable explanation. V1 reasons: customer_dns_invalid, customer_dns_indeterminate, and verification_invalid reflect customer ownership records; rollout_unacknowledged, sending_not_ready, routing_not_ready, worker_unavailable, platform_dependency_unavailable, publication_invalid, publication_unavailable, and validation_overdue reflect service readiness or internal evidence; deleting means teardown is in progress. Clients must tolerate unknown future values and treat the capability as unavailable.'
+          description: 'Machine-readable explanation. V1 reasons: customer_dns_invalid, customer_dns_indeterminate, and verification_invalid reflect customer ownership records; rollout_unacknowledged, sending_not_ready, routing_not_ready, worker_unavailable, platform_dependency_unavailable, platform_health_unavailable, platform_dns_invalid, platform_dns_indeterminate, publication_invalid, publication_unavailable, and validation_overdue reflect service readiness or internal evidence; deleting means teardown is in progress. Clients must tolerate unknown future values and treat the capability as unavailable.'
           type: string
           example: customer_dns_indeterminate
         status:
@@ -447919,7 +447914,7 @@ components:
           example: 2026-07-08T00:00:00Z
           nullable: true
         grace_started_at:
-          description: When the current At Risk suspension grace period started. This can be later than status_since if the grace period was restarted. Null outside At Risk. Automatic suspension remains subject to enforcement and suspension exemptions.
+          description: When the current At Risk suspension grace period started. This can be later than status_since if the grace period was restarted. Null outside At Risk, and null when the account cannot be suspended automatically.
           type: string
           format: date-time
           example: 2026-07-09T00:00:00Z
