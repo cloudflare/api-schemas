@@ -51169,7 +51169,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: ai.authors
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
   /accounts/{account_id}/ai/finetunes:
     get:
       operationId: workers-ai-list-finetunes
@@ -51267,7 +51266,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: ai.finetunes
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
     post:
       operationId: workers-ai-create-finetune
       summary: Create a new Finetune
@@ -51379,7 +51377,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: ai.finetunes
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
   /accounts/{account_id}/ai/finetunes/{finetune_id}:
     delete:
       operationId: workers-ai-delete-finetune
@@ -51455,7 +51452,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: ai.finetunes
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
   /accounts/{account_id}/ai/finetunes/{finetune_id}/finetune-assets:
     post:
       operationId: workers-ai-upload-finetune-asset
@@ -51538,7 +51534,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: ai.finetunes.assets
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
   /accounts/{account_id}/ai/finetunes/{finetune_id}/finetune-assets/{file_name}:
     get:
       operationId: workers-ai-download-finetune-asset
@@ -51619,7 +51614,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: ai.finetunes.assets
       x-fern-sdk-method-name: download
-      x-forge-hidden: true
   /accounts/{account_id}/ai/finetunes/public:
     get:
       operationId: workers-ai-list-public-finetunes
@@ -51743,7 +51737,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: ai.finetunes.public
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
   /accounts/{account_id}/ai/models/schema:
     get:
       operationId: workers-ai-get-model-schema
@@ -52006,7 +51999,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: ai.models
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
   /accounts/{account_id}/ai/run:
     post:
       operationId: workers-ai-post-run-generic
@@ -52346,7 +52338,8 @@ paths:
                         response_format:
                           type: object
                           properties:
-                            json_schema: {}
+                            json_schema:
+                              type: object
                             type:
                               type: string
                               enum:
@@ -52381,6 +52374,7 @@ paths:
                       required:
                         - prompt
                       title: Prompt
+                      type: object
                     - properties:
                         frequency_penalty:
                           description: Decreases the likelihood of the model repeating the same lines verbatim.
@@ -52447,7 +52441,8 @@ paths:
                         response_format:
                           type: object
                           properties:
-                            json_schema: {}
+                            json_schema:
+                              type: object
                             type:
                               type: string
                               enum:
@@ -52515,6 +52510,7 @@ paths:
                                   - name
                                   - description
                                   - parameters
+                                type: object
                               - properties:
                                   function:
                                     description: Details of the function tool.
@@ -52566,6 +52562,7 @@ paths:
                                 required:
                                   - type
                                   - function
+                                type: object
                             type: object
                         top_k:
                           description: Limits the AI to choose from the top 'k' most probable words. Lower values make responses more focused; higher values introduce more variety and potential surprises.
@@ -52580,6 +52577,7 @@ paths:
                       required:
                         - messages
                       title: Messages
+                      type: object
                   title: Text Generation
                   type: object
                 - properties:
@@ -53107,7 +53105,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: ai.tasks
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
   /accounts/{account_id}/ai/tomarkdown:
     post:
       operationId: workers-ai-post-to-markdown
@@ -53421,12 +53418,10 @@ paths:
                       messages:
                         type: array
                         items:
-                          nullable: true
+                          type: object
                       result:
-                        anyOf:
-                          - nullable: true
-                          - type: object
-                          - nullable: true
+                        type: object
+                        nullable: true
                       success:
                         type: boolean
                         enum:
