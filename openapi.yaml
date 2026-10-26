@@ -261019,6 +261019,11 @@ paths:
                               type: array
                               items:
                                 properties:
+                                  entityLocation:
+                                    description: Alpha-2 code of the country the entity belongs to (GEOLOCATION and AS entities only).
+                                    type: string
+                                    example: PT
+                                    nullable: true
                                   entityName:
                                     type: string
                                     example: GPTBot
@@ -261033,6 +261038,7 @@ paths:
                                   - entityType
                                   - entityValue
                                   - entityName
+                                  - entityLocation
                                 type: object
                             eventType:
                               type: string
@@ -261270,6 +261276,11 @@ paths:
                             type: array
                             items:
                               properties:
+                                entityLocation:
+                                  description: Alpha-2 code of the country the entity belongs to (GEOLOCATION and AS entities only).
+                                  type: string
+                                  example: PT
+                                  nullable: true
                                 entityName:
                                   type: string
                                   example: GPTBot
@@ -261284,6 +261295,7 @@ paths:
                                 - entityType
                                 - entityValue
                                 - entityName
+                                - entityLocation
                               type: object
                           eventType:
                             type: string
@@ -261787,6 +261799,11 @@ paths:
                               type: array
                               items:
                                 properties:
+                                  entityLocation:
+                                    description: Alpha-2 code of the country the entity belongs to (GEOLOCATION and AS entities only).
+                                    type: string
+                                    example: PT
+                                    nullable: true
                                   entityName:
                                     type: string
                                     example: GPTBot
@@ -261801,6 +261818,7 @@ paths:
                                   - entityType
                                   - entityValue
                                   - entityName
+                                  - entityLocation
                                 type: object
                             eventType:
                               type: string
@@ -352906,11 +352924,17 @@ paths:
                               required:
                                 - origin
                                 - name
+                            outageId:
+                              description: ID of the published outage this anomaly was confirmed as, if any.
+                              type: string
+                              example: '1234'
+                              nullable: true
                             startDate:
                               type: string
                               format: date-time
                               example: 2023-08-02T23:15:00Z
                             status:
+                              description: 'Verification status: UNVERIFIED (automatically detected, not yet validated by Radar), TP (verified by Radar) or VERIFIED (verified by Radar and a third-party source).'
                               type: string
                               example: UNVERIFIED
                             type:
@@ -352934,6 +352958,7 @@ paths:
                             - locationDetails
                             - asnDetails
                             - originDetails
+                            - outageId
                           type: object
                     required:
                       - trafficAnomalies
@@ -353083,11 +353108,17 @@ paths:
                             required:
                               - origin
                               - name
+                          outageId:
+                            description: ID of the published outage this anomaly was confirmed as, if any.
+                            type: string
+                            example: '1234'
+                            nullable: true
                           startDate:
                             type: string
                             format: date-time
                             example: 2023-08-02T23:15:00Z
                           status:
+                            description: 'Verification status: UNVERIFIED (automatically detected, not yet validated by Radar), TP (verified by Radar) or VERIFIED (verified by Radar and a third-party source).'
                             type: string
                             example: UNVERIFIED
                           type:
@@ -353111,6 +353142,7 @@ paths:
                           - locationDetails
                           - asnDetails
                           - originDetails
+                          - outageId
                     required:
                       - trafficAnomaly
                   success:
