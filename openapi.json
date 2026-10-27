@@ -97890,6 +97890,7 @@
                       {
                         "bucket": "analytics-bucket",
                         "id": "550e8400-e29b-41d4-a716-446655440000",
+                        "jurisdiction": "default",
                         "maintenance_config": {
                           "compaction": {
                             "state": "enabled",
@@ -98042,6 +98043,7 @@
                     "bucket": "analytics-bucket",
                     "credential_status": "present",
                     "id": "550e8400-e29b-41d4-a716-446655440000",
+                    "jurisdiction": "default",
                     "maintenance_config": {
                       "compaction": {
                         "state": "enabled",
@@ -98637,6 +98639,20 @@
             }
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "credential": {
+                  "token": "your-cloudflare-api-token-here"
+                }
+              },
+              "schema": {
+                "$ref": "#/components/schemas/r2-data-catalog_catalog-activation-request"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "Catalog enabled successfully.",
@@ -286453,6 +286469,7 @@
                       {
                         "bucket": "analytics-bucket",
                         "id": "550e8400-e29b-41d4-a716-446655440000",
+                        "jurisdiction": "default",
                         "maintenance_config": {
                           "compaction": {
                             "state": "enabled",
@@ -286607,6 +286624,7 @@
                     "bucket": "analytics-bucket",
                     "credential_status": "present",
                     "id": "550e8400-e29b-41d4-a716-446655440000",
+                    "jurisdiction": "default",
                     "maintenance_config": {
                       "compaction": {
                         "state": "enabled",
@@ -287212,6 +287230,20 @@
             }
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "credential": {
+                  "token": "your-cloudflare-api-token-here"
+                }
+              },
+              "schema": {
+                "$ref": "#/components/schemas/r2-data-catalog_catalog-activation-request"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "Catalog enabled successfully.",
@@ -701953,6 +701985,11 @@
             "format": "uuid",
             "example": "550e8400-e29b-41d4-a716-446655440000"
           },
+          "jurisdiction": {
+            "description": "Specifies the data-locality jurisdiction of the catalog. The first enable sets it, and it cannot change. Currently always `default`.",
+            "type": "string",
+            "example": "default"
+          },
           "maintenance_config": {
             "description": "Configures maintenance for the catalog.",
             "type": "object",
@@ -701978,6 +702015,15 @@
           "bucket",
           "status"
         ]
+      },
+      "r2-data-catalog_catalog-activation-request": {
+        "description": "Contains the optional request to enable a catalog. Send an empty body\nto keep the defaults. If you include `credential`, the service checks\nthat the token can access the bucket, then stores it as the catalog's\nmaintenance credential, like the store credentials operation.\n",
+        "type": "object",
+        "properties": {
+          "credential": {
+            "$ref": "#/components/schemas/r2-data-catalog_catalog-credential-request"
+          }
+        }
       },
       "r2-data-catalog_catalog-activation-response": {
         "description": "Contains response from activating an R2 bucket as a catalog.",
@@ -702023,7 +702069,8 @@
           "token": {
             "description": "Provides the Cloudflare API token for accessing R2.",
             "type": "string",
-            "example": "your-cloudflare-api-token-here"
+            "example": "your-cloudflare-api-token-here",
+            "x-sensitive": true
           }
         },
         "required": [
