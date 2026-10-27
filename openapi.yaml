@@ -116754,10 +116754,14 @@ paths:
                                 - pir_id
                                 - pirs
                             severity:
-                              description: Intrinsic article severity from 1 (informational) to 5 (critical). Null when the account has no active Priority Intelligence Requirements, scoring has not completed, or a historic article has not entered an automatic rescore window.
-                              type: number
-                              maximum: 5
-                              minimum: 1
+                              description: Beta. Intrinsic article severity band, from informational to critical, independent of any organisation or Priority Intelligence Requirement. Null when the account has no active Priority Intelligence Requirements, scoring has not completed, or a historic article has not entered an automatic rescore window.
+                              type: string
+                              enum:
+                                - informational
+                                - low
+                                - medium
+                                - high
+                                - critical
                               nullable: true
                             summary:
                               description: Persisted enrichment summary. Null until enrichment produces a summary.
@@ -117082,10 +117086,14 @@ paths:
                           - pir_id
                           - pirs
                       severity:
-                        description: Intrinsic article severity from 1 (informational) to 5 (critical). Null when the account has no active Priority Intelligence Requirements, scoring has not completed, or a historic article has not entered an automatic rescore window.
-                        type: number
-                        maximum: 5
-                        minimum: 1
+                        description: Beta. Intrinsic article severity band, from informational to critical, independent of any organisation or Priority Intelligence Requirement. Null when the account has no active Priority Intelligence Requirements, scoring has not completed, or a historic article has not entered an automatic rescore window.
+                        type: string
+                        enum:
+                          - informational
+                          - low
+                          - medium
+                          - high
+                          - critical
                         nullable: true
                       skill_version:
                         type: string
@@ -117270,10 +117278,14 @@ paths:
                         type: string
                         nullable: true
                       severity:
-                        description: Intrinsic article severity from 1 (informational) to 5 (critical). Null when the account has no active Priority Intelligence Requirements, scoring has not completed, or a historic article has not entered an automatic rescore window.
-                        type: number
-                        maximum: 5
-                        minimum: 1
+                        description: Beta. Intrinsic article severity band, from informational to critical, independent of any organisation or Priority Intelligence Requirement. Null when the account has no active Priority Intelligence Requirements, scoring has not completed, or a historic article has not entered an automatic rescore window.
+                        type: string
+                        enum:
+                          - informational
+                          - low
+                          - medium
+                          - high
+                          - critical
                         nullable: true
                       skill_version:
                         type: string
@@ -118533,7 +118545,7 @@ paths:
     get:
       operationId: rssArticleRelevanceAggregate
       summary: Count Threat Signals articles by relevance band
-      description: "Beta. Counts the account's Threat Signals articles in each relevance band, for each active Priority Intelligence Requirement and across all of them. Uses the same PIRs as article relevance: active PIRs, including those the matcher paused; drafts and deleted PIRs are excluded. Articles not scored against a PIR are not counted for it. The combined counts place each article once, in the band of its best score, so they are not the sum of the per-PIR counts. All counts are read together and are exact."
+      description: "Beta. Counts the account's Threat Signals articles in each relevance band, for each active Priority Intelligence Requirement and across all of them. Uses the same PIRs as article relevance: active PIRs, including those the matcher paused; drafts and deleted PIRs are excluded. Articles not scored against a PIR are not counted for it. The combined counts place each article once, in the band of its best score, so they are not the sum of the per-PIR counts. read counts only read or only unread articles. All counts are read together and are exact."
       parameters:
         - name: account_id
           in: path
@@ -118552,6 +118564,11 @@ paths:
             description: Include articles published at or before this ISO 8601 date-time with Z or a numeric UTC offset; normalized to UTC.
             type: string
             format: date-time
+        - name: read
+          in: query
+          schema:
+            description: Filter by read state. Accepts true, false, 1, or 0; omit to include read and unread articles.
+            type: boolean
       responses:
         '200':
           description: Threat Signals response.
@@ -118652,7 +118669,7 @@ paths:
     get:
       operationId: rssArticleSeverityAggregate
       summary: Count Threat Signals articles by severity band
-      description: "Beta. Counts the account's Threat Signals articles in each intrinsic severity band. An article's band is the severity level nearest its severity, from informational to critical. Articles without a severity are not counted. Also counts, for each active Priority Intelligence Requirement, the articles scored against it. min_relevance counts only articles at or above a relevance band: overall, for any active PIR; per PIR, for that PIR, the same rule as the per-PIR relevance counts. pir_id counts for one active PIR only. Like the article severity field, severity is reported only while the account has an active Priority Intelligence Requirement, including one the matcher paused; otherwise every count is zero and priorities is empty. All counts are read together and are exact."
+      description: "Beta. Counts the account's Threat Signals articles in each intrinsic severity band. An article's band is the one reported as its severity, from informational to critical. Articles without a severity are not counted. Also counts, for each active Priority Intelligence Requirement, the articles scored against it. min_relevance counts only articles at or above a relevance band: overall, for any active PIR; per PIR, for that PIR, the same rule as the per-PIR relevance counts. pir_id counts for one active PIR only. read counts only read or only unread articles, in both articles and priorities. Like the article severity field, severity is reported only while the account has an active Priority Intelligence Requirement, including one the matcher paused; otherwise every count is zero and priorities is empty. All counts are read together and are exact."
       parameters:
         - name: account_id
           in: path
@@ -118671,6 +118688,11 @@ paths:
             description: Include articles published at or before this ISO 8601 date-time with Z or a numeric UTC offset; normalized to UTC.
             type: string
             format: date-time
+        - name: read
+          in: query
+          schema:
+            description: Filter by read state. Accepts true, false, 1, or 0; omit to include read and unread articles.
+            type: boolean
         - name: pir_id
           in: query
           schema:
@@ -118707,7 +118729,7 @@ paths:
                     type: object
                     properties:
                       articles:
-                        description: "Beta. Number of articles in each severity band: the severity level nearest the article's severity. Articles without a severity are not counted, and every count is zero when the account has no active Priority Intelligence Requirements."
+                        description: Beta. Number of articles in each severity band, the band reported as the article's severity. Articles without a severity are not counted, and every count is zero when the account has no active Priority Intelligence Requirements.
                         type: object
                         properties:
                           critical:
