@@ -591429,15 +591429,26 @@
             "description": "Whether the report already has an open (undecided) appeal.",
             "type": "boolean"
           },
+          "has_pending_notice": {
+            "description": "Whether the report is in its Notice and Takedown notice period. No mitigation is applied yet, but one will be applied at `notice_deadline` unless the report is resolved first.",
+            "type": "boolean"
+          },
           "max_appeals": {
             "description": "Maximum number of appeals allowed per report.",
             "type": "integer"
+          },
+          "notice_deadline": {
+            "description": "When the notice period ends and the mitigation is applied. Present only when `has_pending_notice` is true. Time in RFC 3339 format (https://www.rfc-editor.org/rfc/rfc3339.html)",
+            "type": "string",
+            "format": "date-time",
+            "example": "2009-11-10T23:00:00Z"
           }
         },
         "required": [
           "appealable",
           "has_appealable_mitigations",
           "has_open_appeal",
+          "has_pending_notice",
           "appeal_count",
           "max_appeals"
         ]
