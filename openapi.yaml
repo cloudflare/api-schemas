@@ -144156,7 +144156,7 @@ paths:
     post:
       operationId: dns-settings-for-an-account-create-custom-nameserver-set
       summary: Create Custom Nameserver Set
-      description: Creates an immutable Custom Nameserver Set. To change a set, create a new one, move any zone assignments, and delete the old set.
+      description: Creates a named Custom Nameserver Set. Only the customer-defined name can be changed later. To change nameservers or addresses, create a new set, move any zone assignments, and delete the old set.
       parameters:
         - name: account_id
           in: path
@@ -144280,6 +144280,55 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: dns.settings.account.nameserver-sets
       x-fern-sdk-method-name: get
+      x-stability: beta
+    patch:
+      operationId: dns-settings-for-an-account-update-custom-nameserver-set
+      summary: Update Custom Nameserver Set
+      description: Renames a Custom Nameserver Set owned by the account. Only name may be supplied; immutable and unknown fields are rejected even if unchanged. An empty object or the existing name is a successful no-op. Requires the account-scoped creation entitlements for the existing set.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/dns-settings_identifier'
+        - name: nameserver_set_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/dns-settings_nameserver-set-id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/dns-settings_nameserver-set-patch'
+      responses:
+        '200':
+          description: Returns the complete modified Custom Nameserver Set.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dns-settings_nameserver_set_response_single'
+        4XX:
+          description: Returns an error when the Custom Nameserver Set cannot be updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dns-settings_api-response-common-failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Custom Nameserver Sets for an Account
+      x-api-token-group:
+        - Account DNS Settings Write
+      x-cfPermissionsRequired:
+        enum:
+          - com.cloudflare.api.account.custom-ns-set.update
+      x-fern-availability: beta
+      x-fern-sdk-group-name: dns.settings.account.nameserver-sets
+      x-fern-sdk-method-name: edit
       x-stability: beta
   /accounts/{account_id}/dns_settings/views:
     get:
@@ -442004,6 +442053,8 @@ components:
           x-auditable: true
         ip_set:
           $ref: '#/components/schemas/dns-settings_nameserver-set-ip-set'
+        name:
+          $ref: '#/components/schemas/dns-settings_nameserver-set-name'
         nameservers:
           description: Lists each nameserver and the number of addresses to allocate to it. Requires a unique name for each entry in the set.
           type: array
@@ -442012,6 +442063,7 @@ components:
           maxItems: 5
           minItems: 2
       required:
+        - name
         - nameservers
     dns-settings_nameserver-set-create-member:
       type: object
@@ -442067,6 +442119,20 @@ components:
         x-auditable: true
       maxItems: 3
       readOnly: true
+    dns-settings_nameserver-set-name:
+      description: Customer-defined name, unique within the account by exact string equality (case-sensitive, with no Unicode normalization). Must be valid UTF-8 and at most 255 UTF-8 bytes, not 255 characters. Only graphical Unicode characters are allowed; leading or trailing whitespace is rejected. The name can be changed without changing the set's nameservers or addresses.
+      type: string
+      example: Production nameservers
+      maxLength: 255
+      minLength: 1
+      x-auditable: true
+    dns-settings_nameserver-set-patch:
+      description: Updates only the customer-defined name. All other fields are rejected, even if unchanged. An empty object or the current name succeeds without changing the set. A null name is invalid. Requires the account-scoped creation entitlements, including eligibility for the set's current IP set and the Advanced entitlement for an Advanced set.
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/dns-settings_nameserver-set-name'
+      additionalProperties: false
     dns-settings_nameserver-set-response:
       oneOf:
         - $ref: '#/components/schemas/dns-settings_nameserver-set-standard-response'
@@ -442085,8 +442151,11 @@ components:
           $ref: '#/components/schemas/dns-settings_nameserver-set-id'
         ip_set:
           $ref: '#/components/schemas/dns-settings_nameserver-set-ip-set'
+        name:
+          $ref: '#/components/schemas/dns-settings_nameserver-set-name'
       required:
         - id
+        - name
         - ip_set
         - created_on
     dns-settings_nameserver-set-response-member:
