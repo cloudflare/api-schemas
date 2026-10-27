@@ -9619,6 +9619,135 @@ paths:
       x-fern-sdk-group-name: zero-trust.access.users
       x-fern-sdk-method-name: revoke
       x-forge-require-confirmation: This operation revokes all access tokens for a user destructively.
+  /accounts/{account_id}/access/organizations/trust_settings:
+    get:
+      operationId: zero-trust-organization-get-trust-settings
+      summary: Get Zero Trust organization trust settings
+      description: Returns the trust settings for your Zero Trust organization.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/access_identifier'
+      responses:
+        '200':
+          description: Zero Trust organization trust settings
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/access_trust_settings_response'
+        4XX:
+          description: Failed to get Zero Trust organization trust settings
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/access_api-response-common-failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Zero Trust organization
+      x-api-token-group:
+        - 'Access: Organizations, Identity Providers, and Groups Revoke'
+        - 'Access: Organizations, Identity Providers, and Groups Write'
+        - 'Access: Organizations, Identity Providers, and Groups Read'
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.organization.trust-settings
+      x-fern-sdk-method-name: get
+    patch:
+      operationId: zero-trust-organization-update-trust-settings
+      summary: Update Zero Trust organization trust settings
+      description: Updates the trust settings for your Zero Trust organization.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/access_identifier'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                grant_trust_to_all_accounts_in_org:
+                  $ref: '#/components/schemas/access_grant_trust_to_all_accounts_in_org'
+                trusting_accounts:
+                  $ref: '#/components/schemas/access_trusting_accounts'
+      responses:
+        '200':
+          description: Updated Zero Trust organization trust settings
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/access_trust_settings_response'
+        4XX:
+          description: Failed to update Zero Trust organization trust settings
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/access_api-response-common-failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Zero Trust organization
+      x-api-token-group:
+        - 'Access: Organizations, Identity Providers, and Groups Write'
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.organization.trust-settings
+      x-fern-sdk-method-name: update
+    put:
+      operationId: zero-trust-organization-replace-trust-settings
+      summary: Replace Zero Trust organization trust settings
+      description: Replaces the trust settings for your Zero Trust organization.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/access_identifier'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                grant_trust_to_all_accounts_in_org:
+                  $ref: '#/components/schemas/access_grant_trust_to_all_accounts_in_org'
+                trusting_accounts:
+                  $ref: '#/components/schemas/access_trusting_accounts'
+              required:
+                - grant_trust_to_all_accounts_in_org
+      responses:
+        '200':
+          description: Replaced Zero Trust organization trust settings
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/access_trust_settings_response'
+        4XX:
+          description: Failed to replace Zero Trust organization trust settings
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/access_api-response-common-failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Zero Trust organization
+      x-api-token-group:
+        - 'Access: Organizations, Identity Providers, and Groups Write'
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.organization.trust-settings
+      x-fern-sdk-method-name: replace
   /accounts/{account_id}/access/policies:
     get:
       operationId: access-policies-list-access-reusable-policies
@@ -404733,6 +404862,8 @@ components:
           $ref: '#/components/schemas/access_include-2'
         name:
           $ref: '#/components/schemas/access_name-9'
+        policy_resolution_account_id:
+          $ref: '#/components/schemas/access_policy_resolution_account_id'
         require:
           $ref: '#/components/schemas/access_require-2'
       required:
@@ -404754,6 +404885,8 @@ components:
           $ref: '#/components/schemas/access_include-2'
         name:
           $ref: '#/components/schemas/access_name-9'
+        policy_resolution_account_id:
+          $ref: '#/components/schemas/access_policy_resolution_account_id'
         require:
           $ref: '#/components/schemas/access_require-2'
         updated_at:
@@ -406381,6 +406514,11 @@ components:
                   type: object
           type: object
       title: Google Workspace
+    access_grant_trust_to_all_accounts_in_org:
+      description: Whether all accounts in the organization are trusted to use this account's cross-account Access resources.
+      type: boolean
+      example: false
+      x-auditable: true
     access_group_details:
       type: object
       properties:
@@ -408686,6 +408824,9 @@ components:
           $ref: '#/components/schemas/access_session_duration-3'
       allOf:
         - $ref: '#/components/schemas/access_base_policy_req'
+    access_policy_resolution_account_id:
+      description: The account ID used to resolve policy resources and identity for cross-account WARP authentication. The account must be trusted by the account that owns this policy.
+      type: string
     access_policy_resp:
       type: object
       properties:
@@ -411130,6 +411271,29 @@ components:
       description: The total number of users in the user base.
       type: integer
       example: 20
+      x-auditable: true
+    access_trust_settings_response:
+      allOf:
+        - $ref: '#/components/schemas/access_api-response-single'
+        - properties:
+            result:
+              type: object
+              properties:
+                grant_trust_to_all_accounts_in_org:
+                  $ref: '#/components/schemas/access_grant_trust_to_all_accounts_in_org'
+                trusting_accounts:
+                  $ref: '#/components/schemas/access_trusting_accounts'
+              required:
+                - grant_trust_to_all_accounts_in_org
+          type: object
+    access_trusting_accounts:
+      description: Explicit account IDs trusted to use this account's cross-account Access resources. At most 100 unique valid account IDs are accepted. Omitted from responses when empty.
+      type: array
+      items:
+        pattern: ^[0-9a-fA-F]{32}$
+        type: string
+      example:
+        - 023e105f4ecef8ad9ca31a8372d0c353
       x-auditable: true
     access_type:
       description: The application type.
