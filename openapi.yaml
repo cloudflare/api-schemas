@@ -114432,9 +114432,10 @@ paths:
                     type: string
                     example: 4c27f9a8-6050-41a7-bc8a-b417641e646d
                   investigation_id:
-                    description: Investigation UUID
+                    description: Linked Casefiles case UUID. Null until an analyst links a case to the request.
                     type: string
                     example: 75a73d09-5938-4544-aeba-ab791dcdb445
+                    nullable: true
                   is_free_request:
                     description: Whether this is a free request
                     type: boolean
@@ -114710,9 +114711,10 @@ paths:
                     type: string
                     example: 4c27f9a8-6050-41a7-bc8a-b417641e646d
                   investigation_id:
-                    description: Investigation UUID
+                    description: Linked Casefiles case UUID. Null until an analyst links a case to the request.
                     type: string
                     example: 75a73d09-5938-4544-aeba-ab791dcdb445
+                    nullable: true
                   is_free_request:
                     description: Whether this is a free request
                     type: boolean
@@ -115035,9 +115037,10 @@ paths:
                     type: string
                     example: 4c27f9a8-6050-41a7-bc8a-b417641e646d
                   investigation_id:
-                    description: Investigation UUID
+                    description: Linked Casefiles case UUID. Null until an analyst links a case to the request.
                     type: string
                     example: 75a73d09-5938-4544-aeba-ab791dcdb445
+                    nullable: true
                   is_free_request:
                     description: Whether this is a free request
                     type: boolean
@@ -117461,6 +117464,24 @@ paths:
               - low
               - medium
               - high
+        - name: severity
+          in: query
+          schema:
+            description: Beta. Repeatable intrinsic severity band filter. An article matches any selected band, the band reported as its severity. Excludes articles without a severity. Like the severity field, severity is reported only while the account has an active Priority Intelligence Requirement; otherwise no articles match.
+            type: array
+            items:
+              enum:
+                - informational
+                - low
+                - medium
+                - high
+                - critical
+              type: string
+            example:
+              - high
+              - critical
+            maxItems: 5
+            minItems: 1
         - name: sort
           in: query
           schema:
