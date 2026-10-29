@@ -356833,11 +356833,13 @@ paths:
                   - properties:
                       result_info:
                         $ref: '#/components/schemas/zones_result_info'
+                    type: object
                   - properties:
                       result:
                         type: array
                         items:
                           $ref: '#/components/schemas/zones_zone'
+                    type: object
         4XX:
           description: List Zones response failure.
           content:
@@ -375115,116 +375117,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: zones.holds
       x-fern-sdk-method-name: create
-  /zones/{zone_id}/hold/{zone_name}:
-    get:
-      operationId: zones-0-hold-zone-name-get
-      summary: Get Zone Hold by Zone Name
-      description: |-
-        Retrieve whether a given hostname is subject to a zone hold, and metadata about the hold.
-        This endpoint checks whether the given hostname (or any of its ancestor domains) is blocked
-        by an active zone hold. If a hold with `include_subdomains` is active on an ancestor domain,
-        that hold is returned. This endpoint is used internally by SSL/COMS to check hold status
-        during zone activation.
-      parameters:
-        - name: zone_id
-          in: path
-          description: |-
-            Zone identifier. Consumed by the API gateway for routing; the backend
-            handler does not use this value directly.
-          required: true
-          schema:
-            $ref: '#/components/schemas/zones_identifier-2'
-        - name: zone_name
-          in: path
-          description: |-
-            The hostname to check for a zone hold. May be a subdomain (e.g. `subdomain.example.com`)
-            or an apex domain (e.g. `example.com`). The service checks the hostname and its ancestor
-            domains for active holds with `include_subdomains` enabled.
-          required: true
-          schema:
-            type: string
-            example: subdomain.example.com
-            maxLength: 253
-            pattern: ^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}$
-      responses:
-        '200':
-          description: Successful Response
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  hold:
-                    description: Whether the hostname is currently subject to a zone hold.
-                    type: boolean
-                    example: true
-                  hold_after:
-                    description: |-
-                      The RFC3339-formatted timestamp at which the hold will be automatically
-                      re-enabled, if the hold was temporarily disabled. Null if the hold is
-                      permanently enabled or not set.
-                    type: string
-                    format: date-time
-                    example: 2023-01-31T15:56:36Z
-                    nullable: true
-                  include_subdomains:
-                    description: Whether the hold extends to block subdomains of the held zone.
-                    type: boolean
-                    example: false
-        4XX:
-          description: Client Error
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/zones_api-response-common-failure-2'
-      security: []
-      tags:
-        - Zone Holds
-      x-api-token-group:
-        - Trust and Safety Write
-        - Trust and Safety Read
-        - 'Zero Trust: PII Read'
-        - Zaraz Edit
-        - Zaraz Read
-        - Zaraz Admin
-        - 'Access: Apps and Policies Revoke'
-        - 'Access: Apps and Policies Write'
-        - 'Access: Apps and Policies Read'
-        - 'Access: Apps and Policies Revoke'
-        - 'Access: Mutual TLS Certificates Write'
-        - 'Access: Organizations, Identity Providers, and Groups Write'
-        - Zone Settings Write
-        - Zone Settings Read
-        - Zone Read
-        - DNS Read
-        - Workers Scripts Write
-        - Workers Scripts Read
-        - Zone Write
-        - Workers Routes Write
-        - Workers Routes Read
-        - Stream Write
-        - Stream Read
-        - SSL and Certificates Write
-        - SSL and Certificates Read
-        - Logs Write
-        - Logs Read
-        - Cache Purge
-        - Page Rules Write
-        - Page Rules Read
-        - Load Balancers Write
-        - Load Balancers Read
-        - Firewall Services Write
-        - Firewall Services Read
-        - DNS Write
-        - Apps Write
-        - Analytics Read
-        - 'Access: Apps and Policies Write'
-        - 'Access: Apps and Policies Read'
-      x-fern-ignore: true
-      x-fern-sdk-group-name: zones.holds
-      x-fern-sdk-method-name: getByName
-      x-forge-hidden: true
   /zones/{zone_id}/hostnames/settings/{setting_id}:
     get:
       operationId: per-hostname-tls-settings-list
@@ -383114,6 +383006,7 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/zones_page_rule'
+                    type: object
         4XX:
           description: List Page Rules response failure
           content:
@@ -383134,7 +383027,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: page-rules
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
     post:
       operationId: page-rules-create-a-page-rule
       summary: Create a Page Rule
@@ -383175,6 +383067,7 @@ paths:
                   - properties:
                       result:
                         $ref: '#/components/schemas/zones_page_rule'
+                    type: object
         4XX:
           description: Create a Page Rule response failure
           content:
@@ -383193,7 +383086,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: page-rules
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
   /zones/{zone_id}/pagerules/{pagerule_id}:
     delete:
       operationId: page-rules-delete-a-page-rule
@@ -383237,7 +383129,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: page-rules
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
     get:
       operationId: page-rules-get-a-page-rule
       summary: Get a Page Rule
@@ -383266,6 +383157,7 @@ paths:
                   - properties:
                       result:
                         $ref: '#/components/schemas/zones_page_rule'
+                    type: object
         4XX:
           description: Get a Page Rule response failure
           content:
@@ -383321,7 +383213,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: page-rules
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
     patch:
       operationId: page-rules-edit-a-page-rule
       summary: Edit a Page Rule
@@ -383365,6 +383256,7 @@ paths:
                   - properties:
                       result:
                         $ref: '#/components/schemas/zones_page_rule'
+                    type: object
         4XX:
           description: Edit a Page Rule response failure
           content:
@@ -383383,7 +383275,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: page-rules
       x-fern-sdk-method-name: edit
-      x-forge-hidden: true
     put:
       operationId: page-rules-update-a-page-rule
       summary: Update a Page Rule
@@ -383430,6 +383321,7 @@ paths:
                   - properties:
                       result:
                         $ref: '#/components/schemas/zones_page_rule'
+                    type: object
         4XX:
           description: Update a Page Rule response failure
           content:
@@ -383448,7 +383340,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: page-rules
       x-fern-sdk-method-name: update
-      x-forge-hidden: true
   /zones/{zone_id}/pagerules/settings:
     get:
       operationId: available-page-rules-settings-list-available-page-rules-settings
@@ -383472,6 +383363,7 @@ paths:
                   - properties:
                       result:
                         $ref: '#/components/schemas/zones_settings'
+                    type: object
         4XX:
           description: List available Page Rules settings response failure
           content:
@@ -383493,7 +383385,6 @@ paths:
       x-fern-availability: deprecated
       x-fern-sdk-group-name: page-rules.settings
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
       x-forge-sunset:
         date: 2030-01-01T00:00:00Z
   /zones/{zone_id}/pay-per-crawl/can_be_enabled:
@@ -387636,6 +387527,7 @@ paths:
                   - properties:
                       result:
                         $ref: '#/components/schemas/zones_setting'
+                    type: object
         4XX:
           description: Get zone setting response failure
           content:
@@ -387694,6 +387586,7 @@ paths:
                   - properties:
                       result:
                         $ref: '#/components/schemas/zones_setting'
+                    type: object
         4XX:
           description: Edit zone settings info response failure
           content:
@@ -521518,11 +521411,13 @@ components:
         - properties:
             id:
               description: ID of the zone setting.
+              type: string
               example: 0rtt
               enum:
                 - 0rtt
             value:
               $ref: '#/components/schemas/zones_0rtt_value'
+          type: object
       title: 0-RTT Value
     zones_0rtt_value:
       description: Value of the 0-RTT setting.
@@ -521587,11 +521482,13 @@ components:
         - properties:
             id:
               description: ID of the zone setting.
+              type: string
               example: advanced_ddos
               enum:
                 - advanced_ddos
             value:
               $ref: '#/components/schemas/zones_advanced_ddos_value'
+          type: object
       title: Advanced DDoS Protection
     zones_advanced_ddos_value:
       description: |-
@@ -521609,11 +521506,13 @@ components:
         - properties:
             id:
               description: ID of the zone setting.
+              type: string
               example: always_online
               enum:
                 - always_online
             value:
               $ref: '#/components/schemas/zones_always_online_value'
+          type: object
       title: Always Online Mode
     zones_always_online_value:
       description: Value of the zone setting.
@@ -521638,17 +521537,18 @@ components:
         - terraform
     zones_always_use_https-2:
       description: Reply to all requests for URLs that use "http" with a 301 redirect to the equivalent "https" URL. If you only want to redirect for a subset of requests, consider creating an "Always use HTTPS" page rule.
-      default: off
       allOf:
         - $ref: '#/components/schemas/zones_base'
         - properties:
             id:
               description: ID of the zone setting.
+              type: string
               example: always_use_https
               enum:
                 - always_use_https
             value:
               $ref: '#/components/schemas/zones_always_use_https_value'
+          type: object
       title: Zone Enable Always Use HTTPS
     zones_always_use_https_value:
       description: Value of the zone setting.
@@ -521699,7 +521599,8 @@ components:
         result:
           anyOf:
             - type: object
-            - items: {}
+            - items:
+                type: object
               type: array
             - type: string
         success:
@@ -521823,6 +521724,7 @@ components:
               anyOf:
                 - type: object
                 - type: string
+          type: object
     zones_api-response-single-id:
       type: object
       allOf:
@@ -521836,6 +521738,7 @@ components:
                   $ref: '#/components/schemas/zones_identifier'
               required:
                 - id
+          type: object
     zones_api-response-single-id-2:
       type: object
       allOf:
@@ -521873,17 +521776,18 @@ components:
         - terraform
     zones_automatic_https_rewrites-2:
       description: Enable the Automatic HTTPS Rewrites feature for this zone.
-      default: off
       allOf:
         - $ref: '#/components/schemas/zones_base'
         - properties:
             id:
               description: ID of the zone setting.
+              type: string
               example: automatic_https_rewrites
               enum:
                 - automatic_https_rewrites
             value:
               $ref: '#/components/schemas/zones_automatic_https_rewrites_value'
+          type: object
       title: Zone Enable Automatic HTTPS Rewrites
     zones_automatic_https_rewrites_value:
       description: |-
@@ -521961,6 +521865,14 @@ components:
         value:
           description: Current value of the zone setting.
           example: on
+          anyOf:
+            - type: string
+            - type: number
+            - type: boolean
+            - type: object
+            - items:
+                type: string
+              type: array
       required:
         - id
         - value
@@ -521971,11 +521883,13 @@ components:
         - properties:
             id:
               description: ID of the zone setting.
+              type: string
               example: brotli
               enum:
                 - brotli
             value:
               $ref: '#/components/schemas/zones_brotli_value'
+          type: object
       title: Brotli Compression
     zones_brotli_value:
       description: Value of the zone setting.
@@ -522013,11 +521927,13 @@ components:
         - properties:
             id:
               description: ID of the zone setting.
+              type: string
               example: browser_cache_ttl
               enum:
                 - browser_cache_ttl
             value:
               $ref: '#/components/schemas/zones_browser_cache_ttl_value'
+          type: object
       title: Browser Cache TTL
     zones_browser_cache_ttl_value:
       description: |-
@@ -522062,11 +521978,13 @@ components:
         - properties:
             id:
               description: ID of the zone setting.
+              type: string
               example: browser_check
               enum:
                 - browser_check
             value:
               $ref: '#/components/schemas/zones_browser_check_value'
+          type: object
       title: Browser Check
     zones_browser_check_value:
       description: Value of the zone setting.
@@ -522450,11 +522368,13 @@ components:
         - properties:
             id:
               description: ID of the zone setting.
+              type: string
               example: cache_level
               enum:
                 - cache_level
             value:
               $ref: '#/components/schemas/zones_cache_level_value'
+          type: object
       title: Cloudflare Cache Level
     zones_cache_level_value:
       description: Value of the zone setting.
@@ -522550,11 +522470,13 @@ components:
         - properties:
             id:
               description: ID of the zone setting.
+              type: string
               example: challenge_ttl
               enum:
                 - challenge_ttl
             value:
               $ref: '#/components/schemas/zones_challenge_ttl_value'
+          type: object
       title: Challenge Page TTL
     zones_challenge_ttl_value:
       description: Value of the zone setting.
@@ -522583,11 +522505,13 @@ components:
         - properties:
             id:
               description: ID of the zone setting.
+              type: string
               example: china_network_enabled
               enum:
                 - china_network_enabled
             value:
               $ref: '#/components/schemas/zones_china_network_enabled_value'
+          type: object
       title: China Network Enabled
     zones_china_network_enabled_value:
       description: Value of the zone setting.
@@ -522599,17 +522523,18 @@ components:
       readOnly: true
     zones_ciphers:
       description: An allowlist of ciphers for TLS termination. These ciphers must be in the BoringSSL format.
-      default: []
       allOf:
         - $ref: '#/components/schemas/zones_base'
         - properties:
             id:
               description: ID of the zone setting.
+              type: string
               example: ciphers
               enum:
                 - ciphers
             value:
               $ref: '#/components/schemas/zones_ciphers_value'
+          type: object
       title: Zone ciphers allowed for TLS termination
     zones_ciphers_value:
       description: Value of the zone setting.
@@ -522628,10 +522553,12 @@ components:
         - properties:
             id:
               description: How to flatten the cname destination.
+              type: string
               enum:
                 - cname_flattening
             value:
               $ref: '#/components/schemas/zones_cname_flattening_value'
+          type: object
       deprecated: true
       title: Cloudflare CNAME Flattening
       x-stainless-deprecation-message: This zone setting is deprecated; please use the DNS Settings route instead. More information at https://developers.cloudflare.com/fundamentals/api/reference/deprecations/#2025-03-21
@@ -522654,11 +522581,13 @@ components:
         - properties:
             id:
               description: ID of the zone setting.
+              type: string
               example: content_converter
               enum:
                 - content_converter
             value:
               $ref: '#/components/schemas/zones_content_converter_value'
+          type: object
       title: Content Converter
     zones_content_converter_value:
       description: Value of the zone setting.
@@ -522681,6 +522610,7 @@ components:
         - properties:
             id:
               description: ID of the zone setting.
+              type: string
               example: development_mode
               enum:
                 - development_mode
@@ -522693,6 +522623,7 @@ components:
               readOnly: true
             value:
               $ref: '#/components/schemas/zones_development_mode_value'
+          type: object
       title: Development Mode
     zones_development_mode_value:
       description: Value of the zone setting.
@@ -522768,11 +522699,13 @@ components:
         - properties:
             id:
               description: ID of the zone setting.
+              type: string
               example: early_hints
               enum:
                 - early_hints
             value:
               $ref: '#/components/schemas/zones_early_hints_value'
+          type: object
       title: Early Hints
     zones_early_hints_value:
       description: Value of the zone setting.
@@ -522807,11 +522740,13 @@ components:
         - properties:
             id:
               description: ID of the zone setting.
+              type: string
               example: edge_cache_ttl
               enum:
                 - edge_cache_ttl
             value:
               $ref: '#/components/schemas/zones_edge_cache_ttl_value'
+          type: object
       title: Edge Cache TTL
     zones_edge_cache_ttl_value:
       description: |-
@@ -522869,11 +522804,13 @@ components:
         - properties:
             id:
               description: ID of the zone setting.
+              type: string
               example: email_obfuscation
               enum:
                 - email_obfuscation
             value:
               $ref: '#/components/schemas/zones_email_obfuscation_value'
+          type: object
       title: Email Obfuscation
     zones_email_obfuscation_value:
       description: Value of the zone setting.
@@ -522918,6 +522855,7 @@ components:
             - forwarding_url
           x-auditable: true
         value:
+          type: object
           properties:
             status_code:
               description: |
@@ -522947,11 +522885,13 @@ components:
         - properties:
             id:
               description: ID of the zone setting.
+              type: string
               example: h2_prioritization
               enum:
                 - h2_prioritization
             value:
               $ref: '#/components/schemas/zones_h2_prioritization_value'
+          type: object
       title: HTTP/2 Edge Prioritization
     zones_h2_prioritization_value:
       description: Value of the zone setting.
@@ -522986,11 +522926,13 @@ components:
         - properties:
             id:
               description: ID of the zone setting.
+              type: string
               example: hotlink_protection
               enum:
                 - hotlink_protection
             value:
               $ref: '#/components/schemas/zones_hotlink_protection_value'
+          type: object
       title: Hotlink Protection
     zones_hotlink_protection_value:
       description: Value of the zone setting.
@@ -523006,11 +522948,13 @@ components:
         - properties:
             id:
               description: ID of the zone setting.
+              type: string
               example: http2
               enum:
                 - http2
             value:
               $ref: '#/components/schemas/zones_http2_value'
+          type: object
       title: HTTP2 Value
     zones_http2_value:
       description: Value of the HTTP2 setting.
@@ -523026,11 +522970,13 @@ components:
         - properties:
             id:
               description: ID of the zone setting.
+              type: string
               example: http3
               enum:
                 - http3
             value:
               $ref: '#/components/schemas/zones_http3_value'
+          type: object
       title: HTTP3 Value
     zones_http3_value:
       description: Value of the HTTP3 setting.
@@ -523057,11 +523003,13 @@ components:
         - properties:
             id:
               description: ID of the zone setting.
+              type: string
               example: image_resizing
               enum:
                 - image_resizing
             value:
               $ref: '#/components/schemas/zones_image_resizing_value'
+          type: object
       title: Image Transformations
     zones_image_resizing_value:
       description: Whether the feature is enabled, disabled, or enabled in `open proxy` mode.
@@ -523101,11 +523049,13 @@ components:
         - properties:
             id:
               description: ID of the zone setting.
+              type: string
               example: ip_geolocation
               enum:
                 - ip_geolocation
             value:
               $ref: '#/components/schemas/zones_ip_geolocation_value'
+          type: object
       title: IP Geolocation
     zones_ip_geolocation_value:
       description: Value of the zone setting.
@@ -523121,11 +523071,13 @@ components:
         - properties:
             id:
               description: ID of the zone setting.
+              type: string
               example: ipv6
               enum:
                 - ipv6
             value:
               $ref: '#/components/schemas/zones_ipv6_value'
+          type: object
       title: IPv6
     zones_ipv6_value:
       description: Value of the zone setting.
@@ -523141,11 +523093,13 @@ components:
         - properties:
             id:
               description: identifier of the zone setting.
+              type: string
               example: max_upload
               enum:
                 - max_upload
             value:
               $ref: '#/components/schemas/zones_max_upload_value'
+          type: object
       title: Max Upload
     zones_max_upload_value:
       description: |-
@@ -523219,17 +523173,18 @@ components:
       example: []
     zones_min_tls_version:
       description: Only accepts HTTPS requests that use at least the TLS protocol version specified. For example, if TLS 1.1 is selected, TLS 1.0 connections will be rejected, while 1.1, 1.2, and 1.3 (if enabled) will be permitted.
-      default: '1.0'
       allOf:
         - $ref: '#/components/schemas/zones_base'
         - properties:
             id:
               description: ID of the zone setting.
+              type: string
               example: min_tls_version
               enum:
                 - min_tls_version
             value:
               $ref: '#/components/schemas/zones_min_tls_version_value'
+          type: object
       title: Zone Minimum TLS Version value
     zones_min_tls_version_value:
       description: Value of the zone setting.
@@ -523278,11 +523233,13 @@ components:
         - properties:
             id:
               description: ID of the zone setting.
+              type: string
               example: mirage
               enum:
                 - mirage
             value:
               $ref: '#/components/schemas/zones_mirage_value'
+          type: object
       deprecated: true
       title: Mirage Image Optimization
       x-stainless-deprecation-message: Mirage is being deprecated. More information at https://developers.cloudflare.com/speed/optimization/images/mirage/
@@ -523384,11 +523341,13 @@ components:
         - properties:
             id:
               description: Zone setting identifier.
+              type: string
               example: nel
               enum:
                 - nel
             value:
               $ref: '#/components/schemas/zones_nel_value'
+          type: object
       title: Network Error Logging
     zones_nel_value:
       description: Value of the zone setting.
@@ -523431,11 +523390,13 @@ components:
         - properties:
             id:
               description: ID of the zone setting.
+              type: string
               example: opportunistic_encryption
               enum:
                 - opportunistic_encryption
             value:
               $ref: '#/components/schemas/zones_opportunistic_encryption_value'
+          type: object
       title: Enable Opportunistic Encryption for a zone
     zones_opportunistic_encryption_value:
       description: |-
@@ -523448,17 +523409,18 @@ components:
         - off
     zones_opportunistic_onion:
       description: Add an Alt-Svc header to all legitimate requests from Tor, allowing the connection to use our onion services instead of exit nodes.
-      default: off
       allOf:
         - $ref: '#/components/schemas/zones_base'
         - properties:
             id:
               description: ID of the zone setting.
+              type: string
               example: opportunistic_onion
               enum:
                 - opportunistic_onion
             value:
               $ref: '#/components/schemas/zones_opportunistic_onion_value'
+          type: object
       title: Zone Enable Onion Routing
     zones_opportunistic_onion_value:
       description: |-
@@ -523476,11 +523438,13 @@ components:
         - properties:
             id:
               description: ID of the zone setting.
+              type: string
               example: orange_to_orange
               enum:
                 - orange_to_orange
             value:
               $ref: '#/components/schemas/zones_orange_to_orange_value'
+          type: object
       deprecated: true
       title: Orange to Orange
       x-stainless-deprecation-message: This setting is deprecated. Orange to Orange (O2O) is applied automatically for eligible zones and no longer requires configuration; this setting only controlled the legacy O2O v1 (Managed CNAME) path. More information at https://developers.cloudflare.com/fundamentals/api/reference/deprecations/
@@ -523518,17 +523482,18 @@ components:
         - terraform
     zones_origin_error_page_pass_thru-2:
       description: Cloudflare will proxy customer error pages on any 502,504 errors on origin server instead of showing a default Cloudflare error page. This does not apply to 522 errors and is limited to Enterprise Zones.
-      default: off
       allOf:
         - $ref: '#/components/schemas/zones_base'
         - properties:
             id:
               description: ID of the zone setting.
+              type: string
               example: origin_error_page_pass_thru
               enum:
                 - origin_error_page_pass_thru
             value:
               $ref: '#/components/schemas/zones_origin_error_page_pass_thru_value'
+          type: object
       title: Error Pages On
     zones_origin_error_page_pass_thru_value:
       description: Value of the zone setting.
@@ -523600,11 +523565,13 @@ components:
         - properties:
             id:
               description: ID of the zone setting.
+              type: string
               example: polish
               enum:
                 - polish
             value:
               $ref: '#/components/schemas/zones_polish_value'
+          type: object
       title: Polish Image Optimization
     zones_polish_value:
       description: Value of the zone setting.
@@ -523623,11 +523590,13 @@ components:
         - properties:
             id:
               description: ID of the zone setting.
+              type: string
               example: pre_render
               enum:
                 - pre_render
             value:
               $ref: '#/components/schemas/zones_pre_render_value'
+          type: object
       title: Pre-render
     zones_pre_render_value:
       description: Value of the zone setting.
@@ -523638,17 +523607,18 @@ components:
         - on
     zones_prefetch_preload:
       description: Cloudflare will prefetch any URLs that are included in the response headers. This is limited to Enterprise Zones.
-      default: off
       allOf:
         - $ref: '#/components/schemas/zones_base'
         - properties:
             id:
               description: ID of the zone setting.
+              type: string
               example: prefetch_preload
               enum:
                 - prefetch_preload
             value:
               $ref: '#/components/schemas/zones_prefetch_preload_value'
+          type: object
       title: Prefetch preload
     zones_prefetch_preload_value:
       description: Value of the zone setting.
@@ -523669,17 +523639,18 @@ components:
       x-auditable: true
     zones_privacy_pass:
       description: Privacy Pass v1 was a browser extension developed by the Privacy Pass Team to improve the browsing experience for your visitors by allowing users to reduce the number of CAPTCHAs shown. (https://support.cloudflare.com/hc/en-us/articles/115001992652-Privacy-Pass).
-      default: off
       allOf:
         - $ref: '#/components/schemas/zones_base'
         - properties:
             id:
               description: ID of the zone setting.
+              type: string
               example: privacy_pass
               enum:
                 - privacy_pass
             value:
               $ref: '#/components/schemas/zones_privacy_pass_value'
+          type: object
       deprecated: true
       title: Privacy Pass v1 (deprecated)
       x-stainless-deprecation-message: Privacy Pass v1 was deprecated in 2023. (Announcement - https://blog.cloudflare.com/privacy-pass-standard/) and (API deprecation details - https://developers.cloudflare.com/fundamentals/api/reference/deprecations/#2024-03-31)
@@ -523699,11 +523670,13 @@ components:
         - properties:
             id:
               description: ID of the zone setting.
+              type: string
               example: proxy_read_timeout
               enum:
                 - proxy_read_timeout
             value:
               $ref: '#/components/schemas/zones_proxy_read_timeout_value'
+          type: object
       title: Proxy Read Timeout
     zones_proxy_read_timeout_value:
       description: |-
@@ -523718,11 +523691,13 @@ components:
         - properties:
             id:
               description: Value of the Pseudo IPv4 setting.
+              type: string
               default: pseudo_ipv4
               enum:
                 - pseudo_ipv4
             value:
               $ref: '#/components/schemas/zones_pseudo_ipv4_value'
+          type: object
       title: Pseudo IPv4 Value
     zones_pseudo_ipv4_value:
       description: Value of the Pseudo IPv4 setting.
@@ -523741,11 +523716,13 @@ components:
         - properties:
             id:
               description: ID of the zone setting.
+              type: string
               example: redirects_for_ai_training
               enum:
                 - redirects_for_ai_training
             value:
               $ref: '#/components/schemas/zones_redirects_for_ai_training_value'
+          type: object
       title: Redirects for AI Training
     zones_redirects_for_ai_training_value:
       description: Value of the zone setting.
@@ -523762,11 +523739,13 @@ components:
         - properties:
             id:
               description: ID of the zone setting.
+              type: string
               example: replace_insecure_js
               enum:
                 - replace_insecure_js
             value:
               $ref: '#/components/schemas/zones_replace_insecure_js_value'
+          type: object
       title: Replace insecure JavaScript libraries
     zones_replace_insecure_js_value:
       description: Value of the zone setting.
@@ -523847,17 +523826,18 @@ components:
         - terraform
     zones_response_buffering-2:
       description: Enables or disables buffering of responses from the proxied server. Cloudflare may buffer the whole payload to deliver it at once to the client versus allowing it to be delivered in chunks. By default, the proxied server streams directly and is not buffered by Cloudflare. This is limited to Enterprise Zones.
-      default: off
       allOf:
         - $ref: '#/components/schemas/zones_base'
         - properties:
             id:
               description: ID of the zone setting.
+              type: string
               example: response_buffering
               enum:
                 - response_buffering
             value:
               $ref: '#/components/schemas/zones_response_buffering_value'
+          type: object
       deprecated: true
       title: Response Buffering
       x-stainless-deprecation-message: This zone setting is deprecated. This functionality is no longer supported.
@@ -523920,11 +523900,13 @@ components:
         - properties:
             id:
               description: ID of the zone setting.
+              type: string
               example: rocket_loader
               enum:
                 - rocket_loader
             value:
               $ref: '#/components/schemas/zones_rocket_loader_value'
+          type: object
       title: Rocket Loader
     zones_rocket_loader_value:
       description: Value of the zone setting.
@@ -523940,11 +523922,13 @@ components:
         - properties:
             id:
               description: ID of the zone setting.
+              type: string
               example: automatic_platform_optimization
               enum:
                 - automatic_platform_optimization
             value:
               $ref: '#/components/schemas/zones_automatic_platform_optimization'
+          type: object
       title: Automatic Platform Optimization for WordPress
     zones_search_for_agents:
       description: |-
@@ -523957,11 +523941,13 @@ components:
         - properties:
             id:
               description: ID of the zone setting.
+              type: string
               example: search_for_agents
               enum:
                 - search_for_agents
             value:
               $ref: '#/components/schemas/zones_search_for_agents_value'
+          type: object
       title: Search for Agents
     zones_search_for_agents_value:
       description: Value of the zone setting.
@@ -523977,11 +523963,13 @@ components:
         - properties:
             id:
               description: ID of the zone's security header.
+              type: string
               example: security_header
               enum:
                 - security_header
             value:
               $ref: '#/components/schemas/zones_security_header_value'
+          type: object
       title: Security Header
     zones_security_header_value:
       type: object
@@ -524048,11 +524036,13 @@ components:
         - properties:
             id:
               description: ID of the zone setting.
+              type: string
               example: security_level
               enum:
                 - security_level
             value:
               $ref: '#/components/schemas/zones_security_level_value'
+          type: object
       title: Security Level
     zones_security_level_value:
       description: Value of the zone setting.
@@ -524072,11 +524062,13 @@ components:
         - properties:
             id:
               description: ID of the zone setting.
+              type: string
               example: server_side_exclude
               enum:
                 - server_side_exclude
             value:
               $ref: '#/components/schemas/zones_server_side_exclude_value'
+          type: object
       title: Server Side Exclude
     zones_server_side_exclude_value:
       description: Value of the zone setting.
@@ -524159,16 +524151,6 @@ components:
       description: Setting name
       type: string
       example: always_online
-    zones_setting_readonly:
-      type: boolean
-      enum:
-        - false
-    zones_setting_toggle:
-      description: Value of the zone setting.
-      type: string
-      enum:
-        - on
-        - off
     zones_setting_value:
       oneOf:
         - $ref: '#/components/schemas/zones_0rtt_value'
@@ -524235,10 +524217,6 @@ components:
         - $ref: '#/components/schemas/zones_webmcp_packs_value'
         - $ref: '#/components/schemas/zones_webp_value'
         - $ref: '#/components/schemas/zones_websockets_value'
-    zones_setting_writable:
-      type: boolean
-      enum:
-        - true
     zones_settings:
       description: Settings available for the zone.
       type: array
@@ -524432,11 +524410,13 @@ components:
         - properties:
             id:
               description: Zone setting identifier.
+              type: string
               example: sha1_support
               enum:
                 - sha1_support
             value:
               $ref: '#/components/schemas/zones_sha1_support_value'
+          type: object
       title: Toggle SHA1 support
     zones_sha1_support_value:
       description: Value of the zone setting.
@@ -524470,17 +524450,18 @@ components:
         - terraform
     zones_sort_query_string_for_cache-2:
       description: Cloudflare will treat files with the same query strings as the same file in cache, regardless of the order of the query strings. This is limited to Enterprise Zones.
-      default: off
       allOf:
         - $ref: '#/components/schemas/zones_base'
         - properties:
             id:
               description: ID of the zone setting.
+              type: string
               example: sort_query_string_for_cache
               enum:
                 - sort_query_string_for_cache
             value:
               $ref: '#/components/schemas/zones_sort_query_string_for_cache_value'
+          type: object
       title: Get String Sort
     zones_sort_query_string_for_cache_value:
       description: Value of the zone setting.
@@ -524521,11 +524502,13 @@ components:
         - properties:
             id:
               description: ID of the zone setting.
+              type: string
               example: ssl
               enum:
                 - ssl
             value:
               $ref: '#/components/schemas/zones_ssl_value'
+          type: object
       title: SSL
     zones_ssl_recommender:
       description: Enrollment in the SSL/TLS Recommender service which tries to detect and recommend (by sending periodic emails) the most secure SSL/TLS setting your origin servers support.
@@ -524535,9 +524518,11 @@ components:
               $ref: '#/components/schemas/zones_ssl_recommender_enabled'
             id:
               description: Enrollment value for SSL/TLS Recommender.
+              type: string
               example: ssl_recommender
               enum:
                 - ssl_recommender
+          type: object
       title: SSL/TLS Recommender
     zones_ssl_recommender_enabled:
       description: ssl-recommender enrollment setting.
@@ -524569,6 +524554,7 @@ components:
       properties:
         operator:
           description: The matches operator can use asterisks and pipes as wildcard and 'or' operators.
+          type: string
           default: contains
           enum:
             - matches
@@ -524610,11 +524596,13 @@ components:
         - properties:
             id:
               description: Zone setting identifier.
+              type: string
               example: tls_1_2_only
               enum:
                 - tls_1_2_only
             value:
               $ref: '#/components/schemas/zones_tls_1_2_only_value'
+          type: object
       title: TLS1.2 only
     zones_tls_1_2_only_value:
       description: Value of the zone setting.
@@ -524625,17 +524613,18 @@ components:
         - on
     zones_tls_1_3:
       description: Enables Crypto TLS 1.3 feature for a zone.
-      default: off
       allOf:
         - $ref: '#/components/schemas/zones_base'
         - properties:
             id:
               description: ID of the zone setting.
+              type: string
               example: tls_1_3
               enum:
                 - tls_1_3
             value:
               $ref: '#/components/schemas/zones_tls_1_3_value'
+          type: object
       title: Enable TLS 1.3 value for a zone
     zones_tls_1_3_value:
       description: |-
@@ -524654,11 +524643,13 @@ components:
         - properties:
             id:
               description: ID of the zone setting.
+              type: string
               example: tls_client_auth
               enum:
                 - tls_client_auth
             value:
               $ref: '#/components/schemas/zones_tls_client_auth_value'
+          type: object
       title: TLS Client Authentication
     zones_tls_client_auth_value:
       description: value of the zone setting.
@@ -524674,11 +524665,13 @@ components:
         - properties:
             id:
               description: ID of the zone setting. Shared between Image Transformations and Video Transformations.
+              type: string
               example: transformations
               enum:
                 - transformations
             value:
               $ref: '#/components/schemas/zones_image_resizing_value'
+          type: object
       title: Media Transformations
     zones_transformations_allowed_origins:
       description: Media Transformations Allowed Origins restricts transformations for images and video served through Cloudflare's network. Refer to the [Image Transformations](https://developers.cloudflare.com/images/) and [Video Transformations](https://developers.cloudflare.com/stream/transform-videos/#getting-started) documentation for more information.
@@ -524687,11 +524680,13 @@ components:
         - properties:
             id:
               description: ID of the zone setting. Shared between Image Transformations and Video Transformations.
+              type: string
               example: transformations_allowed_origins
               enum:
                 - transformations_allowed_origins
             value:
               $ref: '#/components/schemas/zones_transformations_allowed_origins_value'
+          type: object
       title: Media Transformations Allowed Origins
     zones_transformations_allowed_origins_value:
       description: |-
@@ -524723,17 +524718,18 @@ components:
         - terraform
     zones_true_client_ip_header-2:
       description: Allows customer to continue to use True Client IP (Akamai feature) in the headers we send to the origin. This is limited to Enterprise Zones.
-      default: off
       allOf:
         - $ref: '#/components/schemas/zones_base'
         - properties:
             id:
               description: ID of the zone setting.
+              type: string
               example: true_client_ip_header
               enum:
                 - true_client_ip_header
             value:
               $ref: '#/components/schemas/zones_true_client_ip_header_value'
+          type: object
       title: True Client IP Header
     zones_true_client_ip_header_value:
       description: Value of the zone setting.
@@ -524770,8 +524766,10 @@ components:
                   example: '*example.com/images/*'
                   pattern: ^(https?://)?(([-a-zA-Z0-9*]*\.)+[-a-zA-Z0-9]{2,20})(:(8080|8443|443|80))?(/[\S]+)?$
                   x-auditable: true
+              type: object
         target:
           description: A target based on the URL of the request.
+          type: string
           example: url
           enum:
             - url
@@ -524820,11 +524818,13 @@ components:
         - properties:
             id:
               description: ID of the zone setting.
+              type: string
               example: waf
               enum:
                 - waf
             value:
               $ref: '#/components/schemas/zones_waf_value'
+          type: object
       title: Web Application Firewall
     zones_waf_value:
       description: Value of the zone setting.
@@ -524845,11 +524845,13 @@ components:
         - properties:
             id:
               description: ID of the zone setting.
+              type: string
               example: webmcp_enabled
               enum:
                 - webmcp_enabled
             value:
               $ref: '#/components/schemas/zones_webmcp_enabled_value'
+          type: object
       title: WebMCP Enabled
     zones_webmcp_enabled_value:
       description: Value of the zone setting.
@@ -524872,11 +524874,13 @@ components:
         - properties:
             id:
               description: ID of the zone setting.
+              type: string
               example: webmcp_mcp_url
               enum:
                 - webmcp_mcp_url
             value:
               $ref: '#/components/schemas/zones_webmcp_mcp_url_value'
+          type: object
       title: WebMCP MCP Endpoint
     zones_webmcp_mcp_url_value:
       description: |-
@@ -524902,11 +524906,13 @@ components:
         - properties:
             id:
               description: ID of the zone setting.
+              type: string
               example: webmcp_packs
               enum:
                 - webmcp_packs
             value:
               $ref: '#/components/schemas/zones_webmcp_packs_value'
+          type: object
       title: WebMCP Tool Packs
     zones_webmcp_packs_value:
       description: |-
@@ -524925,11 +524931,13 @@ components:
         - properties:
             id:
               description: ID of the zone setting.
+              type: string
               example: webp
               enum:
                 - webp
             value:
               $ref: '#/components/schemas/zones_webp_value'
+          type: object
       title: Polish WebP Conversion
     zones_webp_value:
       description: Value of the zone setting.
@@ -524945,11 +524953,13 @@ components:
         - properties:
             id:
               description: ID of the zone setting.
+              type: string
               example: websockets
               enum:
                 - websockets
             value:
               $ref: '#/components/schemas/zones_websockets_value'
+          type: object
       title: WebSockets
     zones_websockets_value:
       description: Value of the zone setting.
@@ -525114,6 +525124,7 @@ components:
           x-stainless-deprecation-message: This has been replaced by Account memberships.
         plan:
           description: A Zones subscription information.
+          type: object
           deprecated: true
           properties:
             can_subscribe:
@@ -525171,6 +525182,7 @@ components:
           readOnly: true
         tenant:
           description: The root organizational unit that this zone belongs to (such as a tenant or organization).
+          type: object
           properties:
             id:
               $ref: '#/components/schemas/zones_identifier'
@@ -525180,6 +525192,7 @@ components:
               example: Example Account Name
         tenant_unit:
           description: The immediate parent organizational unit that this zone belongs to (such as under a tenant or sub-organization).
+          type: object
           properties:
             id:
               $ref: '#/components/schemas/zones_identifier'
@@ -525290,6 +525303,7 @@ components:
                   - $ref: '#/components/schemas/zones_webmcp_packs'
                   - $ref: '#/components/schemas/zones_webp'
                   - $ref: '#/components/schemas/zones_websockets'
+          type: object
     zones_zone_settings_single_request:
       oneOf:
         - properties:
