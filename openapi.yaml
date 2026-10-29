@@ -455230,10 +455230,7 @@ components:
       maxLength: 32
       title: account_id
     infra_ApiTlsSettings:
-      description: |-
-        TLS settings for a connectivity service.
-
-        If omitted, the default mode (`verify_full`) is used.
+      description: TLS settings for a connectivity service.
       type: object
       properties:
         cert_verification_mode:
@@ -455243,8 +455240,21 @@ components:
             - `"verify_full"` — verify certificate chain and hostname (default)
             - `"verify_ca"` — verify certificate chain only, skip hostname check
             - `"disabled"` — do not verify the server certificate at all
+
+            `disabled` cannot be combined with `certificate_authority`: a custom CA is
+            only used to verify the server certificate.
           type: string
           example: verify_full
+        certificate_authority:
+          description: UUID of the custom CA certificate or chain.
+          type: string
+          example: 705db030-8247-489b-80dd-0d6256e5950d
+          nullable: true
+        client_certificate:
+          description: UUID of the mTLS client certificate and private key.
+          type: string
+          example: a493fbb4-34bc-4218-a63c-61a9323ac725
+          nullable: true
       required:
         - cert_verification_mode
     infra_BatchReplaceTargetTagsItem:
