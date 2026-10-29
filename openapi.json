@@ -660970,6 +660970,21 @@
                 "example": "Demo Parent Organization",
                 "readOnly": true,
                 "x-auditable": true
+              },
+              "root_org_id": {
+                "description": "ID of the root Organization, if one exists",
+                "type": "string",
+                "example": "46f0a1ce86ec3d91fae00db3b8b48cee",
+                "maxLength": 32,
+                "readOnly": true,
+                "x-auditable": true
+              },
+              "should_display_parent_orgs": {
+                "description": "Indicates whether the parent Organization hierarchy should be displayed",
+                "type": "boolean",
+                "example": true,
+                "readOnly": true,
+                "x-auditable": true
               }
             }
           },
@@ -660977,7 +660992,7 @@
             "description": "Account name",
             "type": "string",
             "example": "Demo Account",
-            "maxLength": 100,
+            "maxLength": 120,
             "x-auditable": true
           },
           "settings": {
@@ -661348,6 +661363,15 @@
         "allOf": [
           {
             "$ref": "#/components/schemas/iam_account"
+          },
+          {
+            "properties": {
+              "name": {
+                "type": "string",
+                "maxLength": 65
+              }
+            },
+            "type": "object"
           }
         ]
       },
@@ -661381,7 +661405,8 @@
         "properties": {
           "name": {
             "description": "Account name",
-            "type": "string"
+            "type": "string",
+            "maxLength": 65
           },
           "standalone": {
             "description": "Set to `true` and omit `unit` to create a standalone Free Account. If provided, this field must be `true`.",
@@ -664863,6 +664888,12 @@
           },
           "status": {
             "$ref": "#/components/schemas/iam_token_status"
+          },
+          "token_prefix": {
+            "$ref": "#/components/schemas/iam_token_prefix"
+          },
+          "token_suffix": {
+            "$ref": "#/components/schemas/iam_token_suffix"
           }
         }
       },
@@ -664898,6 +664929,13 @@
           "$ref": "#/components/schemas/iam_policy_with_permission_groups_and_resources"
         }
       },
+      "iam_token_prefix": {
+        "description": "The prefix of the token value, before the first underscore. Use it with\n`token_suffix` to identify a token. Only present for tokens created or\nrolled after this field was added.",
+        "type": "string",
+        "example": "cfat",
+        "readOnly": true,
+        "x-auditable": true
+      },
       "iam_token_status": {
         "description": "Status of the token.",
         "type": "string",
@@ -664909,6 +664947,15 @@
         ],
         "x-auditable": true,
         "x-stainless-terraform-configurability": "computed_optional"
+      },
+      "iam_token_suffix": {
+        "description": "The last 4 characters of the token value. Use it with `token_prefix` to\nidentify a token. It is not unique. Only present for tokens created or\nrolled after this field was added.",
+        "type": "string",
+        "example": "a1b2",
+        "maxLength": 4,
+        "minLength": 4,
+        "readOnly": true,
+        "x-auditable": true
       },
       "iam_token_verify_response_single_segment": {
         "allOf": [
