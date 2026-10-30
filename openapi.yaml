@@ -177434,13 +177434,6 @@ paths:
           description: The scan request was rejected and no report will be produced (`report_not_produced`, code 10020).
           content:
             application/json:
-              example:
-                errors:
-                  - code: 10020
-                    message: No report will be produced for this scan.
-                messages: []
-                result: null
-                success: false
               schema:
                 $ref: '#/components/schemas/managed-defense-vulnerability-discovery_FailureResponse'
         4XX:
@@ -177487,7 +177480,7 @@ paths:
       tags:
         - Vulnerability Discovery
       x-fern-sdk-group-name: managed-defense.vulnerability-discovery.repositories
-      x-fern-sdk-method-name: createToken
+      x-fern-sdk-method-name: create-token
   /accounts/{account_id}/managed-defense/vulnerability-discovery/scans:
     get:
       operationId: listAccountVulnerabilityDiscoveryScans
@@ -177619,13 +177612,6 @@ paths:
           description: The scan request was rejected and no report will be produced (`report_not_produced`, code 10020).
           content:
             application/json:
-              example:
-                errors:
-                  - code: 10020
-                    message: No report will be produced for this scan.
-                messages: []
-                result: null
-                success: false
               schema:
                 $ref: '#/components/schemas/managed-defense-vulnerability-discovery_FailureResponse'
         4XX:
@@ -177639,7 +177625,7 @@ paths:
       tags:
         - Vulnerability Discovery
       x-fern-sdk-group-name: managed-defense.vulnerability-discovery.scans
-      x-fern-sdk-method-name: getReport
+      x-fern-sdk-method-name: get-report
     parameters:
       - $ref: '#/components/parameters/managed-defense-vulnerability-discovery_AccountId'
       - $ref: '#/components/parameters/managed-defense-vulnerability-discovery_ScanId'
@@ -465211,6 +465197,10 @@ components:
         path:
           type: string
           minLength: 1
+        repo:
+          description: Repository the step is in, present only when it is not the finding's repository (a library or consumer of the same report). `path` is then relative to that repository.
+          type: string
+          format: uuid
         scope:
           type: string
         why:
