@@ -238896,7 +238896,7 @@
                     "type": "string"
                   },
                   {
-                    "pattern": "^action:(on|off|allow|block|scan|noscan|safesearch|ytrestricted|isolate|noisolate|override|l4_override|egress|resolve|quarantine|redirect|custom)$",
+                    "pattern": "^action:(on|off|allow|block|scan|noscan|safesearch|ytrestricted|isolate|noisolate|override|l4_override|egress|resolve|quarantine|redirect|forward)$",
                     "type": "string"
                   },
                   {
@@ -754857,7 +754857,8 @@
           "egress",
           "resolve",
           "quarantine",
-          "redirect"
+          "redirect",
+          "forward"
         ],
         "x-auditable": true
       },
@@ -757293,12 +757294,13 @@
                 "x-auditable": true
               },
               "keyboard": {
-                "description": "Configure keyboard usage behavior. If this field is absent, keyboard usage remains enabled. Applies only when version == \"v2\".",
+                "description": "Configure keyboard usage behavior. When set to enable_read_only_actions, only approved browser commands (find, copy, print, zoom, and select-all) may execute; other keyboard input is blocked from reaching the page. Copy and print remain subject to their independent controls. If this field is absent, keyboard usage remains enabled. Applies only when version == \"v2\". The enable_read_only_actions value requires an explicit version of \"v2\".",
                 "type": "string",
                 "example": "enabled",
                 "enum": [
                   "enabled",
-                  "disabled"
+                  "disabled",
+                  "enable_read_only_actions"
                 ],
                 "x-auditable": true
               },
@@ -757491,6 +757493,24 @@
                 "x-auditable": true
               }
             },
+            "x-stainless-terraform-configurability": "optional"
+          },
+          "forward": {
+            "description": "Forward matching HTTP requests to a Worker. Required for `http` rules with the action set to `forward`.",
+            "type": "object",
+            "nullable": true,
+            "properties": {
+              "worker_id": {
+                "description": "Specify the public Worker ID of the target Worker.",
+                "type": "string",
+                "example": "0123456789abcdef0123456789abcdef",
+                "pattern": "^[0-9a-f]{32}$",
+                "x-auditable": true
+              }
+            },
+            "required": [
+              "worker_id"
+            ],
             "x-stainless-terraform-configurability": "optional"
           },
           "ignore_cname_category_matches": {
