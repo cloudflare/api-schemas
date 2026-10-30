@@ -9620,6 +9620,40 @@ paths:
       x-fern-sdk-method-name: revoke
       x-forge-require-confirmation: This operation revokes all access tokens for a user destructively.
   /accounts/{account_id}/access/organizations/trust_settings:
+    delete:
+      operationId: zero-trust-organization-delete-trust-settings
+      summary: Delete Zero Trust organization trust settings
+      description: Resets the trust settings for your Zero Trust organization.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/access_identifier'
+      responses:
+        '200':
+          description: Reset Zero Trust organization trust settings
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/access_trust_settings_response'
+        4XX:
+          description: Failed to reset Zero Trust organization trust settings
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/access_api-response-common-failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Zero Trust organization
+      x-api-token-group:
+        - 'Access: Organizations, Identity Providers, and Groups Write'
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.organization.trust-settings
+      x-fern-sdk-method-name: delete
     get:
       operationId: zero-trust-organization-get-trust-settings
       summary: Get Zero Trust organization trust settings
@@ -10421,6 +10455,8 @@ paths:
                   $ref: '#/components/schemas/access_name-2'
                 previous_client_secret_expires_at:
                   $ref: '#/components/schemas/access_previous_client_secret_expires_at'
+                tags:
+                  $ref: '#/components/schemas/access_tags'
               required:
                 - name
       responses:
@@ -10559,6 +10595,8 @@ paths:
                   $ref: '#/components/schemas/access_name-2'
                 previous_client_secret_expires_at:
                   $ref: '#/components/schemas/access_previous_client_secret_expires_at'
+                tags:
+                  $ref: '#/components/schemas/access_tags'
       responses:
         '200':
           description: Update a service token response
@@ -359165,6 +359203,8 @@ paths:
                   $ref: '#/components/schemas/access_name-17'
                 previous_client_secret_expires_at:
                   $ref: '#/components/schemas/access_previous_client_secret_expires_at'
+                tags:
+                  $ref: '#/components/schemas/access_tags'
               required:
                 - name
       responses:
@@ -359306,6 +359346,8 @@ paths:
                   $ref: '#/components/schemas/access_name-17'
                 previous_client_secret_expires_at:
                   $ref: '#/components/schemas/access_previous_client_secret_expires_at'
+                tags:
+                  $ref: '#/components/schemas/access_tags'
       responses:
         '200':
           description: Update a service token response
@@ -403214,7 +403256,7 @@ components:
         name:
           $ref: '#/components/schemas/access_name-8'
         tags:
-          $ref: '#/components/schemas/access_tags'
+          $ref: '#/components/schemas/access_tags-2'
         type:
           allOf:
             - $ref: '#/components/schemas/access_type'
@@ -403629,6 +403671,8 @@ components:
                   type: string
                 name:
                   $ref: '#/components/schemas/access_name-2'
+                tags:
+                  $ref: '#/components/schemas/access_tags'
                 updated_at:
                   $ref: '#/components/schemas/access_updated_at'
           type: object
@@ -403655,6 +403699,8 @@ components:
                   type: string
                 name:
                   $ref: '#/components/schemas/access_name-17'
+                tags:
+                  $ref: '#/components/schemas/access_tags'
                 updated_at:
                   $ref: '#/components/schemas/access_timestamp'
           type: object
@@ -405830,7 +405876,7 @@ components:
         session_duration:
           $ref: '#/components/schemas/access_session_duration-2'
         tags:
-          $ref: '#/components/schemas/access_tags'
+          $ref: '#/components/schemas/access_tags-2'
         type:
           allOf:
             - $ref: '#/components/schemas/access_type'
@@ -405875,7 +405921,7 @@ components:
         session_duration:
           $ref: '#/components/schemas/access_session_duration-2'
         tags:
-          $ref: '#/components/schemas/access_tags'
+          $ref: '#/components/schemas/access_tags-2'
         type:
           allOf:
             - $ref: '#/components/schemas/access_type'
@@ -407733,6 +407779,7 @@ components:
         - $ref: '#/components/schemas/access_saml_group_rule'
         - $ref: '#/components/schemas/access_oidc_claim_rule'
         - $ref: '#/components/schemas/access_service_token_rule'
+        - $ref: '#/components/schemas/access_service_token_tag_rule'
         - $ref: '#/components/schemas/access_linked_app_token_rule'
         - $ref: '#/components/schemas/access_user_risk_score_rule'
         - $ref: '#/components/schemas/access_cloudflare_account_member_rule'
@@ -407759,7 +407806,7 @@ components:
         scim_config:
           $ref: '#/components/schemas/access_scim_config'
         tags:
-          $ref: '#/components/schemas/access_tags'
+          $ref: '#/components/schemas/access_tags-2'
         type:
           allOf:
             - $ref: '#/components/schemas/access_type'
@@ -408593,7 +408640,16 @@ components:
                   - replace
               path:
                 type: string
-              value: {}
+              value:
+                oneOf:
+                  - nullable: true
+                    type: string
+                  - type: number
+                  - type: boolean
+                  - items: {}
+                    type: array
+                  - additionalProperties: true
+                    type: object
             required:
               - op
             type: object
@@ -408811,7 +408867,7 @@ components:
         skip_interstitial:
           $ref: '#/components/schemas/access_skip_interstitial'
         tags:
-          $ref: '#/components/schemas/access_tags'
+          $ref: '#/components/schemas/access_tags-2'
         type:
           allOf:
             - $ref: '#/components/schemas/access_type'
@@ -408907,6 +408963,8 @@ components:
           $ref: '#/components/schemas/access_leak_reporter'
         name:
           $ref: '#/components/schemas/access_name-2'
+        tags:
+          $ref: '#/components/schemas/access_tags'
         updated_at:
           $ref: '#/components/schemas/access_updated_at'
     access_service-tokens-2:
@@ -408937,6 +408995,8 @@ components:
           $ref: '#/components/schemas/access_leak_reporter'
         name:
           $ref: '#/components/schemas/access_name-17'
+        tags:
+          $ref: '#/components/schemas/access_tags'
         updated_at:
           $ref: '#/components/schemas/access_timestamp'
     access_service_auth_401_redirect:
@@ -408985,6 +409045,31 @@ components:
       required:
         - service_token
       title: Service Token
+    access_service_token_tag_rule:
+      description: Matches an Access service token with the specified tag key and value. Only compatible with non_identity decisions.
+      type: object
+      properties:
+        service_token_tag:
+          type: object
+          properties:
+            key:
+              description: The tag key to match. Keys are case-sensitive and may contain Unicode letters and digits, underscores, periods, and hyphens.
+              type: string
+              example: environment
+              maxLength: 256
+              minLength: 1
+            value:
+              description: The tag value to match. Values are case-sensitive, preserve whitespace, and must not contain NUL characters.
+              type: string
+              example: production
+              maxLength: 256
+              minLength: 1
+          required:
+            - key
+            - value
+      required:
+        - service_token_tag
+      title: Service Token Tag
     access_session_duration:
       description: 'The amount of time that tokens issued for applications will be valid. Must be in the format `300ms` or `2h45m`. Valid time units are: ns, us (or µs), ms, s, m, h.'
       type: string
@@ -409344,6 +409429,17 @@ components:
       required:
         - name
     access_tags:
+      description: Tags associated with the service token, as key-value pairs. On update, replaces all existing tags.
+      type: object
+      example:
+        environment: production
+      additionalProperties:
+        maxLength: 256
+        type: string
+      maxProperties: 5
+      nullable: true
+      x-auditable: true
+    access_tags-2:
       description: The tags you want assigned to an application. Tags are used to filter applications in the App Launcher dashboard.
       type: array
       items:
