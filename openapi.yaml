@@ -206521,7 +206521,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/security-center_accountId'
         - $ref: '#/components/parameters/security-center_partner'
-        - $ref: '#/components/parameters/security-center_partnerAssetPage'
+        - $ref: '#/components/parameters/security-center_partnerAssetCursor'
         - $ref: '#/components/parameters/security-center_partnerAssetPerPage'
       responses:
         '200':
@@ -206531,6 +206531,8 @@ paths:
               $ref: '#/components/headers/security-center_collectionTotal'
             X-Collection-Truncated:
               $ref: '#/components/headers/security-center_collectionTruncated'
+            X-Next-Cursor:
+              $ref: '#/components/headers/security-center_nextCursor'
           content:
             application/json:
               schema:
@@ -206568,7 +206570,7 @@ paths:
           schema:
             type: string
             example: example.com
-        - $ref: '#/components/parameters/security-center_partnerAssetPage'
+        - $ref: '#/components/parameters/security-center_partnerAssetCursor'
         - $ref: '#/components/parameters/security-center_partnerAssetPerPage'
       responses:
         '200':
@@ -206578,6 +206580,8 @@ paths:
               $ref: '#/components/headers/security-center_collectionTotal'
             X-Collection-Truncated:
               $ref: '#/components/headers/security-center_collectionTruncated'
+            X-Next-Cursor:
+              $ref: '#/components/headers/security-center_nextCursor'
           content:
             application/json:
               schema:
@@ -387248,7 +387252,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/security-center_zoneId'
         - $ref: '#/components/parameters/security-center_partner'
-        - $ref: '#/components/parameters/security-center_partnerAssetPage'
+        - $ref: '#/components/parameters/security-center_partnerAssetCursor'
         - $ref: '#/components/parameters/security-center_partnerAssetPerPage'
       responses:
         '200':
@@ -387258,6 +387262,8 @@ paths:
               $ref: '#/components/headers/security-center_collectionTotal'
             X-Collection-Truncated:
               $ref: '#/components/headers/security-center_collectionTruncated'
+            X-Next-Cursor:
+              $ref: '#/components/headers/security-center_nextCursor'
           content:
             application/json:
               schema:
@@ -398493,14 +398499,12 @@ components:
         type: string
         enum:
           - riskrecon
-    security-center_partnerAssetPage:
-      description: Page number for premium partner asset results.
+    security-center_partnerAssetCursor:
+      description: Opaque cursor from the previous response's `result_info.cursor`. Omit for the first page.
       in: query
-      name: page
+      name: cursor
       schema:
-        type: integer
-        default: 1
-        minimum: 1
+        type: string
     security-center_partnerAssetPerPage:
       description: Number of premium partner asset results per page. Values other than 1 must be a multiple of 5.
       in: query
@@ -493909,6 +493913,29 @@ components:
       description: Specifies the current page within paginated list of results.
       type: integer
       example: 1
+    security-center_partnerAssetResultInfo:
+      type: object
+      properties:
+        count:
+          description: Number of items in the current page.
+          type: integer
+          format: int64
+          example: 25
+          minimum: 0
+        cursor:
+          description: Opaque cursor for the next page. Absent when there are no more results.
+          type: string
+        per_page:
+          description: Requested maximum number of items per page.
+          type: integer
+          format: int64
+          example: 25
+          maximum: 1000
+          minimum: 1
+      additionalProperties: false
+      required:
+        - count
+        - per_page
     security-center_partnerEntitlement:
       description: The account's feature level for the partner integration.
       type: string
@@ -494175,7 +494202,7 @@ components:
               additionalProperties: false
               properties:
                 collection_truncated:
-                  description: Whether partner data reached the service collection limit.
+                  description: Whether the partner reported that the parent domain's host collection was truncated.
                   type: boolean
                   example: false
                   x-auditable: true
@@ -494186,11 +494213,6 @@ components:
                   x-auditable: true
                 entitlement:
                   $ref: '#/components/schemas/security-center_partnerEntitlement'
-                has_more:
-                  description: Whether another page of items is available.
-                  type: boolean
-                  example: true
-                  x-auditable: true
                 items:
                   description: Paginated shadow hosts. Empty for baseline accounts.
                   type: array
@@ -494208,8 +494230,9 @@ components:
                 - domain
                 - total_count
                 - items
-                - has_more
                 - collection_truncated
+            result_info:
+              $ref: '#/components/schemas/security-center_partnerAssetResultInfo'
           type: object
     security-center_shadowZone:
       type: object
@@ -494246,17 +494269,12 @@ components:
               additionalProperties: false
               properties:
                 collection_truncated:
-                  description: Whether partner data reached the service collection limit.
+                  description: Whether the partner reported that the parent organization's domain collection was truncated.
                   type: boolean
                   example: false
                   x-auditable: true
                 entitlement:
                   $ref: '#/components/schemas/security-center_partnerEntitlement'
-                has_more:
-                  description: Whether another page of items is available.
-                  type: boolean
-                  example: true
-                  x-auditable: true
                 items:
                   description: Paginated shadow zones. Empty for baseline accounts.
                   type: array
@@ -494273,8 +494291,9 @@ components:
                 - entitlement
                 - total_count
                 - items
-                - has_more
                 - collection_truncated
+            result_info:
+              $ref: '#/components/schemas/security-center_partnerAssetResultInfo'
           type: object
     security-center_source:
       description: Who generated the insight. `cloudflare` for Cloudflare-generated insights, otherwise the partner.
@@ -526820,9 +526839,13 @@ components:
         format: int64
         minimum: 0
     security-center_collectionTruncated:
-      description: Whether partner data reached the service collection limit. Returned with CSV responses.
+      description: Whether the partner reported that the relevant parent asset's child collection was truncated. Returned with CSV responses.
       schema:
         type: boolean
+    security-center_nextCursor:
+      description: Opaque cursor for the next CSV page. Absent when there are no more results.
+      schema:
+        type: string
   requestBodies:
     api-shield_bulk-create-rules:
       content:
