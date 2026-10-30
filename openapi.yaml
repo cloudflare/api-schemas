@@ -109,7 +109,7 @@ paths:
     post:
       operationId: account-creation
       summary: Create an Account
-      description: 'Create an Account. To create the Account within an Organization, provide `unit.id` and omit `standalone`. To create a standalone Free Account, provide `standalone: true` and omit `unit`. Providing both fields is invalid. If you omit both fields, Cloudflare can determine the destination only when the User is an administrator of exactly one Organization. Cloudflare creates the Account in that Organization; otherwise, the request returns an error.'
+      description: 'Create an Account. To create the Account within an Organization, provide `unit.id` and omit `standalone`. To create a standalone Free Account, provide `standalone: true` and omit `unit`. Providing both fields is invalid. If you omit both fields, Cloudflare can determine the destination only when the User is an administrator of exactly one Organization. Cloudflare creates the Account in that Organization; otherwise, the request returns an error. Account names are limited to 65 UTF-8 bytes.'
       parameters:
         - name: Idempotency-Key
           in: header
@@ -270,7 +270,7 @@ paths:
     put:
       operationId: accounts-update-account
       summary: Update Account
-      description: Update an existing account.
+      description: Update an existing account. Account names are limited to 65 UTF-8 bytes.
       parameters:
         - name: account_id
           in: path
@@ -451242,7 +451242,6 @@ components:
           description: Account name
           type: string
           example: Demo Account
-          maxLength: 120
           x-auditable: true
         settings:
           description: Account settings
@@ -451467,8 +451466,8 @@ components:
         - $ref: '#/components/schemas/iam_account'
         - properties:
             name:
+              description: Account name, limited to 65 UTF-8 bytes.
               type: string
-              maxLength: 65
           type: object
     iam_components-schemas-status:
       description: Whether the user is a member of the organization or has an invitation pending.
@@ -451493,9 +451492,8 @@ components:
       type: object
       properties:
         name:
-          description: Account name
+          description: Account name, limited to 65 UTF-8 bytes.
           type: string
-          maxLength: 65
         standalone:
           description: Set to `true` and omit `unit` to create a standalone Free Account. If provided, this field must be `true`.
           type: boolean
