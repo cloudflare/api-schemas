@@ -615963,6 +615963,40 @@
           "durable_objects"
         ]
       },
+      "bot-management_ai_agent_action": {
+        "description": "Action to apply to one supported personal AI agent.",
+        "type": "string",
+        "example": "block",
+        "enum": [
+          "disabled",
+          "block",
+          "only_on_ad_pages"
+        ]
+      },
+      "bot-management_ai_agents": {
+        "description": "Configure blocking behavior for supported personal AI agents.",
+        "type": "object",
+        "properties": {
+          "anthropic_agent": {
+            "$ref": "#/components/schemas/bot-management_ai_agent_action"
+          },
+          "google_agent": {
+            "$ref": "#/components/schemas/bot-management_ai_agent_action"
+          },
+          "instinct": {
+            "$ref": "#/components/schemas/bot-management_ai_agent_action"
+          },
+          "muse": {
+            "$ref": "#/components/schemas/bot-management_ai_agent_action"
+          },
+          "openai_agent": {
+            "$ref": "#/components/schemas/bot-management_ai_agent_action"
+          }
+        },
+        "additionalProperties": false,
+        "x-auditable": true,
+        "x-stainless-terraform-configurability": "computed_optional"
+      },
       "bot-management_ai_bots_migration_opt_out": {
         "description": "Temporary migration flag tracking zones opted out of AI bots managed-rule updates.",
         "type": "boolean",
@@ -616111,6 +616145,9 @@
         "allOf": [
           {
             "properties": {
+              "ai_agents": {
+                "$ref": "#/components/schemas/bot-management_ai_agents"
+              },
               "ai_bots_migration_opt_out": {
                 "$ref": "#/components/schemas/bot-management_ai_bots_migration_opt_out"
               },
