@@ -198353,129 +198353,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: registrar.registrations
       x-fern-sdk-method-name: transfer-check
-  /accounts/{account_id}/registrar/domains:
-    get:
-      operationId: registrar-domains-list-domains
-      summary: List domains
-      description: Lists domains handled by Registrar.
-      parameters:
-        - name: account_id
-          in: path
-          required: true
-          schema:
-            $ref: '#/components/schemas/registrar-api_identifier'
-      responses:
-        '200':
-          description: List domains response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/registrar-api_domain_response_collection'
-        4XX:
-          description: List domains response failure.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/registrar-api_api-response-common-failure'
-      deprecated: true
-      security:
-        - api_email: []
-          api_key: []
-          api_token: []
-      tags:
-        - Registrar Domains
-      x-api-token-group: null
-      x-fern-ignore: true
-      x-fern-sdk-group-name: registrar.legacy
-      x-fern-sdk-method-name: list-domains
-      x-stainless-deprecation-message: This operation is deprecated and will reach end of life on September 27, 2026. Use the new Registrar API endpoints (domain-search, domain-check, registrations) instead. Refer to https://developers.cloudflare.com/fundamentals/api/reference/deprecations/ for details.
-  /accounts/{account_id}/registrar/domains/{domain_name}:
-    get:
-      operationId: registrar-domains-get-domain
-      summary: Get domain
-      description: Show individual domain.
-      parameters:
-        - name: domain_name
-          in: path
-          required: true
-          schema:
-            $ref: '#/components/schemas/registrar-api_domain_name'
-        - name: account_id
-          in: path
-          required: true
-          schema:
-            $ref: '#/components/schemas/registrar-api_identifier'
-      responses:
-        '200':
-          description: Get domain response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/registrar-api_domain_response_single'
-        4XX:
-          description: Get domain response failure.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/registrar-api_api-response-common-failure'
-      deprecated: true
-      security:
-        - api_email: []
-          api_key: []
-          api_token: []
-      tags:
-        - Registrar Domains
-      x-api-token-group: null
-      x-fern-ignore: true
-      x-fern-sdk-group-name: registrar.legacy
-      x-fern-sdk-method-name: get-domain
-      x-stainless-deprecation-message: This operation is deprecated and will reach end of life on September 27, 2026. Use the new Registrar API endpoints (domain-search, domain-check, registrations) instead. Refer to https://developers.cloudflare.com/fundamentals/api/reference/deprecations/ for details.
-    put:
-      operationId: registrar-domains-update-domain
-      summary: Update domain
-      description: Updates an individual domain.
-      parameters:
-        - name: domain_name
-          in: path
-          required: true
-          schema:
-            $ref: '#/components/schemas/registrar-api_domain_name'
-        - name: account_id
-          in: path
-          required: true
-          schema:
-            $ref: '#/components/schemas/registrar-api_identifier'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/registrar-api_domain_update_properties'
-      responses:
-        '200':
-          description: Update domain response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/registrar-api_domain_response_single'
-        4XX:
-          description: Update domain response failure.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/registrar-api_api-response-common-failure'
-      deprecated: true
-      security:
-        - api_email: []
-          api_key: []
-          api_token: []
-      tags:
-        - Registrar Domains
-      x-api-token-group: null
-      x-fern-ignore: true
-      x-fern-sdk-group-name: registrar.legacy
-      x-fern-sdk-method-name: update-domain
-      x-stainless-deprecation-message: This operation is deprecated and will reach end of life on September 27, 2026. Use the new Registrar API endpoints (domain-search, domain-check, registrations) instead. Refer to https://developers.cloudflare.com/fundamentals/api/reference/deprecations/ for details.
   /accounts/{account_id}/registrar/extensions:
     get:
       operationId: registrar-extension-list
@@ -483469,27 +483346,6 @@ components:
         - created_at
         - updated_at
         - links
-    registrar-api_address:
-      description: Address.
-      type: string
-      example: 123 Sesame St.
-    registrar-api_address2:
-      description: Optional address line for unit, floor, suite, etc.
-      type: string
-      example: Suite 430
-    registrar-api_api-response-collection:
-      type: object
-      allOf:
-        - $ref: '#/components/schemas/registrar-api_api-response-common'
-        - properties:
-            result:
-              type: array
-              items:
-                type: object
-              nullable: true
-            result_info:
-              $ref: '#/components/schemas/registrar-api_result_info'
-          type: object
     registrar-api_api-response-common:
       type: object
       properties:
@@ -483545,96 +483401,6 @@ components:
         - errors
         - messages
         - result
-    registrar-api_api-response-single:
-      type: object
-      allOf:
-        - $ref: '#/components/schemas/registrar-api_api-response-common'
-        - properties:
-            result:
-              type: object
-              nullable: true
-          type: object
-    registrar-api_auto_renew:
-      description: Auto-renew controls whether subscription is automatically renewed upon domain expiration.
-      type: boolean
-      example: true
-      x-auditable: true
-    registrar-api_available:
-      description: Shows if a domain is available for transferring into Cloudflare Registrar.
-      type: boolean
-      example: false
-    registrar-api_can_register:
-      description: Indicates eligibility to register the domain as a new domain.
-      type: boolean
-      example: false
-    registrar-api_city:
-      description: City.
-      type: string
-      example: Austin
-    registrar-api_contact_identifier:
-      description: Contact Identifier.
-      type: string
-      example: ea95132c15732412d22c1476fa83f27a
-      maxLength: 32
-      readOnly: true
-    registrar-api_contact_properties:
-      type: object
-      properties:
-        address:
-          $ref: '#/components/schemas/registrar-api_address'
-        address2:
-          $ref: '#/components/schemas/registrar-api_address2'
-        city:
-          $ref: '#/components/schemas/registrar-api_city'
-        country:
-          $ref: '#/components/schemas/registrar-api_country'
-        email:
-          $ref: '#/components/schemas/registrar-api_email'
-        fax:
-          $ref: '#/components/schemas/registrar-api_fax'
-        first_name:
-          $ref: '#/components/schemas/registrar-api_first_name'
-        id:
-          $ref: '#/components/schemas/registrar-api_contact_identifier'
-        last_name:
-          $ref: '#/components/schemas/registrar-api_last_name'
-        organization:
-          $ref: '#/components/schemas/registrar-api_organization'
-        phone:
-          $ref: '#/components/schemas/registrar-api_telephone'
-        state:
-          $ref: '#/components/schemas/registrar-api_state'
-        zip:
-          $ref: '#/components/schemas/registrar-api_zipcode'
-      required:
-        - first_name
-        - last_name
-        - address
-        - city
-        - state
-        - zip
-        - country
-        - phone
-        - organization
-    registrar-api_contacts:
-      type: object
-      allOf:
-        - $ref: '#/components/schemas/registrar-api_contact_properties'
-    registrar-api_country:
-      description: The country in which the user lives.
-      type: string
-      example: US
-      maxLength: 30
-      nullable: true
-    registrar-api_created_at:
-      description: Shows time of creation.
-      type: string
-      format: date-time
-      example: 2018-08-28T17:26:26Z
-    registrar-api_current_registrar:
-      description: Shows name of current registrar.
-      type: string
-      example: Cloudflare
     registrar-api_cursor_result_info:
       description: |
         Provides cursor-based pagination metadata. List endpoints use this
@@ -483750,12 +483516,6 @@ components:
       required:
         - name
         - registrable
-    registrar-api_domain_identifier:
-      description: Domain identifier.
-      type: string
-      example: ea95132c15732412d22c1476fa83f27a
-      maxLength: 32
-      readOnly: true
     registrar-api_domain_name:
       description: |
         Provides a fully qualified domain name (FQDN), including the extension
@@ -483765,49 +483525,6 @@ components:
       type: string
       example: example.com
       x-auditable: true
-    registrar-api_domain_properties:
-      type: object
-      properties:
-        available:
-          $ref: '#/components/schemas/registrar-api_available'
-        can_register:
-          $ref: '#/components/schemas/registrar-api_can_register'
-        created_at:
-          $ref: '#/components/schemas/registrar-api_created_at'
-        current_registrar:
-          $ref: '#/components/schemas/registrar-api_current_registrar'
-        expires_at:
-          $ref: '#/components/schemas/registrar-api_expires_at'
-        id:
-          $ref: '#/components/schemas/registrar-api_domain_identifier'
-        locked:
-          $ref: '#/components/schemas/registrar-api_locked'
-        registrant_contact:
-          $ref: '#/components/schemas/registrar-api_registrant_contact'
-        registry_statuses:
-          $ref: '#/components/schemas/registrar-api_registry_statuses'
-        supported_tld:
-          $ref: '#/components/schemas/registrar-api_supported_tld'
-        transfer_in:
-          $ref: '#/components/schemas/registrar-api_transfer_in'
-        updated_at:
-          $ref: '#/components/schemas/registrar-api_updated_at'
-    registrar-api_domain_response_collection:
-      allOf:
-        - $ref: '#/components/schemas/registrar-api_api-response-collection'
-        - properties:
-            result:
-              type: array
-              items:
-                $ref: '#/components/schemas/registrar-api_domains'
-          type: object
-    registrar-api_domain_response_single:
-      allOf:
-        - $ref: '#/components/schemas/registrar-api_api-response-single'
-        - properties:
-            result:
-              type: object
-          type: object
     registrar-api_domain_search_response:
       allOf:
         - $ref: '#/components/schemas/registrar-api_api-response-common'
@@ -484040,29 +483757,6 @@ components:
         - name
         - transferable
         - reasons
-    registrar-api_domain_update_properties:
-      type: object
-      properties:
-        auto_renew:
-          $ref: '#/components/schemas/registrar-api_auto_renew'
-        locked:
-          $ref: '#/components/schemas/registrar-api_locked'
-        privacy:
-          $ref: '#/components/schemas/registrar-api_privacy'
-    registrar-api_domains:
-      type: object
-      allOf:
-        - $ref: '#/components/schemas/registrar-api_domain_properties'
-    registrar-api_email:
-      description: The contact email address of the user.
-      type: string
-      example: user@example.com
-      maxLength: 90
-    registrar-api_expires_at:
-      description: Shows when domain name registration expires.
-      type: string
-      format: date-time
-      example: 2019-08-28T23:59:59Z
     registrar-api_extension-item:
       description: Extension entry with metadata and JSON Schema documents for registration and transfer operations.
       type: object
@@ -484119,33 +483813,12 @@ components:
             result:
               $ref: '#/components/schemas/registrar-api_extension-item'
           type: object
-    registrar-api_fax:
-      description: Contact fax number.
-      type: string
-      example: 123-867-5309
-    registrar-api_first_name:
-      description: User's first name.
-      type: string
-      example: John
-      maxLength: 60
-      nullable: true
     registrar-api_identifier:
       description: Identifier.
       type: string
       example: 023e105f4ecef8ad9ca31a8372d0c353
       maxLength: 32
       readOnly: true
-    registrar-api_last_name:
-      description: User's last name.
-      type: string
-      example: Appleseed
-      maxLength: 60
-      nullable: true
-    registrar-api_locked:
-      description: Shows whether a registrar lock is in place for a domain.
-      type: boolean
-      example: false
-      x-auditable: true
     registrar-api_messages:
       type: array
       items:
@@ -484170,10 +483843,6 @@ components:
         type: object
         uniqueItems: true
       example: []
-    registrar-api_organization:
-      description: Name of organization.
-      type: string
-      example: Cloudflare, Inc.
     registrar-api_pricing_base:
       description: |
         Provides annual pricing information for a given domain.
@@ -484229,15 +483898,6 @@ components:
             - renewal_cost
             - transfer_cost
           type: object
-    registrar-api_privacy:
-      description: Privacy option controls redacting WHOIS information.
-      type: boolean
-      example: true
-      x-auditable: true
-    registrar-api_registrant_contact:
-      description: Shows contact information for domain registrant.
-      allOf:
-        - $ref: '#/components/schemas/registrar-api_contacts'
     registrar-api_registration:
       description: A domain registration resource representing the current state of a registered domain.
       type: object
@@ -484544,96 +484204,6 @@ components:
           type: boolean
           example: true
       minProperties: 1
-    registrar-api_registry_statuses:
-      description: A comma-separated list of registry status codes. Refer to [EPP Status Codes](https://www.icann.org/resources/pages/epp-status-codes-2014-06-16-en) for the full list.
-      type: string
-      example: ok,serverTransferProhibited
-    registrar-api_result_info:
-      type: object
-      properties:
-        count:
-          description: Total number of results for the requested service.
-          type: number
-          example: 1
-        page:
-          description: Current page within paginated list of results.
-          type: number
-          example: 1
-        per_page:
-          description: Number of results per page of results.
-          type: number
-          example: 20
-        total_count:
-          description: Total results available without any search parameters.
-          type: number
-          example: 2000
-    registrar-api_state:
-      description: State.
-      type: string
-      example: TX
-    registrar-api_supported_tld:
-      description: Indicates whether Cloudflare Registrar currently supports a particular TLD. Refer to [TLD Policies](https://www.cloudflare.com/tld-policies/) for a list of supported TLDs.
-      type: boolean
-      example: true
-    registrar-api_telephone:
-      description: User's telephone number.
-      type: string
-      example: +1 123-123-1234
-      maxLength: 20
-      nullable: true
-    registrar-api_transfer_in:
-      description: Statuses for domain transfers into Cloudflare Registrar.
-      properties:
-        accept_foa:
-          description: Status of the registrant authorization step.
-          type: string
-          example: needed
-          enum:
-            - needed
-            - ok
-        approve_transfer:
-          description: Status of the registry transfer-approval step.
-          type: string
-          example: unknown
-          enum:
-            - needed
-            - ok
-            - pending
-            - trying
-            - rejected
-            - unknown
-        can_cancel_transfer:
-          description: Indicates if cancellation is still possible.
-          type: boolean
-          example: true
-        disable_privacy:
-          description: Status of the privacy-guard disabling step at the foreign registrar.
-          type: string
-          example: ok
-          enum:
-            - needed
-            - ok
-            - unknown
-        enter_auth_code:
-          description: Status of the auth-code entry and verification step.
-          type: string
-          example: needed
-          enum:
-            - needed
-            - ok
-            - pending
-            - trying
-            - rejected
-        unlock_domain:
-          description: Status of the domain-unlock step at the foreign registrar.
-          type: string
-          example: ok
-          enum:
-            - needed
-            - ok
-            - pending
-            - trying
-            - unknown
     registrar-api_transfer_in_create_request:
       type: object
       properties:
@@ -484679,11 +484249,6 @@ components:
           enum:
             - off
             - redaction
-    registrar-api_updated_at:
-      description: Last updated.
-      type: string
-      format: date-time
-      example: 2018-08-28T17:26:26Z
     registrar-api_workflow-status-response-single:
       allOf:
         - $ref: '#/components/schemas/registrar-api_api-response-common'
@@ -484781,12 +484346,6 @@ components:
         - created_at
         - updated_at
         - links
-    registrar-api_zipcode:
-      description: The zipcode or postal code where the user lives.
-      type: string
-      example: '12345'
-      maxLength: 20
-      nullable: true
     reports_AccountIndustryErrorResponse:
       type: object
       properties:
