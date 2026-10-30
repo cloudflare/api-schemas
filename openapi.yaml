@@ -159159,7 +159159,7 @@ paths:
                   type: string
                 - pattern: ^id:.*$
                   type: string
-                - pattern: ^action:(on|off|allow|block|scan|noscan|safesearch|ytrestricted|isolate|noisolate|override|l4_override|egress|resolve|quarantine|redirect|custom)$
+                - pattern: ^action:(on|off|allow|block|scan|noscan|safesearch|ytrestricted|isolate|noisolate|override|l4_override|egress|resolve|quarantine|redirect|forward)$
                   type: string
                 - pattern: ^enabled:(true|false)$
                   type: string
@@ -518368,6 +518368,7 @@ components:
         - resolve
         - quarantine
         - redirect
+        - forward
       x-auditable: true
     zero-trust-gateway_activity-log-settings:
       description: Specify activity log settings.
@@ -520109,12 +520110,13 @@ components:
               type: boolean
               x-auditable: true
             keyboard:
-              description: Configure keyboard usage behavior. If this field is absent, keyboard usage remains enabled. Applies only when version == "v2".
+              description: Configure keyboard usage behavior. When set to enable_read_only_actions, only approved browser commands (find, copy, print, zoom, and select-all) may execute; other keyboard input is blocked from reaching the page. Copy and print remain subject to their independent controls. If this field is absent, keyboard usage remains enabled. Applies only when version == "v2". The enable_read_only_actions value requires an explicit version of "v2".
               type: string
               example: enabled
               enum:
                 - enabled
                 - disabled
+                - enable_read_only_actions
               x-auditable: true
             paste:
               description: Configure paste behavior. If set to remote_only, users cannot paste content from the local clipboard into isolated pages. If this field is absent, pasting remains enabled. Applies only when version == "v2".
@@ -520266,6 +520268,20 @@ components:
               description: Enable sending the copy to storage.
               type: boolean
               x-auditable: true
+          x-stainless-terraform-configurability: optional
+        forward:
+          description: Forward matching HTTP requests to a Worker. Required for `http` rules with the action set to `forward`.
+          type: object
+          nullable: true
+          properties:
+            worker_id:
+              description: Specify the public Worker ID of the target Worker.
+              type: string
+              example: 0123456789abcdef0123456789abcdef
+              pattern: ^[0-9a-f]{32}$
+              x-auditable: true
+          required:
+            - worker_id
           x-stainless-terraform-configurability: optional
         ignore_cname_category_matches:
           description: Ignore category matches at CNAME domains in a response. When off, evaluate categories in this rule against all CNAME domain categories in the response. Settable only for `dns` and `dns_resolver` rules.
