@@ -463119,6 +463119,10 @@ components:
           $ref: '#/components/schemas/magic_nat'
         physport:
           $ref: '#/components/schemas/magic_port'
+        remote_subnets:
+          type: array
+          items:
+            $ref: '#/components/schemas/magic_remote_subnet'
         routed_subnets:
           type: array
           items:
@@ -463249,6 +463253,10 @@ components:
           $ref: '#/components/schemas/magic_nat'
         physport:
           $ref: '#/components/schemas/magic_port'
+        remote_subnets:
+          type: array
+          items:
+            $ref: '#/components/schemas/magic_remote_subnet'
         routed_subnets:
           type: array
           items:
@@ -463277,6 +463285,10 @@ components:
           $ref: '#/components/schemas/magic_nat'
         physport:
           $ref: '#/components/schemas/magic_port'
+        remote_subnets:
+          type: array
+          items:
+            $ref: '#/components/schemas/magic_remote_subnet'
         routed_subnets:
           type: array
           items:
@@ -463626,6 +463638,17 @@ components:
       required:
         - id
         - type
+    magic_remote_subnet:
+      description: A remote subnet reachable through Cloudflare that is addressed from this LAN by a local alias prefix of the same size. The local alias prefix must not overlap other subnets on the LAN, and the remote prefix must not overlap other remote prefixes on the LAN.
+      type: object
+      properties:
+        local_alias_prefix:
+          $ref: '#/components/schemas/magic_cidr'
+        remote_prefix:
+          $ref: '#/components/schemas/magic_cidr'
+      required:
+        - remote_prefix
+        - local_alias_prefix
     magic_replay_protection:
       description: If `true`, then IPsec replay protection will be supported in the Cloudflare-to-customer direction.
       type: boolean
