@@ -211,105 +211,6 @@
         "x-forge-hidden": true
       }
     },
-    "/accounts/move": {
-      "post": {
-        "operationId": "Accounts_batchMoveAccounts",
-        "summary": "Batch move accounts",
-        "description": "Batch move a collection of accounts to a specific organization. ⚠️ Not implemented.",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "account_ids": {
-                    "description": "Move these accounts to the destination organization.",
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  },
-                  "destination_organization_id": {
-                    "description": "Move accounts to this organization ID.",
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "account_ids",
-                  "destination_organization_id"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "The request has succeeded.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "errors": {
-                      "type": "array",
-                      "items": {
-                        "type": "object"
-                      },
-                      "maxItems": 0
-                    },
-                    "messages": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/organizations-api_V4Message"
-                      }
-                    },
-                    "result": {
-                      "$ref": "#/components/schemas/organizations-api_BatchAccountMoveResponse"
-                    },
-                    "success": {
-                      "type": "boolean",
-                      "enum": [
-                        true
-                      ]
-                    }
-                  },
-                  "required": [
-                    "success",
-                    "errors",
-                    "messages",
-                    "result"
-                  ]
-                }
-              }
-            }
-          },
-          "4XX": {
-            "description": "An unexpected error response.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/organizations-api_V4ErrorResponse"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "api_email": [],
-            "api_key": []
-          }
-        ],
-        "tags": [
-          "Accounts"
-        ],
-        "x-fern-availability": "alpha",
-        "x-fern-ignore": true,
-        "x-fern-sdk-group-name": "accounts.batch",
-        "x-fern-sdk-method-name": "move"
-      }
-    },
     "/accounts/{account_id}": {
       "delete": {
         "operationId": "account-deletion",
@@ -270345,7 +270246,8 @@
                 "properties": {
                   "destination_organization_id": {
                     "description": "The ID of the organization to move the account into.",
-                    "type": "string"
+                    "type": "string",
+                    "x-auditable": true
                   }
                 },
                 "required": [
@@ -270397,7 +270299,17 @@
             }
           },
           "4XX": {
-            "description": "An unexpected error response.",
+            "description": "The request failed due to a client error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/organizations-api_V4ErrorResponse"
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "The request failed due to a server error.",
             "content": {
               "application/json": {
                 "schema": {
@@ -273372,7 +273284,17 @@
             }
           },
           "4XX": {
-            "description": "An unexpected error response.",
+            "description": "The request failed due to a client error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/organizations-api_V4ErrorResponse"
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "The request failed due to a server error.",
             "content": {
               "application/json": {
                 "schema": {
@@ -273398,7 +273320,7 @@
           "Account Settings Read"
         ],
         "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "accounts.organization",
+        "x-fern-sdk-group-name": "accounts.organizations",
         "x-fern-sdk-method-name": "list"
       }
     },
@@ -282094,7 +282016,7 @@
       "get": {
         "operationId": "Accounts_getAccountProfile",
         "summary": "Get account profile",
-        "description": "Retrieves the business profile (name, email, phone, address, and external metadata)\nassociated with this account's parent organization customer record. Profiles can be shared\nacross accounts and organizations. Only available to members of an organization that\ncontains the account.",
+        "description": "Retrieves the business profile (name, email, phone, address, and external metadata)\nassociated with this account's customer record. Profiles can be shared across accounts and\norganizations. Only available to members of an organization that contains the account.",
         "parameters": [
           {
             "name": "account_id",
@@ -282148,7 +282070,17 @@
             }
           },
           "4XX": {
-            "description": "An unexpected error response.",
+            "description": "The request failed due to a client error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/organizations-api_V4ErrorResponse"
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "The request failed due to a server error.",
             "content": {
               "application/json": {
                 "schema": {
@@ -282180,7 +282112,7 @@
       "put": {
         "operationId": "Accounts_modifyAccountProfile",
         "summary": "Update account profile",
-        "description": "Updates the business profile (name, email, phone, address, and external metadata) associated\nwith this account's parent organization customer record. Changes apply to every account and\norganization sharing that profile. Omitted or empty fields are left unchanged. Only\navailable to members of an organization that contains the account.",
+        "description": "Partially updates the business profile (name, email, phone, address, and external metadata)\nassociated with this account's parent organization customer record, creating the profile if\nit does not exist. Changes apply to every account and organization sharing that profile.\nOmitted, empty, or null fields are left unchanged. Each profile field is limited to 1,000\nUTF-8 bytes. Only available to members of an organization that contains the account.",
         "parameters": [
           {
             "name": "account_id",
@@ -282197,7 +282129,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/organizations-api_Profile"
+                "$ref": "#/components/schemas/organizations-api_ModifyProfileRequest"
               }
             }
           }
@@ -282207,7 +282139,17 @@
             "description": "There is no content to send for this request, but the headers may be useful."
           },
           "4XX": {
-            "description": "An unexpected error response.",
+            "description": "The request failed due to a client error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/organizations-api_V4ErrorResponse"
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "The request failed due to a server error.",
             "content": {
               "application/json": {
                 "schema": {
@@ -381831,7 +381773,7 @@
       "get": {
         "operationId": "Organization_listOrganizations",
         "summary": "List organizations the user has access to",
-        "description": "Retrieve a list of organizations a particular user has access to.",
+        "description": "Retrieve a list of organizations a particular user has access to. At most one of\n`containing.account`, `containing.user`, or `containing.organization` may be provided.",
         "parameters": [
           {
             "$ref": "#/components/parameters/organizations-api_OrganizationListFiltersId"
@@ -381859,6 +381801,39 @@
           },
           {
             "$ref": "#/components/parameters/organizations-api_OrganizationListFiltersParentId"
+          },
+          {
+            "name": "member.email",
+            "in": "query",
+            "description": "Filter organizations to those where the given user, by email, is an active member of\nthat exact organization. This does not include hierarchy-derived access.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "order_by",
+            "in": "query",
+            "description": "Field to order results by. Currently supported values: `name`.\nWhen not specified, results are ordered by hierarchy.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "name"
+              ]
+            },
+            "explode": false
+          },
+          {
+            "name": "direction",
+            "in": "query",
+            "description": "Sort direction for the `order_by` field. Defaults to `asc` when `order_by` is\nspecified.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            },
+            "explode": false
           },
           {
             "$ref": "#/components/parameters/organizations-api_PageTokenParamsPageToken"
@@ -381916,7 +381891,17 @@
             }
           },
           "4XX": {
-            "description": "An unexpected error response.",
+            "description": "The request failed due to a client error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/organizations-api_V4ErrorResponse"
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "The request failed due to a server error.",
             "content": {
               "application/json": {
                 "schema": {
@@ -381944,19 +381929,18 @@
         ],
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "organization",
-        "x-fern-sdk-method-name": "list",
-        "x-forge-hidden": true
+        "x-fern-sdk-method-name": "list"
       },
       "post": {
         "operationId": "Organizations_createUserOrganization",
         "summary": "Create organization",
-        "description": "Create a new organization for a user. Sub-organization creation availability depends on\nthe organization's capabilities.",
+        "description": "Create a new organization for a user. Sub-organization creation availability depends on\nthe organization's capabilities. The optional `profile` object accepts partial profile\ndetails; its individual fields are not required. Organization names are limited to 65\nUTF-8 bytes. Each profile field is limited to 1,000 UTF-8 bytes, and a non-empty business\nemail must be valid. At least one of business name, address, phone, or email must be\nnon-empty to persist a profile.",
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/organizations-api_Organization"
+                "$ref": "#/components/schemas/organizations-api_CreateOrganizationRequest"
               }
             }
           }
@@ -382003,7 +381987,17 @@
             }
           },
           "4XX": {
-            "description": "An unexpected error response.",
+            "description": "The request failed due to a client error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/organizations-api_V4ErrorResponse"
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "The request failed due to a server error.",
             "content": {
               "application/json": {
                 "schema": {
@@ -382030,15 +382024,14 @@
         ],
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "organization",
-        "x-fern-sdk-method-name": "create",
-        "x-forge-hidden": true
+        "x-fern-sdk-method-name": "create"
       }
     },
     "/organizations/{organization_id}": {
       "delete": {
         "operationId": "Organizations_delete",
         "summary": "Delete organization",
-        "description": "Delete an organization. The organization MUST be empty before deleting.\nIt must not contain any sub-organizations, accounts, members or users. Sub-organization\ndeletion availability depends on the organization's capabilities.\n\n**Access Control:** Restricted to enterprise organizations.",
+        "description": "Delete an organization. It must not contain active sub-organizations or accounts. A root\norganization must also have no active managed users. Sub-organization deletion availability\ndepends on the organization's capabilities.\n\n**Access Control:** Root deletion is restricted to enterprise organizations.",
         "parameters": [
           {
             "name": "organization_id",
@@ -382092,7 +382085,17 @@
             }
           },
           "4XX": {
-            "description": "An unexpected error response.",
+            "description": "The request failed due to a client error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/organizations-api_V4ErrorResponse"
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "The request failed due to a server error.",
             "content": {
               "application/json": {
                 "schema": {
@@ -382114,7 +382117,6 @@
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "organization",
         "x-fern-sdk-method-name": "delete",
-        "x-forge-hidden": true,
         "x-forge-require-confirmation": "Delete this empty organization? This action cannot be undone."
       },
       "get": {
@@ -382174,7 +382176,17 @@
             }
           },
           "4XX": {
-            "description": "An unexpected error response.",
+            "description": "The request failed due to a client error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/organizations-api_V4ErrorResponse"
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "The request failed due to a server error.",
             "content": {
               "application/json": {
                 "schema": {
@@ -382195,13 +382207,12 @@
         ],
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "organization",
-        "x-fern-sdk-method-name": "get",
-        "x-forge-hidden": true
+        "x-fern-sdk-method-name": "get"
       },
       "put": {
         "operationId": "Organizations_modify",
         "summary": "Update organization",
-        "description": "Update an organization's name.",
+        "description": "Update an organization's name. Supplying `parent_id` verifies the current parent; this\nendpoint cannot move an organization. Organization names are limited to 65 UTF-8 bytes.",
         "parameters": [
           {
             "name": "organization_id",
@@ -382214,12 +382225,12 @@
           }
         ],
         "requestBody": {
-          "description": "The new details of the organization. Only accepts updates\nto \"name\" currently.",
+          "description": "The Organization fields to update or verify.",
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/organizations-api_Organization"
+                "$ref": "#/components/schemas/organizations-api_ModifyOrganizationRequest"
               }
             }
           }
@@ -382266,7 +382277,17 @@
             }
           },
           "4XX": {
-            "description": "An unexpected error response.",
+            "description": "The request failed due to a client error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/organizations-api_V4ErrorResponse"
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "The request failed due to a server error.",
             "content": {
               "application/json": {
                 "schema": {
@@ -382287,16 +382308,23 @@
         ],
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "organization",
-        "x-fern-sdk-method-name": "update",
-        "x-forge-hidden": true
+        "x-fern-sdk-method-name": "update"
       }
     },
     "/organizations/{organization_id}/accounts": {
       "get": {
         "operationId": "Organizations_getAccounts",
         "summary": "List organization accounts",
-        "description": "Retrieve the accounts immediately attached to a specific organization. Accounts\nattached to sub-organizations are not included.",
+        "description": "Retrieve the accounts immediately attached to a specific organization. Accounts\nattached to sub-organizations are not included. Use `page_token` and `page_size` for cursor\npagination, or provide `page` and `per_page` together for legacy offset pagination. Cursor\npagination takes precedence when requested. The default response uses Account fields;\n`Accept: application/json; legacy=true` requests the LegacyAccount representation.",
         "parameters": [
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "Request `application/json; legacy=true` for the LegacyAccount representation.",
+            "schema": {
+              "type": "string"
+            }
+          },
           {
             "name": "organization_id",
             "in": "path",
@@ -382309,7 +382337,7 @@
           {
             "name": "account_pubname",
             "in": "query",
-            "description": "(case-insensitive) Filter the list of accounts to where the account_pubname is equal to\na particular string.",
+            "description": "(case-sensitive) Filter the list of accounts to where the account_pubname is equal to\na particular string.",
             "schema": {
               "type": "string"
             },
@@ -382349,7 +382377,7 @@
           {
             "name": "name",
             "in": "query",
-            "description": "(case-insensitive) Filter the list of accounts to where the name is equal to a\nparticular string.",
+            "description": "(case-sensitive) Filter the list of accounts to where the name is equal to a\nparticular string.",
             "schema": {
               "type": "string"
             },
@@ -382383,9 +382411,22 @@
             "explode": false
           },
           {
+            "name": "status",
+            "in": "query",
+            "description": "Filter accounts by lifecycle status. Defaults to `active`.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "active",
+                "deleted"
+              ]
+            },
+            "explode": false
+          },
+          {
             "name": "order_by",
             "in": "query",
-            "description": "Field to order results by. Currently supported values: `account_name`.\nWhen not specified, results are ordered by internal account ID.",
+            "description": "Field to order results by. Currently supported values: `account_name`.",
             "schema": {
               "type": "string",
               "enum": [
@@ -382427,6 +382468,12 @@
             "explode": false
           },
           {
+            "$ref": "#/components/parameters/organizations-api_LegacyPaginationParamsPage"
+          },
+          {
+            "$ref": "#/components/parameters/organizations-api_LegacyPaginationParamsPerPage"
+          },
+          {
             "$ref": "#/components/parameters/organizations-api_PageTokenParamsPageToken"
           },
           {
@@ -382457,11 +382504,18 @@
                     "result": {
                       "type": "array",
                       "items": {
-                        "$ref": "#/components/schemas/organizations-api_Account"
+                        "anyOf": [
+                          {
+                            "$ref": "#/components/schemas/organizations-api_Account"
+                          },
+                          {
+                            "$ref": "#/components/schemas/organizations-api_LegacyAccount"
+                          }
+                        ]
                       }
                     },
                     "result_info": {
-                      "$ref": "#/components/schemas/organizations-api_PageTokenResultInfo"
+                      "$ref": "#/components/schemas/organizations-api_AccountListResultInfo"
                     },
                     "success": {
                       "type": "boolean",
@@ -382482,7 +382536,17 @@
             }
           },
           "4XX": {
-            "description": "An unexpected error response.",
+            "description": "The request failed due to a client error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/organizations-api_V4ErrorResponse"
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "The request failed due to a server error.",
             "content": {
               "application/json": {
                 "schema": {
@@ -382503,8 +382567,7 @@
         ],
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "organization.account",
-        "x-fern-sdk-method-name": "list",
-        "x-forge-hidden": true
+        "x-fern-sdk-method-name": "list"
       }
     },
     "/organizations/{organization_id}/billable/usage": {
@@ -382626,7 +382689,7 @@
                       }
                     },
                     "result": {
-                      "$ref": "#/components/schemas/organizations-api_Member"
+                      "$ref": "#/components/schemas/organizations-api_OrganizationInviteMember"
                     },
                     "success": {
                       "type": "boolean",
@@ -382646,7 +382709,17 @@
             }
           },
           "4XX": {
-            "description": "An unexpected error response.",
+            "description": "The request failed due to a client error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/organizations-api_V4ErrorResponse"
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "The request failed due to a server error.",
             "content": {
               "application/json": {
                 "schema": {
@@ -382670,8 +382743,7 @@
         ],
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "organization.invite",
-        "x-fern-sdk-method-name": "update",
-        "x-forge-hidden": true
+        "x-fern-sdk-method-name": "update"
       }
     },
     "/organizations/{organization_id}/logs/audit": {
@@ -383455,7 +383527,9 @@
                 ],
                 "type": "string"
               }
-            }
+            },
+            "explode": true,
+            "style": "form"
           },
           {
             "name": "user.email",
@@ -383549,7 +383623,17 @@
             }
           },
           "4XX": {
-            "description": "An unexpected error response.",
+            "description": "The request failed due to a client error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/organizations-api_V4ErrorResponse"
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "The request failed due to a server error.",
             "content": {
               "application/json": {
                 "schema": {
@@ -383570,8 +383654,7 @@
         ],
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "organization.member",
-        "x-fern-sdk-method-name": "list",
-        "x-forge-hidden": true
+        "x-fern-sdk-method-name": "list"
       },
       "post": {
         "operationId": "Members_create",
@@ -383639,7 +383722,17 @@
             }
           },
           "4XX": {
-            "description": "An unexpected error response.",
+            "description": "The request failed due to a client error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/organizations-api_V4ErrorResponse"
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "The request failed due to a server error.",
             "content": {
               "application/json": {
                 "schema": {
@@ -383660,8 +383753,7 @@
         ],
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "organization.member",
-        "x-fern-sdk-method-name": "create",
-        "x-forge-hidden": true
+        "x-fern-sdk-method-name": "create"
       }
     },
     "/organizations/{organization_id}/members/{member_id}": {
@@ -383688,11 +383780,58 @@
           }
         ],
         "responses": {
-          "204": {
-            "description": "There is no content to send for this request, but the headers may be useful."
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      },
+                      "maxItems": 0
+                    },
+                    "messages": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/organizations-api_V4Message"
+                      }
+                    },
+                    "result": {
+                      "$ref": "#/components/schemas/organizations-api_DeleteOrganizationMemberResult"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "enum": [
+                        true
+                      ]
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "errors",
+                    "messages",
+                    "result"
+                  ]
+                }
+              }
+            }
           },
           "4XX": {
-            "description": "An unexpected error response.",
+            "description": "The request failed due to a client error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/organizations-api_V4ErrorResponse"
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "The request failed due to a server error.",
             "content": {
               "application/json": {
                 "schema": {
@@ -383714,7 +383853,6 @@
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "organization.member",
         "x-fern-sdk-method-name": "delete",
-        "x-forge-hidden": true,
         "x-forge-require-confirmation": "Delete this organization membership? The member will lose access to this organization and its sub-organizations."
       },
       "get": {
@@ -383781,7 +383919,17 @@
             }
           },
           "4XX": {
-            "description": "An unexpected error response.",
+            "description": "The request failed due to a client error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/organizations-api_V4ErrorResponse"
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "The request failed due to a server error.",
             "content": {
               "application/json": {
                 "schema": {
@@ -383802,8 +383950,7 @@
         ],
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "organization.member",
-        "x-fern-sdk-method-name": "get",
-        "x-forge-hidden": true
+        "x-fern-sdk-method-name": "get"
       }
     },
     "/organizations/{organization_id}/members:batchCreate": {
@@ -383876,7 +384023,17 @@
             }
           },
           "4XX": {
-            "description": "An unexpected error response.",
+            "description": "The request failed due to a client error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/organizations-api_V4ErrorResponse"
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "The request failed due to a server error.",
             "content": {
               "application/json": {
                 "schema": {
@@ -383897,15 +384054,14 @@
         ],
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "organization.member.batch",
-        "x-fern-sdk-method-name": "create",
-        "x-forge-hidden": true
+        "x-fern-sdk-method-name": "create"
       }
     },
     "/organizations/{organization_id}/profile": {
       "get": {
         "operationId": "Organizations_getProfile",
         "summary": "Get organization profile",
-        "description": "Get an organizations profile if it exists.",
+        "description": "Retrieves the business profile (name, email, phone, address, and external metadata)\nassociated with this organization's customer record. Profiles can be shared across\naccounts and organizations. Only available to members of the organization.",
         "parameters": [
           {
             "name": "organization_id",
@@ -383929,7 +384085,17 @@
             }
           },
           "4XX": {
-            "description": "An unexpected error response.",
+            "description": "The request failed due to a client error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/organizations-api_V4ErrorResponse"
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "The request failed due to a server error.",
             "content": {
               "application/json": {
                 "schema": {
@@ -383950,13 +384116,12 @@
         ],
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "organization.profile",
-        "x-fern-sdk-method-name": "get",
-        "x-forge-hidden": true
+        "x-fern-sdk-method-name": "get"
       },
       "put": {
         "operationId": "Organizations_modifyProfile",
         "summary": "Modify organization profile.",
-        "description": "Modify organization profile.",
+        "description": "Partially updates the business profile (name, email, phone, address, and external metadata)\nassociated with this organization's customer record, creating the profile if it does not\nexist. Changes apply to every account and organization sharing that profile. Omitted,\nempty, or null fields are left unchanged. Each profile field is limited to 1,000 UTF-8\nbytes. Only available to members of the organization.",
         "parameters": [
           {
             "name": "organization_id",
@@ -383972,7 +384137,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/organizations-api_ModifyOrganizationProfileRequest"
+                "$ref": "#/components/schemas/organizations-api_ModifyProfileRequest"
               }
             }
           }
@@ -383982,7 +384147,17 @@
             "description": "There is no content to send for this request, but the headers may be useful."
           },
           "4XX": {
-            "description": "An unexpected error response.",
+            "description": "The request failed due to a client error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/organizations-api_V4ErrorResponse"
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "The request failed due to a server error.",
             "content": {
               "application/json": {
                 "schema": {
@@ -384003,8 +384178,7 @@
         ],
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "organization.profile",
-        "x-fern-sdk-method-name": "update",
-        "x-forge-hidden": true
+        "x-fern-sdk-method-name": "update"
       }
     },
     "/organizations/{organization_id}/shares": {
@@ -516484,178 +516658,11 @@
         }
       ]
     },
-    "/tenants/{tenant_id}": {
-      "get": {
-        "operationId": "Tenants_retrieveTenant",
-        "summary": "Get tenant details",
-        "description": "Retrieves a tenant's identity, status, metadata, contacts, and organizational units.",
-        "parameters": [
-          {
-            "name": "tenant_id",
-            "in": "path",
-            "description": "The ID of the tenant to retrieve.",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The request has succeeded.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "errors": {
-                      "type": "array",
-                      "items": {
-                        "type": "object"
-                      },
-                      "maxItems": 0
-                    },
-                    "messages": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/organizations-api_V4Message"
-                      }
-                    },
-                    "result": {
-                      "$ref": "#/components/schemas/organizations-api_Tenant"
-                    },
-                    "success": {
-                      "type": "boolean",
-                      "enum": [
-                        true
-                      ]
-                    }
-                  },
-                  "required": [
-                    "success",
-                    "errors",
-                    "messages",
-                    "result"
-                  ]
-                }
-              }
-            }
-          },
-          "4XX": {
-            "description": "An unexpected error response.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/organizations-api_V4ErrorResponse"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "api_email": [],
-            "api_key": []
-          }
-        ],
-        "tags": [
-          "Tenants"
-        ],
-        "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "tenant",
-        "x-fern-sdk-method-name": "get"
-      }
-    },
-    "/tenants/{tenant_id}/account_types": {
-      "get": {
-        "operationId": "Tenants_validAccountTypes",
-        "summary": "List tenant account types",
-        "description": "Lists the account types this tenant is allowed to provision.",
-        "parameters": [
-          {
-            "name": "tenant_id",
-            "in": "path",
-            "description": "The ID of the tenant whose available account types to list.",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The request has succeeded.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "errors": {
-                      "type": "array",
-                      "items": {
-                        "type": "object"
-                      },
-                      "maxItems": 0
-                    },
-                    "messages": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/organizations-api_V4Message"
-                      }
-                    },
-                    "result": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    },
-                    "success": {
-                      "type": "boolean",
-                      "enum": [
-                        true
-                      ]
-                    }
-                  },
-                  "required": [
-                    "success",
-                    "errors",
-                    "messages",
-                    "result"
-                  ]
-                }
-              }
-            }
-          },
-          "4XX": {
-            "description": "An unexpected error response.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/organizations-api_V4ErrorResponse"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "api_email": [],
-            "api_key": []
-          }
-        ],
-        "tags": [
-          "Tenants"
-        ],
-        "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "tenant.account-type",
-        "x-fern-sdk-method-name": "list"
-      }
-    },
     "/tenants/{tenant_id}/accounts": {
       "get": {
         "operationId": "Tenants_listAccounts",
         "summary": "List tenant accounts",
-        "description": "Lists the Cloudflare accounts associated with this tenant.",
+        "description": "Lists the Cloudflare accounts associated with this tenant using the legacy Account response\nshape. Use `GET /organizations/{organization_id}/accounts` for the modern Account response.\nUse `page_token` and `page_size` for cursor pagination, or provide `page` and `per_page`\ntogether for legacy offset pagination. Cursor pagination takes precedence when requested.",
         "parameters": [
           {
             "name": "tenant_id",
@@ -516665,6 +516672,142 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "account_pubname",
+            "in": "query",
+            "description": "(case-sensitive) Filter the list of accounts to where the account_pubname is equal to\na particular string.",
+            "schema": {
+              "type": "string"
+            },
+            "deprecated": true,
+            "explode": false
+          },
+          {
+            "name": "account_pubname.startsWith",
+            "in": "query",
+            "description": "(case-insensitive) Filter the list of accounts to where the account_pubname starts with\na particular string.",
+            "schema": {
+              "type": "string"
+            },
+            "deprecated": true,
+            "explode": false
+          },
+          {
+            "name": "account_pubname.endsWith",
+            "in": "query",
+            "description": "(case-insensitive) Filter the list of accounts to where the account_pubname ends with\na particular string.",
+            "schema": {
+              "type": "string"
+            },
+            "deprecated": true,
+            "explode": false
+          },
+          {
+            "name": "account_pubname.contains",
+            "in": "query",
+            "description": "(case-insensitive) Filter the list of accounts to where the account_pubname contains\na particular string.",
+            "schema": {
+              "type": "string"
+            },
+            "deprecated": true,
+            "explode": false
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "description": "(case-sensitive) Filter the list of accounts to where the name is equal to a\nparticular string.",
+            "schema": {
+              "type": "string"
+            },
+            "explode": false
+          },
+          {
+            "name": "name.startsWith",
+            "in": "query",
+            "description": "(case-insensitive) Filter the list of accounts to where the name starts with a\nparticular string.",
+            "schema": {
+              "type": "string"
+            },
+            "explode": false
+          },
+          {
+            "name": "name.endsWith",
+            "in": "query",
+            "description": "(case-insensitive) Filter the list of accounts to where the name ends with a particular\nstring.",
+            "schema": {
+              "type": "string"
+            },
+            "explode": false
+          },
+          {
+            "name": "name.contains",
+            "in": "query",
+            "description": "(case-insensitive) Filter the list of accounts to where the name contains a particular\nstring.",
+            "schema": {
+              "type": "string"
+            },
+            "explode": false
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Filter accounts by lifecycle status. Defaults to `active`.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "active",
+                "deleted"
+              ]
+            },
+            "explode": false
+          },
+          {
+            "name": "order_by",
+            "in": "query",
+            "description": "Field to order results by. Currently supported values: `account_name`.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "account_name"
+              ]
+            },
+            "explode": false
+          },
+          {
+            "name": "direction",
+            "in": "query",
+            "description": "Sort direction for the order_by field. Valid values: `asc`, `desc`.\nDefaults to `asc` when order_by is specified.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            },
+            "explode": false
+          },
+          {
+            "name": "include_total",
+            "in": "query",
+            "description": "Whether to calculate and return the exact `result_info.total_size` for cursor\npagination. Defaults to true. When false, `total_size` is omitted. Legacy\n`page`/`per_page` requests always calculate `total_count`.",
+            "schema": {
+              "type": "boolean",
+              "default": true
+            },
+            "explode": false
+          },
+          {
+            "$ref": "#/components/parameters/organizations-api_LegacyPaginationParamsPage"
+          },
+          {
+            "$ref": "#/components/parameters/organizations-api_LegacyPaginationParamsPerPage"
+          },
+          {
+            "$ref": "#/components/parameters/organizations-api_PageTokenParamsPageToken"
+          },
+          {
+            "$ref": "#/components/parameters/organizations-api_PageTokenParamsPageSize"
           }
         ],
         "responses": {
@@ -516691,8 +516834,11 @@
                     "result": {
                       "type": "array",
                       "items": {
-                        "$ref": "#/components/schemas/organizations-api_Account"
+                        "$ref": "#/components/schemas/organizations-api_LegacyAccount"
                       }
+                    },
+                    "result_info": {
+                      "$ref": "#/components/schemas/organizations-api_AccountListResultInfo"
                     },
                     "success": {
                       "type": "boolean",
@@ -516705,14 +516851,25 @@
                     "success",
                     "errors",
                     "messages",
-                    "result"
+                    "result",
+                    "result_info"
                   ]
                 }
               }
             }
           },
           "4XX": {
-            "description": "An unexpected error response.",
+            "description": "The request failed due to a client error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/organizations-api_V4ErrorResponse"
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "The request failed due to a server error.",
             "content": {
               "application/json": {
                 "schema": {
@@ -516732,6 +516889,7 @@
           "Tenants"
         ],
         "x-fern-availability": "generally-available",
+        "x-fern-ignore": true,
         "x-fern-sdk-group-name": "tenant.account",
         "x-fern-sdk-method-name": "list"
       }
@@ -516954,174 +517112,6 @@
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "tenant-custom-nameservers",
         "x-fern-sdk-method-name": "delete"
-      }
-    },
-    "/tenants/{tenant_id}/entitlements": {
-      "get": {
-        "operationId": "Tenants_listEntitlements",
-        "summary": "List tenant entitlements",
-        "description": "Retrieves the innate and custom entitlement allocations available to this tenant.",
-        "parameters": [
-          {
-            "name": "tenant_id",
-            "in": "path",
-            "description": "The ID of the tenant whose entitlement allocations to retrieve.",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The request has succeeded.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "errors": {
-                      "type": "array",
-                      "items": {
-                        "type": "object"
-                      },
-                      "maxItems": 0
-                    },
-                    "messages": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/organizations-api_V4Message"
-                      }
-                    },
-                    "result": {
-                      "$ref": "#/components/schemas/organizations-api_InnateEntitlements"
-                    },
-                    "success": {
-                      "type": "boolean",
-                      "enum": [
-                        true
-                      ]
-                    }
-                  },
-                  "required": [
-                    "success",
-                    "errors",
-                    "messages",
-                    "result"
-                  ]
-                }
-              }
-            }
-          },
-          "4XX": {
-            "description": "An unexpected error response.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/organizations-api_V4ErrorResponse"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "api_email": [],
-            "api_key": []
-          }
-        ],
-        "tags": [
-          "Tenants"
-        ],
-        "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "tenant.entitlement",
-        "x-fern-sdk-method-name": "list"
-      }
-    },
-    "/tenants/{tenant_id}/memberships": {
-      "get": {
-        "operationId": "Tenants_listMemberships",
-        "summary": "List tenant memberships",
-        "description": "Lists active Cloudflare users with memberships in this tenant.",
-        "parameters": [
-          {
-            "name": "tenant_id",
-            "in": "path",
-            "description": "The ID of the tenant whose active memberships to list.",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The request has succeeded.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "errors": {
-                      "type": "array",
-                      "items": {
-                        "type": "object"
-                      },
-                      "maxItems": 0
-                    },
-                    "messages": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/organizations-api_V4Message"
-                      }
-                    },
-                    "result": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/organizations-api_TenantMembership"
-                      }
-                    },
-                    "success": {
-                      "type": "boolean",
-                      "enum": [
-                        true
-                      ]
-                    }
-                  },
-                  "required": [
-                    "success",
-                    "errors",
-                    "messages",
-                    "result"
-                  ]
-                }
-              }
-            }
-          },
-          "4XX": {
-            "description": "An unexpected error response.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/organizations-api_V4ErrorResponse"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "api_email": [],
-            "api_key": []
-          }
-        ],
-        "tags": [
-          "Tenants"
-        ],
-        "x-fern-availability": "generally-available",
-        "x-fern-ignore": true,
-        "x-fern-sdk-group-name": "tenant.membership",
-        "x-fern-sdk-method-name": "list"
       }
     },
     "/user": {
@@ -521109,7 +521099,7 @@
       "get": {
         "operationId": "User_listUserTenants",
         "summary": "List user tenants",
-        "description": "Retrieves list of tenants the authenticated user / method has access to.",
+        "description": "Retrieves the legacy Tenants associated with the authenticated user. Use `GET /organizations`\nto list modern Organizations the user has access to.",
         "responses": {
           "200": {
             "description": "The request has succeeded.",
@@ -521134,7 +521124,7 @@
                     "result": {
                       "type": "array",
                       "items": {
-                        "$ref": "#/components/schemas/organizations-api_Organization"
+                        "$ref": "#/components/schemas/organizations-api_LegacyTenant"
                       }
                     },
                     "success": {
@@ -521155,7 +521145,17 @@
             }
           },
           "4XX": {
-            "description": "An unexpected error response.",
+            "description": "The request failed due to a client error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/organizations-api_V4ErrorResponse"
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "The request failed due to a server error.",
             "content": {
               "application/json": {
                 "schema": {
@@ -521179,9 +521179,9 @@
           "User Details Read"
         ],
         "x-fern-availability": "generally-available",
+        "x-fern-ignore": true,
         "x-fern-sdk-group-name": "user.tenant",
-        "x-fern-sdk-method-name": "list",
-        "x-forge-hidden": true
+        "x-fern-sdk-method-name": "list"
       }
     },
     "/user/tokens": {
@@ -585320,6 +585320,24 @@
           "pattern": "^[0-9a-f]{32}$"
         }
       },
+      "organizations-api_LegacyPaginationParamsPage": {
+        "description": "Legacy offset page number. Must be provided with `per_page`. Values below 1 are treated as\n1. Cursor pagination takes precedence when requested.",
+        "explode": false,
+        "in": "query",
+        "name": "page",
+        "schema": {
+          "type": "integer"
+        }
+      },
+      "organizations-api_LegacyPaginationParamsPerPage": {
+        "description": "Legacy offset page size. Must be provided with `page`. Values are clamped to the range\n1-100. Cursor pagination takes precedence when requested.",
+        "explode": false,
+        "in": "query",
+        "name": "per_page",
+        "schema": {
+          "type": "integer"
+        }
+      },
       "organizations-api_OrganizationListFiltersContainingAccount": {
         "description": "Filter the list of organizations to the ones that contain this particular\naccount.",
         "explode": false,
@@ -585349,7 +585367,7 @@
       },
       "organizations-api_OrganizationListFiltersId": {
         "description": "Only return organizations with the specified IDs (ex. id=foo&id=bar). Send multiple elements\nby repeating the query value.",
-        "explode": false,
+        "explode": true,
         "in": "query",
         "name": "id",
         "schema": {
@@ -585357,7 +585375,8 @@
           "items": {
             "$ref": "#/components/schemas/organizations-api_OrganizationID"
           }
-        }
+        },
+        "style": "form"
       },
       "organizations-api_OrganizationListFiltersName": {
         "description": "(case-sensitive) Filter the list of organizations to where the name is equal to a\nparticular string.",
@@ -689140,64 +689159,29 @@
           "created_on"
         ]
       },
-      "organizations-api_BatchAccountMoveResponse": {
-        "type": "object",
-        "properties": {
-          "statuses": {
-            "type": "object",
-            "properties": {
-              "message": {
-                "type": "string"
-              },
-              "moved": {
-                "type": "boolean"
-              },
-              "tag": {
-                "type": "string"
-              }
-            },
-            "required": [
-              "tag",
-              "moved"
-            ]
+      "organizations-api_AccountListResultInfo": {
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/organizations-api_PageTokenResultInfo"
+          },
+          {
+            "$ref": "#/components/schemas/organizations-api_LegacyPaginationResultInfo"
           }
-        },
-        "required": [
-          "statuses"
         ]
       },
       "organizations-api_BatchCreateMembersRequest": {
         "type": "object",
         "properties": {
           "members": {
+            "description": "Omitted or null members are treated as an empty batch.",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/organizations-api_CreateSingleMember"
             },
-            "maxItems": 10
+            "maxItems": 10,
+            "nullable": true
           }
-        },
-        "required": [
-          "members"
-        ]
-      },
-      "organizations-api_BoolAllocation": {
-        "type": "object",
-        "properties": {
-          "type": {
-            "type": "string",
-            "enum": [
-              "bool"
-            ]
-          },
-          "value": {
-            "type": "boolean"
-          }
-        },
-        "required": [
-          "type",
-          "value"
-        ]
+        }
       },
       "organizations-api_CreateMemberRequest": {
         "type": "object",
@@ -689210,17 +689194,62 @@
           "member"
         ]
       },
+      "organizations-api_CreateOrganizationProfileRequest": {
+        "description": "Optional profile fields, each limited to 1,000 UTF-8 bytes. An empty profile is ignored.",
+        "type": "object",
+        "properties": {
+          "business_address": {
+            "type": "string",
+            "x-auditable": true
+          },
+          "business_email": {
+            "type": "string",
+            "x-auditable": true
+          },
+          "business_name": {
+            "type": "string",
+            "x-auditable": true
+          },
+          "business_phone": {
+            "type": "string",
+            "x-auditable": true
+          },
+          "external_metadata": {
+            "type": "string"
+          }
+        }
+      },
+      "organizations-api_CreateOrganizationRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "description": "The Organization name, limited to 65 UTF-8 bytes.",
+            "type": "string",
+            "minLength": 1,
+            "x-auditable": true
+          },
+          "parent": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "$ref": "#/components/schemas/organizations-api_OrganizationID"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "profile": {
+            "$ref": "#/components/schemas/organizations-api_CreateOrganizationProfileRequest"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
       "organizations-api_CreateSingleMember": {
         "type": "object",
         "properties": {
-          "status": {
-            "type": "string",
-            "enum": [
-              "active",
-              "canceled"
-            ],
-            "x-auditable": true
-          },
           "user": {
             "type": "object",
             "properties": {
@@ -689238,7 +689267,7 @@
           "user"
         ]
       },
-      "organizations-api_DeleteOrganizationResult": {
+      "organizations-api_DeleteOrganizationMemberResult": {
         "type": "object",
         "properties": {
           "id": {
@@ -689250,29 +689279,16 @@
           "id"
         ]
       },
-      "organizations-api_Entitlement": {
+      "organizations-api_DeleteOrganizationResult": {
         "type": "object",
         "properties": {
-          "allocation": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/organizations-api_MaxCountAllocation"
-              },
-              {
-                "$ref": "#/components/schemas/organizations-api_BoolAllocation"
-              },
-              {
-                "$ref": "#/components/schemas/organizations-api_NullAllocation"
-              }
-            ]
-          },
-          "feature": {
-            "$ref": "#/components/schemas/organizations-api_Feature"
+          "id": {
+            "type": "string",
+            "x-auditable": true
           }
         },
         "required": [
-          "feature",
-          "allocation"
+          "id"
         ]
       },
       "organizations-api_Feature": {
@@ -689302,57 +689318,237 @@
           "status"
         ]
       },
-      "organizations-api_InnateEntitlements": {
+      "organizations-api_LegacyAccount": {
         "type": "object",
         "properties": {
-          "allow_add_subdomain": {
-            "$ref": "#/components/schemas/organizations-api_BoolAllocation"
-          },
-          "allow_auto_accept_invites": {
-            "$ref": "#/components/schemas/organizations-api_BoolAllocation"
-          },
-          "cname_setup_allowed": {
-            "$ref": "#/components/schemas/organizations-api_BoolAllocation"
-          },
-          "custom_entitlements": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/organizations-api_Entitlement"
-            },
+          "account_pubname": {
+            "type": "string",
             "nullable": true
           },
-          "mhs_certificate_count": {
-            "$ref": "#/components/schemas/organizations-api_MaxCountAllocation"
+          "account_tag": {
+            "type": "string"
           },
-          "partial_setup_allowed": {
-            "$ref": "#/components/schemas/organizations-api_BoolAllocation"
+          "account_type": {
+            "type": "string",
+            "enum": [
+              "standard",
+              "enterprise"
+            ]
+          },
+          "created_on": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "settings": {
+            "type": "object",
+            "properties": {
+              "access_approval_expiry": {
+                "type": "string",
+                "format": "date-time",
+                "nullable": true
+              },
+              "api_access_enabled": {
+                "type": "boolean"
+              },
+              "enforce_two_factor": {
+                "type": "boolean"
+              },
+              "use_account_custom_ns_by_default": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "enforce_two_factor",
+              "api_access_enabled",
+              "access_approval_expiry",
+              "use_account_custom_ns_by_default"
+            ]
           }
         },
         "required": [
-          "allow_add_subdomain",
-          "cname_setup_allowed",
-          "partial_setup_allowed",
-          "allow_auto_accept_invites",
-          "mhs_certificate_count",
-          "custom_entitlements"
+          "account_tag",
+          "account_pubname",
+          "account_type",
+          "created_on",
+          "settings"
         ]
       },
-      "organizations-api_MaxCountAllocation": {
+      "organizations-api_LegacyPaginationResultInfo": {
         "type": "object",
         "properties": {
-          "type": {
-            "type": "string",
-            "enum": [
-              "max_count"
-            ]
+          "count": {
+            "type": "integer"
           },
-          "value": {
+          "page": {
+            "type": "integer"
+          },
+          "per_page": {
+            "type": "integer"
+          },
+          "total_count": {
             "type": "integer"
           }
         },
         "required": [
-          "type",
-          "value"
+          "count",
+          "page",
+          "per_page",
+          "total_count"
+        ]
+      },
+      "organizations-api_LegacyTenant": {
+        "type": "object",
+        "properties": {
+          "cdate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "customer_id": {
+            "type": "string",
+            "nullable": true
+          },
+          "edate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "tenant_contacts": {
+            "type": "object",
+            "properties": {
+              "email": {
+                "type": "string"
+              },
+              "website": {
+                "type": "string"
+              }
+            }
+          },
+          "tenant_labels": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "tenant_metadata": {
+            "type": "object",
+            "properties": {
+              "billing_account_type": {
+                "type": "string"
+              },
+              "configuration_account": {
+                "type": "string"
+              },
+              "created_by": {
+                "type": "string"
+              },
+              "dns": {
+                "type": "object",
+                "properties": {
+                  "ns_pool": {
+                    "type": "object",
+                    "properties": {
+                      "primary": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "secondary": {
+                        "type": "string",
+                        "nullable": true
+                      }
+                    },
+                    "required": [
+                      "primary",
+                      "secondary"
+                    ]
+                  }
+                },
+                "required": [
+                  "ns_pool"
+                ]
+              },
+              "flags": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              },
+              "innate_account_entitlements": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/organizations-api_UserTenantEntitlement"
+                }
+              },
+              "tenant_entitlements": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/organizations-api_UserTenantEntitlement"
+                }
+              }
+            }
+          },
+          "tenant_name": {
+            "type": "string"
+          },
+          "tenant_network": {
+            "type": "object",
+            "properties": {
+              "choices": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "tenant_status": {
+            "type": "string"
+          },
+          "tenant_tag": {
+            "type": "string"
+          },
+          "tenant_type": {
+            "type": "string"
+          },
+          "tenant_units": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/organizations-api_TenantUnit"
+            },
+            "nullable": true
+          },
+          "ui_flags": {
+            "description": "Which top-level dashboard experiences to render for this tenant; both may be true.",
+            "type": "object",
+            "properties": {
+              "show_orgs_ui": {
+                "description": "Render the Organizations experience for this tenant.",
+                "type": "boolean"
+              },
+              "show_tenants_ui": {
+                "description": "Render the legacy Tenants experience for this tenant.",
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "show_orgs_ui",
+              "show_tenants_ui"
+            ]
+          }
+        },
+        "required": [
+          "tenant_tag",
+          "tenant_name",
+          "tenant_labels",
+          "tenant_type",
+          "tenant_status",
+          "tenant_metadata",
+          "tenant_contacts",
+          "cdate",
+          "edate",
+          "customer_id",
+          "tenant_network",
+          "tenant_units",
+          "ui_flags"
         ]
       },
       "organizations-api_Member": {
@@ -689369,6 +689565,13 @@
             "type": "object",
             "additionalProperties": {
               "type": "object"
+            }
+          },
+          "policies": {
+            "description": "Direct policies of the membership. Present only for DSR members enrolled in Organization Roles.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/organizations-api_MemberPolicy"
             }
           },
           "status": {
@@ -689405,6 +689608,65 @@
         "pattern": "^[a-f0-9]{32}$",
         "x-auditable": true
       },
+      "organizations-api_MemberPolicy": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "Omit to create a policy. An unchanged policy keeps its ID; a changed policy is replaced under a new ID.",
+            "type": "string"
+          },
+          "roles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/organizations-api_MemberPolicyRole"
+            },
+            "maxItems": 10,
+            "minItems": 1
+          },
+          "scopes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/organizations-api_MemberPolicyScope"
+            },
+            "maxItems": 10,
+            "minItems": 1
+          }
+        },
+        "required": [
+          "roles",
+          "scopes"
+        ]
+      },
+      "organizations-api_MemberPolicyRole": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "organizations-api_MemberPolicyScope": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "description": "An Organization (`com.cloudflare.api.tenant.unit.<tag>`) or Account (`com.cloudflare.api.account.<tag>`) key.",
+            "type": "string"
+          },
+          "subset_of": {
+            "description": "The route Organization for Account scopes. Optional in requests and always returned for Account scopes.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/organizations-api_MemberPolicyScope"
+            }
+          }
+        },
+        "required": [
+          "key"
+        ]
+      },
       "organizations-api_MemberSubjectUser": {
         "type": "object",
         "properties": {
@@ -689432,71 +689694,74 @@
           "two_factor_authentication_enabled"
         ]
       },
-      "organizations-api_ModifyOrganizationProfileRequest": {
+      "organizations-api_ModifyOrganizationRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "description": "The Organization's display name, limited to 65 UTF-8 bytes. An omitted, empty, or unchanged value is a no-op.",
+            "type": "string",
+            "x-auditable": true
+          },
+          "parent_id": {
+            "description": "The current parent Organization ID. A different value is rejected; this endpoint cannot move an Organization.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/organizations-api_OrganizationID"
+              }
+            ]
+          }
+        }
+      },
+      "organizations-api_ModifyProfileRequest": {
+        "description": "Partial business profile update. Omitted, empty, or null fields remain unchanged. At least\none of business name, address, phone, or email must be non-empty.",
         "type": "object",
         "properties": {
           "business_address": {
             "type": "string",
+            "nullable": true,
             "x-auditable": true
           },
           "business_email": {
             "type": "string",
+            "nullable": true,
             "x-auditable": true
           },
           "business_name": {
             "type": "string",
+            "nullable": true,
             "x-auditable": true
           },
           "business_phone": {
             "type": "string",
+            "nullable": true,
             "x-auditable": true
           },
           "external_metadata": {
-            "type": "string"
+            "type": "string",
+            "nullable": true
           }
-        },
-        "required": [
-          "business_name",
-          "business_email",
-          "business_phone",
-          "business_address",
-          "external_metadata"
-        ]
+        }
       },
       "organizations-api_MoveAccountResult": {
         "type": "object",
         "properties": {
           "account_id": {
-            "type": "string"
+            "type": "string",
+            "x-auditable": true
           },
           "destination_organization_id": {
-            "type": "string"
+            "type": "string",
+            "x-auditable": true
           },
           "source_organization_id": {
-            "type": "string"
+            "type": "string",
+            "x-auditable": true
           }
         },
         "required": [
           "account_id",
           "source_organization_id",
           "destination_organization_id"
-        ]
-      },
-      "organizations-api_NullAllocation": {
-        "type": "object",
-        "properties": {
-          "type": {
-            "type": "string",
-            "enum": [
-              ""
-            ]
-          },
-          "value": {
-            "type": "object"
-          }
-        },
-        "required": [
-          "type"
         ]
       },
       "organizations-api_Organization": {
@@ -689522,6 +689787,10 @@
               "type": "object"
             },
             "properties": {
+              "are_child_accounts_accessible_by_org_members": {
+                "type": "boolean",
+                "readOnly": true
+              },
               "hierarchy_tags": {
                 "description": "Ordered chain of organization tags from the root organization down to\n(and including) this organization itself. Root organizations return a\nsingle-element array containing their own tag; sub-organizations return\n`[rootTag, ...intermediateTags, parentTag, selfTag]`. Useful for\nconstructing authorization scopes that need to cover every ancestor\nin the hierarchy.",
                 "type": "array",
@@ -689538,6 +689807,9 @@
                     "$ref": "#/components/schemas/organizations-api_OrganizationFlags"
                   }
                 ]
+              },
+              "tenant_type": {
+                "type": "string"
               }
             },
             "readOnly": true
@@ -689621,6 +689893,51 @@
         "title": "Organization ID",
         "x-auditable": true
       },
+      "organizations-api_OrganizationInviteMember": {
+        "description": "Membership returned after handling an Organization invitation. Invite handling populates\nuser ID and email; name, two-factor status, and timestamps contain placeholder values.",
+        "type": "object",
+        "properties": {
+          "create_time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "id": {
+            "$ref": "#/components/schemas/organizations-api_MemberID"
+          },
+          "meta": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            },
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "pending",
+              "rejected",
+              "canceled"
+            ],
+            "x-auditable": true
+          },
+          "update_time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "user": {
+            "$ref": "#/components/schemas/organizations-api_MemberSubjectUser"
+          }
+        },
+        "required": [
+          "id",
+          "status",
+          "user",
+          "meta",
+          "create_time",
+          "update_time"
+        ]
+      },
       "organizations-api_PageTokenResultInfo": {
         "type": "object",
         "properties": {
@@ -689638,16 +689955,20 @@
         "type": "object",
         "properties": {
           "business_address": {
-            "type": "string"
+            "type": "string",
+            "x-auditable": true
           },
           "business_email": {
-            "type": "string"
+            "type": "string",
+            "x-auditable": true
           },
           "business_name": {
-            "type": "string"
+            "type": "string",
+            "x-auditable": true
           },
           "business_phone": {
-            "type": "string"
+            "type": "string",
+            "x-auditable": true
           },
           "external_metadata": {
             "type": "string"
@@ -689694,124 +690015,15 @@
           "result"
         ]
       },
-      "organizations-api_Tenant": {
-        "type": "object",
-        "properties": {
-          "cdate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "customer_id": {
-            "type": "string"
-          },
-          "edate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "tenant_contacts": {
-            "type": "object",
-            "properties": {
-              "email": {
-                "type": "string"
-              },
-              "website": {
-                "type": "string"
-              }
-            }
-          },
-          "tenant_labels": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "tenant_metadata": {
-            "type": "object",
-            "properties": {
-              "dns": {
-                "type": "object",
-                "properties": {
-                  "ns_pool": {
-                    "type": "object",
-                    "properties": {
-                      "primary": {
-                        "type": "string"
-                      },
-                      "secondary": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                },
-                "required": [
-                  "ns_pool"
-                ]
-              }
-            }
-          },
-          "tenant_name": {
-            "type": "string"
-          },
-          "tenant_network": {
-            "type": "object"
-          },
-          "tenant_status": {
-            "type": "string"
-          },
-          "tenant_tag": {
-            "type": "string"
-          },
-          "tenant_type": {
-            "type": "string"
-          },
-          "tenant_units": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/organizations-api_TenantUnit"
-            }
-          }
-        },
-        "required": [
-          "tenant_tag",
-          "tenant_name",
-          "tenant_labels",
-          "tenant_type",
-          "tenant_status",
-          "tenant_metadata",
-          "tenant_contacts",
-          "cdate",
-          "edate",
-          "tenant_network",
-          "tenant_units"
-        ]
-      },
-      "organizations-api_TenantMembership": {
-        "type": "object",
-        "properties": {
-          "user_email": {
-            "type": "string"
-          },
-          "user_name": {
-            "type": "string"
-          },
-          "user_tag": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "user_tag",
-          "user_email",
-          "user_name"
-        ]
-      },
       "organizations-api_TenantUnit": {
         "type": "object",
         "properties": {
           "unit_memberships": {
             "type": "array",
             "items": {
-              "type": "object"
-            }
+              "$ref": "#/components/schemas/organizations-api_TenantUnitMembership"
+            },
+            "nullable": true
           },
           "unit_metadata": {
             "type": "object"
@@ -689834,6 +690046,79 @@
           "unit_memberships"
         ]
       },
+      "organizations-api_TenantUnitMembership": {
+        "type": "object",
+        "properties": {
+          "member_metadata": {
+            "type": "object"
+          },
+          "member_status": {
+            "type": "string"
+          },
+          "member_tag": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "member_tag",
+          "member_status",
+          "member_metadata"
+        ]
+      },
+      "organizations-api_UserTenantAllocation": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "value": {
+            "$ref": "#/components/schemas/organizations-api_UserTenantAllocationValue"
+          }
+        },
+        "required": [
+          "type",
+          "value"
+        ]
+      },
+      "organizations-api_UserTenantAllocationValue": {
+        "anyOf": [
+          {
+            "type": "boolean"
+          },
+          {
+            "type": "number"
+          },
+          {
+            "type": "string"
+          },
+          {
+            "additionalProperties": true,
+            "nullable": true,
+            "type": "object"
+          },
+          {
+            "items": {
+              "$ref": "#/components/schemas/organizations-api_UserTenantAllocationValue"
+            },
+            "type": "array"
+          }
+        ]
+      },
+      "organizations-api_UserTenantEntitlement": {
+        "type": "object",
+        "properties": {
+          "allocation": {
+            "$ref": "#/components/schemas/organizations-api_UserTenantAllocation"
+          },
+          "feature": {
+            "$ref": "#/components/schemas/organizations-api_Feature"
+          }
+        },
+        "required": [
+          "feature",
+          "allocation"
+        ]
+      },
       "organizations-api_V4ErrorResponse": {
         "type": "object",
         "properties": {
@@ -689850,7 +690135,8 @@
             }
           },
           "result": {
-            "type": "object"
+            "type": "object",
+            "nullable": true
           },
           "success": {
             "type": "boolean",
@@ -772316,7 +772602,7 @@
           "description": "Browse the categories used to classify applications"
         },
         "organizations": {
-          "description": "Move accounts between organizations"
+          "description": "View organizations associated with a Cloudflare account"
         },
         "profile": {
           "description": "View and manage the profile for a Cloudflare account"
