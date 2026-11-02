@@ -207034,6 +207034,7 @@ paths:
         - $ref: '#/components/parameters/resource-sharing_per_page'
         - $ref: '#/components/parameters/resource-sharing_include_resources'
         - $ref: '#/components/parameters/resource-sharing_include_recipient_counts'
+        - $ref: '#/components/parameters/resource-sharing_include_tags_from'
         - $ref: '#/components/parameters/resource-sharing_tag'
       responses:
         '200':
@@ -207048,14 +207049,14 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/resource-sharing_api-response-common-failure'
+                  - $ref: '#/components/schemas/resource-sharing_api_response_common_failure'
         5XX:
           description: List account shares response failure.
           content:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/resource-sharing_api-response-common-failure'
+                  - $ref: '#/components/schemas/resource-sharing_api_response_common_failure'
       security:
         - api_token: []
         - api_email: []
@@ -207079,7 +207080,7 @@ paths:
     post:
       operationId: share-create
       summary: Trigger a share creation
-      description: Creates a new resource share for sharing Cloudflare resources with other accounts or organizations.
+      description: Creates a share that makes a resource available to specific accounts in the caller's organization, or to the whole organization.
       parameters:
         - name: account_id
           in: path
@@ -207105,14 +207106,14 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/resource-sharing_api-response-common-failure'
+                  - $ref: '#/components/schemas/resource-sharing_api_response_common_failure'
         5XX:
           description: Create share failure.
           content:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/resource-sharing_api-response-common-failure'
+                  - $ref: '#/components/schemas/resource-sharing_api_response_common_failure'
       security:
         - api_email: []
           api_key: []
@@ -207156,14 +207157,14 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/resource-sharing_api-response-common-failure'
+                  - $ref: '#/components/schemas/resource-sharing_api_response_common_failure'
         5XX:
           description: Delete share failure.
           content:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/resource-sharing_api-response-common-failure'
+                  - $ref: '#/components/schemas/resource-sharing_api_response_common_failure'
       security:
         - api_email: []
           api_key: []
@@ -207196,6 +207197,7 @@ paths:
             $ref: '#/components/schemas/resource-sharing_share_id'
         - $ref: '#/components/parameters/resource-sharing_include_resources'
         - $ref: '#/components/parameters/resource-sharing_include_recipient_counts'
+        - $ref: '#/components/parameters/resource-sharing_include_tags_from'
       responses:
         '200':
           description: Get account share response.
@@ -207209,14 +207211,14 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/resource-sharing_api-response-common-failure'
+                  - $ref: '#/components/schemas/resource-sharing_api_response_common_failure'
         5XX:
           description: Get account share response failure.
           content:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/resource-sharing_api-response-common-failure'
+                  - $ref: '#/components/schemas/resource-sharing_api_response_common_failure'
       security:
         - api_token: []
         - api_email: []
@@ -207238,21 +207240,11 @@ paths:
       x-fern-sdk-method-name: get
     put:
       operationId: share-update
-      summary: Trigger a share rename
+      summary: Trigger a share update
       description: |
-        Updates the share's display name and tags. This endpoint does **not**
-        modify recipients or resources — those are managed via dedicated
-        subresource endpoints:
-
-        - **Recipients**: Use `POST /accounts/{account_id}/shares/{share_id}/recipients`
-          to add a single recipient, `PUT /accounts/{account_id}/shares/{share_id}/recipients`
-          to replace the full recipient list, or
-          `DELETE /accounts/{account_id}/shares/{share_id}/recipients/{recipient_id}`
-          to remove a recipient.
-        - **Resources**: Use the share's resource subresource endpoints.
-
-        Updating is not immediate; an updated share object with a new status
-        will be returned.
+        Updates the share's display name and tags. Omitting `tags` leaves the
+        existing tags unchanged. Recipients and resources are managed via their
+        subresource endpoints.
       parameters:
         - name: account_id
           in: path
@@ -207283,14 +207275,14 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/resource-sharing_api-response-common-failure'
+                  - $ref: '#/components/schemas/resource-sharing_api_response_common_failure'
         5XX:
           description: Update share failure.
           content:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/resource-sharing_api-response-common-failure'
+                  - $ref: '#/components/schemas/resource-sharing_api_response_common_failure'
       security:
         - api_email: []
           api_key: []
@@ -207308,7 +207300,7 @@ paths:
     get:
       operationId: share-excluded-recipients-list
       summary: List share excluded recipients by share ID
-      description: Lists the accounts excluded from an organization-targeted share. Only valid for shares with `target_type=organization`.
+      description: Lists the accounts excluded from an organization-targeted share. Returns an empty list for account-targeted shares.
       parameters:
         - name: account_id
           in: path
@@ -207335,14 +207327,14 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/resource-sharing_api-response-common-failure'
+                  - $ref: '#/components/schemas/resource-sharing_api_response_common_failure'
         5XX:
           description: List share excluded recipients response failure.
           content:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/resource-sharing_api-response-common-failure'
+                  - $ref: '#/components/schemas/resource-sharing_api_response_common_failure'
       security:
         - api_email: []
           api_key: []
@@ -207391,14 +207383,14 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/resource-sharing_api-response-common-failure'
+                  - $ref: '#/components/schemas/resource-sharing_api_response_common_failure'
         5XX:
           description: Create share excluded recipient failure.
           content:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/resource-sharing_api-response-common-failure'
+                  - $ref: '#/components/schemas/resource-sharing_api_response_common_failure'
       security:
         - api_email: []
           api_key: []
@@ -207443,14 +207435,14 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/resource-sharing_api-response-common-failure'
+                  - $ref: '#/components/schemas/resource-sharing_api_response_common_failure'
         5XX:
           description: Update share excluded recipients failure.
           content:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/resource-sharing_api-response-common-failure'
+                  - $ref: '#/components/schemas/resource-sharing_api_response_common_failure'
       security:
         - api_email: []
           api_key: []
@@ -207464,6 +207456,7 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: resource-sharing.excluded-recipients
       x-fern-sdk-method-name: update
+      x-forge-require-confirmation: Accounts omitted from the list are no longer excluded and will receive the share.
   /accounts/{account_id}/shares/{share_id}/excluded-recipients/{excluded_recipient_id}:
     delete:
       operationId: share-excluded-recipient-delete
@@ -207498,14 +207491,14 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/resource-sharing_api-response-common-failure'
+                  - $ref: '#/components/schemas/resource-sharing_api_response_common_failure'
         5XX:
           description: Delete share excluded recipient failure.
           content:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/resource-sharing_api-response-common-failure'
+                  - $ref: '#/components/schemas/resource-sharing_api_response_common_failure'
       security:
         - api_email: []
           api_key: []
@@ -207520,6 +207513,7 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: resource-sharing.excluded-recipients
       x-fern-sdk-method-name: delete
+      x-forge-require-confirmation: Removing the exclusion makes the share apply to this account.
     get:
       operationId: share-excluded-recipients-get-by-id
       summary: Get share excluded recipient by ID
@@ -207553,14 +207547,14 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/resource-sharing_api-response-common-failure'
+                  - $ref: '#/components/schemas/resource-sharing_api_response_common_failure'
         5XX:
           description: Get share excluded recipient response failure.
           content:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/resource-sharing_api-response-common-failure'
+                  - $ref: '#/components/schemas/resource-sharing_api_response_common_failure'
       security:
         - api_email: []
           api_key: []
@@ -207611,14 +207605,14 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/resource-sharing_api-response-common-failure'
+                  - $ref: '#/components/schemas/resource-sharing_api_response_common_failure'
         5XX:
           description: List account share recipients response failure.
           content:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/resource-sharing_api-response-common-failure'
+                  - $ref: '#/components/schemas/resource-sharing_api_response_common_failure'
       security:
         - api_email: []
           api_key: []
@@ -207659,7 +207653,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/resource-sharing_create_share_recipient_request'
+              $ref: '#/components/schemas/resource-sharing_share_recipient_mutation_request'
       responses:
         '201':
           description: Share recipient created.
@@ -207673,14 +207667,14 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/resource-sharing_api-response-common-failure'
+                  - $ref: '#/components/schemas/resource-sharing_api_response_common_failure'
         5XX:
           description: Create share recipient failure.
           content:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/resource-sharing_api-response-common-failure'
+                  - $ref: '#/components/schemas/resource-sharing_api_response_common_failure'
       security:
         - api_email: []
           api_key: []
@@ -207705,9 +207699,9 @@ paths:
         disassociation, and unchanged accounts are left as-is.
 
         Returns an error if the share targets an organization
-        (`target_type=organization`); org-targeted shares derive their
-        recipients dynamically from org membership and cannot be modified
-        through this endpoint.
+        (`target_type=organization`) and the list is non-empty; org-targeted
+        shares derive their recipients dynamically from org membership and
+        cannot be modified through this endpoint.
       parameters:
         - name: account_id
           in: path
@@ -207734,14 +207728,14 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/resource-sharing_api-response-common-failure'
+                  - $ref: '#/components/schemas/resource-sharing_api_response_common_failure'
         5XX:
           description: Update share recipients failure.
           content:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/resource-sharing_api-response-common-failure'
+                  - $ref: '#/components/schemas/resource-sharing_api_response_common_failure'
       security:
         - api_email: []
           api_key: []
@@ -207755,6 +207749,7 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: resource-sharing.recipients
       x-fern-sdk-method-name: update
+      x-forge-require-confirmation: Accounts omitted from the list are disassociated from the share.
   /accounts/{account_id}/shares/{share_id}/recipients/{recipient_id}:
     delete:
       operationId: share-recipient-delete
@@ -207800,14 +207795,14 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/resource-sharing_api-response-common-failure'
+                  - $ref: '#/components/schemas/resource-sharing_api_response_common_failure'
         5XX:
           description: Delete share recipient failure.
           content:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/resource-sharing_api-response-common-failure'
+                  - $ref: '#/components/schemas/resource-sharing_api_response_common_failure'
       security:
         - api_email: []
           api_key: []
@@ -207857,14 +207852,14 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/resource-sharing_api-response-common-failure'
+                  - $ref: '#/components/schemas/resource-sharing_api_response_common_failure'
         5XX:
           description: Get account share recipient response failure.
           content:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/resource-sharing_api-response-common-failure'
+                  - $ref: '#/components/schemas/resource-sharing_api_response_common_failure'
       security:
         - api_email: []
           api_key: []
@@ -207912,14 +207907,14 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/resource-sharing_api-response-common-failure'
+                  - $ref: '#/components/schemas/resource-sharing_api_response_common_failure'
         5XX:
           description: List account share resources response failure.
           content:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/resource-sharing_api-response-common-failure'
+                  - $ref: '#/components/schemas/resource-sharing_api_response_common_failure'
       security:
         - api_email: []
           api_key: []
@@ -207968,14 +207963,14 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/resource-sharing_api-response-common-failure'
+                  - $ref: '#/components/schemas/resource-sharing_api_response_common_failure'
         5XX:
           description: Create share resource failure.
           content:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/resource-sharing_api-response-common-failure'
+                  - $ref: '#/components/schemas/resource-sharing_api_response_common_failure'
       security:
         - api_email: []
           api_key: []
@@ -208024,14 +208019,14 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/resource-sharing_api-response-common-failure'
+                  - $ref: '#/components/schemas/resource-sharing_api_response_common_failure'
         5XX:
           description: Delete share resource failure.
           content:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/resource-sharing_api-response-common-failure'
+                  - $ref: '#/components/schemas/resource-sharing_api_response_common_failure'
       security:
         - api_email: []
           api_key: []
@@ -208080,14 +208075,14 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/resource-sharing_api-response-common-failure'
+                  - $ref: '#/components/schemas/resource-sharing_api_response_common_failure'
         5XX:
           description: Get account share resource response failure.
           content:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/resource-sharing_api-response-common-failure'
+                  - $ref: '#/components/schemas/resource-sharing_api_response_common_failure'
       security:
         - api_email: []
           api_key: []
@@ -208105,7 +208100,7 @@ paths:
     put:
       operationId: share-resource-update
       summary: Trigger a resource metadata update in a share
-      description: Update is not immediate, an updated share resource object with a new status will be returned.
+      description: Updates the resource's `meta`. Only resources with `status=active` can be updated.
       parameters:
         - name: account_id
           in: path
@@ -208141,14 +208136,14 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/resource-sharing_api-response-common-failure'
+                  - $ref: '#/components/schemas/resource-sharing_api_response_common_failure'
         5XX:
           description: Update share resource failure.
           content:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/resource-sharing_api-response-common-failure'
+                  - $ref: '#/components/schemas/resource-sharing_api_response_common_failure'
       security:
         - api_email: []
           api_key: []
@@ -254778,9 +254773,6 @@ paths:
           schema:
             $ref: '#/components/schemas/resource-sharing_organization_id'
         - $ref: '#/components/parameters/resource-sharing_status'
-        - $ref: '#/components/parameters/resource-sharing_kind'
-        - $ref: '#/components/parameters/resource-sharing_target_type'
-        - $ref: '#/components/parameters/resource-sharing_resource_types'
         - $ref: '#/components/parameters/resource-sharing_order'
         - $ref: '#/components/parameters/resource-sharing_direction'
         - $ref: '#/components/parameters/resource-sharing_page'
@@ -254798,14 +254790,14 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/resource-sharing_api-response-common-failure'
+                  - $ref: '#/components/schemas/resource-sharing_api_response_common_failure'
         5XX:
           description: List organization shares response failure.
           content:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/resource-sharing_api-response-common-failure'
+                  - $ref: '#/components/schemas/resource-sharing_api_response_common_failure'
       security:
         - api_email: []
           api_key: []
@@ -254817,7 +254809,7 @@ paths:
         free: false
         pro: false
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: organization.share
+      x-fern-sdk-group-name: organizations.shares
       x-fern-sdk-method-name: list
   /pages/assets/check-missing:
     post:
@@ -398389,6 +398381,15 @@ components:
       schema:
         type: boolean
         example: true
+    resource-sharing_include_tags_from:
+      description: Include share tags in the response. `api` reads tags from the tag service; `mirror` reads a local, eventually consistent replica. If the tag lookup fails, the response omits `tags`.
+      in: query
+      name: include_tags_from
+      schema:
+        type: string
+        enum:
+          - api
+          - mirror
     resource-sharing_kind:
       description: Filter shares by kind.
       in: query
@@ -398406,10 +398407,7 @@ components:
           - name
           - created
     resource-sharing_page:
-      description: |-
-        Page number. Defaults to `1` when `per_page` is supplied without
-        `page`. May be omitted entirely along with `per_page` to receive a
-        non-paginated response.
+      description: Page number. Defaults to `1` when omitted.
       in: query
       name: page
       schema:
@@ -398419,7 +398417,7 @@ components:
         minimum: 1
         multipleOf: 1
     resource-sharing_per_page:
-      description: Number of objects to return per page. Defaults to `20` when `page` is supplied without `per_page`. May be omitted entirely along with `page` to receive a non-paginated response.
+      description: Number of objects to return per page. Defaults to `20` when omitted.
       in: query
       name: per_page
       schema:
@@ -487797,23 +487795,25 @@ components:
       type: string
       example: 023e105f4ecef8ad9ca31a8372d0c353
       maxLength: 32
+      minLength: 32
+      pattern: ^[0-9a-fA-F]{32}$
       x-auditable: true
     resource-sharing_account_name:
       description: The display name of an account.
       type: string
       example: Account A
       x-auditable: true
-    resource-sharing_api-response-collection:
+    resource-sharing_api_response_collection:
       type: object
       allOf:
-        - $ref: '#/components/schemas/resource-sharing_api-response-common'
-        - $ref: '#/components/schemas/resource-sharing_api-response-collection-info'
-    resource-sharing_api-response-collection-info:
+        - $ref: '#/components/schemas/resource-sharing_api_response_common'
+        - $ref: '#/components/schemas/resource-sharing_api_response_collection_info'
+    resource-sharing_api_response_collection_info:
       type: object
       properties:
         result_info:
           $ref: '#/components/schemas/resource-sharing_result_info'
-    resource-sharing_api-response-common:
+    resource-sharing_api_response_common:
       type: object
       properties:
         errors:
@@ -487825,7 +487825,7 @@ components:
       required:
         - success
         - errors
-    resource-sharing_api-response-common-failure:
+    resource-sharing_api_response_common_failure:
       type: object
       properties:
         errors:
@@ -487834,17 +487834,14 @@ components:
               message: No route for the URI
           allOf:
             - $ref: '#/components/schemas/resource-sharing_v4errors'
-          minLength: 1
+          minItems: 1
         result:
           type: object
-          enum:
-            - null
           nullable: true
         success:
           description: Whether the API call was successful.
           type: boolean
           example: false
-          x-auditable: true
       required:
         - success
         - errors
@@ -487883,27 +487880,37 @@ components:
     resource-sharing_create_share_request:
       type: object
       properties:
+        excluded_recipients:
+          description: Accounts to exclude from an organization-targeted share. Only allowed when `recipients` contains no account entries. The share owner cannot be excluded. Duplicate entries are ignored.
+          type: array
+          items:
+            $ref: '#/components/schemas/resource-sharing_create_share_excluded_recipient_request'
+          maxItems: 1000
         name:
           $ref: '#/components/schemas/resource-sharing_share_name'
         recipients:
           type: array
           items:
             $ref: '#/components/schemas/resource-sharing_create_share_recipient_request'
+          maxItems: 100
         resources:
           type: array
           items:
             $ref: '#/components/schemas/resource-sharing_create_share_resource_request'
+          maxItems: 1
+        tags:
+          $ref: '#/components/schemas/resource-sharing_share_tags'
       required:
         - name
-        - resources
-        - recipients
     resource-sharing_create_share_resource_request:
       type: object
       properties:
         meta:
           $ref: '#/components/schemas/resource-sharing_resource_meta'
         resource_account_id:
-          $ref: '#/components/schemas/resource-sharing_account_id'
+          description: The account that owns the resource. Must match the `account_id` in the path.
+          allOf:
+            - $ref: '#/components/schemas/resource-sharing_account_id'
         resource_id:
           $ref: '#/components/schemas/resource-sharing_resource_resource_id'
         resource_type:
@@ -487914,7 +487921,7 @@ components:
         - resource_account_id
         - meta
     resource-sharing_created:
-      description: When the share was created.
+      description: When the object was created.
       type: string
       format: date-time
       example: 2023-09-21T18:56:32.624632Z
@@ -487924,9 +487931,11 @@ components:
       type: string
       example: 4ae96b85c43850f2c0a7b9101a0eeb18
       maxLength: 32
+      minLength: 32
+      pattern: ^[0-9a-fA-F]{32}$
       x-auditable: true
     resource-sharing_modified:
-      description: When the share was modified.
+      description: When the object was last modified.
       type: string
       format: date-time
       example: 2023-09-21T18:56:32.624632Z
@@ -487936,6 +487945,8 @@ components:
       type: string
       example: 023e105f4ecef8ad9ca31a8372d0c353
       maxLength: 32
+      minLength: 32
+      pattern: ^[0-9a-fA-F]{32}$
       x-auditable: true
     resource-sharing_recipient_association_status:
       description: |
@@ -487965,9 +487976,11 @@ components:
       type: string
       example: 3fd85f74b32742f1bff64a85009dda07
       maxLength: 32
+      minLength: 32
+      pattern: ^[0-9a-fA-F]{32}$
       x-auditable: true
     resource-sharing_recipient_resource_error:
-      description: Share Recipient error message.
+      description: Error from the most recent attempt to apply the resource to the recipient. Empty string when no error has been recorded.
       type: string
       example: Recipient is missing necessary entitlement
       x-auditable: true
@@ -487975,21 +487988,28 @@ components:
       description: Whether the error is terminal or will be continually retried.
       type: boolean
       example: true
+      nullable: true
+      x-auditable: true
+    resource-sharing_recipient_resource_version:
+      description: Resource version applied to the recipient, if reconciliation has occurred.
+      type: integer
+      nullable: true
       x-auditable: true
     resource-sharing_resource_id:
       description: Share Resource identifier.
       type: string
       example: 023e105f4ecef8ad9ca31a8372d0c353
       maxLength: 32
+      minLength: 32
+      pattern: ^[0-9a-fA-F]{32}$
       x-auditable: true
     resource-sharing_resource_meta:
       description: Resource Metadata.
       type: object
     resource-sharing_resource_resource_id:
-      description: Share Resource identifier.
+      description: Identifier assigned by the service that owns the shared resource.
       type: string
-      example: 023e105f4ecef8ad9ca31a8372d0c353
-      maxLength: 32
+      example: 0a679032-bbb2-4b7e-9acc-dd5c5cb27a17
       x-auditable: true
     resource-sharing_resource_status:
       description: Resource Status.
@@ -488019,26 +488039,27 @@ components:
       type: object
       properties:
         count:
-          description: Total number of results for the requested service.
-          type: number
+          description: Number of results on the current page.
+          type: integer
           example: 1
         page:
           description: Current page within paginated list of results.
-          type: number
+          type: integer
           example: 1
         per_page:
           description: Number of results per page of results.
-          type: number
+          type: integer
           example: 20
         total_count:
-          description: Total results available without any search parameters.
-          type: number
+          description: Total number of results matching the current filters before pagination.
+          type: integer
           example: 2000
         total_pages:
           description: Total number of pages using the given per page.
-          type: number
+          type: integer
           example: 50
     resource-sharing_share_excluded_recipient_object:
+      type: object
       properties:
         account_id:
           $ref: '#/components/schemas/resource-sharing_account_id'
@@ -488056,7 +488077,7 @@ components:
     resource-sharing_share_excluded_recipient_response_collection:
       type: object
       allOf:
-        - $ref: '#/components/schemas/resource-sharing_api-response-collection'
+        - $ref: '#/components/schemas/resource-sharing_api_response_collection'
         - $ref: '#/components/schemas/resource-sharing_share_excluded_recipient_response_collection_result'
     resource-sharing_share_excluded_recipient_response_collection_result:
       type: object
@@ -488068,7 +488089,7 @@ components:
     resource-sharing_share_excluded_recipient_response_single:
       type: object
       allOf:
-        - $ref: '#/components/schemas/resource-sharing_api-response-common'
+        - $ref: '#/components/schemas/resource-sharing_api_response_common'
         - $ref: '#/components/schemas/resource-sharing_share_excluded_recipient_response_single_result'
     resource-sharing_share_excluded_recipient_response_single_result:
       type: object
@@ -488080,6 +488101,8 @@ components:
       type: string
       example: 3fd85f74b32742f1bff64a85009dda07
       maxLength: 32
+      minLength: 32
+      pattern: ^[0-9a-fA-F]{32}$
       x-auditable: true
     resource-sharing_share_kind:
       type: string
@@ -488093,6 +488116,7 @@ components:
       example: My Shared WAF Managed Rule
       x-auditable: true
     resource-sharing_share_object:
+      type: object
       properties:
         account_id:
           $ref: '#/components/schemas/resource-sharing_account_id'
@@ -488102,20 +488126,24 @@ components:
           description: The number of recipients in the 'associated' state. This field is only included when requested via the 'include_recipient_counts' parameter.
           type: integer
           example: 10
+          x-auditable: true
         associating_recipient_count:
           description: The number of recipients in the 'associating' state. This field is only included when requested via the 'include_recipient_counts' parameter.
           type: integer
           example: 1
+          x-auditable: true
         created:
           $ref: '#/components/schemas/resource-sharing_created'
         disassociated_recipient_count:
           description: The number of recipients in the 'disassociated' state. This field is only included when requested via the 'include_recipient_counts' parameter.
           type: integer
           example: 0
+          x-auditable: true
         disassociating_recipient_count:
           description: The number of recipients in the 'disassociating' state. This field is only included when requested via the 'include_recipient_counts' parameter.
           type: integer
           example: 0
+          x-auditable: true
         id:
           $ref: '#/components/schemas/resource-sharing_share_id'
         kind:
@@ -488133,6 +488161,10 @@ components:
             $ref: '#/components/schemas/resource-sharing_share_resource_object'
         status:
           $ref: '#/components/schemas/resource-sharing_share_status'
+        tags:
+          description: Tags associated with the share. Included in create and update responses when tags are supplied, and in read responses when the `include_tags_from` parameter is set.
+          allOf:
+            - $ref: '#/components/schemas/resource-sharing_share_tags'
         target_type:
           $ref: '#/components/schemas/resource-sharing_share_target_type'
       required:
@@ -488145,12 +488177,34 @@ components:
         - modified
         - status
         - target_type
+    resource-sharing_share_recipient_mutation_request:
+      description: |
+        Specify the account receiving the share using `recipient_account_id`.
+        The legacy field `account_id` is accepted as a synonym during the deprecation period (see `x-sunset` on that field).
+      type: object
+      properties:
+        account_id:
+          description: |
+            Deprecated alias for `recipient_account_id`. Use `recipient_account_id` instead.
+            The body field collided with the URL path parameter of the same name, which prevented SDK generators from distinguishing the source account (in the URL) from the recipient account (in the body). Both names will continue to be accepted until 2027-05-26 (see `x-sunset`).
+          allOf:
+            - $ref: '#/components/schemas/resource-sharing_account_id'
+          deprecated: true
+          x-stainless-deprecation-message: This field has been renamed to `recipient_account_id`. Both names are accepted during the deprecation period.
+          x-stainless-skip:
+            - terraform
+        recipient_account_id:
+          description: The account that will receive the share.
+          allOf:
+            - $ref: '#/components/schemas/resource-sharing_account_id'
+      minProperties: 1
     resource-sharing_share_recipient_object:
       description: |
         A recipient of a share. The `association_status` field tracks the
         lifecycle of the shared resources in the recipient account. All
         recipients are returned by the list endpoint regardless of status;
         filter client-side if only active recipients are needed.
+      type: object
       properties:
         account_id:
           $ref: '#/components/schemas/resource-sharing_account_id'
@@ -488173,13 +488227,14 @@ components:
         - created
         - modified
     resource-sharing_share_recipient_resource_object:
+      type: object
       properties:
         error:
           $ref: '#/components/schemas/resource-sharing_recipient_resource_error'
         resource_id:
           $ref: '#/components/schemas/resource-sharing_resource_resource_id'
         resource_version:
-          $ref: '#/components/schemas/resource-sharing_resource_version'
+          $ref: '#/components/schemas/resource-sharing_recipient_resource_version'
         terminal:
           $ref: '#/components/schemas/resource-sharing_recipient_resource_error_terminal'
       required:
@@ -488190,7 +488245,7 @@ components:
     resource-sharing_share_recipient_response_collection:
       type: object
       allOf:
-        - $ref: '#/components/schemas/resource-sharing_api-response-collection'
+        - $ref: '#/components/schemas/resource-sharing_api_response_collection'
         - $ref: '#/components/schemas/resource-sharing_share_recipient_response_collection_result'
     resource-sharing_share_recipient_response_collection_result:
       type: object
@@ -488202,7 +488257,7 @@ components:
     resource-sharing_share_recipient_response_single:
       type: object
       allOf:
-        - $ref: '#/components/schemas/resource-sharing_api-response-common'
+        - $ref: '#/components/schemas/resource-sharing_api_response_common'
         - $ref: '#/components/schemas/resource-sharing_share_recipient_response_single_result'
     resource-sharing_share_recipient_response_single_result:
       type: object
@@ -488210,6 +488265,7 @@ components:
         result:
           $ref: '#/components/schemas/resource-sharing_share_recipient_object'
     resource-sharing_share_resource_object:
+      type: object
       properties:
         created:
           $ref: '#/components/schemas/resource-sharing_created'
@@ -488242,7 +488298,7 @@ components:
     resource-sharing_share_resource_response_collection:
       type: object
       allOf:
-        - $ref: '#/components/schemas/resource-sharing_api-response-collection'
+        - $ref: '#/components/schemas/resource-sharing_api_response_collection'
         - $ref: '#/components/schemas/resource-sharing_share_resource_response_collection_result'
     resource-sharing_share_resource_response_collection_result:
       type: object
@@ -488254,7 +488310,7 @@ components:
     resource-sharing_share_resource_response_single:
       type: object
       allOf:
-        - $ref: '#/components/schemas/resource-sharing_api-response-common'
+        - $ref: '#/components/schemas/resource-sharing_api_response_common'
         - $ref: '#/components/schemas/resource-sharing_share_resource_response_single_result'
     resource-sharing_share_resource_response_single_result:
       type: object
@@ -488264,7 +488320,7 @@ components:
     resource-sharing_share_response_collection:
       type: object
       allOf:
-        - $ref: '#/components/schemas/resource-sharing_api-response-collection'
+        - $ref: '#/components/schemas/resource-sharing_api_response_collection'
         - $ref: '#/components/schemas/resource-sharing_share_response_collection_result'
     resource-sharing_share_response_collection_result:
       type: object
@@ -488276,7 +488332,7 @@ components:
     resource-sharing_share_response_single:
       type: object
       allOf:
-        - $ref: '#/components/schemas/resource-sharing_api-response-common'
+        - $ref: '#/components/schemas/resource-sharing_api_response_common'
         - $ref: '#/components/schemas/resource-sharing_share_response_single_result'
     resource-sharing_share_response_single_result:
       type: object
@@ -488290,6 +488346,11 @@ components:
         - deleting
         - deleted
       x-auditable: true
+    resource-sharing_share_tags:
+      description: Tags associated with the share.
+      type: object
+      additionalProperties:
+        type: string
     resource-sharing_share_target_type:
       type: string
       enum:
@@ -488300,10 +488361,12 @@ components:
       type: array
       items:
         $ref: '#/components/schemas/resource-sharing_create_share_excluded_recipient_request'
+      maxItems: 1000
     resource-sharing_update_share_recipients_request:
       type: array
       items:
-        $ref: '#/components/schemas/resource-sharing_create_share_recipient_request'
+        $ref: '#/components/schemas/resource-sharing_share_recipient_mutation_request'
+      maxItems: 100
     resource-sharing_update_share_request:
       description: |
         Request body for `PUT /accounts/{account_id}/shares/{share_id}`. The
@@ -488315,6 +488378,8 @@ components:
       properties:
         name:
           $ref: '#/components/schemas/resource-sharing_share_name'
+        tags:
+          $ref: '#/components/schemas/resource-sharing_share_tags'
       required:
         - name
     resource-sharing_update_share_resource_request:
@@ -488329,7 +488394,6 @@ components:
       properties:
         code:
           type: integer
-          minimum: 1000
         message:
           type: string
       required:
@@ -530839,7 +530903,7 @@ x-forge-commands:
       organization-profile:
         description: View and update the public profile information for an organization
       shares:
-        description: Shares operations
+        description: Shares across the organization
   origin-post-quantum-encryption:
     description: Enable post-quantum key exchange for connections between Cloudflare and your origin server
   pages:
@@ -531031,12 +531095,14 @@ x-forge-commands:
       traces:
         description: Simulate request processing to debug rule matches, transforms, and routing decisions
   resource-sharing:
-    description: Share Cloudflare resources (zones, accounts) across organizations with granular access controls
+    description: Share account-level resources (WAF custom rulesets, Gateway policies and settings, Access IdP federation grants) with other accounts in the same organization
     groups:
+      excluded-recipients:
+        description: Accounts excluded from an organization-targeted share
       recipients:
-        description: Update share recipients
+        description: Accounts that receive a share
       resources:
-        description: Individual resources (zones, configs) that have been shared with recipients
+        description: Resources attached to a share
   rules:
     description: Resources used by Cloudflare rules and rulesets
     groups:
