@@ -477315,7 +477315,10 @@ components:
         expression:
           description: Rego expression body for the policy. `package cloudflare.casb.custom` and `import rego.v1` are added automatically. Do not include package or import declarations. This field cannot be changed after creation. Maximum 4096 characters.
           type: string
-          example: result := "pass"
+          example: |
+            default result := "pass"
+
+            result := "fail" if input.asset.publicLinkDisabled == false
           maxLength: 4096
         integration_ids:
           description: Required and non-empty when applies_to_all_integrations is false; omit when it is true.
