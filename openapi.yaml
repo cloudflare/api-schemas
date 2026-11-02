@@ -362537,8 +362537,8 @@ paths:
   /zones/{zone_id}/argo/tiered_caching:
     get:
       operationId: tiered-caching-get-tiered-caching-setting
-      summary: Get Tiered Caching setting
-      description: Tiered Cache works by dividing Cloudflare's data centers into a hierarchy of lower-tiers and upper-tiers. If content is not cached in lower-tier data centers (generally the ones closest to a visitor), the lower-tier must ask an upper-tier to see if it has the content. If the upper-tier does not have the content, only the upper-tier can ask the origin for content. This practice improves bandwidth efficiency by limiting the number of data centers that can ask the origin for content, which reduces origin load and makes websites more cost-effective to operate. Additionally, Tiered Cache concentrates connections to origin servers so they come from a small number of data centers rather than the full set of network locations. This results in fewer open connections using server resources.
+      summary: Get Tiered Cache
+      description: Retrieves whether Tiered Cache is enabled for a zone. Tiered Cache reduces origin traffic by serving lower-tier cache misses from upper-tier data centers before requesting content from your origin.
       parameters:
         - name: zone_id
           in: path
@@ -362577,8 +362577,8 @@ paths:
       x-fern-sdk-method-name: get
     patch:
       operationId: tiered-caching-patch-tiered-caching-setting
-      summary: Patch Tiered Caching setting
-      description: Tiered Cache works by dividing Cloudflare's data centers into a hierarchy of lower-tiers and upper-tiers. If content is not cached in lower-tier data centers (generally the ones closest to a visitor), the lower-tier must ask an upper-tier to see if it has the content. If the upper-tier does not have the content, only the upper-tier can ask the origin for content. This practice improves bandwidth efficiency by limiting the number of data centers that can ask the origin for content, which reduces origin load and makes websites more cost-effective to operate. Additionally, Tiered Cache concentrates connections to origin servers so they come from a small number of data centers rather than the full set of network locations. This results in fewer open connections using server resources.
+      summary: Update Tiered Cache
+      description: Enables or disables Tiered Cache for a zone. Tiered Cache reduces origin traffic by serving lower-tier cache misses from upper-tier data centers before requesting content from your origin.
       parameters:
         - name: zone_id
           in: path
@@ -363873,7 +363873,7 @@ paths:
         enterprise: true
         free: true
         pro: true
-      x-fern-availability: generally-available
+      x-fern-availability: deprecated
       x-fern-sdk-group-name: origin-post-quantum-encryption
       x-fern-sdk-method-name: get
     put:
@@ -363936,7 +363936,7 @@ paths:
         enterprise: true
         free: true
         pro: true
-      x-fern-availability: generally-available
+      x-fern-availability: deprecated
       x-fern-sdk-group-name: origin-post-quantum-encryption
       x-fern-sdk-method-name: update
   /zones/{zone_id}/cache/regional_tiered_cache:
@@ -422435,7 +422435,7 @@ components:
       uniqueItems: true
       x-auditable: true
     cache-settings_patch:
-      description: Update enablement of Tiered Caching.
+      description: Updates whether Tiered Cache is enabled for a zone.
       type: object
       properties:
         value:
@@ -422634,7 +422634,7 @@ components:
         - off
       x-auditable: true
     cache-settings_value:
-      description: Enables Tiered Caching.
+      description: Enables or disables Tiered Cache.
       type: string
       example: on
       enum:
