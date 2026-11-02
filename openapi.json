@@ -126672,8 +126672,7 @@
         ],
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "cloudforce-one.scans.results",
-        "x-fern-sdk-method-name": "getBanners",
-        "x-forge-hidden": true
+        "x-fern-sdk-method-name": "get-banners"
       }
     },
     "/accounts/{account_id}/cloudforce-one/binary": {
@@ -157635,7 +157634,8 @@
                             "$ref": "#/components/schemas/cloudforce-one-port-scan-api_scan-config"
                           }
                         }
-                      }
+                      },
+                      "type": "object"
                     }
                   ]
                 }
@@ -157671,8 +157671,7 @@
         ],
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "cloudforce-one.scans.config",
-        "x-fern-sdk-method-name": "list",
-        "x-forge-hidden": true
+        "x-fern-sdk-method-name": "list"
       },
       "post": {
         "operationId": "post_ConfigCreate",
@@ -157728,7 +157727,8 @@
                         "result": {
                           "$ref": "#/components/schemas/cloudforce-one-port-scan-api_scan-config"
                         }
-                      }
+                      },
+                      "type": "object"
                     }
                   ]
                 }
@@ -157763,8 +157763,7 @@
         ],
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "cloudforce-one.scans.config",
-        "x-fern-sdk-method-name": "create",
-        "x-forge-hidden": true
+        "x-fern-sdk-method-name": "create"
       }
     },
     "/accounts/{account_id}/cloudforce-one/scans/config/{config_id}": {
@@ -157859,8 +157858,7 @@
         ],
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "cloudforce-one.scans.config",
-        "x-fern-sdk-method-name": "delete",
-        "x-forge-hidden": true
+        "x-fern-sdk-method-name": "delete"
       },
       "patch": {
         "operationId": "post_ConfigUpdate",
@@ -157923,7 +157921,8 @@
                         "result": {
                           "$ref": "#/components/schemas/cloudforce-one-port-scan-api_scan-config"
                         }
-                      }
+                      },
+                      "type": "object"
                     }
                   ]
                 }
@@ -157958,8 +157957,7 @@
         ],
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "cloudforce-one.scans.config",
-        "x-fern-sdk-method-name": "edit",
-        "x-forge-hidden": true
+        "x-fern-sdk-method-name": "edit"
       }
     },
     "/accounts/{account_id}/cloudforce-one/scans/results/{config_id}": {
@@ -158066,8 +158064,7 @@
         ],
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "cloudforce-one.scans.results",
-        "x-fern-sdk-method-name": "get",
-        "x-forge-hidden": true
+        "x-fern-sdk-method-name": "get"
       }
     },
     "/accounts/{account_id}/cloudforce-one/v2/brand-protection/domain/matches": {
@@ -627292,25 +627289,37 @@
         ]
       },
       "cloudforce-one-port-scan-api_api-response-common-failure": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/cloudforce-one-port-scan-api_api-response-common"
-          },
-          {
-            "properties": {
-              "errors": {
-                "type": "object",
-                "example": {
-                  "code": 10433,
-                  "message": "request error"
-                }
-              },
-              "success": {
-                "type": "boolean",
-                "example": false
+        "type": "object",
+        "properties": {
+          "errors": {
+            "example": [
+              {
+                "code": 10433,
+                "message": "request error"
               }
-            }
+            ],
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/cloudforce-one-port-scan-api_messages"
+              }
+            ]
+          },
+          "messages": {
+            "$ref": "#/components/schemas/cloudforce-one-port-scan-api_messages"
+          },
+          "success": {
+            "description": "Whether the API call was successful.",
+            "type": "boolean",
+            "example": false,
+            "enum": [
+              false
+            ]
           }
+        },
+        "required": [
+          "success",
+          "errors",
+          "messages"
         ]
       },
       "cloudforce-one-port-scan-api_frequency": {
