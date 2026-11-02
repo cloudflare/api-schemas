@@ -495984,6 +495984,10 @@ components:
               $ref: '#/components/schemas/spectrum-config_origin_port'
             origin_worker_id:
               $ref: '#/components/schemas/spectrum-config_origin_worker_id'
+            origin_worker_name:
+              $ref: '#/components/schemas/spectrum-config_origin_worker_name'
+            origin_worker_status:
+              $ref: '#/components/schemas/spectrum-config_origin_worker_status'
             protocol:
               $ref: '#/components/schemas/spectrum-config_protocol'
             proxy_protocol:
@@ -496232,6 +496236,18 @@ components:
       type: string
       example: 277b7815c871434b960b60729659000a
       pattern: ^[0-9a-f]{32}$
+    spectrum-config_origin_worker_name:
+      description: Name of the Worker origin. Omitted when the Worker is not found or its name cannot be resolved.
+      type: string
+      readOnly: true
+    spectrum-config_origin_worker_status:
+      description: Lookup status of the Worker origin. Unknown indicates that its name could not be resolved. Only returned for Worker origins.
+      type: string
+      enum:
+        - available
+        - not_found
+        - unknown
+      readOnly: true
     spectrum-config_paygo_app_config:
       allOf:
         - $ref: '#/components/schemas/spectrum-config_base_app_config'
