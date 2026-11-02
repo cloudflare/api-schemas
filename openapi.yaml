@@ -85114,8 +85114,7 @@ paths:
         - Scans
       x-fern-availability: generally-available
       x-fern-sdk-group-name: cloudforce-one.scans.results
-      x-fern-sdk-method-name: getBanners
-      x-forge-hidden: true
+      x-fern-sdk-method-name: get-banners
   /accounts/{account_id}/cloudforce-one/binary:
     post:
       operationId: post_BinDBPost
@@ -106158,6 +106157,7 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/cloudforce-one-port-scan-api_scan-config'
+                    type: object
         4XX:
           description: List Scan Configs failure.
           content:
@@ -106176,7 +106176,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: cloudforce-one.scans.config
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
     post:
       operationId: post_ConfigCreate
       summary: Create a new Scan Config
@@ -106214,6 +106213,7 @@ paths:
                   - properties:
                       result:
                         $ref: '#/components/schemas/cloudforce-one-port-scan-api_scan-config'
+                    type: object
         4XX:
           description: Create a new Scan Config failure.
           content:
@@ -106231,7 +106231,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: cloudforce-one.scans.config
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
   /accounts/{account_id}/cloudforce-one/scans/config/{config_id}:
     delete:
       operationId: delete_DeleteScans
@@ -106294,7 +106293,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: cloudforce-one.scans.config
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
     patch:
       operationId: post_ConfigUpdate
       summary: Update an existing Scan Config
@@ -106337,6 +106335,7 @@ paths:
                   - properties:
                       result:
                         $ref: '#/components/schemas/cloudforce-one-port-scan-api_scan-config'
+                    type: object
         4XX:
           description: Update an Existing Scan Config failure.
           content:
@@ -106354,7 +106353,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: cloudforce-one.scans.config
       x-fern-sdk-method-name: edit
-      x-forge-hidden: true
   /accounts/{account_id}/cloudforce-one/scans/results/{config_id}:
     get:
       operationId: get_GetOpenPorts
@@ -106425,7 +106423,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: cloudforce-one.scans.results
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
   /accounts/{account_id}/cloudforce-one/v2/brand-protection/domain/matches:
     get:
       operationId: get_DomainMatchList
@@ -427029,17 +427026,26 @@ components:
         - errors
         - messages
     cloudforce-one-port-scan-api_api-response-common-failure:
-      allOf:
-        - $ref: '#/components/schemas/cloudforce-one-port-scan-api_api-response-common'
-        - properties:
-            errors:
-              type: object
-              example:
-                code: 10433
-                message: request error
-            success:
-              type: boolean
-              example: false
+      type: object
+      properties:
+        errors:
+          example:
+            - code: 10433
+              message: request error
+          allOf:
+            - $ref: '#/components/schemas/cloudforce-one-port-scan-api_messages'
+        messages:
+          $ref: '#/components/schemas/cloudforce-one-port-scan-api_messages'
+        success:
+          description: Whether the API call was successful.
+          type: boolean
+          example: false
+          enum:
+            - false
+      required:
+        - success
+        - errors
+        - messages
     cloudforce-one-port-scan-api_frequency:
       description: Defines the number of days between each scan (0 = One-off scan).
       type: number
