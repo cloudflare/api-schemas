@@ -381965,7 +381965,7 @@
           "User Details Write"
         ],
         "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "organization",
+        "x-fern-sdk-group-name": "organizations",
         "x-fern-sdk-method-name": "list"
       },
       "post": {
@@ -382060,7 +382060,7 @@
           "User Details Write"
         ],
         "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "organization",
+        "x-fern-sdk-group-name": "organizations",
         "x-fern-sdk-method-name": "create"
       }
     },
@@ -382152,7 +382152,7 @@
           "Organizations"
         ],
         "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "organization",
+        "x-fern-sdk-group-name": "organizations",
         "x-fern-sdk-method-name": "delete",
         "x-forge-require-confirmation": "Delete this empty organization? This action cannot be undone."
       },
@@ -382243,7 +382243,7 @@
           "Organizations"
         ],
         "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "organization",
+        "x-fern-sdk-group-name": "organizations",
         "x-fern-sdk-method-name": "get"
       },
       "put": {
@@ -382344,7 +382344,7 @@
           "Organizations"
         ],
         "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "organization",
+        "x-fern-sdk-group-name": "organizations",
         "x-fern-sdk-method-name": "update"
       }
     },
@@ -382414,7 +382414,7 @@
           {
             "name": "name",
             "in": "query",
-            "description": "(case-sensitive) Filter the list of accounts to where the name is equal to a\nparticular string.",
+            "description": "(case-sensitive) Filter the list of accounts to where the name is equal to a\nparticular string. At most one of `name`, `name.startsWith`, `name.endsWith`,\nor `name.contains` may be supplied per request.",
             "schema": {
               "type": "string"
             },
@@ -382603,7 +382603,7 @@
           "Organizations"
         ],
         "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "organization.account",
+        "x-fern-sdk-group-name": "organizations.accounts",
         "x-fern-sdk-method-name": "list"
       }
     },
@@ -382779,7 +382779,7 @@
           "Organizations"
         ],
         "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "organization.invite",
+        "x-fern-sdk-group-name": "organizations.invites",
         "x-fern-sdk-method-name": "update"
       }
     },
@@ -383552,7 +383552,7 @@
           {
             "name": "status",
             "in": "query",
-            "description": "Filter the list of memberships by membership status.",
+            "description": "Filter the list of memberships by membership status. Defaults to `active`, `pending`, and `rejected`; pass `canceled` explicitly to include canceled memberships.",
             "schema": {
               "type": "array",
               "items": {
@@ -383690,7 +383690,7 @@
           "OrganizationMembers"
         ],
         "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "organization.member",
+        "x-fern-sdk-group-name": "organizations.members",
         "x-fern-sdk-method-name": "list"
       },
       "post": {
@@ -383789,7 +383789,7 @@
           "OrganizationMembers"
         ],
         "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "organization.member",
+        "x-fern-sdk-group-name": "organizations.members",
         "x-fern-sdk-method-name": "create"
       }
     },
@@ -383888,7 +383888,7 @@
           "OrganizationMembers"
         ],
         "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "organization.member",
+        "x-fern-sdk-group-name": "organizations.members",
         "x-fern-sdk-method-name": "delete",
         "x-forge-require-confirmation": "Delete this organization membership? The member will lose access to this organization and its sub-organizations."
       },
@@ -383986,7 +383986,7 @@
           "OrganizationMembers"
         ],
         "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "organization.member",
+        "x-fern-sdk-group-name": "organizations.members",
         "x-fern-sdk-method-name": "get"
       }
     },
@@ -384090,7 +384090,7 @@
           "OrganizationMembers"
         ],
         "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "organization.member.batch",
+        "x-fern-sdk-group-name": "organizations.members.batch",
         "x-fern-sdk-method-name": "create"
       }
     },
@@ -384152,7 +384152,7 @@
           "Organizations"
         ],
         "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "organization.profile",
+        "x-fern-sdk-group-name": "organizations.profile",
         "x-fern-sdk-method-name": "get"
       },
       "put": {
@@ -384214,7 +384214,7 @@
           "Organizations"
         ],
         "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "organization.profile",
+        "x-fern-sdk-group-name": "organizations.profile",
         "x-fern-sdk-method-name": "update"
       }
     },
@@ -516691,7 +516691,7 @@
       "get": {
         "operationId": "Tenants_listAccounts",
         "summary": "List tenant accounts",
-        "description": "Lists the Cloudflare accounts associated with this tenant using the legacy Account response\nshape. Use `GET /organizations/{organization_id}/accounts` for the modern Account response.\nUse `page_token` and `page_size` for cursor pagination, or provide `page` and `per_page`\ntogether for legacy offset pagination. Cursor pagination takes precedence when requested.",
+        "description": "Lists all Cloudflare accounts across this tenant's hierarchy using the legacy Account\nresponse shape. Use `GET /organizations/{organization_id}/accounts` to list only accounts\nimmediately attached to a specific Organization using the modern Account response shape.\nUse `page_token` and `page_size` for cursor pagination, or provide `page` and `per_page`\ntogether for legacy offset pagination. Cursor pagination takes precedence when requested.",
         "parameters": [
           {
             "name": "tenant_id",
@@ -516745,7 +516745,7 @@
           {
             "name": "name",
             "in": "query",
-            "description": "(case-sensitive) Filter the list of accounts to where the name is equal to a\nparticular string.",
+            "description": "(case-sensitive) Filter the list of accounts to where the name is equal to a\nparticular string. At most one of `name`, `name.startsWith`, `name.endsWith`,\nor `name.contains` may be supplied per request.",
             "schema": {
               "type": "string"
             },
@@ -516918,8 +516918,7 @@
           "Tenants"
         ],
         "x-fern-availability": "generally-available",
-        "x-fern-ignore": true,
-        "x-fern-sdk-group-name": "tenant.account",
+        "x-fern-sdk-group-name": "tenants.accounts",
         "x-fern-sdk-method-name": "list"
       }
     },
@@ -521128,7 +521127,7 @@
       "get": {
         "operationId": "User_listUserTenants",
         "summary": "List user tenants",
-        "description": "Retrieves the legacy Tenants associated with the authenticated user. Use `GET /organizations`\nto list modern Organizations the user has access to.",
+        "description": "Lists the Cloudflare tenants in which the authenticated user has direct membership using the\nlegacy Tenant response shape. Use `GET /organizations` to list Organizations the user can\naccess, including through hierarchy, using the modern Organization response shape.",
         "responses": {
           "200": {
             "description": "The request has succeeded.",
@@ -521208,8 +521207,7 @@
           "User Details Read"
         ],
         "x-fern-availability": "generally-available",
-        "x-fern-ignore": true,
-        "x-fern-sdk-group-name": "user.tenant",
+        "x-fern-sdk-group-name": "user.tenants",
         "x-fern-sdk-method-name": "list"
       }
     },
@@ -689901,6 +689899,7 @@
             "x-auditable": true
           },
           "source_organization_id": {
+            "description": "Empty string when the account did not belong to an organization before the move.",
             "type": "string",
             "x-auditable": true
           }
@@ -773530,19 +773529,19 @@
     "organizations": {
       "description": "Multi-user organizations that group accounts, members, and shared settings under a single entity",
       "groups": {
-        "account-organizations": {
-          "description": "List organizations associated with a specific account"
-        },
         "accounts": {
-          "description": "Accounts operations"
+          "description": "Accounts that belong to an organization"
+        },
+        "invites": {
+          "description": "Invitations to join an organization"
         },
         "members": {
-          "description": "Members operations"
+          "description": "Members of an organization"
         },
-        "members-batch-create": {
-          "description": "Members Batch Create operations"
+        "members.batch": {
+          "description": "Add members to an organization in bulk"
         },
-        "organization-profile": {
+        "profile": {
           "description": "View and update the public profile information for an organization"
         },
         "shares": {
@@ -774015,19 +774014,10 @@
       }
     },
     "tenants": {
-      "description": "Multi-tenant account management — manage tenant accounts, entitlements, and memberships",
+      "description": "Multi-tenant account management",
       "groups": {
-        "account-types": {
-          "description": "Account Types operations"
-        },
         "accounts": {
-          "description": "Accounts operations"
-        },
-        "entitlements": {
-          "description": "Entitlements operations"
-        },
-        "memberships": {
-          "description": "Memberships operations"
+          "description": "Accounts that belong to a tenant"
         }
       }
     },
@@ -774102,7 +774092,7 @@
           "description": "View and manage zone-level plan subscriptions owned by your user"
         },
         "tenants": {
-          "description": "Tenants operations"
+          "description": "Tenants the user belongs to"
         },
         "tokens": {
           "description": "Create and manage personal API tokens scoped to your user for programmatic API access"
