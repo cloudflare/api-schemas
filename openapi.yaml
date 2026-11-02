@@ -253186,7 +253186,7 @@ paths:
         - User Details Read
         - User Details Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: organization
+      x-fern-sdk-group-name: organizations
       x-fern-sdk-method-name: list
     post:
       operationId: Organizations_createUserOrganization
@@ -253253,7 +253253,7 @@ paths:
       x-api-token-group:
         - User Details Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: organization
+      x-fern-sdk-group-name: organizations
       x-fern-sdk-method-name: create
   /organizations/{organization_id}:
     delete:
@@ -253318,7 +253318,7 @@ paths:
       tags:
         - Organizations
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: organization
+      x-fern-sdk-group-name: organizations
       x-fern-sdk-method-name: delete
       x-forge-require-confirmation: Delete this empty organization? This action cannot be undone.
     get:
@@ -253378,7 +253378,7 @@ paths:
       tags:
         - Organizations
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: organization
+      x-fern-sdk-group-name: organizations
       x-fern-sdk-method-name: get
     put:
       operationId: Organizations_modify
@@ -253446,7 +253446,7 @@ paths:
       tags:
         - Organizations
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: organization
+      x-fern-sdk-group-name: organizations
       x-fern-sdk-method-name: update
   /organizations/{organization_id}/accounts:
     get:
@@ -253510,7 +253510,8 @@ paths:
           in: query
           description: |-
             (case-sensitive) Filter the list of accounts to where the name is equal to a
-            particular string.
+            particular string. At most one of `name`, `name.startsWith`, `name.endsWith`,
+            or `name.contains` may be supplied per request.
           schema:
             type: string
           explode: false
@@ -253641,7 +253642,7 @@ paths:
       tags:
         - Organizations
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: organization.account
+      x-fern-sdk-group-name: organizations.accounts
       x-fern-sdk-method-name: list
   /organizations/{organization_id}/billable/usage:
     get:
@@ -253776,7 +253777,7 @@ paths:
       tags:
         - Organizations
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: organization.invite
+      x-fern-sdk-group-name: organizations.invites
       x-fern-sdk-method-name: update
   /organizations/{organization_id}/logs/audit:
     get:
@@ -254325,7 +254326,7 @@ paths:
             $ref: '#/components/schemas/organizations-api_OrganizationID'
         - name: status
           in: query
-          description: Filter the list of memberships by membership status.
+          description: Filter the list of memberships by membership status. Defaults to `active`, `pending`, and `rejected`; pass `canceled` explicitly to include canceled memberships.
           schema:
             type: array
             items:
@@ -254414,7 +254415,7 @@ paths:
       tags:
         - OrganizationMembers
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: organization.member
+      x-fern-sdk-group-name: organizations.members
       x-fern-sdk-method-name: list
     post:
       operationId: Members_create
@@ -254478,7 +254479,7 @@ paths:
       tags:
         - OrganizationMembers
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: organization.member
+      x-fern-sdk-group-name: organizations.members
       x-fern-sdk-method-name: create
   /organizations/{organization_id}/members/{member_id}:
     delete:
@@ -254542,7 +254543,7 @@ paths:
       tags:
         - OrganizationMembers
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: organization.member
+      x-fern-sdk-group-name: organizations.members
       x-fern-sdk-method-name: delete
       x-forge-require-confirmation: Delete this organization membership? The member will lose access to this organization and its sub-organizations.
     get:
@@ -254606,7 +254607,7 @@ paths:
       tags:
         - OrganizationMembers
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: organization.member
+      x-fern-sdk-group-name: organizations.members
       x-fern-sdk-method-name: get
   /organizations/{organization_id}/members:batchCreate:
     post:
@@ -254673,7 +254674,7 @@ paths:
       tags:
         - OrganizationMembers
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: organization.member.batch
+      x-fern-sdk-group-name: organizations.members.batch
       x-fern-sdk-method-name: create
   /organizations/{organization_id}/profile:
     get:
@@ -254715,7 +254716,7 @@ paths:
       tags:
         - Organizations
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: organization.profile
+      x-fern-sdk-group-name: organizations.profile
       x-fern-sdk-method-name: get
     put:
       operationId: Organizations_modifyProfile
@@ -254759,7 +254760,7 @@ paths:
       tags:
         - Organizations
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: organization.profile
+      x-fern-sdk-group-name: organizations.profile
       x-fern-sdk-method-name: update
   /organizations/{organization_id}/shares:
     get:
@@ -353333,8 +353334,9 @@ paths:
       operationId: Tenants_listAccounts
       summary: List tenant accounts
       description: |-
-        Lists the Cloudflare accounts associated with this tenant using the legacy Account response
-        shape. Use `GET /organizations/{organization_id}/accounts` for the modern Account response.
+        Lists all Cloudflare accounts across this tenant's hierarchy using the legacy Account
+        response shape. Use `GET /organizations/{organization_id}/accounts` to list only accounts
+        immediately attached to a specific Organization using the modern Account response shape.
         Use `page_token` and `page_size` for cursor pagination, or provide `page` and `per_page`
         together for legacy offset pagination. Cursor pagination takes precedence when requested.
       parameters:
@@ -353384,7 +353386,8 @@ paths:
           in: query
           description: |-
             (case-sensitive) Filter the list of accounts to where the name is equal to a
-            particular string.
+            particular string. At most one of `name`, `name.startsWith`, `name.endsWith`,
+            or `name.contains` may be supplied per request.
           schema:
             type: string
           explode: false
@@ -353505,8 +353508,7 @@ paths:
       tags:
         - Tenants
       x-fern-availability: generally-available
-      x-fern-ignore: true
-      x-fern-sdk-group-name: tenant.account
+      x-fern-sdk-group-name: tenants.accounts
       x-fern-sdk-method-name: list
   /tenants/{tenant_id}/custom_ns:
     get:
@@ -356246,8 +356248,9 @@ paths:
       operationId: User_listUserTenants
       summary: List user tenants
       description: |-
-        Retrieves the legacy Tenants associated with the authenticated user. Use `GET /organizations`
-        to list modern Organizations the user has access to.
+        Lists the Cloudflare tenants in which the authenticated user has direct membership using the
+        legacy Tenant response shape. Use `GET /organizations` to list Organizations the user can
+        access, including through hierarchy, using the modern Organization response shape.
       responses:
         '200':
           description: The request has succeeded.
@@ -356299,8 +356302,7 @@ paths:
         - User Details Write
         - User Details Read
       x-fern-availability: generally-available
-      x-fern-ignore: true
-      x-fern-sdk-group-name: user.tenant
+      x-fern-sdk-group-name: user.tenants
       x-fern-sdk-method-name: list
   /user/tokens:
     get:
@@ -471436,6 +471438,7 @@ components:
           type: string
           x-auditable: true
         source_organization_id:
+          description: Empty string when the account did not belong to an organization before the move.
           type: string
           x-auditable: true
       required:
@@ -530895,15 +530898,15 @@ x-forge-commands:
   organizations:
     description: Multi-user organizations that group accounts, members, and shared settings under a single entity
     groups:
-      account-organizations:
-        description: List organizations associated with a specific account
       accounts:
-        description: Accounts operations
+        description: Accounts that belong to an organization
+      invites:
+        description: Invitations to join an organization
       members:
-        description: Members operations
-      members-batch-create:
-        description: Members Batch Create operations
-      organization-profile:
+        description: Members of an organization
+      members.batch:
+        description: Add members to an organization in bulk
+      profile:
         description: View and update the public profile information for an organization
       shares:
         description: Shares across the organization
@@ -531211,16 +531214,10 @@ x-forge-commands:
       webhooks:
         description: Webhook notifications for video lifecycle events (ready, error, etc.)
   tenants:
-    description: Multi-tenant account management — manage tenant accounts, entitlements, and memberships
+    description: Multi-tenant account management
     groups:
-      account-types:
-        description: Account Types operations
       accounts:
-        description: Accounts operations
-      entitlements:
-        description: Entitlements operations
-      memberships:
-        description: Memberships operations
+        description: Accounts that belong to a tenant
   turnstile:
     description: CAPTCHA-free bot verification widgets that protect forms and APIs without degrading user experience
     groups:
@@ -531269,7 +531266,7 @@ x-forge-commands:
       subscriptions:
         description: View and manage zone-level plan subscriptions owned by your user
       tenants:
-        description: Tenants operations
+        description: Tenants the user belongs to
       tokens:
         description: Create and manage personal API tokens scoped to your user for programmatic API access
   user.analytics:
