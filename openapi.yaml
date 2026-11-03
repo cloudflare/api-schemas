@@ -71483,6 +71483,8 @@ paths:
                 $ref: '#/components/schemas/brand-protection-api_Error'
         '500':
           $ref: '#/components/responses/brand-protection-api_DEFAULT_ERROR'
+        '503':
+          $ref: '#/components/responses/brand-protection-api_SAVED_QUERY_DELETE_UNAVAILABLE'
       security:
         - api_token: []
         - api_email: []
@@ -419863,6 +419865,47 @@ components:
             type: object
         total:
           type: integer
+    brand-protection-api_SavedQueryDeleteUnavailable:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            properties:
+              code:
+                type: integer
+              message:
+                type: string
+            required:
+              - code
+              - message
+            type: object
+        messages:
+          type: array
+          items:
+            properties:
+              code:
+                type: integer
+              message:
+                type: string
+            required:
+              - code
+              - message
+            type: object
+        result:
+          type: array
+          items:
+            type: object
+          maxItems: 0
+        success:
+          type: boolean
+          enum:
+            - false
+      required:
+        - success
+        - errors
+        - messages
+        - result
     brand-protection-api_URLInfo:
       type: object
       properties:
@@ -529196,6 +529239,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/brand-protection-api_Error'
+    brand-protection-api_SAVED_QUERY_DELETE_UNAVAILABLE:
+      description: Saved query deletion could not be confirmed.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/brand-protection-api_SavedQueryDeleteUnavailable'
     brand-protection-api_SUCCESS:
       description: Successful response.
     brand-protection-api_UNPROCESSABLE_CONTENT:
