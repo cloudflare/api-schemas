@@ -250339,7 +250339,7 @@
         ],
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "load-balancers.monitors.references",
-        "x-fern-sdk-method-name": "get"
+        "x-fern-sdk-method-name": "list"
       }
     },
     "/accounts/{account_id}/load_balancers/pools": {
@@ -250494,11 +250494,17 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "check_regions": {
+                    "$ref": "#/components/schemas/load-balancing_check_regions"
+                  },
                   "description": {
                     "$ref": "#/components/schemas/load-balancing_schemas-description"
                   },
                   "enabled": {
                     "$ref": "#/components/schemas/load-balancing_enabled"
+                  },
+                  "health_sources": {
+                    "$ref": "#/components/schemas/load-balancing_health_sources"
                   },
                   "latitude": {
                     "$ref": "#/components/schemas/load-balancing_latitude"
@@ -250520,6 +250526,9 @@
                   },
                   "name": {
                     "$ref": "#/components/schemas/load-balancing_name"
+                  },
+                  "networks": {
+                    "$ref": "#/components/schemas/load-balancing_networks"
                   },
                   "notification_email": {
                     "$ref": "#/components/schemas/load-balancing_notification_email"
@@ -250771,6 +250780,9 @@
                   "name": {
                     "$ref": "#/components/schemas/load-balancing_name"
                   },
+                  "networks": {
+                    "$ref": "#/components/schemas/load-balancing_networks"
+                  },
                   "notification_email": {
                     "$ref": "#/components/schemas/load-balancing_notification_email"
                   },
@@ -250891,6 +250903,9 @@
                   },
                   "name": {
                     "$ref": "#/components/schemas/load-balancing_name"
+                  },
+                  "networks": {
+                    "$ref": "#/components/schemas/load-balancing_networks"
                   },
                   "notification_email": {
                     "$ref": "#/components/schemas/load-balancing_notification_email"
@@ -251152,7 +251167,7 @@
         ],
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "load-balancers.pools.references",
-        "x-fern-sdk-method-name": "get"
+        "x-fern-sdk-method-name": "list"
       }
     },
     "/accounts/{account_id}/load_balancers/preview/{preview_id}": {
@@ -520135,6 +520150,9 @@
                   "name": {
                     "$ref": "#/components/schemas/load-balancing_name"
                   },
+                  "networks": {
+                    "$ref": "#/components/schemas/load-balancing_networks"
+                  },
                   "notification_email": {
                     "$ref": "#/components/schemas/load-balancing_notification_email"
                   },
@@ -553729,6 +553747,9 @@
                   "description": {
                     "$ref": "#/components/schemas/load-balancing_components-schemas-description"
                   },
+                  "enabled": {
+                    "$ref": "#/components/schemas/load-balancing_components-schemas-enabled"
+                  },
                   "fallback_pool": {
                     "$ref": "#/components/schemas/load-balancing_fallback_pool"
                   },
@@ -553740,6 +553761,9 @@
                   },
                   "networks": {
                     "$ref": "#/components/schemas/load-balancing_networks"
+                  },
+                  "pool_sets": {
+                    "$ref": "#/components/schemas/load-balancing_pool_sets"
                   },
                   "pop_pools": {
                     "$ref": "#/components/schemas/load-balancing_pop_pools"
@@ -553998,6 +554022,12 @@
                   "name": {
                     "$ref": "#/components/schemas/load-balancing_components-schemas-name"
                   },
+                  "networks": {
+                    "$ref": "#/components/schemas/load-balancing_networks"
+                  },
+                  "pool_sets": {
+                    "$ref": "#/components/schemas/load-balancing_pool_sets"
+                  },
                   "pop_pools": {
                     "$ref": "#/components/schemas/load-balancing_pop_pools"
                   },
@@ -554127,6 +554157,9 @@
                   },
                   "networks": {
                     "$ref": "#/components/schemas/load-balancing_networks"
+                  },
+                  "pool_sets": {
+                    "$ref": "#/components/schemas/load-balancing_pool_sets"
                   },
                   "pop_pools": {
                     "$ref": "#/components/schemas/load-balancing_pop_pools"
@@ -672006,6 +672039,9 @@
           "networks": {
             "$ref": "#/components/schemas/load-balancing_networks"
           },
+          "pool_sets": {
+            "$ref": "#/components/schemas/load-balancing_pool_sets"
+          },
           "pop_pools": {
             "$ref": "#/components/schemas/load-balancing_pop_pools"
           },
@@ -672703,7 +672739,7 @@
             "$ref": "#/components/schemas/load-balancing_origin-failure-reason"
           },
           "healthy": {
-            "$ref": "#/components/schemas/load-balancing_origin-healthy"
+            "$ref": "#/components/schemas/load-balancing_origin_healthy"
           },
           "ip": {
             "$ref": "#/components/schemas/load-balancing_origin-ip"
@@ -672758,12 +672794,6 @@
             }
           }
         }
-      },
-      "load-balancing_origin-healthy": {
-        "description": "Whether the origin is reported as healthy.",
-        "type": "boolean",
-        "example": true,
-        "x-auditable": true
       },
       "load-balancing_origin-ip": {
         "description": "The IP address (IPv4 or IPv6) of the origin.",
@@ -673442,7 +673472,32 @@
             "$ref": "#/components/schemas/load-balancing_pop_pools"
           },
           "random_steering": {
-            "$ref": "#/components/schemas/load-balancing_random_steering"
+            "description": "Configures pool weights for a rule override. An omitted default_weight inherits the load balancer's default weight.\n- `steering_policy=\"random\"`: A random pool is selected with probability proportional to pool weights.\n- `steering_policy=\"least_outstanding_requests\"`: Use pool weights to scale each pool's outstanding requests.\n- `steering_policy=\"least_connections\"`: Use pool weights to scale each pool's open connections.",
+            "type": "object",
+            "properties": {
+              "default_weight": {
+                "description": "The default weight for pools in the load balancer that are not specified in the pool_weights map. An omitted value inherits the load balancer's default weight.",
+                "type": "number",
+                "example": 0.2,
+                "maximum": 1,
+                "minimum": 0,
+                "multipleOf": 0.1,
+                "x-auditable": true,
+                "x-stainless-terraform-configurability": "computed_optional"
+              },
+              "pool_weights": {
+                "description": "A mapping of pool IDs to custom weights. The weight is relative to other pools in the load balancer.",
+                "type": "object",
+                "example": {
+                  "9290f38c5d07c2e2f4df57b1f61d4196": 0.5,
+                  "de90f38ced07c2e2f4df50b1f61d4194": 0.3
+                },
+                "additionalProperties": {
+                  "type": "number",
+                  "x-auditable": true
+                }
+              }
+            }
           },
           "region_pools": {
             "$ref": "#/components/schemas/load-balancing_region_pools"
@@ -673498,11 +673553,11 @@
               "$ref": "#/components/schemas/load-balancing_rule_overrides"
             },
             "priority": {
-              "description": "The order in which rules should be executed in relation to each other. Lower values are executed first. Values do not need to be sequential. If no value is provided for any rule the array order of the rules field will be used to assign a priority.",
+              "description": "The order in which rules should be executed in relation to each other. Lower values are executed first. Values do not need to be sequential. If all priorities are omitted or zero, the API assigns priorities based on the array order of the rules field.",
               "type": "integer",
-              "default": 0,
               "minimum": 0,
-              "x-auditable": true
+              "x-auditable": true,
+              "x-stainless-terraform-configurability": "computed_optional"
             },
             "terminates": {
               "description": "If this rule's condition is true, this causes rule evaluation to stop after processing this rule.",
