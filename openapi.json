@@ -102146,13 +102146,16 @@
       "get": {
         "operationId": "spend-policies-activity",
         "summary": "List Spend Policy Activity",
-        "description": "Returns configuration history from immutable policy revisions for the account, including deleted policies. Entries contain before/after values and verified actor attribution. Pages use descending revision IDs, not event or commit order; refresh the first page for new entries. This cursor is not an incremental consumer checkpoint.",
+        "description": "Returns configuration history from immutable policy revisions for the account, including deleted policies. Entries contain before/after values and verified actor attribution. Pages use descending revision IDs, not event or commit order; refresh the first page for new entries. This cursor is not an incremental consumer checkpoint. Defaults to `period=current_billing_cycle`: each revision's timestamp must be within its product's current subscription cycle (inclusive start, exclusive end). Each product's cycle is resolved independently from canonical aggregates, including for disabled or deleted policies. Set `period=all` for history across cycles. Filtering happens before pagination. No current cycles returns an empty page; unavailable or disabled cycle resolution returns `503` with code `1013`. Cursors pin resolved cycle bounds across pages and must be used with the same period selection. Cursors obtained before this filter was introduced must be refreshed.",
         "parameters": [
           {
             "$ref": "#/components/parameters/billing-spend-policies_account_id"
           },
           {
             "$ref": "#/components/parameters/billing-spend-policies_audit_limit"
+          },
+          {
+            "$ref": "#/components/parameters/billing-spend-policies_history_period"
           },
           {
             "name": "cursor",
@@ -102176,7 +102179,7 @@
             }
           },
           "400": {
-            "description": "Invalid limit or pagination cursor (error code 1006 or 1011).",
+            "description": "Invalid limit, pagination cursor, or period (error code 1006, 1011, or 1012).",
             "content": {
               "application/json": {
                 "schema": {
@@ -102198,7 +102201,7 @@
             "$ref": "#/components/responses/billing-spend-policies_internal_error"
           },
           "503": {
-            "$ref": "#/components/responses/billing-spend-policies_authentication_unavailable"
+            "$ref": "#/components/responses/billing-spend-policies_history_unavailable"
           }
         },
         "security": [
@@ -102443,7 +102446,7 @@
       "get": {
         "operationId": "spend-policies-list-audit",
         "summary": "List Spend Policy Audit Entries",
-        "description": "Returns the policy's evaluation history, newest first. At most one threshold-crossing entry (`limit_reached`) is recorded per policy version and billing period, so a policy update can record a new entry without any change in balance. Disabled policies still return their history; deleted policies return `404`. There is no pagination: use `limit` to set how many entries come back.",
+        "description": "Returns the policy's evaluation history, newest first. At most one threshold-crossing entry (`limit_reached`) is recorded per policy version and billing period, so a policy update can record a new entry without any change in balance. Disabled policies still return their history; deleted policies return `404`. There is no pagination: use `limit` to set how many entries come back. Defaults to `period=current_billing_cycle`, resolved from the product's canonical aggregates, not calendar months. Crossings match their recorded billing-period bounds, even if recorded late. Set `period=all` for history across cycles. Filtering happens before LIMIT. No current cycle returns an empty array; unavailable or disabled cycle resolution returns `503` with code `1013`, never an empty success.",
         "parameters": [
           {
             "$ref": "#/components/parameters/billing-spend-policies_account_id"
@@ -102453,6 +102456,9 @@
           },
           {
             "$ref": "#/components/parameters/billing-spend-policies_audit_limit"
+          },
+          {
+            "$ref": "#/components/parameters/billing-spend-policies_history_period"
           }
         ],
         "responses": {
@@ -102467,7 +102473,7 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/billing-spend-policies_invalid_limit"
+            "$ref": "#/components/responses/billing-spend-policies_invalid_history_request"
           },
           "401": {
             "$ref": "#/components/responses/billing-spend-policies_unauthenticated"
@@ -102482,7 +102488,7 @@
             "$ref": "#/components/responses/billing-spend-policies_internal_error"
           },
           "503": {
-            "$ref": "#/components/responses/billing-spend-policies_authentication_unavailable"
+            "$ref": "#/components/responses/billing-spend-policies_history_unavailable"
           }
         },
         "security": [
@@ -584952,6 +584958,19 @@
           "minimum": 1
         }
       },
+      "billing-spend-policies_history_period": {
+        "description": "Select current subscription billing-cycle history or history across all cycles.",
+        "in": "query",
+        "name": "period",
+        "schema": {
+          "type": "string",
+          "default": "current_billing_cycle",
+          "enum": [
+            "current_billing_cycle",
+            "all"
+          ]
+        }
+      },
       "billing-spend-policies_if_match": {
         "description": "The policy `version` the change is based on, as returned in `ETag`. Quoted (`\"3\"`) and bare (`3`) values are both accepted. Weak ETags (`W/\"3\"`) and `*` are not.",
         "in": "header",
@@ -770690,6 +770709,16 @@
           }
         }
       },
+      "billing-spend-policies_history_unavailable": {
+        "description": "Code `1001`: authentication verification is unavailable. Code `1013`: current billing-cycle resolution is unavailable or disabled. Retry or request period=all, which does not require aggregate reads.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/billing-spend-policies_api-response-common-failure"
+            }
+          }
+        }
+      },
       "billing-spend-policies_if_match_required": {
         "description": "Code `1007`. The `If-Match` header is missing or does not hold a positive integer version.",
         "content": {
@@ -770720,8 +770749,8 @@
           }
         }
       },
-      "billing-spend-policies_invalid_limit": {
-        "description": "The request was malformed. Code `1004`: the account ID is invalid. Code `1006`: `limit` is not a positive integer.",
+      "billing-spend-policies_invalid_history_request": {
+        "description": "The request was malformed. Code `1004`: invalid account ID. Code `1006`: invalid limit. Code `1012`: period must be current_billing_cycle or all.",
         "content": {
           "application/json": {
             "schema": {
