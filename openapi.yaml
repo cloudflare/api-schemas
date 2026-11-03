@@ -224034,8 +224034,8 @@ paths:
       summary: List credential sets
       description: Returns all credential sets for the account.
       parameters:
-        - $ref: '#/components/parameters/vuln_scanner_page'
-        - $ref: '#/components/parameters/vuln_scanner_per_page'
+        - $ref: '#/components/parameters/vuln-scanner_page'
+        - $ref: '#/components/parameters/vuln-scanner_per_page'
       responses:
         '200':
           description: Successful response.
@@ -224043,15 +224043,15 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/vuln_scanner_api-response-collection'
+                  - $ref: '#/components/schemas/vuln-scanner_api-response-collection'
                   - properties:
                       result:
                         type: array
                         items:
-                          $ref: '#/components/schemas/vuln_scanner_credential-set'
+                          $ref: '#/components/schemas/vuln-scanner_credential-set'
                     type: object
         4XX:
-          $ref: '#/components/responses/vuln_scanner_4XX'
+          $ref: '#/components/responses/vuln-scanner_4XX'
       security:
         - api_token: []
         - api_email: []
@@ -224061,9 +224061,8 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: api-security.vulnerability-scanner.credential-sets
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
     parameters:
-      - $ref: '#/components/parameters/vuln_scanner_account_id'
+      - $ref: '#/components/parameters/vuln-scanner_account_id'
     post:
       operationId: create-credential-set
       summary: Create credential set
@@ -224073,7 +224072,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/vuln_scanner_create-credential-set-request'
+              $ref: '#/components/schemas/vuln-scanner_create-credential-set-request'
       responses:
         '200':
           description: Successful response.
@@ -224081,16 +224080,16 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/vuln_scanner_api-response-common'
+                  - $ref: '#/components/schemas/vuln-scanner_api-response-common'
                   - properties:
                       result:
-                        $ref: '#/components/schemas/vuln_scanner_credential-set'
+                        $ref: '#/components/schemas/vuln-scanner_credential-set'
                       result_info:
                         type: object
                         nullable: true
                     type: object
         4XX:
-          $ref: '#/components/responses/vuln_scanner_4XX'
+          $ref: '#/components/responses/vuln-scanner_4XX'
       security:
         - api_token: []
         - api_email: []
@@ -224100,7 +224099,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: api-security.vulnerability-scanner.credential-sets
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
   /accounts/{account_id}/vuln_scanner/credential_sets/{credential_set_id}:
     delete:
       operationId: delete-credential-set
@@ -224112,9 +224110,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/vuln_scanner_empty-response'
+                $ref: '#/components/schemas/vuln-scanner_empty-response'
         4XX:
-          $ref: '#/components/responses/vuln_scanner_4XX'
+          $ref: '#/components/responses/vuln-scanner_4XX'
       security:
         - api_token: []
         - api_email: []
@@ -224124,7 +224122,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: api-security.vulnerability-scanner.credential-sets
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
       x-forge-require-confirmation: This operation permanently deletes the credential set and every credential it contains.
     get:
       operationId: get-credential-set
@@ -224137,16 +224134,16 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/vuln_scanner_api-response-common'
+                  - $ref: '#/components/schemas/vuln-scanner_api-response-common'
                   - properties:
                       result:
-                        $ref: '#/components/schemas/vuln_scanner_credential-set'
+                        $ref: '#/components/schemas/vuln-scanner_credential-set'
                       result_info:
                         type: object
                         nullable: true
                     type: object
         4XX:
-          $ref: '#/components/responses/vuln_scanner_4XX'
+          $ref: '#/components/responses/vuln-scanner_4XX'
       security:
         - api_token: []
         - api_email: []
@@ -224156,10 +224153,9 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: api-security.vulnerability-scanner.credential-sets
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
     parameters:
-      - $ref: '#/components/parameters/vuln_scanner_account_id'
-      - $ref: '#/components/parameters/vuln_scanner_credential_set_id'
+      - $ref: '#/components/parameters/vuln-scanner_account_id'
+      - $ref: '#/components/parameters/vuln-scanner_credential_set_id'
     patch:
       operationId: edit-credential-set
       summary: Edit credential set
@@ -224169,7 +224165,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/vuln_scanner_patch-credential-set-request'
+              $ref: '#/components/schemas/vuln-scanner_patch-credential-set-request'
       responses:
         '200':
           description: Successful response.
@@ -224177,16 +224173,16 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/vuln_scanner_api-response-common'
+                  - $ref: '#/components/schemas/vuln-scanner_api-response-common'
                   - properties:
                       result:
-                        $ref: '#/components/schemas/vuln_scanner_credential-set'
+                        $ref: '#/components/schemas/vuln-scanner_credential-set'
                       result_info:
                         type: object
                         nullable: true
                     type: object
         4XX:
-          $ref: '#/components/responses/vuln_scanner_4XX'
+          $ref: '#/components/responses/vuln-scanner_4XX'
       security:
         - api_token: []
         - api_email: []
@@ -224196,7 +224192,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: api-security.vulnerability-scanner.credential-sets
       x-fern-sdk-method-name: edit
-      x-forge-hidden: true
     put:
       operationId: update-credential-set
       summary: Update credential set
@@ -224206,7 +224201,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/vuln_scanner_update-credential-set-request'
+              $ref: '#/components/schemas/vuln-scanner_update-credential-set-request'
       responses:
         '200':
           description: Successful response.
@@ -224214,16 +224209,16 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/vuln_scanner_api-response-common'
+                  - $ref: '#/components/schemas/vuln-scanner_api-response-common'
                   - properties:
                       result:
-                        $ref: '#/components/schemas/vuln_scanner_credential-set'
+                        $ref: '#/components/schemas/vuln-scanner_credential-set'
                       result_info:
                         type: object
                         nullable: true
                     type: object
         4XX:
-          $ref: '#/components/responses/vuln_scanner_4XX'
+          $ref: '#/components/responses/vuln-scanner_4XX'
       security:
         - api_token: []
         - api_email: []
@@ -224233,15 +224228,14 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: api-security.vulnerability-scanner.credential-sets
       x-fern-sdk-method-name: update
-      x-forge-hidden: true
   /accounts/{account_id}/vuln_scanner/credential_sets/{credential_set_id}/credentials:
     get:
       operationId: list-credentials
       summary: List credentials
       description: Returns all credentials within a credential set.
       parameters:
-        - $ref: '#/components/parameters/vuln_scanner_page'
-        - $ref: '#/components/parameters/vuln_scanner_per_page'
+        - $ref: '#/components/parameters/vuln-scanner_page'
+        - $ref: '#/components/parameters/vuln-scanner_per_page'
       responses:
         '200':
           description: Successful response.
@@ -224249,15 +224243,15 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/vuln_scanner_api-response-collection'
+                  - $ref: '#/components/schemas/vuln-scanner_api-response-collection'
                   - properties:
                       result:
                         type: array
                         items:
-                          $ref: '#/components/schemas/vuln_scanner_credential'
+                          $ref: '#/components/schemas/vuln-scanner_credential'
                     type: object
         4XX:
-          $ref: '#/components/responses/vuln_scanner_4XX'
+          $ref: '#/components/responses/vuln-scanner_4XX'
       security:
         - api_token: []
         - api_email: []
@@ -224267,10 +224261,9 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: api-security.vulnerability-scanner.credential-sets.credentials
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
     parameters:
-      - $ref: '#/components/parameters/vuln_scanner_account_id'
-      - $ref: '#/components/parameters/vuln_scanner_credential_set_id'
+      - $ref: '#/components/parameters/vuln-scanner_account_id'
+      - $ref: '#/components/parameters/vuln-scanner_credential_set_id'
     post:
       operationId: create-credential
       summary: Create credential
@@ -224280,7 +224273,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/vuln_scanner_create-credential-request'
+              $ref: '#/components/schemas/vuln-scanner_create-credential-request'
       responses:
         '200':
           description: Successful response.
@@ -224288,16 +224281,16 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/vuln_scanner_api-response-common'
+                  - $ref: '#/components/schemas/vuln-scanner_api-response-common'
                   - properties:
                       result:
-                        $ref: '#/components/schemas/vuln_scanner_credential'
+                        $ref: '#/components/schemas/vuln-scanner_credential'
                       result_info:
                         type: object
                         nullable: true
                     type: object
         4XX:
-          $ref: '#/components/responses/vuln_scanner_4XX'
+          $ref: '#/components/responses/vuln-scanner_4XX'
       security:
         - api_token: []
         - api_email: []
@@ -224307,7 +224300,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: api-security.vulnerability-scanner.credential-sets.credentials
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
   /accounts/{account_id}/vuln_scanner/credential_sets/{credential_set_id}/credentials/{credential_id}:
     delete:
       operationId: delete-credential
@@ -224319,9 +224311,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/vuln_scanner_empty-response'
+                $ref: '#/components/schemas/vuln-scanner_empty-response'
         4XX:
-          $ref: '#/components/responses/vuln_scanner_4XX'
+          $ref: '#/components/responses/vuln-scanner_4XX'
       security:
         - api_token: []
         - api_email: []
@@ -224331,7 +224323,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: api-security.vulnerability-scanner.credential-sets.credentials
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
       x-forge-require-confirmation: This operation permanently deletes the credential from the credential set.
     get:
       operationId: get-credential
@@ -224344,16 +224335,16 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/vuln_scanner_api-response-common'
+                  - $ref: '#/components/schemas/vuln-scanner_api-response-common'
                   - properties:
                       result:
-                        $ref: '#/components/schemas/vuln_scanner_credential'
+                        $ref: '#/components/schemas/vuln-scanner_credential'
                       result_info:
                         type: object
                         nullable: true
                     type: object
         4XX:
-          $ref: '#/components/responses/vuln_scanner_4XX'
+          $ref: '#/components/responses/vuln-scanner_4XX'
       security:
         - api_token: []
         - api_email: []
@@ -224363,11 +224354,10 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: api-security.vulnerability-scanner.credential-sets.credentials
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
     parameters:
-      - $ref: '#/components/parameters/vuln_scanner_account_id'
-      - $ref: '#/components/parameters/vuln_scanner_credential_set_id'
-      - $ref: '#/components/parameters/vuln_scanner_credential_id'
+      - $ref: '#/components/parameters/vuln-scanner_account_id'
+      - $ref: '#/components/parameters/vuln-scanner_credential_set_id'
+      - $ref: '#/components/parameters/vuln-scanner_credential_id'
     patch:
       operationId: edit-credential
       summary: Edit credential
@@ -224377,7 +224367,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/vuln_scanner_patch-credential-request'
+              $ref: '#/components/schemas/vuln-scanner_patch-credential-request'
       responses:
         '200':
           description: Successful response.
@@ -224385,16 +224375,16 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/vuln_scanner_api-response-common'
+                  - $ref: '#/components/schemas/vuln-scanner_api-response-common'
                   - properties:
                       result:
-                        $ref: '#/components/schemas/vuln_scanner_credential'
+                        $ref: '#/components/schemas/vuln-scanner_credential'
                       result_info:
                         type: object
                         nullable: true
                     type: object
         4XX:
-          $ref: '#/components/responses/vuln_scanner_4XX'
+          $ref: '#/components/responses/vuln-scanner_4XX'
       security:
         - api_token: []
         - api_email: []
@@ -224404,7 +224394,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: api-security.vulnerability-scanner.credential-sets.credentials
       x-fern-sdk-method-name: edit
-      x-forge-hidden: true
     put:
       operationId: update-credential
       summary: Update credential
@@ -224414,7 +224403,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/vuln_scanner_update-credential-request'
+              $ref: '#/components/schemas/vuln-scanner_update-credential-request'
       responses:
         '200':
           description: Successful response.
@@ -224422,16 +224411,16 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/vuln_scanner_api-response-common'
+                  - $ref: '#/components/schemas/vuln-scanner_api-response-common'
                   - properties:
                       result:
-                        $ref: '#/components/schemas/vuln_scanner_credential'
+                        $ref: '#/components/schemas/vuln-scanner_credential'
                       result_info:
                         type: object
                         nullable: true
                     type: object
         4XX:
-          $ref: '#/components/responses/vuln_scanner_4XX'
+          $ref: '#/components/responses/vuln-scanner_4XX'
       security:
         - api_token: []
         - api_email: []
@@ -224441,15 +224430,14 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: api-security.vulnerability-scanner.credential-sets.credentials
       x-fern-sdk-method-name: update
-      x-forge-hidden: true
   /accounts/{account_id}/vuln_scanner/scans:
     get:
       operationId: list-scans
       summary: List scans
       description: Returns all scans for the account.
       parameters:
-        - $ref: '#/components/parameters/vuln_scanner_page'
-        - $ref: '#/components/parameters/vuln_scanner_per_page'
+        - $ref: '#/components/parameters/vuln-scanner_page'
+        - $ref: '#/components/parameters/vuln-scanner_per_page'
       responses:
         '200':
           description: Successful response.
@@ -224457,15 +224445,15 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/vuln_scanner_api-response-collection'
+                  - $ref: '#/components/schemas/vuln-scanner_api-response-collection'
                   - properties:
                       result:
                         type: array
                         items:
-                          $ref: '#/components/schemas/vuln_scanner_scan'
+                          $ref: '#/components/schemas/vuln-scanner_scan'
                     type: object
         4XX:
-          $ref: '#/components/responses/vuln_scanner_4XX'
+          $ref: '#/components/responses/vuln-scanner_4XX'
       security:
         - api_token: []
         - api_email: []
@@ -224475,9 +224463,8 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: api-security.vulnerability-scanner.scans
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
     parameters:
-      - $ref: '#/components/parameters/vuln_scanner_account_id'
+      - $ref: '#/components/parameters/vuln-scanner_account_id'
     post:
       operationId: create-scan
       summary: Create scan
@@ -224487,7 +224474,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/vuln_scanner_create-scan-request'
+              $ref: '#/components/schemas/vuln-scanner_create-scan-request'
       responses:
         '200':
           description: |
@@ -224497,16 +224484,16 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/vuln_scanner_api-response-common'
+                  - $ref: '#/components/schemas/vuln-scanner_api-response-common'
                   - properties:
                       result:
-                        $ref: '#/components/schemas/vuln_scanner_scan'
+                        $ref: '#/components/schemas/vuln-scanner_scan'
                       result_info:
                         type: object
                         nullable: true
                     type: object
         4XX:
-          $ref: '#/components/responses/vuln_scanner_4XX'
+          $ref: '#/components/responses/vuln-scanner_4XX'
       security:
         - api_token: []
         - api_email: []
@@ -224516,7 +224503,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: api-security.vulnerability-scanner.scans
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
   /accounts/{account_id}/vuln_scanner/scans/{scan_id}:
     delete:
       operationId: delete-scan
@@ -224529,16 +224515,16 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/vuln_scanner_api-response-common'
+                  - $ref: '#/components/schemas/vuln-scanner_api-response-common'
                   - properties:
                       result:
-                        $ref: '#/components/schemas/vuln_scanner_delete-scan-response'
+                        $ref: '#/components/schemas/vuln-scanner_delete-scan-response'
                       result_info:
                         type: object
                         nullable: true
                     type: object
         4XX:
-          $ref: '#/components/responses/vuln_scanner_4XX'
+          $ref: '#/components/responses/vuln-scanner_4XX'
       security:
         - api_token: []
         - api_email: []
@@ -224548,7 +224534,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: api-security.vulnerability-scanner.scans
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
       x-forge-require-confirmation: This operation permanently deletes the completed or failed scan and all associated scan data.
     get:
       operationId: get-scan
@@ -224561,16 +224546,16 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/vuln_scanner_api-response-common'
+                  - $ref: '#/components/schemas/vuln-scanner_api-response-common'
                   - properties:
                       result:
-                        $ref: '#/components/schemas/vuln_scanner_scan'
+                        $ref: '#/components/schemas/vuln-scanner_scan'
                       result_info:
                         type: object
                         nullable: true
                     type: object
         4XX:
-          $ref: '#/components/responses/vuln_scanner_4XX'
+          $ref: '#/components/responses/vuln-scanner_4XX'
       security:
         - api_token: []
         - api_email: []
@@ -224580,18 +224565,17 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: api-security.vulnerability-scanner.scans
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
     parameters:
-      - $ref: '#/components/parameters/vuln_scanner_account_id'
-      - $ref: '#/components/parameters/vuln_scanner_scan_id'
+      - $ref: '#/components/parameters/vuln-scanner_account_id'
+      - $ref: '#/components/parameters/vuln-scanner_scan_id'
   /accounts/{account_id}/vuln_scanner/target_environments:
     get:
       operationId: list-target-environments
       summary: List target environments
       description: Returns all target environments for the account.
       parameters:
-        - $ref: '#/components/parameters/vuln_scanner_page'
-        - $ref: '#/components/parameters/vuln_scanner_per_page'
+        - $ref: '#/components/parameters/vuln-scanner_page'
+        - $ref: '#/components/parameters/vuln-scanner_per_page'
       responses:
         '200':
           description: Successful response.
@@ -224599,15 +224583,15 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/vuln_scanner_api-response-collection'
+                  - $ref: '#/components/schemas/vuln-scanner_api-response-collection'
                   - properties:
                       result:
                         type: array
                         items:
-                          $ref: '#/components/schemas/vuln_scanner_target-environment'
+                          $ref: '#/components/schemas/vuln-scanner_target-environment'
                     type: object
         4XX:
-          $ref: '#/components/responses/vuln_scanner_4XX'
+          $ref: '#/components/responses/vuln-scanner_4XX'
       security:
         - api_token: []
         - api_email: []
@@ -224617,9 +224601,8 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: api-security.vulnerability-scanner.target-environments
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
     parameters:
-      - $ref: '#/components/parameters/vuln_scanner_account_id'
+      - $ref: '#/components/parameters/vuln-scanner_account_id'
     post:
       operationId: create-target-environment
       summary: Create target environment
@@ -224629,7 +224612,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/vuln_scanner_create-target-environment-request'
+              $ref: '#/components/schemas/vuln-scanner_create-target-environment-request'
       responses:
         '200':
           description: Successful response.
@@ -224637,16 +224620,16 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/vuln_scanner_api-response-common'
+                  - $ref: '#/components/schemas/vuln-scanner_api-response-common'
                   - properties:
                       result:
-                        $ref: '#/components/schemas/vuln_scanner_target-environment'
+                        $ref: '#/components/schemas/vuln-scanner_target-environment'
                       result_info:
                         type: object
                         nullable: true
                     type: object
         4XX:
-          $ref: '#/components/responses/vuln_scanner_4XX'
+          $ref: '#/components/responses/vuln-scanner_4XX'
       security:
         - api_token: []
         - api_email: []
@@ -224656,7 +224639,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: api-security.vulnerability-scanner.target-environments
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
   /accounts/{account_id}/vuln_scanner/target_environments/{target_environment_id}:
     delete:
       operationId: delete-target-environment
@@ -224668,9 +224650,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/vuln_scanner_empty-response'
+                $ref: '#/components/schemas/vuln-scanner_empty-response'
         4XX:
-          $ref: '#/components/responses/vuln_scanner_4XX'
+          $ref: '#/components/responses/vuln-scanner_4XX'
       security:
         - api_token: []
         - api_email: []
@@ -224680,7 +224662,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: api-security.vulnerability-scanner.target-environments
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
       x-forge-require-confirmation: This operation permanently deletes the target environment from Vulnerability Scanner.
     get:
       operationId: get-target-environment
@@ -224693,16 +224674,16 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/vuln_scanner_api-response-common'
+                  - $ref: '#/components/schemas/vuln-scanner_api-response-common'
                   - properties:
                       result:
-                        $ref: '#/components/schemas/vuln_scanner_target-environment'
+                        $ref: '#/components/schemas/vuln-scanner_target-environment'
                       result_info:
                         type: object
                         nullable: true
                     type: object
         4XX:
-          $ref: '#/components/responses/vuln_scanner_4XX'
+          $ref: '#/components/responses/vuln-scanner_4XX'
       security:
         - api_token: []
         - api_email: []
@@ -224712,10 +224693,9 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: api-security.vulnerability-scanner.target-environments
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
     parameters:
-      - $ref: '#/components/parameters/vuln_scanner_account_id'
-      - $ref: '#/components/parameters/vuln_scanner_target_environment_id'
+      - $ref: '#/components/parameters/vuln-scanner_account_id'
+      - $ref: '#/components/parameters/vuln-scanner_target_environment_id'
     patch:
       operationId: edit-target-environment
       summary: Edit target environment
@@ -224725,7 +224705,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/vuln_scanner_patch-target-environment-request'
+              $ref: '#/components/schemas/vuln-scanner_patch-target-environment-request'
       responses:
         '200':
           description: Successful response.
@@ -224733,16 +224713,16 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/vuln_scanner_api-response-common'
+                  - $ref: '#/components/schemas/vuln-scanner_api-response-common'
                   - properties:
                       result:
-                        $ref: '#/components/schemas/vuln_scanner_target-environment'
+                        $ref: '#/components/schemas/vuln-scanner_target-environment'
                       result_info:
                         type: object
                         nullable: true
                     type: object
         4XX:
-          $ref: '#/components/responses/vuln_scanner_4XX'
+          $ref: '#/components/responses/vuln-scanner_4XX'
       security:
         - api_token: []
         - api_email: []
@@ -224752,7 +224732,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: api-security.vulnerability-scanner.target-environments
       x-fern-sdk-method-name: edit
-      x-forge-hidden: true
     put:
       operationId: update-target-environment
       summary: Update target environment
@@ -224762,7 +224741,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/vuln_scanner_update-target-environment-request'
+              $ref: '#/components/schemas/vuln-scanner_update-target-environment-request'
       responses:
         '200':
           description: Successful response.
@@ -224770,16 +224749,16 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/vuln_scanner_api-response-common'
+                  - $ref: '#/components/schemas/vuln-scanner_api-response-common'
                   - properties:
                       result:
-                        $ref: '#/components/schemas/vuln_scanner_target-environment'
+                        $ref: '#/components/schemas/vuln-scanner_target-environment'
                       result_info:
                         type: object
                         nullable: true
                     type: object
         4XX:
-          $ref: '#/components/responses/vuln_scanner_4XX'
+          $ref: '#/components/responses/vuln-scanner_4XX'
       security:
         - api_token: []
         - api_email: []
@@ -224789,7 +224768,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: api-security.vulnerability-scanner.target-environments
       x-fern-sdk-method-name: update
-      x-forge-hidden: true
   /accounts/{account_id}/waiting_rooms:
     get:
       operationId: waiting-room-list-waiting-rooms-account
@@ -399033,14 +399011,14 @@ components:
       required: true
       schema:
         $ref: '#/components/schemas/usage-analytics_identifier'
-    vuln_scanner_account_id:
+    vuln-scanner_account_id:
       description: Account identifier.
       in: path
       name: account_id
       required: true
       schema:
-        $ref: '#/components/schemas/vuln_scanner_identifier'
-    vuln_scanner_credential_id:
+        $ref: '#/components/schemas/vuln-scanner_identifier'
+    vuln-scanner_credential_id:
       description: Credential identifier.
       in: path
       name: credential_id
@@ -399048,7 +399026,7 @@ components:
       schema:
         type: string
         format: uuid
-    vuln_scanner_credential_set_id:
+    vuln-scanner_credential_set_id:
       description: Credential set identifier.
       in: path
       name: credential_set_id
@@ -399056,7 +399034,7 @@ components:
       schema:
         type: string
         format: uuid
-    vuln_scanner_page:
+    vuln-scanner_page:
       description: Page number of paginated results.
       in: query
       name: page
@@ -399064,7 +399042,7 @@ components:
         type: integer
         default: 1
         minimum: 1
-    vuln_scanner_per_page:
+    vuln-scanner_per_page:
       description: Number of results per page.
       in: query
       name: per_page
@@ -399073,7 +399051,7 @@ components:
         default: 20
         maximum: 50
         minimum: 5
-    vuln_scanner_scan_id:
+    vuln-scanner_scan_id:
       description: Scan identifier.
       in: path
       name: scan_id
@@ -399081,7 +399059,7 @@ components:
       schema:
         type: string
         format: uuid
-    vuln_scanner_target_environment_id:
+    vuln-scanner_target_environment_id:
       description: Target environment identifier.
       in: path
       name: target_environment_id
@@ -507244,10 +507222,10 @@ components:
           $ref: '#/components/schemas/vectorize_vector-identifier'
       required:
         - id
-    vuln_scanner_api-response-collection:
+    vuln-scanner_api-response-collection:
       type: object
       allOf:
-        - $ref: '#/components/schemas/vuln_scanner_api-response-common'
+        - $ref: '#/components/schemas/vuln-scanner_api-response-common'
         - properties:
             result_info:
               type: object
@@ -507273,13 +507251,13 @@ components:
                   type: number
                   example: 100
           type: object
-    vuln_scanner_api-response-common:
+    vuln-scanner_api-response-common:
       type: object
       properties:
         errors:
-          $ref: '#/components/schemas/vuln_scanner_messages'
+          $ref: '#/components/schemas/vuln-scanner_messages'
         messages:
-          $ref: '#/components/schemas/vuln_scanner_messages'
+          $ref: '#/components/schemas/vuln-scanner_messages'
         success:
           description: Whether the API call was successful.
           type: boolean
@@ -507290,7 +507268,7 @@ components:
         - success
         - errors
         - messages
-    vuln_scanner_api-response-common-failure:
+    vuln-scanner_api-response-common-failure:
       type: object
       properties:
         errors:
@@ -507298,12 +507276,12 @@ components:
             - code: 7003
               message: No route for the URI
           allOf:
-            - $ref: '#/components/schemas/vuln_scanner_messages'
+            - $ref: '#/components/schemas/vuln-scanner_messages'
           minLength: 1
         messages:
           example: []
           allOf:
-            - $ref: '#/components/schemas/vuln_scanner_messages'
+            - $ref: '#/components/schemas/vuln-scanner_messages'
         result:
           type: object
           enum:
@@ -507320,13 +507298,13 @@ components:
         - errors
         - messages
         - result
-    vuln_scanner_bola-assertion-kind:
+    vuln-scanner_bola-assertion-kind:
       description: The kind of assertion to make.
       oneOf:
         - description: Assert that an HTTP status code is within a range, e.g. to assert success for the 2xx range, or expected failure for the 4xx/5xx range.
           properties:
             parameters:
-              $ref: '#/components/schemas/vuln_scanner_bola-http-status-range'
+              $ref: '#/components/schemas/vuln-scanner_bola-http-status-range'
             type:
               type: string
               enum:
@@ -507335,21 +507313,21 @@ components:
             - type
             - parameters
           type: object
-    vuln_scanner_bola-body-response:
+    vuln-scanner_bola-body-response:
       description: HTTP response body preview.
       discriminator:
         mapping:
-          bytes: '#/components/schemas/vuln_scanner_bola-body-response-bytes'
-          json: '#/components/schemas/vuln_scanner_bola-body-response-json'
-          not_found: '#/components/schemas/vuln_scanner_bola-body-response-not-found'
-          text: '#/components/schemas/vuln_scanner_bola-body-response-text'
+          bytes: '#/components/schemas/vuln-scanner_bola-body-response-bytes'
+          json: '#/components/schemas/vuln-scanner_bola-body-response-json'
+          not_found: '#/components/schemas/vuln-scanner_bola-body-response-not-found'
+          text: '#/components/schemas/vuln-scanner_bola-body-response-text'
         propertyName: kind
       oneOf:
-        - $ref: '#/components/schemas/vuln_scanner_bola-body-response-not-found'
-        - $ref: '#/components/schemas/vuln_scanner_bola-body-response-bytes'
-        - $ref: '#/components/schemas/vuln_scanner_bola-body-response-text'
-        - $ref: '#/components/schemas/vuln_scanner_bola-body-response-json'
-    vuln_scanner_bola-body-response-bytes:
+        - $ref: '#/components/schemas/vuln-scanner_bola-body-response-not-found'
+        - $ref: '#/components/schemas/vuln-scanner_bola-body-response-bytes'
+        - $ref: '#/components/schemas/vuln-scanner_bola-body-response-text'
+        - $ref: '#/components/schemas/vuln-scanner_bola-body-response-json'
+    vuln-scanner_bola-body-response-bytes:
       description: Body received but unable to read as UTF-8. Raw bytes, base64-encoded.
       type: object
       properties:
@@ -507365,7 +507343,7 @@ components:
         - kind
         - contents
         - truncated
-    vuln_scanner_bola-body-response-json:
+    vuln-scanner_bola-body-response-json:
       description: Body received as valid JSON.
       type: object
       properties:
@@ -507381,7 +507359,7 @@ components:
         - kind
         - contents
         - truncated
-    vuln_scanner_bola-body-response-not-found:
+    vuln-scanner_bola-body-response-not-found:
       description: No body was received.
       type: object
       properties:
@@ -507391,7 +507369,7 @@ components:
             - not_found
       required:
         - kind
-    vuln_scanner_bola-body-response-text:
+    vuln-scanner_bola-body-response-text:
       description: Body received as valid UTF-8 text but not valid JSON.
       type: object
       properties:
@@ -507407,13 +507385,13 @@ components:
         - kind
         - contents
         - truncated
-    vuln_scanner_bola-credential-role:
+    vuln-scanner_bola-credential-role:
       description: Identifies the role a request was made with. The credential set governs this role. `owner` is the resource owner, `attacker` attempts to access resources.
       type: string
       enum:
         - owner
         - attacker
-    vuln_scanner_bola-credential-sets:
+    vuln-scanner_bola-credential-sets:
       description: |
         Credential set references for a BOLA scan. The scanner uses the
         `owner` credentials for legitimate requests and the `attacker`
@@ -507431,7 +507409,7 @@ components:
       required:
         - owner
         - attacker
-    vuln_scanner_bola-http-status-range:
+    vuln-scanner_bola-http-status-range:
       description: Range of HTTP status codes.
       type: object
       properties:
@@ -507448,7 +507426,7 @@ components:
       required:
         - min
         - max
-    vuln_scanner_bola-method:
+    vuln-scanner_bola-method:
       description: HTTP method.
       type: string
       enum:
@@ -507457,20 +507435,20 @@ components:
         - PATCH
         - POST
         - PUT
-    vuln_scanner_bola-outcome:
+    vuln-scanner_bola-outcome:
       description: Outcome of an assertion. `ok` means the assertion passed, `fail` means the assertion failed, `inconclusive` means the scanner could not evaluate the assertion.
       type: string
       enum:
         - ok
         - fail
         - inconclusive
-    vuln_scanner_bola-report:
+    vuln-scanner_bola-report:
       description: A BOLA vulnerability scan report, versioned for future evolution.
       type: object
       properties:
         report:
           allOf:
-            - $ref: '#/components/schemas/vuln_scanner_bola-report-v1'
+            - $ref: '#/components/schemas/vuln-scanner_bola-report-v1'
         report_schema_version:
           description: Version of the report schema.
           type: string
@@ -507479,33 +507457,33 @@ components:
       required:
         - report_schema_version
         - report
-    vuln_scanner_bola-report-summary:
+    vuln-scanner_bola-report-summary:
       description: Overall report summary.
       type: object
       properties:
         verdict:
           description: Overall verdict of the vulnerability scan.
           allOf:
-            - $ref: '#/components/schemas/vuln_scanner_bola-verdict'
+            - $ref: '#/components/schemas/vuln-scanner_bola-verdict'
       required:
         - verdict
-    vuln_scanner_bola-report-v1:
+    vuln-scanner_bola-report-v1:
       description: Version 1 of the BOLA vulnerability scan report.
       type: object
       properties:
         summary:
           description: Summary of all steps and findings.
           allOf:
-            - $ref: '#/components/schemas/vuln_scanner_bola-report-summary'
+            - $ref: '#/components/schemas/vuln-scanner_bola-report-summary'
         tests:
           description: List of tests that were run.
           type: array
           items:
-            $ref: '#/components/schemas/vuln_scanner_bola-test'
+            $ref: '#/components/schemas/vuln-scanner_bola-test'
       required:
         - summary
         - tests
-    vuln_scanner_bola-test:
+    vuln-scanner_bola-test:
       description: Result of a single test.
       type: object
       properties:
@@ -507513,20 +507491,20 @@ components:
           description: Errors that prevented step execution.
           type: array
           items:
-            $ref: '#/components/schemas/vuln_scanner_bola-test-error'
+            $ref: '#/components/schemas/vuln-scanner_bola-test-error'
         steps:
           description: Steps that were executed.
           type: array
           items:
-            $ref: '#/components/schemas/vuln_scanner_bola-test-step'
+            $ref: '#/components/schemas/vuln-scanner_bola-test-step'
         verdict:
           description: Verdict of this single test.
           allOf:
-            - $ref: '#/components/schemas/vuln_scanner_bola-verdict'
+            - $ref: '#/components/schemas/vuln-scanner_bola-verdict'
       required:
         - verdict
         - steps
-    vuln_scanner_bola-test-assertion:
+    vuln-scanner_bola-test-assertion:
       description: Assertion that was made against the received response.
       type: object
       properties:
@@ -507536,7 +507514,7 @@ components:
         kind:
           description: Kind of assertion.
           allOf:
-            - $ref: '#/components/schemas/vuln_scanner_bola-assertion-kind'
+            - $ref: '#/components/schemas/vuln-scanner_bola-assertion-kind'
         observed:
           description: Observed value on which the assertion was made.
           type: integer
@@ -507544,13 +507522,13 @@ components:
         outcome:
           description: Outcome of the assertion.
           allOf:
-            - $ref: '#/components/schemas/vuln_scanner_bola-outcome'
+            - $ref: '#/components/schemas/vuln-scanner_bola-outcome'
       required:
         - description
         - kind
         - observed
         - outcome
-    vuln_scanner_bola-test-credential-set:
+    vuln-scanner_bola-test-credential-set:
       description: Credential set that was used.
       type: object
       properties:
@@ -507561,11 +507539,11 @@ components:
         role:
           description: Role of the credential set.
           allOf:
-            - $ref: '#/components/schemas/vuln_scanner_bola-credential-role'
+            - $ref: '#/components/schemas/vuln-scanner_bola-credential-role'
       required:
         - id
         - role
-    vuln_scanner_bola-test-error:
+    vuln-scanner_bola-test-error:
       description: Error that occurred during a test.
       type: object
       properties:
@@ -507580,7 +507558,7 @@ components:
           nullable: true
       required:
         - description
-    vuln_scanner_bola-test-request:
+    vuln-scanner_bola-test-request:
       description: HTTP request that was made.
       type: object
       properties:
@@ -507591,7 +507569,7 @@ components:
         credential_set:
           description: Credential set that was used.
           allOf:
-            - $ref: '#/components/schemas/vuln_scanner_bola-test-credential-set'
+            - $ref: '#/components/schemas/vuln-scanner_bola-test-credential-set'
         header_names:
           description: Names of headers that were sent.
           type: array
@@ -507600,7 +507578,7 @@ components:
         method:
           description: HTTP method.
           allOf:
-            - $ref: '#/components/schemas/vuln_scanner_bola-method'
+            - $ref: '#/components/schemas/vuln-scanner_bola-method'
         url:
           description: Exact and full URL (including host, query parameters) that was requested.
           type: string
@@ -507609,21 +507587,21 @@ components:
           description: Variable captures requested for this step.
           type: array
           items:
-            $ref: '#/components/schemas/vuln_scanner_bola-variable-capture'
+            $ref: '#/components/schemas/vuln-scanner_bola-variable-capture'
       required:
         - method
         - url
         - credential_set
         - header_names
         - variable_captures
-    vuln_scanner_bola-test-response:
+    vuln-scanner_bola-test-response:
       description: HTTP response that was received.
       type: object
       properties:
         body:
           description: HTTP response body.
           allOf:
-            - $ref: '#/components/schemas/vuln_scanner_bola-body-response'
+            - $ref: '#/components/schemas/vuln-scanner_bola-body-response'
         header_names:
           description: Names of headers that were received.
           type: array
@@ -507642,7 +507620,7 @@ components:
         - status
         - header_names
         - body
-    vuln_scanner_bola-test-step:
+    vuln-scanner_bola-test-step:
       description: A single step in a test.
       type: object
       properties:
@@ -507650,27 +507628,27 @@ components:
           description: Assertions that were made against the received response.
           type: array
           items:
-            $ref: '#/components/schemas/vuln_scanner_bola-test-assertion'
+            $ref: '#/components/schemas/vuln-scanner_bola-test-assertion'
         errors:
           description: Errors the step encountered that may explain absent or incomplete fields.
           type: array
           items:
-            $ref: '#/components/schemas/vuln_scanner_bola-test-error'
+            $ref: '#/components/schemas/vuln-scanner_bola-test-error'
         request:
           description: HTTP request that was made, if any.
           type: object
           allOf:
-            - $ref: '#/components/schemas/vuln_scanner_bola-test-request'
+            - $ref: '#/components/schemas/vuln-scanner_bola-test-request'
           nullable: true
         response:
           description: HTTP response that was received, if any.
           type: object
           allOf:
-            - $ref: '#/components/schemas/vuln_scanner_bola-test-response'
+            - $ref: '#/components/schemas/vuln-scanner_bola-test-response'
           nullable: true
       required:
         - assertions
-    vuln_scanner_bola-variable-capture:
+    vuln-scanner_bola-variable-capture:
       description: A variable to capture from the response body.
       type: object
       properties:
@@ -507683,18 +507661,18 @@ components:
       required:
         - name
         - json_path
-    vuln_scanner_bola-verdict:
+    vuln-scanner_bola-verdict:
       description: A verdict. `ok` means the scan passed, `warning` means the scan detected issues, `inconclusive` means errors prevented the scanner from reaching an accurate verdict.
       type: string
       enum:
         - ok
         - warning
         - inconclusive
-    vuln_scanner_create-bola-scan-request:
+    vuln-scanner_create-bola-scan-request:
       type: object
       properties:
         credential_sets:
-          $ref: '#/components/schemas/vuln_scanner_bola-credential-sets'
+          $ref: '#/components/schemas/vuln-scanner_bola-credential-sets'
         open_api:
           description: |
             OpenAPI schema definition for the API under test. The scanner
@@ -507713,11 +507691,11 @@ components:
         - scan_type
         - open_api
         - credential_sets
-    vuln_scanner_create-credential-request:
+    vuln-scanner_create-credential-request:
       type: object
       properties:
         location:
-          $ref: '#/components/schemas/vuln_scanner_credential-location'
+          $ref: '#/components/schemas/vuln-scanner_credential-location'
         location_name:
           description: |
             Name of the header or cookie where the credential is attached.
@@ -507740,7 +507718,7 @@ components:
         - location
         - location_name
         - value
-    vuln_scanner_create-credential-set-request:
+    vuln-scanner_create-credential-set-request:
       type: object
       properties:
         name:
@@ -507749,17 +507727,17 @@ components:
           example: Production API credentials
       required:
         - name
-    vuln_scanner_create-scan-request:
+    vuln-scanner_create-scan-request:
       description: |
         Create a new vulnerability scan. The `scan_type` discriminator
         selects the scan variant and its required context fields.
       discriminator:
         mapping:
-          bola: '#/components/schemas/vuln_scanner_create-bola-scan-request'
+          bola: '#/components/schemas/vuln-scanner_create-bola-scan-request'
         propertyName: scan_type
       oneOf:
-        - $ref: '#/components/schemas/vuln_scanner_create-bola-scan-request'
-    vuln_scanner_create-target-environment-request:
+        - $ref: '#/components/schemas/vuln-scanner_create-bola-scan-request'
+    vuln-scanner_create-target-environment-request:
       type: object
       properties:
         description:
@@ -507772,11 +507750,11 @@ components:
           type: string
           example: Production Zone
         target:
-          $ref: '#/components/schemas/vuln_scanner_target-type'
+          $ref: '#/components/schemas/vuln-scanner_target-type'
       required:
         - name
         - target
-    vuln_scanner_credential:
+    vuln-scanner_credential:
       description: |
         A credential attached to API requests during scanning. The
         credential `value` is write-only and never returned in responses.
@@ -507793,7 +507771,7 @@ components:
           format: uuid
           x-auditable: true
         location:
-          $ref: '#/components/schemas/vuln_scanner_credential-location'
+          $ref: '#/components/schemas/vuln-scanner_credential-location'
         location_name:
           description: |
             Name of the header or cookie where the credential is attached.
@@ -507811,14 +507789,14 @@ components:
         - name
         - location
         - location_name
-    vuln_scanner_credential-location:
+    vuln-scanner_credential-location:
       description: Where the credential is attached in outgoing requests.
       type: string
       enum:
         - header
         - cookie
       x-auditable: true
-    vuln_scanner_credential-set:
+    vuln-scanner_credential-set:
       type: object
       properties:
         id:
@@ -507834,7 +507812,7 @@ components:
       required:
         - id
         - name
-    vuln_scanner_delete-scan-response:
+    vuln-scanner_delete-scan-response:
       description: Successful scan deletion result.
       type: object
       properties:
@@ -507845,12 +507823,12 @@ components:
           x-auditable: true
       required:
         - id
-    vuln_scanner_empty-response:
+    vuln-scanner_empty-response:
       description: |
         Standard response envelope with a `null` result. Operations
         that produce no result body return this response.
       allOf:
-        - $ref: '#/components/schemas/vuln_scanner_api-response-common'
+        - $ref: '#/components/schemas/vuln-scanner_api-response-common'
         - properties:
             result:
               type: object
@@ -507859,13 +507837,13 @@ components:
               type: object
               nullable: true
           type: object
-    vuln_scanner_identifier:
+    vuln-scanner_identifier:
       description: Identifier.
       type: string
       example: 023e105f4ecef8ad9ca31a8372d0c353
       maxLength: 32
       x-auditable: true
-    vuln_scanner_messages:
+    vuln-scanner_messages:
       type: array
       items:
         properties:
@@ -507887,12 +507865,12 @@ components:
         type: object
         uniqueItems: true
       example: []
-    vuln_scanner_patch-credential-request:
+    vuln-scanner_patch-credential-request:
       description: Applies a partial update. Only the provided fields change; omitted fields remain unchanged.
       type: object
       properties:
         location:
-          $ref: '#/components/schemas/vuln_scanner_credential-location'
+          $ref: '#/components/schemas/vuln-scanner_credential-location'
         location_name:
           description: |
             Name of the header or cookie where the credential is attached.
@@ -507909,7 +507887,7 @@ components:
           example: Bearer EXAMPLE_TOKEN
           writeOnly: true
           x-sensitive: true
-    vuln_scanner_patch-credential-set-request:
+    vuln-scanner_patch-credential-set-request:
       description: Applies a partial update. Only the provided fields change; omitted fields remain unchanged.
       type: object
       properties:
@@ -507917,7 +507895,7 @@ components:
           description: Human-readable name.
           type: string
           example: Production API credentials
-    vuln_scanner_patch-target-environment-request:
+    vuln-scanner_patch-target-environment-request:
       description: |
         Applies a partial update. Only the provided fields change; omitted fields remain unchanged.
 
@@ -507939,8 +507917,8 @@ components:
           type: string
           example: Production Zone
         target:
-          $ref: '#/components/schemas/vuln_scanner_target-type'
-    vuln_scanner_scan:
+          $ref: '#/components/schemas/vuln-scanner_target-type'
+    vuln-scanner_scan:
       type: object
       properties:
         id:
@@ -507952,7 +507930,7 @@ components:
           description: Vulnerability report produced after the scan completes. The shape depends on the scan type. Present only for finished scans.
           type: object
           allOf:
-            - $ref: '#/components/schemas/vuln_scanner_bola-report'
+            - $ref: '#/components/schemas/vuln-scanner_bola-report'
           nullable: true
         scan_type:
           description: The type of vulnerability scan.
@@ -507981,7 +507959,7 @@ components:
         - target_environment_id
         - scan_type
         - status
-    vuln_scanner_target-environment:
+    vuln-scanner_target-environment:
       type: object
       properties:
         description:
@@ -508000,28 +507978,28 @@ components:
           example: Production Zone
           x-auditable: true
         target:
-          $ref: '#/components/schemas/vuln_scanner_target-type'
+          $ref: '#/components/schemas/vuln-scanner_target-type'
       required:
         - id
         - name
         - target
-    vuln_scanner_target-type:
+    vuln-scanner_target-type:
       description: |
         Identifies the Cloudflare asset to scan. Uses a `type` discriminator.
         Currently the service supports only `zone` targets.
       discriminator:
         mapping:
-          zone: '#/components/schemas/vuln_scanner_zone-target'
+          zone: '#/components/schemas/vuln-scanner_zone-target'
         propertyName: type
       oneOf:
-        - $ref: '#/components/schemas/vuln_scanner_zone-target'
+        - $ref: '#/components/schemas/vuln-scanner_zone-target'
       x-auditable: true
-    vuln_scanner_update-credential-request:
+    vuln-scanner_update-credential-request:
       description: Full replacement. Provide all fields.
       type: object
       properties:
         location:
-          $ref: '#/components/schemas/vuln_scanner_credential-location'
+          $ref: '#/components/schemas/vuln-scanner_credential-location'
         location_name:
           description: |
             Name of the header or cookie where the credential is attached.
@@ -508043,7 +508021,7 @@ components:
         - location
         - location_name
         - value
-    vuln_scanner_update-credential-set-request:
+    vuln-scanner_update-credential-set-request:
       description: Full replacement. Provide all fields.
       type: object
       properties:
@@ -508053,7 +508031,7 @@ components:
           example: Production API credentials
       required:
         - name
-    vuln_scanner_update-target-environment-request:
+    vuln-scanner_update-target-environment-request:
       description: Full replacement.
       type: object
       properties:
@@ -508067,11 +508045,11 @@ components:
           type: string
           example: Production Zone
         target:
-          $ref: '#/components/schemas/vuln_scanner_target-type'
+          $ref: '#/components/schemas/vuln-scanner_target-type'
       required:
         - name
         - target
-    vuln_scanner_zone-target:
+    vuln-scanner_zone-target:
       type: object
       properties:
         type:
@@ -530244,12 +530222,12 @@ components:
                 success: false
           schema:
             $ref: '#/components/schemas/usage-analytics_error_response'
-    vuln_scanner_4XX:
+    vuln-scanner_4XX:
       description: Client error.
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/vuln_scanner_api-response-common-failure'
+            $ref: '#/components/schemas/vuln-scanner_api-response-common-failure'
     workers_4XX:
       description: |
         Upload Worker Module response failure. When the upload uses the
