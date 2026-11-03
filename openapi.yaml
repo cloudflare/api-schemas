@@ -389167,6 +389167,213 @@ paths:
         - NEL Settings
       x-api-token-group:
         - Zone Settings Write
+  /zones/{zone_id}/settings/ohttp-gateway:
+    delete:
+      operationId: ohttp-gateway-disable
+      summary: Disable OHTTP Gateway
+      description: Idempotently disables Oblivious HTTP Gateway for the zone. Requires product subscription to call.
+      parameters:
+        - $ref: '#/components/parameters/ohttp-gateway_zone-id'
+      responses:
+        '200':
+          description: OHTTP Gateway was disabled for the zone, or was already disabled.
+          content:
+            application/json:
+              examples:
+                inactive:
+                  value:
+                    errors: []
+                    messages: []
+                    result: ohttp is inactive
+                    success: true
+              schema:
+                $ref: '#/components/schemas/ohttp-gateway_api-success-response'
+        '400':
+          description: Invalid translated account or zone identifier.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ohttp-gateway_api-response-failure'
+        '403':
+          description: The request is not authorized for this zone or entitlement.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ohttp-gateway_api-response-failure'
+        '500':
+          description: API dependency failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ohttp-gateway_api-response-failure'
+        4XX:
+          description: Failure response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ohttp-gateway_api-response-failure'
+        5XX:
+          description: API dependency failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ohttp-gateway_api-response-failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - OHTTP Gateway
+      x-api-token-group:
+        - Zone Settings Write
+      x-fern-availability: beta
+      x-fern-sdk-group-name: ohttp-gateway.enablement
+      x-fern-sdk-method-name: delete
+      x-forge-require-confirmation: This operation disables OHTTP Gateway for the zone.
+      x-stability: beta
+    get:
+      operationId: ohttp-gateway-get-enablement
+      summary: Get OHTTP Gateway enablement
+      description: Returns the state of Oblivious HTTP enablement for the zone. Requires product subscription to call.
+      parameters:
+        - $ref: '#/components/parameters/ohttp-gateway_zone-id'
+      responses:
+        '200':
+          description: The OHTTP Gateway enablement state for the zone.
+          content:
+            application/json:
+              examples:
+                active:
+                  value:
+                    errors: []
+                    messages: []
+                    result: ohttp is active
+                    success: true
+                inactive:
+                  value:
+                    errors: []
+                    messages: []
+                    result: ohttp is inactive
+                    success: true
+              schema:
+                $ref: '#/components/schemas/ohttp-gateway_api-success-response'
+        '400':
+          description: Invalid translated account or zone identifier.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ohttp-gateway_api-response-failure'
+        '403':
+          description: The request is not authorized for this zone or entitlement.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ohttp-gateway_api-response-failure'
+        '500':
+          description: API dependency failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ohttp-gateway_api-response-failure'
+        4XX:
+          description: Failure response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ohttp-gateway_api-response-failure'
+        5XX:
+          description: API dependency failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ohttp-gateway_api-response-failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - OHTTP Gateway
+      x-api-token-group:
+        - Zone Settings Read
+      x-fern-availability: beta
+      x-fern-sdk-group-name: ohttp-gateway.enablement
+      x-fern-sdk-method-name: get
+      x-stability: beta
+    put:
+      operationId: ohttp-gateway-enable
+      summary: Enable OHTTP Gateway
+      description: Enables OHTTP Gateway for the zone. Enabling an already-enabled zone is idempotent and returns HTTP 200 status code; enabling a zone for the first time returns HTTP 201. Requires product subscription to call.
+      parameters:
+        - $ref: '#/components/parameters/ohttp-gateway_zone-id'
+      responses:
+        '200':
+          description: OHTTP Gateway was already enabled for the zone.
+          content:
+            application/json:
+              examples:
+                active:
+                  value:
+                    errors: []
+                    messages: []
+                    result: ohttp is active
+                    success: true
+              schema:
+                $ref: '#/components/schemas/ohttp-gateway_api-success-response'
+        '201':
+          description: OHTTP Gateway was enabled for the zone.
+          content:
+            application/json:
+              examples:
+                active:
+                  value:
+                    errors: []
+                    messages: []
+                    result: ohttp is active
+                    success: true
+              schema:
+                $ref: '#/components/schemas/ohttp-gateway_api-success-response'
+        '400':
+          description: Invalid translated account or zone identifier.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ohttp-gateway_api-response-failure'
+        '403':
+          description: The request is not authorized for this zone or entitlement.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ohttp-gateway_api-response-failure'
+        '500':
+          description: API dependency failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ohttp-gateway_api-response-failure'
+        4XX:
+          description: Failure response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ohttp-gateway_api-response-failure'
+        5XX:
+          description: API dependency failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ohttp-gateway_api-response-failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - OHTTP Gateway
+      x-api-token-group:
+        - Zone Settings Write
+      x-fern-availability: beta
+      x-fern-sdk-group-name: ohttp-gateway.enablement
+      x-fern-sdk-method-name: create
+      x-stability: beta
   /zones/{zone_id}/settings/origin_h2_max_streams:
     get:
       operationId: zone-cache-settings-get-origin-h2-max-streams-setting
@@ -397788,6 +397995,13 @@ components:
         type: string
         example: a1b2c3d4e5f67890a1b2c3d4e5f67890
         pattern: ^[0-9a-f]{32}$
+    ohttp-gateway_zone-id:
+      description: The zone tag.
+      in: path
+      name: zone_id
+      required: true
+      schema:
+        $ref: '#/components/schemas/ohttp-gateway_identifier'
     organizations-api_LegacyPaginationParamsPage:
       description: |-
         Legacy offset page number. Must be provided with `per_page`. Values below 1 are treated as
@@ -469844,6 +470058,95 @@ components:
       type: string
       example: f174e90a-fafe-4643-bbbc-4a0ed4fc8415
       maxLength: 36
+      x-auditable: true
+    ohttp-gateway_api-error:
+      description: Represents an error that the API returns.
+      type: object
+      properties:
+        code:
+          description: Numeric error code.
+          type: integer
+          example: 1013
+        message:
+          description: Human-readable error message.
+          type: string
+          example: 'upstream failure: could not enable OHTTP'
+      required:
+        - code
+        - message
+    ohttp-gateway_api-message:
+      description: Represents an informational message that the API returns.
+      type: object
+      properties:
+        code:
+          description: Numeric message code.
+          type: integer
+          example: 0
+        message:
+          description: Human-readable message.
+          type: string
+          example: ''
+      required:
+        - code
+        - message
+    ohttp-gateway_api-response-failure:
+      description: Standard Cloudflare API failure response.
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ohttp-gateway_api-error'
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/ohttp-gateway_api-message'
+        result:
+          description: Always null for error responses.
+          type: object
+          nullable: true
+        success:
+          description: Always false for error responses.
+          type: boolean
+          example: false
+      required:
+        - success
+        - errors
+        - messages
+        - result
+    ohttp-gateway_api-success-response:
+      description: Standard Cloudflare API response wrapping the result of an operation.
+      type: object
+      properties:
+        errors:
+          description: List of errors, empty on success.
+          type: array
+          items:
+            $ref: '#/components/schemas/ohttp-gateway_api-error'
+        messages:
+          description: List of informational messages, empty on success.
+          type: array
+          items:
+            $ref: '#/components/schemas/ohttp-gateway_api-message'
+          example: []
+        result:
+          type: string
+          enum:
+            - ohttp is active
+            - ohttp is inactive
+        success:
+          description: Whether the API call was successful.
+          type: boolean
+          example: true
+      required:
+        - success
+        - errors
+        - messages
+        - result
+    ohttp-gateway_identifier:
+      type: string
+      example: 023e105f4ecef8ad9ca31a8372d0c353
+      maxLength: 32
       x-auditable: true
     one_ApplicationDetail:
       description: Full application detail for onboarding UI.
