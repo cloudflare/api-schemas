@@ -10383,9 +10383,9 @@ paths:
       x-api-token-group:
         - 'Zero Trust: Seats Write'
       x-fern-availability: generally-available
+      x-fern-ignore: true
       x-fern-sdk-group-name: zero-trust.seats
       x-fern-sdk-method-name: edit
-      x-forge-hidden: true
   /accounts/{account_id}/access/service_tokens:
     get:
       operationId: access-service-tokens-list-service-tokens
@@ -10951,7 +10951,8 @@ paths:
     post:
       operationId: access-user-populations-create-user-population
       summary: Create a user population
-      description: Creates a user population in an account.
+      description: |
+        Creates a user population in an account. Requires permission to update the account's Access organization.
       parameters:
         - $ref: '#/components/parameters/access_account_id'
       requestBody:
@@ -404257,7 +404258,7 @@ components:
                       type: boolean
                   type: object
           type: object
-      title: Azure AD
+      title: Zone-Level Azure AD
     access_base_policy_req:
       type: object
       properties:
@@ -404492,7 +404493,7 @@ components:
                       example: exampleapp
                   type: object
           type: object
-      title: Centrify
+      title: Zone-Level Centrify
     access_certificate_rule:
       description: Matches any valid client certificate.
       type: object
@@ -404661,7 +404662,7 @@ components:
               enum:
                 - cloudflare
           type: object
-      title: Cloudflare
+      title: Zone-Level Cloudflare
     access_cloudflare_account_member_rule:
       description: |-
         Matches users who are members of a specific Cloudflare account.
@@ -404709,7 +404710,7 @@ components:
       properties:
         ssh:
           $ref: '#/components/schemas/access_connection_rules_ssh'
-      title: Connection Rules
+      title: Infrastructure Connection Rules
     access_connection_rules_rdp:
       description: The RDP-specific rules that define clipboard behavior for RDP connections.
       type: object
@@ -405337,7 +405338,7 @@ components:
               enum:
                 - duo
           type: object
-      title: Duo
+      title: Zone-Level Duo
     access_duration:
       description: 'The duration for how long the service token will be valid. Must be in the format `300ms` or `2h45m`, or the special value `forever` for non-expiring tokens. Valid time units are: ns, us (or µs), ms, s, m, h. The default is 1 year in hours (8760h).'
       type: string
@@ -405634,7 +405635,7 @@ components:
             config:
               $ref: '#/components/schemas/access_generic-oauth-config-2'
           type: object
-      title: Facebook
+      title: Zone-Level Facebook
     access_failed_login_response:
       type: object
       allOf:
@@ -405818,7 +405819,7 @@ components:
             config:
               $ref: '#/components/schemas/access_generic-oauth-config-2'
           type: object
-      title: GitHub
+      title: Zone-Level GitHub
     access_github_organization_rule:
       description: |-
         Matches a Github organization.
@@ -405865,7 +405866,7 @@ components:
             config:
               $ref: '#/components/schemas/access_generic-oauth-config-2'
           type: object
-      title: Google
+      title: Zone-Level Google
     access_google-apps:
       type: object
       allOf:
@@ -405924,7 +405925,7 @@ components:
                       example: true
                   type: object
           type: object
-      title: Google Workspace
+      title: Zone-Level Google Workspace
     access_grant_trust_to_all_accounts_in_org:
       description: Whether all accounts in the organization are trusted to use this account's cross-account Access resources.
       type: boolean
@@ -406904,7 +406905,7 @@ components:
             config:
               $ref: '#/components/schemas/access_generic-oauth-config-2'
           type: object
-      title: LinkedIn
+      title: Zone-Level LinkedIn
     access_login_design:
       type: object
       properties:
@@ -407341,7 +407342,7 @@ components:
                         - email
                         - profile
                     token_url:
-                      description: The token_endpoint URL of your IdP
+                      description: The token_endpoint URL of your IdP. Updates that change its origin (scheme, host, or port) require client_secret in the request. Path-only changes do not require client_secret.
                       type: string
                       example: https://accounts.google.com/o/oauth2/token
                   type: object
@@ -407382,12 +407383,12 @@ components:
                         - email
                         - profile
                     token_url:
-                      description: The token_endpoint URL of your IdP
+                      description: The token_endpoint URL of your IdP. Updates that change its origin (scheme, host, or port) require client_secret in the request. Path-only changes do not require client_secret.
                       type: string
                       example: https://accounts.google.com/o/oauth2/token
                   type: object
           type: object
-      title: Generic OAuth
+      title: Zone-Level Generic OAuth
     access_oidc_claim_rule:
       description: |-
         Matches an OIDC claim.
@@ -407685,7 +407686,7 @@ components:
             - profile
         updated_at:
           $ref: '#/components/schemas/access_timestamp'
-      title: OIDC SaaS App
+      title: Zone-Level OIDC SaaS App
     access_okta:
       type: object
       allOf:
@@ -407723,7 +407724,7 @@ components:
                       example: https://dev-abc123.oktapreview.com
                   type: object
           type: object
-      title: Okta
+      title: Zone-Level Okta
     access_okta_group_rule:
       description: |-
         Matches an Okta group.
@@ -407780,7 +407781,7 @@ components:
                       example: https://mycompany.onelogin.com
                   type: object
           type: object
-      title: OneLogin
+      title: Zone-Level OneLogin
     access_onetimepin:
       type: object
       allOf:
@@ -407814,7 +407815,7 @@ components:
               enum:
                 - onetimepin
           type: object
-      title: One Time Pin
+      title: Zone-Level One Time Pin
     access_options_preflight_bypass:
       description: Allows options preflight requests to bypass Access authentication and go directly to the origin. Cannot turn on if cors_headers is set.
       type: boolean
@@ -408008,7 +408009,7 @@ components:
                       example: 342b5660-0c32-4936-a5a4-ce21fae57b0a
                   type: object
           type: object
-      title: PingOne
+      title: Zone-Level PingOne
     access_policies:
       type: object
       properties:
@@ -408956,7 +408957,7 @@ components:
           description: The application type.
           type: string
           example: saas
-      title: SaaS Application
+      title: Zone-Level SaaS Application
     access_same_site_cookie_attribute:
       description: Sets the SameSite cookie setting, which provides increased security against CSRF attacks.
       type: string
@@ -409110,7 +409111,7 @@ components:
                   type: string
                   example: https://edgeaccess.org/idp/saml/login
           type: object
-      title: Generic SAML
+      title: Zone-Level Generic SAML
     access_saml_certificate:
       description: A single SAML encryption certificate with metadata
       type: object
@@ -409462,7 +409463,7 @@ components:
           x-stainless-terraform-configurability: computed_optional
         updated_at:
           $ref: '#/components/schemas/access_timestamp'
-      title: SAML SaaS App
+      title: Zone-Level SAML SaaS App
     access_scim_config:
       description: Configuration for provisioning to this application via SCIM. This is currently in closed beta.
       type: object
@@ -409593,7 +409594,7 @@ components:
       required:
         - scheme
         - token
-      title: OAuth Bearer Token
+      title: Zone-Level OAuth Bearer Token
     access_scim_config_authentication_oauth2:
       description: Attributes for configuring OAuth 2 authentication scheme for SCIM provisioning to an application.
       type: object
@@ -409767,7 +409768,12 @@ components:
                     type: string
                   - type: number
                   - type: boolean
-                  - items: {}
+                  - items:
+                      oneOf:
+                        - type: string
+                        - type: boolean
+                        - type: number
+                        - type: object
                     type: array
                   - additionalProperties: true
                     type: object
@@ -410052,7 +410058,7 @@ components:
       required:
         - type
         - domain
-      title: Self Hosted Application
+      title: Zone-Level Self Hosted Application
     access_service-tokens:
       type: object
       properties:
@@ -410249,7 +410255,7 @@ components:
         - hostname
         - china_network
         - client_certificate_forwarding
-      title: Hostname Settings
+      title: Zone-Level Hostname Settings
     access_since:
       description: the timestamp of the earliest update log.
       type: string
@@ -411140,7 +411146,7 @@ components:
             config:
               $ref: '#/components/schemas/access_generic-oauth-config-2'
           type: object
-      title: Yandex
+      title: Zone-Level Yandex
     addressing_account_identifier:
       description: Identifier of a Cloudflare account.
       type: string
