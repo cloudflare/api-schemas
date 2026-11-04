@@ -571970,7 +571970,7 @@
         ],
         "responses": {
           "200": {
-            "description": "OHTTP Gateway was disabled for the zone, or was already disabled.",
+            "description": "OHTTP Gateway was disabled for the zone.",
             "content": {
               "application/json": {
                 "examples": {
@@ -571978,13 +571978,13 @@
                     "value": {
                       "errors": [],
                       "messages": [],
-                      "result": "ohttp is inactive",
+                      "result": "off",
                       "success": true
                     }
                   }
                 },
                 "schema": {
-                  "$ref": "#/components/schemas/ohttp-gateway_api-success-response"
+                  "$ref": "#/components/schemas/ohttp-gateway_delete-api-success-response"
                 }
               }
             }
@@ -572080,7 +572080,7 @@
                     "value": {
                       "errors": [],
                       "messages": [],
-                      "result": "ohttp is active",
+                      "result": "on",
                       "success": true
                     }
                   },
@@ -572088,13 +572088,13 @@
                     "value": {
                       "errors": [],
                       "messages": [],
-                      "result": "ohttp is inactive",
+                      "result": "off",
                       "success": true
                     }
                   }
                 },
                 "schema": {
-                  "$ref": "#/components/schemas/ohttp-gateway_api-success-response"
+                  "$ref": "#/components/schemas/ohttp-gateway_get-api-success-response"
                 }
               }
             }
@@ -572173,7 +572173,7 @@
       "put": {
         "operationId": "ohttp-gateway-enable",
         "summary": "Enable OHTTP Gateway",
-        "description": "Enables OHTTP Gateway for the zone. Enabling an already-enabled zone is idempotent and returns HTTP 200 status code; enabling a zone for the first time returns HTTP 201. Requires product subscription to call.",
+        "description": "Idempotently enables OHTTP Gateway for the zone. Requires product subscription to call.",
         "parameters": [
           {
             "$ref": "#/components/parameters/ohttp-gateway_zone-id"
@@ -572181,26 +572181,6 @@
         ],
         "responses": {
           "200": {
-            "description": "OHTTP Gateway was already enabled for the zone.",
-            "content": {
-              "application/json": {
-                "examples": {
-                  "active": {
-                    "value": {
-                      "errors": [],
-                      "messages": [],
-                      "result": "ohttp is active",
-                      "success": true
-                    }
-                  }
-                },
-                "schema": {
-                  "$ref": "#/components/schemas/ohttp-gateway_api-success-response"
-                }
-              }
-            }
-          },
-          "201": {
             "description": "OHTTP Gateway was enabled for the zone.",
             "content": {
               "application/json": {
@@ -572209,13 +572189,13 @@
                     "value": {
                       "errors": [],
                       "messages": [],
-                      "result": "ohttp is active",
+                      "result": "on",
                       "success": true
                     }
                   }
                 },
                 "schema": {
-                  "$ref": "#/components/schemas/ohttp-gateway_api-success-response"
+                  "$ref": "#/components/schemas/ohttp-gateway_create-api-success-response"
                 }
               }
             }
@@ -688342,7 +688322,7 @@
           "code": {
             "description": "Numeric error code.",
             "type": "integer",
-            "example": 1013
+            "example": 1010
           },
           "message": {
             "description": "Human-readable error message.",
@@ -688409,7 +688389,43 @@
           "result"
         ]
       },
-      "ohttp-gateway_api-success-response": {
+      "ohttp-gateway_create-api-success-response": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ohttp-gateway_get-api-success-response"
+          },
+          {
+            "properties": {
+              "result": {
+                "type": "string",
+                "enum": [
+                  "on"
+                ]
+              }
+            },
+            "type": "object"
+          }
+        ]
+      },
+      "ohttp-gateway_delete-api-success-response": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ohttp-gateway_get-api-success-response"
+          },
+          {
+            "properties": {
+              "result": {
+                "type": "string",
+                "enum": [
+                  "off"
+                ]
+              }
+            },
+            "type": "object"
+          }
+        ]
+      },
+      "ohttp-gateway_get-api-success-response": {
         "description": "Standard Cloudflare API response wrapping the result of an operation.",
         "type": "object",
         "properties": {
@@ -688431,8 +688447,8 @@
           "result": {
             "type": "string",
             "enum": [
-              "ohttp is active",
-              "ohttp is inactive"
+              "on",
+              "off"
             ]
           },
           "success": {
