@@ -208307,7 +208307,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: r2.super-slurper.jobs
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
     post:
       operationId: slurper-create-job
       summary: Create a job
@@ -208361,7 +208360,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: r2.super-slurper.jobs
       x-fern-sdk-method-name: create
-      x-forge-hidden: true
   /accounts/{account_id}/slurper/jobs/{job_id}:
     delete:
       operationId: slurper-delete-job
@@ -208412,7 +208410,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: r2.super-slurper.jobs
       x-fern-sdk-method-name: delete
-      x-forge-hidden: true
     get:
       operationId: slurper-get-job
       summary: Get job details
@@ -208456,7 +208453,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: r2.super-slurper.jobs
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
   /accounts/{account_id}/slurper/jobs/{job_id}/abort:
     put:
       operationId: slurper-abort-job
@@ -208501,7 +208497,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: r2.super-slurper.jobs
       x-fern-sdk-method-name: abort
-      x-forge-hidden: true
       x-forge-require-confirmation: This operation stops a running migration job.
   /accounts/{account_id}/slurper/jobs/{job_id}/logs:
     get:
@@ -208558,7 +208553,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: r2.super-slurper.jobs.logs
       x-fern-sdk-method-name: list
-      x-forge-hidden: true
   /accounts/{account_id}/slurper/jobs/{job_id}/pause:
     put:
       operationId: slurper-pause-job
@@ -208609,7 +208603,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: r2.super-slurper.jobs
       x-fern-sdk-method-name: pause
-      x-forge-hidden: true
   /accounts/{account_id}/slurper/jobs/{job_id}/progress:
     get:
       operationId: slurper-get-job-progress
@@ -208654,7 +208647,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: r2.super-slurper.jobs
       x-fern-sdk-method-name: progress
-      x-forge-hidden: true
   /accounts/{account_id}/slurper/jobs/{job_id}/resume:
     put:
       operationId: slurper-resume-job
@@ -208699,7 +208691,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: r2.super-slurper.jobs
       x-fern-sdk-method-name: resume
-      x-forge-hidden: true
   /accounts/{account_id}/slurper/jobs/abortAll:
     put:
       operationId: slurper-abort-all-jobs
@@ -208739,7 +208730,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: r2.super-slurper.jobs
       x-fern-sdk-method-name: abort-all
-      x-forge-hidden: true
       x-forge-require-confirmation: This operation stops every running migration job.
   /accounts/{account_id}/slurper/source/connectivity-precheck:
     put:
@@ -208786,7 +208776,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: r2.super-slurper.connectivity-precheck
       x-fern-sdk-method-name: source
-      x-forge-hidden: true
   /accounts/{account_id}/slurper/target/connectivity-precheck:
     put:
       operationId: slurper-check-target-connectivity
@@ -208832,7 +208821,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: r2.super-slurper.connectivity-precheck
       x-fern-sdk-method-name: target
-      x-forge-hidden: true
   /accounts/{account_id}/sso_connectors:
     get:
       operationId: get-all-sso-connectors
@@ -479265,7 +479253,9 @@ components:
                 bucket:
                   type: string
                 jurisdiction:
-                  $ref: '#/components/schemas/r2-slurper_Jurisdiction'
+                  allOf:
+                    - $ref: '#/components/schemas/r2-slurper_Jurisdiction'
+                  nullable: true
                 keys:
                   type: array
                   items:
@@ -479288,7 +479278,9 @@ components:
             bucket:
               type: string
             jurisdiction:
-              $ref: '#/components/schemas/r2-slurper_Jurisdiction'
+              allOf:
+                - $ref: '#/components/schemas/r2-slurper_Jurisdiction'
+              nullable: true
             vendor:
               type: string
               enum:
@@ -479314,7 +479306,9 @@ components:
         bucket:
           type: string
         jurisdiction:
-          $ref: '#/components/schemas/r2-slurper_Jurisdiction'
+          allOf:
+            - $ref: '#/components/schemas/r2-slurper_Jurisdiction'
+          nullable: true
         keys:
           type: array
           items:
@@ -479340,7 +479334,9 @@ components:
         bucket:
           type: string
         jurisdiction:
-          $ref: '#/components/schemas/r2-slurper_Jurisdiction'
+          allOf:
+            - $ref: '#/components/schemas/r2-slurper_Jurisdiction'
+          nullable: true
         secret:
           $ref: '#/components/schemas/r2-slurper_S3LikeCredsSchema'
         vendor:
