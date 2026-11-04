@@ -384081,9 +384081,7 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/precursor_precursor_config_response_body'
-                  - $ref: '#/components/schemas/precursor_api-response-common-failure'
+                $ref: '#/components/schemas/precursor_api-response-common-failure'
       security:
         - api_token: []
         - api_email: []
@@ -384102,7 +384100,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: precursor
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
     parameters:
       - name: Cloudflare-Version
         in: header
@@ -384187,9 +384184,7 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/precursor_precursor_config_response_body'
-                  - $ref: '#/components/schemas/precursor_api-response-common-failure'
+                $ref: '#/components/schemas/precursor_api-response-common-failure'
       security:
         - api_token: []
         - api_email: []
@@ -384207,7 +384202,6 @@ paths:
       x-fern-availability: beta
       x-fern-sdk-group-name: precursor
       x-fern-sdk-method-name: update
-      x-forge-hidden: true
   /zones/{zone_id}/purge_cache:
     post:
       operationId: zone-purge
@@ -478179,7 +478173,9 @@ components:
       type: object
       properties:
         mode:
-          $ref: '#/components/schemas/precursor_precursor_mode'
+          allOf:
+            - $ref: '#/components/schemas/precursor_precursor_mode'
+          x-fern-property-name: precursor-mode
         rules:
           $ref: '#/components/schemas/precursor_precursor_rules'
         show_interstitial:
