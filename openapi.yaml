@@ -522708,6 +522708,28 @@ components:
         - wp_plugin
         - hostnames
         - cache_by_device_type
+    zones_avif:
+      description: When the client requesting the image supports the AVIF image codec, and AVIF offers a performance advantage over the original image format, Cloudflare will serve an AVIF version of the original image.
+      allOf:
+        - $ref: '#/components/schemas/zones_base'
+        - properties:
+            id:
+              description: ID of the zone setting.
+              type: string
+              example: avif
+              enum:
+                - avif
+            value:
+              $ref: '#/components/schemas/zones_avif_value'
+          type: object
+      title: Polish AVIF Conversion
+    zones_avif_value:
+      description: Value of the zone setting.
+      type: string
+      default: off
+      enum:
+        - off
+        - on
     zones_base:
       properties:
         editable:
@@ -524192,6 +524214,7 @@ components:
           - $ref: '#/components/schemas/zones_webmcp_mcp_url'
           - $ref: '#/components/schemas/zones_webmcp_packs'
           - $ref: '#/components/schemas/zones_webp'
+          - $ref: '#/components/schemas/zones_avif'
           - $ref: '#/components/schemas/zones_websockets'
     zones_name:
       description: The domain name. Per [RFC 1035](https://datatracker.ietf.org/doc/html/rfc1035#section-2.3.4) the overall zone name can be up to 253 characters, with each segment ("label") not exceeding 63 characters.
@@ -525012,6 +525035,7 @@ components:
         - $ref: '#/components/schemas/zones_webmcp_mcp_url'
         - $ref: '#/components/schemas/zones_webmcp_packs'
         - $ref: '#/components/schemas/zones_webp'
+        - $ref: '#/components/schemas/zones_avif'
         - $ref: '#/components/schemas/zones_websockets'
     zones_setting_name:
       description: Setting name
@@ -525082,6 +525106,7 @@ components:
         - $ref: '#/components/schemas/zones_webmcp_mcp_url_value'
         - $ref: '#/components/schemas/zones_webmcp_packs_value'
         - $ref: '#/components/schemas/zones_webp_value'
+        - $ref: '#/components/schemas/zones_avif_value'
         - $ref: '#/components/schemas/zones_websockets_value'
     zones_settings:
       description: Settings available for the zone.
@@ -526168,6 +526193,7 @@ components:
                   - $ref: '#/components/schemas/zones_webmcp_mcp_url'
                   - $ref: '#/components/schemas/zones_webmcp_packs'
                   - $ref: '#/components/schemas/zones_webp'
+                  - $ref: '#/components/schemas/zones_avif'
                   - $ref: '#/components/schemas/zones_websockets'
           type: object
     zones_zone_settings_single_request:
