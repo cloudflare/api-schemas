@@ -271602,7 +271602,7 @@ paths:
           schema:
             description: Measurement units, eg. bytes.
             type: string
-            default: bytes
+            default: BYTES
             enum:
               - BYTES
               - BYTES_OLD
@@ -289653,27 +289653,29 @@ paths:
             minimum: 0
         - name: botCategory
           in: query
-          description: Filters results by bot category.
+          description: Filters results by bot category. `ACCESSIBILITY`, `AGGREGATOR`, `AI_SEARCH`, `ARCHIVER`, `SOCIAL_MEDIA_MARKETING` and `WEBHOOKS` are deprecated legacy categories that match only that exact category.
           schema:
-            description: Filters results by bot category.
+            description: Filters results by bot category. `ACCESSIBILITY`, `AGGREGATOR`, `AI_SEARCH`, `ARCHIVER`, `SOCIAL_MEDIA_MARKETING` and `WEBHOOKS` are deprecated legacy categories that match only that exact category.
             type: string
             enum:
+              - ACADEMIC_RESEARCH
+              - ADVERTISING_AND_MARKETING
+              - AI_ASSISTANT
+              - AI_CRAWLER
+              - COMMERCE
+              - FEED_FETCHER
+              - MONITORING_AND_ANALYTICS
+              - OTHER
+              - PAGE_PREVIEW
               - SEARCH_ENGINE_CRAWLER
               - SEARCH_ENGINE_OPTIMIZATION
-              - MONITORING_AND_ANALYTICS
-              - ADVERTISING_AND_MARKETING
-              - SOCIAL_MEDIA_MARKETING
-              - PAGE_PREVIEW
-              - ACADEMIC_RESEARCH
               - SECURITY
               - ACCESSIBILITY
-              - WEBHOOKS
-              - FEED_FETCHER
-              - AI_CRAWLER
               - AGGREGATOR
-              - AI_ASSISTANT
               - AI_SEARCH
               - ARCHIVER
+              - SOCIAL_MEDIA_MARKETING
+              - WEBHOOKS
         - name: botOperator
           in: query
           description: Filters results by bot operator.
@@ -289724,10 +289726,28 @@ paths:
                         type: array
                         items:
                           properties:
+                            accessLevel:
+                              description: 'Who can operate the bot: DIRECT bots reach origins under their own identity, while INTERMEDIARY bots forward requests on behalf of another agent or a person.'
+                              type: string
+                              example: DIRECT
+                              nullable: true
+                            categories:
+                              description: The categories of the bot.
+                              type: array
+                              items:
+                                description: A category of the bot.
+                                example: AI_CRAWLER
+                                type: string
                             category:
-                              description: The category of the bot.
+                              description: 'The category of the bot. Deprecated: use `categories`.'
                               type: string
                               example: AI_CRAWLER
+                              deprecated: true
+                            contentUse:
+                              description: How the bot uses the content it fetches (e.g., immediate, reference or full).
+                              type: string
+                              example: full
+                              nullable: true
                             description:
                               description: A summary for the bot (e.g., purpose).
                               type: string
@@ -289762,6 +289782,9 @@ paths:
                             - kind
                             - operator
                             - category
+                            - categories
+                            - accessLevel
+                            - contentUse
                             - userAgentPatterns
                           type: object
                     required:
@@ -289853,14 +289876,37 @@ paths:
                       bot:
                         type: object
                         properties:
+                          accessLevel:
+                            description: 'Who can operate the bot: DIRECT bots reach origins under their own identity, while INTERMEDIARY bots forward requests on behalf of another agent or a person.'
+                            type: string
+                            example: DIRECT
+                            nullable: true
+                          categories:
+                            description: The categories of the bot.
+                            type: array
+                            items:
+                              description: A category of the bot.
+                              example: AI_CRAWLER
+                              type: string
                           category:
-                            description: The category of the bot.
+                            description: 'The category of the bot. Deprecated: use `categories`.'
                             type: string
                             example: AI_CRAWLER
+                            deprecated: true
+                          contentUse:
+                            description: How the bot uses the content it fetches (e.g., immediate, reference or full).
+                            type: string
+                            example: full
+                            nullable: true
                           description:
                             description: A summary for the bot (e.g., purpose).
                             type: string
                             example: OpenAI/ChatGPT's web crawler
+                          documentationUrl:
+                            description: The link to the bot documentation.
+                            type: string
+                            example: https://platform.openai.com/docs/bots
+                            nullable: true
                           kind:
                             description: The kind of the bot.
                             type: string
@@ -289875,9 +289921,15 @@ paths:
                             type: string
                             example: OpenAI
                           operatorUrl:
-                            description: The link to the bot documentation.
+                            description: 'The link to the bot documentation. Deprecated: use `documentationUrl`.'
                             type: string
                             example: https://platform.openai.com/docs/bots
+                            deprecated: true
+                          operatorWebsiteUrl:
+                            description: The link to the operator's website.
+                            type: string
+                            example: https://openai.com
+                            nullable: true
                           signatureAgentUrl:
                             description: The URL of the agent's [Web Bot Auth](https://blog.cloudflare.com/web-bot-auth/) resource. Null for bots not verified via request signature.
                             type: string
@@ -289906,7 +289958,12 @@ paths:
                           - kind
                           - operator
                           - operatorUrl
+                          - documentationUrl
+                          - operatorWebsiteUrl
                           - category
+                          - categories
+                          - accessLevel
+                          - contentUse
                           - userAgents
                           - userAgentPatterns
                     required:
@@ -290819,29 +290876,31 @@ paths:
               type: string
         - name: botCategory
           in: query
-          description: Filters results by bot category.
+          description: Filters results by bot category. `ACCESSIBILITY`, `AGGREGATOR`, `AI_SEARCH`, `ARCHIVER`, `SOCIAL_MEDIA_MARKETING` and `WEBHOOKS` are deprecated legacy categories that match only that exact category.
           schema:
-            description: Filters results by bot category.
+            description: Filters results by bot category. `ACCESSIBILITY`, `AGGREGATOR`, `AI_SEARCH`, `ARCHIVER`, `SOCIAL_MEDIA_MARKETING` and `WEBHOOKS` are deprecated legacy categories that match only that exact category.
             type: array
             items:
               description: The category of the bot.
               enum:
+                - ACADEMIC_RESEARCH
+                - ADVERTISING_AND_MARKETING
+                - AI_ASSISTANT
+                - AI_CRAWLER
+                - COMMERCE
+                - FEED_FETCHER
+                - MONITORING_AND_ANALYTICS
+                - OTHER
+                - PAGE_PREVIEW
                 - SEARCH_ENGINE_CRAWLER
                 - SEARCH_ENGINE_OPTIMIZATION
-                - MONITORING_AND_ANALYTICS
-                - ADVERTISING_AND_MARKETING
-                - SOCIAL_MEDIA_MARKETING
-                - PAGE_PREVIEW
-                - ACADEMIC_RESEARCH
                 - SECURITY
                 - ACCESSIBILITY
-                - WEBHOOKS
-                - FEED_FETCHER
-                - AI_CRAWLER
                 - AGGREGATOR
-                - AI_ASSISTANT
                 - AI_SEARCH
                 - ARCHIVER
+                - SOCIAL_MEDIA_MARKETING
+                - WEBHOOKS
               type: string
         - name: botKind
           in: query
@@ -291194,29 +291253,31 @@ paths:
               type: string
         - name: botCategory
           in: query
-          description: Filters results by bot category.
+          description: Filters results by bot category. `ACCESSIBILITY`, `AGGREGATOR`, `AI_SEARCH`, `ARCHIVER`, `SOCIAL_MEDIA_MARKETING` and `WEBHOOKS` are deprecated legacy categories that match only that exact category.
           schema:
-            description: Filters results by bot category.
+            description: Filters results by bot category. `ACCESSIBILITY`, `AGGREGATOR`, `AI_SEARCH`, `ARCHIVER`, `SOCIAL_MEDIA_MARKETING` and `WEBHOOKS` are deprecated legacy categories that match only that exact category.
             type: array
             items:
               description: The category of the bot.
               enum:
+                - ACADEMIC_RESEARCH
+                - ADVERTISING_AND_MARKETING
+                - AI_ASSISTANT
+                - AI_CRAWLER
+                - COMMERCE
+                - FEED_FETCHER
+                - MONITORING_AND_ANALYTICS
+                - OTHER
+                - PAGE_PREVIEW
                 - SEARCH_ENGINE_CRAWLER
                 - SEARCH_ENGINE_OPTIMIZATION
-                - MONITORING_AND_ANALYTICS
-                - ADVERTISING_AND_MARKETING
-                - SOCIAL_MEDIA_MARKETING
-                - PAGE_PREVIEW
-                - ACADEMIC_RESEARCH
                 - SECURITY
                 - ACCESSIBILITY
-                - WEBHOOKS
-                - FEED_FETCHER
-                - AI_CRAWLER
                 - AGGREGATOR
-                - AI_ASSISTANT
                 - AI_SEARCH
                 - ARCHIVER
+                - SOCIAL_MEDIA_MARKETING
+                - WEBHOOKS
               type: string
         - name: botKind
           in: query
@@ -291604,29 +291665,31 @@ paths:
               type: string
         - name: botCategory
           in: query
-          description: Filters results by bot category.
+          description: Filters results by bot category. `ACCESSIBILITY`, `AGGREGATOR`, `AI_SEARCH`, `ARCHIVER`, `SOCIAL_MEDIA_MARKETING` and `WEBHOOKS` are deprecated legacy categories that match only that exact category.
           schema:
-            description: Filters results by bot category.
+            description: Filters results by bot category. `ACCESSIBILITY`, `AGGREGATOR`, `AI_SEARCH`, `ARCHIVER`, `SOCIAL_MEDIA_MARKETING` and `WEBHOOKS` are deprecated legacy categories that match only that exact category.
             type: array
             items:
               description: The category of the bot.
               enum:
+                - ACADEMIC_RESEARCH
+                - ADVERTISING_AND_MARKETING
+                - AI_ASSISTANT
+                - AI_CRAWLER
+                - COMMERCE
+                - FEED_FETCHER
+                - MONITORING_AND_ANALYTICS
+                - OTHER
+                - PAGE_PREVIEW
                 - SEARCH_ENGINE_CRAWLER
                 - SEARCH_ENGINE_OPTIMIZATION
-                - MONITORING_AND_ANALYTICS
-                - ADVERTISING_AND_MARKETING
-                - SOCIAL_MEDIA_MARKETING
-                - PAGE_PREVIEW
-                - ACADEMIC_RESEARCH
                 - SECURITY
                 - ACCESSIBILITY
-                - WEBHOOKS
-                - FEED_FETCHER
-                - AI_CRAWLER
                 - AGGREGATOR
-                - AI_ASSISTANT
                 - AI_SEARCH
                 - ARCHIVER
+                - SOCIAL_MEDIA_MARKETING
+                - WEBHOOKS
               type: string
         - name: botKind
           in: query
@@ -346546,8 +346609,8 @@ paths:
           schema:
             description: Metrics to be returned.
             type: string
-            example: bandwidth
-            default: bandwidth
+            example: BANDWIDTH
+            default: BANDWIDTH
             enum:
               - BANDWIDTH
               - LATENCY
@@ -349919,7 +349982,7 @@ paths:
     get:
       operationId: radar-get-search-global
       summary: Search for locations, ASes, reports, and more
-      description: 'Searches for locations, autonomous systems, reports, bots, certificate logs, certificate authorities, industries and verticals. Location names can be localized by sending an `Accept-Language` HTTP header with a BCP 47 language tag (e.g., `Accept-Language: pt-PT`). The full quality-value chain is supported (e.g., `pt-PT,pt;q=0.9,en;q=0.8`).'
+      description: 'Searches for locations, autonomous systems, reports, bots, bot operators, certificate logs, certificate authorities, industries and verticals. Location names can be localized by sending an `Accept-Language` HTTP header with a BCP 47 language tag (e.g., `Accept-Language: pt-PT`). The full quality-value chain is supported (e.g., `pt-PT,pt;q=0.9,en;q=0.8`).'
       parameters:
         - name: limit
           in: query
@@ -349956,6 +350019,7 @@ paths:
                 - ADM1S
                 - ASNS
                 - BOTS
+                - BOT_OPERATORS
                 - CERTIFICATE_AUTHORITIES
                 - CERTIFICATE_LOGS
                 - ORIGINS
@@ -349977,6 +350041,7 @@ paths:
                 - ADM1S
                 - ASNS
                 - BOTS
+                - BOT_OPERATORS
                 - CERTIFICATE_AUTHORITIES
                 - CERTIFICATE_LOGS
                 - ORIGINS
