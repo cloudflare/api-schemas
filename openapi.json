@@ -761128,6 +761128,40 @@
           "cache_by_device_type"
         ]
       },
+      "zones_avif": {
+        "description": "When the client requesting the image supports the AVIF image codec, and AVIF offers a performance advantage over the original image format, Cloudflare will serve an AVIF version of the original image.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/zones_base"
+          },
+          {
+            "properties": {
+              "id": {
+                "description": "ID of the zone setting.",
+                "type": "string",
+                "example": "avif",
+                "enum": [
+                  "avif"
+                ]
+              },
+              "value": {
+                "$ref": "#/components/schemas/zones_avif_value"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "title": "Polish AVIF Conversion"
+      },
+      "zones_avif_value": {
+        "description": "Value of the zone setting.",
+        "type": "string",
+        "default": "off",
+        "enum": [
+          "off",
+          "on"
+        ]
+      },
       "zones_base": {
         "properties": {
           "editable": {
@@ -763144,6 +763178,9 @@
               "$ref": "#/components/schemas/zones_webp"
             },
             {
+              "$ref": "#/components/schemas/zones_avif"
+            },
+            {
               "$ref": "#/components/schemas/zones_websockets"
             }
           ]
@@ -764381,6 +764418,9 @@
             "$ref": "#/components/schemas/zones_webp"
           },
           {
+            "$ref": "#/components/schemas/zones_avif"
+          },
+          {
             "$ref": "#/components/schemas/zones_websockets"
           }
         ]
@@ -764580,6 +764620,9 @@
           },
           {
             "$ref": "#/components/schemas/zones_webp_value"
+          },
+          {
+            "$ref": "#/components/schemas/zones_avif_value"
           },
           {
             "$ref": "#/components/schemas/zones_websockets_value"
@@ -766174,6 +766217,9 @@
                     },
                     {
                       "$ref": "#/components/schemas/zones_webp"
+                    },
+                    {
+                      "$ref": "#/components/schemas/zones_avif"
                     },
                     {
                       "$ref": "#/components/schemas/zones_websockets"
