@@ -252990,7 +252990,7 @@ paths:
     get:
       operationId: origin-ca-list-certificates
       summary: List Certificates
-      description: List all existing Origin CA certificates for a given zone. You can use an Origin CA Key as your User Service Key or an API token when calling this endpoint ([see above](#requests)).
+      description: List all existing Origin CA certificates for a given zone. Revoked certificates are not included. You can use an Origin CA Key as your User Service Key or an API token when calling this endpoint ([see above](#requests)).
       parameters:
         - name: zone_id
           in: query
@@ -253012,18 +253012,6 @@ paths:
             default: 20
             maximum: 50
             minimum: 5
-        - name: limit
-          in: query
-          schema:
-            description: Limit to the number of records returned.
-            type: integer
-            example: 10
-        - name: offset
-          in: query
-          schema:
-            description: Offset the results.
-            type: integer
-            example: 10
       responses:
         '200':
           description: List Certificates response.
@@ -253032,6 +253020,14 @@ paths:
               schema:
                 $ref: '#/components/schemas/tls-certificates-and-hostnames_certificate_response_collection-2'
         4XX:
+          description: List Certificates response failure.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/tls-certificates-and-hostnames_certificate_response_collection-2'
+                  - $ref: '#/components/schemas/tls-certificates-and-hostnames_api-response-common-failure'
+        5XX:
           description: List Certificates response failure.
           content:
             application/json:
@@ -253055,7 +253051,7 @@ paths:
     post:
       operationId: origin-ca-create-certificate
       summary: Create Certificate
-      description: Create an Origin CA certificate. You can use an Origin CA Key as your User Service Key or an API token when calling this endpoint ([see above](#requests)).
+      description: Create an Origin CA certificate. For `keyless-certificate` requests, `zone_id` is required and the response contains only `id`, `certificate`, and `expires_on`. You can use an Origin CA Key as your User Service Key or an API token when calling this endpoint ([see above](#requests)).
       requestBody:
         required: true
         content:
@@ -253071,6 +253067,12 @@ paths:
                   $ref: '#/components/schemas/tls-certificates-and-hostnames_request_type'
                 requested_validity:
                   $ref: '#/components/schemas/tls-certificates-and-hostnames_requested_validity'
+                zone_id:
+                  description: Identifier of the zone whose keyless servers the certificate is for. Required when `request_type` is `keyless-certificate`; ignored otherwise.
+                  type: string
+                  example: 023e105f4ecef8ad9ca31a8372d0c353
+                  maxLength: 32
+                  x-auditable: true
               required:
                 - hostnames
                 - request_type
@@ -253083,6 +253085,14 @@ paths:
               schema:
                 $ref: '#/components/schemas/tls-certificates-and-hostnames_certificate_response_single-2'
         4XX:
+          description: Create Certificate response failure.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/tls-certificates-and-hostnames_certificate_response_single-2'
+                  - $ref: '#/components/schemas/tls-certificates-and-hostnames_api-response-common-failure'
+        5XX:
           description: Create Certificate response failure.
           content:
             application/json:
@@ -253129,6 +253139,14 @@ paths:
                 allOf:
                   - $ref: '#/components/schemas/tls-certificates-and-hostnames_certificate_revoke_response'
                   - $ref: '#/components/schemas/tls-certificates-and-hostnames_api-response-common-failure'
+        5XX:
+          description: Revoke Certificate response failure.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/tls-certificates-and-hostnames_certificate_revoke_response'
+                  - $ref: '#/components/schemas/tls-certificates-and-hostnames_api-response-common-failure'
       security:
         - api_token: []
         - user_service_key: []
@@ -253160,6 +253178,14 @@ paths:
               schema:
                 $ref: '#/components/schemas/tls-certificates-and-hostnames_certificate_response_single-2'
         4XX:
+          description: Get Certificate response failure.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/tls-certificates-and-hostnames_certificate_response_single-2'
+                  - $ref: '#/components/schemas/tls-certificates-and-hostnames_api-response-common-failure'
+        5XX:
           description: Get Certificate response failure.
           content:
             application/json:
@@ -503792,9 +503818,6 @@ components:
             - $ref: '#/components/schemas/tls-certificates-and-hostnames_requested_validity_days'
         revoked_at:
           $ref: '#/components/schemas/tls-certificates-and-hostnames_revoked_at'
-      required:
-        - hostnames
-        - request_type
     tls-certificates-and-hostnames_certificates-2:
       description: The uploaded root CA certificate.
       type: string
