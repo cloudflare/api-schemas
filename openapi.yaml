@@ -201559,7 +201559,8 @@ paths:
           description: |
             Order results using field:direction format. Supported fields are name, id, human_id,
             category_id, application_type, application_confidence_score, and gen_ai_score.
-            Supported directions are asc and desc. Ignored when search is provided; results are
+            Supported directions are asc and desc. name and application_type ignore the case of
+            the letters A to Z, and ties sort by id. Ignored when search is provided; results are
             ranked by relevance instead. Also ignored when lookup is provided.
           schema:
             type: string
@@ -201678,6 +201679,14 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/alexandria_get_application_response'
+        '403':
+          description: The authenticated principal does not have access to the requested account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/alexandria_api_response_common_failure'
+        '429':
+          $ref: '#/components/responses/alexandria_application_write_busy'
         4XX:
           description: Create application response failure.
           content:
@@ -201722,12 +201731,20 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/alexandria_delete_application_response'
+        '403':
+          description: The authenticated principal does not have access to the requested account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/alexandria_api_response_common_failure'
         '409':
           description: The application is referenced by other resources and cannot be deleted.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/alexandria_delete_application_conflict_response'
+        '429':
+          $ref: '#/components/responses/alexandria_application_write_busy'
         '502':
           description: Application deletion could not be safely completed because a required validation was unavailable.
           content:
@@ -201778,6 +201795,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/alexandria_get_application_response'
+        '403':
+          description: The authenticated principal does not have access to the requested account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/alexandria_api_response_common_failure'
         4XX:
           description: Get application by id response failure.
           content:
@@ -201829,6 +201852,14 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/alexandria_get_application_response'
+        '403':
+          description: The authenticated principal does not have access to the requested account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/alexandria_api_response_common_failure'
+        '429':
+          $ref: '#/components/responses/alexandria_application_write_busy'
         4XX:
           description: Update application response failure.
           content:
@@ -201952,7 +201983,7 @@ paths:
       operationId: getResourceLibraryCategories
       summary: List application categories
       description: |
-        List the categories available for classifying applications, ordered by name.
+        List the categories available for classifying applications, ordered by name, ignoring the case of the letters A to Z.
         Results are paginated by `offset` or `cursor`.
       parameters:
         - name: account_id
@@ -529679,6 +529710,21 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/access_api-response-common-failure'
+    alexandria_application_write_busy:
+      description: |
+        Too many concurrent application writes for this account. This request made no
+        changes. Wait for the delay in Retry-After before retrying.
+      headers:
+        Retry-After:
+          description: Minimum number of seconds to wait before retrying the request.
+          example: 1
+          schema:
+            type: integer
+            minimum: 1
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/alexandria_api_response_common_failure'
     analytics-engine_BadRequest:
       description: |
         Bad request. The query parameter or request body is missing or malformed.
