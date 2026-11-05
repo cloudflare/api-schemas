@@ -309617,7 +309617,7 @@
       "get": {
         "operationId": "secrets-store-list",
         "summary": "List account stores",
-        "description": "Lists all the stores in an account.",
+        "description": "Lists account stores from an eventually consistent projection. Returns retryable HTTP 503 until initial backfill completes; empty accounts are ready immediately.",
         "parameters": [
           {
             "$ref": "#/components/parameters/secrets-store_account_id"
@@ -309642,6 +309642,20 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/secrets-store_stores_response_collection"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service temporarily unavailable, including while initial store listing backfill is incomplete. Returns a generic error with a reference; retry the request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/secrets-store_api-response-common-failure"
+                    }
+                  ]
                 }
               }
             }
