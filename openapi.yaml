@@ -123377,8 +123377,8 @@ paths:
       operationId: list_interconnects
       summary: List existing interconnects
       description: |-
-        Lists all network interconnects configured for the account, including physical and virtual
-        connections.
+        Lists network interconnects of a single type configured for the account. The `type` query
+        parameter selects the type to list; when omitted, only `direct` interconnects are returned.
       parameters:
         - name: site
           in: query
@@ -123388,7 +123388,7 @@ paths:
             nullable: true
         - name: type
           in: query
-          description: If specified, only show interconnects of the given type
+          description: Type of interconnect to list, such as `direct` or `gcp_partner`. Defaults to `direct`.
           schema:
             type: string
             nullable: true
@@ -470231,18 +470231,13 @@ components:
       type: object
       allOf:
         - properties:
-            account:
-              type: string
             name:
-              type: string
-            owner:
               type: string
             type:
               type: string
           required:
             - type
             - name
-            - account
           type: object
         - properties:
             region:
@@ -470256,23 +470251,18 @@ components:
             - virtual_port_reservation_id
             - region
           type: object
-      title: GcpPartner
+      title: Interconnect_GcpPartner_Body
     nsc_Interconnect_Physical_Body:
       type: object
       allOf:
         - properties:
-            account:
-              type: string
             name:
-              type: string
-            owner:
               type: string
             type:
               type: string
           required:
             - type
             - name
-            - account
           type: object
         - properties:
             ccr_device_name:
@@ -470297,7 +470287,7 @@ components:
             - speed
             - facility
           type: object
-      title: Physical
+      title: Interconnect_Physical_Body
     nsc_InterconnectCreate:
       type: object
       discriminator:
@@ -470330,7 +470320,7 @@ components:
             - pairing_key
             - bandwidth
           type: object
-      title: GcpPartner
+      title: InterconnectCreate_GcpPartner_Body
     nsc_InterconnectCreate_Physical_Body:
       type: object
       allOf:
@@ -470353,7 +470343,7 @@ components:
           required:
             - slot_id
           type: object
-      title: Physical
+      title: InterconnectCreate_Physical_Body
     nsc_InterconnectList:
       type: object
       properties:
