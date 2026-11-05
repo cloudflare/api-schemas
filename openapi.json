@@ -367737,10 +367737,11 @@
             "name": "include",
             "in": "query",
             "schema": {
-              "description": "Whether to include the `modules` property of the deployment in the response, which contains code and sourcemap content and may add several megabytes to the response size.",
+              "description": "Optional properties to include in the response. `modules` includes the `modules` property, which contains code and may add several megabytes to the response size. `modules,sourcemaps` also includes the deployment's source maps in `modules`.",
               "type": "string",
               "enum": [
-                "modules"
+                "modules",
+                "modules,sourcemaps"
               ]
             }
           }
@@ -368061,10 +368062,11 @@
             "name": "include",
             "in": "query",
             "schema": {
-              "description": "Whether to include the `modules` property of the version in the response, which contains code and sourcemap content and may add several megabytes to the response size.",
+              "description": "Optional properties to include in the response. `modules` includes the `modules` property, which contains code and may add several megabytes to the response size. `modules,sourcemaps` also includes the version's source maps in `modules`.",
               "type": "string",
               "enum": [
-                "modules"
+                "modules",
+                "modules,sourcemaps"
               ]
             }
           }
@@ -368372,10 +368374,11 @@
             "name": "include",
             "in": "query",
             "schema": {
-              "description": "Whether to include the `modules` property of the version in the response, which contains code and sourcemap content and may add several megabytes to the response size.",
+              "description": "Optional properties to include in the response. `modules` includes the `modules` property, which contains code and may add several megabytes to the response size. `modules,sourcemaps` also includes the version's source maps in `modules`.",
               "type": "string",
               "enum": [
-                "modules"
+                "modules",
+                "modules,sourcemaps"
               ]
             }
           }
@@ -749445,7 +749448,7 @@
           {
             "properties": {
               "modules": {
-                "description": "Code, sourcemaps, and other content used at runtime.",
+                "description": "Code, sourcemaps, and other content used at runtime.\n\nSource maps use content type `application/source-map`. Responses include them only when requested with\n`include=modules,sourcemaps`. Workers stores the source map fields used to remap stack traces, so a\nreturned source map is equivalent to the uploaded file but not byte-identical.\n",
                 "type": "array",
                 "items": {
                   "properties": {
@@ -749674,7 +749677,12 @@
             "$ref": "#/components/schemas/workers_compatibility_date"
           },
           "compatibility_flags": {
-            "$ref": "#/components/schemas/workers_compatibility_flags"
+            "description": "Enables or disables specific Workers runtime features, such as upcoming features or changes outside the `compatibility_date`.\n\nResponses list only the flags this version sets explicitly and exclude behavior that `compatibility_date` enables. Responses omit the field when the list is empty, so a missing field means the version sets zero flags.\n",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/workers_compatibility_flags"
+              }
+            ]
           },
           "containers": {
             "$ref": "#/components/schemas/workers_containers"
@@ -749750,7 +749758,7 @@
             ]
           },
           "modules": {
-            "description": "Code, sourcemaps, and other content used at runtime.\n\nThis includes [`_headers`](https://developers.cloudflare.com/workers/static-assets/headers/#custom-headers) and\n[`_redirects`](https://developers.cloudflare.com/workers/static-assets/redirects/) files used to configure\n[Static Assets](https://developers.cloudflare.com/workers/static-assets/). `_headers` and `_redirects` files should be\nincluded as modules named `_headers` and `_redirects` with content type `text/plain`.\n",
+            "description": "Code, sourcemaps, and other content used at runtime.\n\nSource maps use content type `application/source-map`. Responses include them only when requested with\n`include=modules,sourcemaps`. Workers stores the source map fields used to remap stack traces, so a returned\nsource map is equivalent to the uploaded file but not byte-identical.\n\nThis includes [`_headers`](https://developers.cloudflare.com/workers/static-assets/headers/#custom-headers) and\n[`_redirects`](https://developers.cloudflare.com/workers/static-assets/redirects/) files used to configure\n[Static Assets](https://developers.cloudflare.com/workers/static-assets/). `_headers` and `_redirects` files should be\nincluded as modules named `_headers` and `_redirects` with content type `text/plain`.\n",
             "type": "array",
             "items": {
               "properties": {
@@ -750645,6 +750653,7 @@
             "vpc_network": "#/components/schemas/workers_binding_kind_vpc_network",
             "vpc_service": "#/components/schemas/workers_binding_kind_vpc_service",
             "wasm_module": "#/components/schemas/workers_binding_kind_wasm_module",
+            "worker_loader": "#/components/schemas/workers_binding_kind_worker_loader",
             "workflow": "#/components/schemas/workers_binding_kind_workflow"
           },
           "propertyName": "type"
@@ -750763,6 +750772,9 @@
           },
           {
             "$ref": "#/components/schemas/workers_binding_kind_vpc_network"
+          },
+          {
+            "$ref": "#/components/schemas/workers_binding_kind_worker_loader"
           }
         ]
       },
@@ -751779,7 +751791,8 @@
             "type": "string",
             "example": "production",
             "default": "production",
-            "x-auditable": true
+            "x-auditable": true,
+            "x-stainless-terraform-configurability": "computed_optional"
           },
           "name": {
             "$ref": "#/components/schemas/workers_binding_name"
@@ -751973,6 +751986,26 @@
           "name",
           "type",
           "part"
+        ]
+      },
+      "workers_binding_kind_worker_loader": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "$ref": "#/components/schemas/workers_binding_name"
+          },
+          "type": {
+            "description": "The kind of resource that the binding provides.",
+            "type": "string",
+            "enum": [
+              "worker_loader"
+            ],
+            "x-auditable": true
+          }
+        },
+        "required": [
+          "name",
+          "type"
         ]
       },
       "workers_binding_kind_workflow": {
@@ -755643,13 +755676,14 @@
                         "x-auditable": true
                       },
                       "compatibility_flags": {
-                        "description": "Flags that enable or disable certain features in the Workers runtime.",
+                        "description": "Lists the flags this version sets explicitly to enable or disable\nWorkers runtime features. Excludes behavior that `compatibility_date`\nenables. Responses omit the field when the list is empty, so a missing\nfield means the version sets zero flags.\n",
                         "type": "array",
                         "items": {
                           "example": "x",
                           "readOnly": true,
                           "type": "string"
                         },
+                        "default": [],
                         "readOnly": true,
                         "x-stainless-collection-type": "set"
                       },
