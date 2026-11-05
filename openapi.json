@@ -734888,13 +734888,19 @@
             "$ref": "#/components/schemas/tls-certificates-and-hostnames_request_type"
           },
           "requested_validity": {
-            "$ref": "#/components/schemas/tls-certificates-and-hostnames_requested_validity"
+            "description": "The number of days for which the certificate was requested to be valid. Only returned in the Create Certificate response, where it echoes the requested value. Not returned when getting or listing certificates.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/tls-certificates-and-hostnames_requested_validity_days"
+              }
+            ]
+          },
+          "revoked_at": {
+            "$ref": "#/components/schemas/tls-certificates-and-hostnames_revoked_at"
           }
         },
         "required": [
           "hostnames",
-          "csr",
-          "requested_validity",
           "request_type"
         ]
       },
@@ -737063,9 +737069,17 @@
       },
       "tls-certificates-and-hostnames_requested_validity": {
         "description": "The number of days for which the certificate should be valid.",
+        "default": 5475,
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/tls-certificates-and-hostnames_requested_validity_days"
+          }
+        ]
+      },
+      "tls-certificates-and-hostnames_requested_validity_days": {
+        "description": "A permitted certificate validity period, in days.",
         "type": "number",
         "example": 5475,
-        "default": 5475,
         "enum": [
           7,
           30,
