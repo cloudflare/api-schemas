@@ -125302,6 +125302,54 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: containers.registries.credentials
       x-fern-sdk-method-name: generate
+  /accounts/{account_id}/containers/usage:
+    get:
+      operationId: getUsage
+      summary: Get live account usage
+      description: Get current live resource usage and maximum account limits for the authenticated Cloudchamber account. Usage includes active and assigned instances.
+      responses:
+        '200':
+          description: Returns live account usage and maximum limits.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/cc_V4BaseResponse'
+                  - properties:
+                      result:
+                        $ref: '#/components/schemas/cc_AccountUsageResponse'
+                    required:
+                      - result
+                    type: object
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cc_V4BaseErrorResponse'
+        '403':
+          description: The account does not have the required capability for this operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cc_V4BaseErrorResponse'
+        '500':
+          description: An internal error has occurred.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cc_V4BaseErrorResponse'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Account
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: containers
+      x-fern-sdk-method-name: usage
+    parameters:
+      - $ref: '#/components/parameters/cc_AccountId'
   /accounts/{account_id}/custom_csrs:
     get:
       operationId: custom-csrs-for-an-account-list-custom-csrs
@@ -424511,6 +424559,72 @@ components:
     cc_AccountID:
       description: A unique identifier for the user's account.
       type: string
+    cc_AccountUsageMaximum:
+      description: Lists account limits for the resources reported in usage.
+      type: object
+      properties:
+        disk_mb:
+          description: Maximum disk in MB for the account.
+          type: integer
+        memory_mib:
+          description: Maximum memory in MiB for the account.
+          type: integer
+        vcpus:
+          description: Maximum vCPU for the account.
+          type: number
+          format: float
+      required:
+        - vcpus
+        - memory_mib
+        - disk_mb
+    cc_AccountUsageResources:
+      description: Lists current resource consumption for active and assigned instances.
+      type: object
+      properties:
+        disk_mb:
+          type: integer
+        instances:
+          type: integer
+        memory_mib:
+          type: integer
+        vcpus:
+          type: number
+          format: float
+      required:
+        - vcpus
+        - memory_mib
+        - disk_mb
+        - instances
+    cc_AccountUsageResponse:
+      description: Current live usage, maximum limits, and utilization percentages for a Cloudchamber account. Usage includes active and assigned instances and is a current snapshot, not a historical or billable metric.
+      type: object
+      properties:
+        maximum:
+          $ref: '#/components/schemas/cc_AccountUsageMaximum'
+        usage:
+          $ref: '#/components/schemas/cc_AccountUsageResources'
+        utilization:
+          $ref: '#/components/schemas/cc_AccountUsageUtilization'
+      required:
+        - usage
+        - maximum
+        - utilization
+    cc_AccountUsageUtilization:
+      description: Live resource utilization percentages. A value of 100 represents full utilization. Values can exceed 100 when usage exceeds quota. The API omits fields whose corresponding maximum is zero.
+      type: object
+      properties:
+        disk_mb:
+          description: Live disk usage as a percentage of maximum disk.
+          type: number
+          format: float
+        memory_mib:
+          description: Live memory usage as a percentage of maximum memory.
+          type: number
+          format: float
+        vcpus:
+          description: Live vCPU usage as a percentage of maximum vCPU.
+          type: number
+          format: float
     cc_Application:
       description: Describes an application and the parameters that govern how it places its instances.
       type: object
