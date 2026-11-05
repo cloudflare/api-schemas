@@ -134556,11 +134556,12 @@ paths:
                 default:
                   $ref: '#/components/schemas/teams-devices_default'
                 description:
-                  allOf:
-                    - $ref: '#/components/schemas/teams-devices_schemas-description'
-                    - default: ''
-                      type: string
-                      x-auditable: true
+                  description: A description of the policy.
+                  type: string
+                  example: Policy for test teams.
+                  default: ''
+                  maxLength: 500
+                  x-auditable: true
                 disable_auto_fallback:
                   $ref: '#/components/schemas/teams-devices_disable_auto_fallback'
                 dns_search_suffixes:
@@ -500949,6 +500950,7 @@ components:
           $ref: '#/components/schemas/teams-devices_split_tunnel_address'
         description:
           $ref: '#/components/schemas/teams-devices_split_tunnel_description'
+      additionalProperties: false
       required:
         - address
     teams-devices_exclude_split_tunnel_with_host:
@@ -500958,6 +500960,7 @@ components:
           $ref: '#/components/schemas/teams-devices_split_tunnel_description'
         host:
           $ref: '#/components/schemas/teams-devices_split_tunnel_host'
+      additionalProperties: false
       required:
         - host
     teams-devices_expiration:
@@ -501128,6 +501131,7 @@ components:
           example:
             - 198.51.100.1:2408
           maxItems: 5
+      additionalProperties: false
       nullable: true
       required:
         - enabled
@@ -501209,6 +501213,7 @@ components:
           $ref: '#/components/schemas/teams-devices_include_split_tunnel_address'
         description:
           $ref: '#/components/schemas/teams-devices_include_split_tunnel_description'
+      additionalProperties: false
       required:
         - address
     teams-devices_include_split_tunnel_with_host:
@@ -501218,6 +501223,7 @@ components:
           $ref: '#/components/schemas/teams-devices_include_split_tunnel_description'
         host:
           $ref: '#/components/schemas/teams-devices_include_split_tunnel_host'
+      additionalProperties: false
       required:
         - host
     teams-devices_input:
@@ -502716,6 +502722,7 @@ components:
           format: uuid
           example: f174e90a-fafe-4643-bbbc-4a0ed4fc8415
           x-auditable: true
+      additionalProperties: false
       nullable: true
       required:
         - allowed
@@ -502794,46 +502801,55 @@ components:
           description: Sets the time limit, in seconds, that a user can use an override code to bypass WARP.
           type: number
           x-auditable: true
+          x-stainless-terraform-configurability: computed_optional
         external_emergency_signal_enabled:
           description: Controls whether the external emergency disconnect feature is enabled.
           type: boolean
           example: true
           x-auditable: true
+          x-stainless-terraform-configurability: computed_optional
         external_emergency_signal_fingerprint:
           description: The SHA256 fingerprint (64 hexadecimal characters) of the HTTPS server certificate for the external_emergency_signal_url. If provided, the WARP client will use this value to verify the server's identity. The device will ignore any response if the server's certificate fingerprint does not exactly match this value.
           type: string
           example: abcd1234567890abcd1234567890abcd1234567890abcd1234567890abcd1234
           x-auditable: true
+          x-stainless-terraform-configurability: computed_optional
         external_emergency_signal_interval:
           description: The interval at which the WARP client fetches the emergency disconnect signal, formatted as a duration string (e.g., "5m", "2m30s", "1h"). Minimum 30 seconds.
           type: string
           example: 5m
           x-auditable: true
+          x-stainless-terraform-configurability: computed_optional
         external_emergency_signal_url:
           description: The HTTPS URL from which to fetch the emergency disconnect signal. Must use HTTPS and have an IPv4 or IPv6 address as the host.
           type: string
           example: https://192.0.2.1/signal
           x-auditable: true
+          x-stainless-terraform-configurability: computed_optional
         gateway_proxy_enabled:
           description: Enable gateway proxy filtering on TCP.
           type: boolean
           example: true
           x-auditable: true
+          x-stainless-terraform-configurability: computed_optional
         gateway_udp_proxy_enabled:
           description: Enable gateway proxy filtering on UDP.
           type: boolean
           example: true
           x-auditable: true
+          x-stainless-terraform-configurability: computed_optional
         root_certificate_installation_enabled:
           description: Enable installation of cloudflare managed root certificate.
           type: boolean
           example: true
           x-auditable: true
+          x-stainless-terraform-configurability: computed_optional
         use_zt_virtual_ip:
           description: Enable using CGNAT virtual IPv4.
           type: boolean
           example: true
           x-auditable: true
+          x-stainless-terraform-configurability: computed_optional
     teams-devices_zero-trust-account-device-settings-response:
       type: object
       allOf:
