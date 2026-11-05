@@ -302965,7 +302965,7 @@
           {
             "name": "order_by",
             "in": "query",
-            "description": "Order results using field:direction format. Supported fields are name, id, human_id,\ncategory_id, application_type, application_confidence_score, and gen_ai_score.\nSupported directions are asc and desc. Ignored when search is provided; results are\nranked by relevance instead. Also ignored when lookup is provided.\n",
+            "description": "Order results using field:direction format. Supported fields are name, id, human_id,\ncategory_id, application_type, application_confidence_score, and gen_ai_score.\nSupported directions are asc and desc. name and application_type ignore the case of\nthe letters A to Z, and ties sort by id. Ignored when search is provided; results are\nranked by relevance instead. Also ignored when lookup is provided.\n",
             "schema": {
               "type": "string"
             },
@@ -303113,6 +303113,19 @@
                 }
               }
             }
+          },
+          "403": {
+            "description": "The authenticated principal does not have access to the requested account.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/alexandria_api_response_common_failure"
+                }
+              }
+            }
+          },
+          "429": {
+            "$ref": "#/components/responses/alexandria_application_write_busy"
           },
           "4XX": {
             "description": "Create application response failure.",
@@ -303312,6 +303325,16 @@
               }
             }
           },
+          "403": {
+            "description": "The authenticated principal does not have access to the requested account.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/alexandria_api_response_common_failure"
+                }
+              }
+            }
+          },
           "409": {
             "description": "The application is referenced by other resources and cannot be deleted.",
             "content": {
@@ -303321,6 +303344,9 @@
                 }
               }
             }
+          },
+          "429": {
+            "$ref": "#/components/responses/alexandria_application_write_busy"
           },
           "502": {
             "description": "Application deletion could not be safely completed because a required validation was unavailable.",
@@ -303396,6 +303422,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/alexandria_get_application_response"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The authenticated principal does not have access to the requested account.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/alexandria_api_response_common_failure"
                 }
               }
             }
@@ -303479,6 +303515,19 @@
               }
             }
           },
+          "403": {
+            "description": "The authenticated principal does not have access to the requested account.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/alexandria_api_response_common_failure"
+                }
+              }
+            }
+          },
+          "429": {
+            "$ref": "#/components/responses/alexandria_application_write_busy"
+          },
           "4XX": {
             "description": "Update application response failure.",
             "content": {
@@ -303515,7 +303564,7 @@
       "get": {
         "operationId": "getResourceLibraryCategories",
         "summary": "List application categories",
-        "description": "List the categories available for classifying applications, ordered by name.\nResults are paginated by `offset` or `cursor`.\n",
+        "description": "List the categories available for classifying applications, ordered by name, ignoring the case of the letters A to Z.\nResults are paginated by `offset` or `cursor`.\n",
         "parameters": [
           {
             "name": "account_id",
@@ -771153,6 +771202,26 @@
           "application/json": {
             "schema": {
               "$ref": "#/components/schemas/access_api-response-common-failure"
+            }
+          }
+        }
+      },
+      "alexandria_application_write_busy": {
+        "description": "Too many concurrent application writes for this account. This request made no\nchanges. Wait for the delay in Retry-After before retrying.\n",
+        "headers": {
+          "Retry-After": {
+            "description": "Minimum number of seconds to wait before retrying the request.",
+            "example": 1,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/alexandria_api_response_common_failure"
             }
           }
         }
