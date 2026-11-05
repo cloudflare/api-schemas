@@ -579762,7 +579762,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/tls-certificates-and-hostnames_advanced_certificate_pack_response_single"
+                  "$ref": "#/components/schemas/tls-certificates-and-hostnames_certificate_pack_order_response_single"
                 }
               }
             }
@@ -579774,7 +579774,7 @@
                 "schema": {
                   "allOf": [
                     {
-                      "$ref": "#/components/schemas/tls-certificates-and-hostnames_advanced_certificate_pack_response_single"
+                      "$ref": "#/components/schemas/tls-certificates-and-hostnames_certificate_pack_order_response_single"
                     },
                     {
                       "$ref": "#/components/schemas/tls-certificates-and-hostnames_api-response-common-failure"
@@ -734569,7 +734569,7 @@
         "x-auditable": true
       },
       "tls-certificates-and-hostnames_certificate_authority-3": {
-        "description": "The Certificate Authority that Total TLS certificates will be issued through.",
+        "description": "The Certificate Authority that Total TLS certificates will be issued through. Not returned in responses when Total TLS is disabled.",
         "type": "string",
         "example": "google",
         "enum": [
@@ -734776,6 +734776,54 @@
         "example": "3822ff90-ea29-44df-9e55-21300bb9419b",
         "readOnly": true,
         "x-auditable": true
+      },
+      "tls-certificates-and-hostnames_certificate_pack_order": {
+        "description": "A newly ordered certificate pack. Certificates are not included until they are issued; get the certificate pack to retrieve them.",
+        "type": "object",
+        "properties": {
+          "certificate_authority": {
+            "$ref": "#/components/schemas/tls-certificates-and-hostnames_certificate_authority-2"
+          },
+          "hosts": {
+            "$ref": "#/components/schemas/tls-certificates-and-hostnames_hosts-2"
+          },
+          "id": {
+            "$ref": "#/components/schemas/tls-certificates-and-hostnames_certificate_pack_identifier"
+          },
+          "status": {
+            "$ref": "#/components/schemas/tls-certificates-and-hostnames_status-5"
+          },
+          "type": {
+            "$ref": "#/components/schemas/tls-certificates-and-hostnames_type-2"
+          },
+          "validation_method": {
+            "$ref": "#/components/schemas/tls-certificates-and-hostnames_validation_method"
+          },
+          "validity_days": {
+            "$ref": "#/components/schemas/tls-certificates-and-hostnames_validity_days"
+          }
+        },
+        "required": [
+          "id",
+          "type",
+          "hosts",
+          "status"
+        ]
+      },
+      "tls-certificates-and-hostnames_certificate_pack_order_response_single": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/tls-certificates-and-hostnames_api-response-single"
+          },
+          {
+            "properties": {
+              "result": {
+                "$ref": "#/components/schemas/tls-certificates-and-hostnames_certificate_pack_order"
+              }
+            },
+            "type": "object"
+          }
+        ]
       },
       "tls-certificates-and-hostnames_certificate_pack_quota_response": {
         "allOf": [
@@ -735204,6 +735252,11 @@
           }
         }
       },
+      "tls-certificates-and-hostnames_client_certificate_hostname": {
+        "type": "string",
+        "example": "api.example.com",
+        "x-auditable": true
+      },
       "tls-certificates-and-hostnames_client_certificate_identifier": {
         "description": "Client Certificate Tag",
         "type": "string",
@@ -735313,7 +735366,7 @@
         "x-auditable": true
       },
       "tls-certificates-and-hostnames_ct_alerting_emails": {
-        "description": "Email addresses that receive CT alert notifications for the zone. A maximum of 100 addresses may be configured. Each address must be a valid RFC 5322 email address and must not contain a comma.\n",
+        "description": "Email addresses that receive CT alert notifications for the zone. A maximum of 100 addresses may be configured. Each address must be a valid RFC 5322 email address and must not contain a comma. Omitted from responses when no addresses are configured.\n",
         "type": "array",
         "items": {
           "format": "email",
@@ -735494,8 +735547,7 @@
           "signature",
           "certificate",
           "expires_on",
-          "uploaded_on",
-          "updated_at"
+          "uploaded_on"
         ]
       },
       "tls-certificates-and-hostnames_custom_cert_and_key": {
@@ -736702,7 +736754,13 @@
                 "type": "object",
                 "properties": {
                   "hostnames": {
-                    "$ref": "#/components/schemas/tls-certificates-and-hostnames_hostnames-2"
+                    "description": "Hostnames are returned in lowercase punycode, in no particular order. Null when there are no associations.",
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/tls-certificates-and-hostnames_client_certificate_hostname"
+                    },
+                    "nullable": true,
+                    "x-stainless-collection-type": "set"
                   }
                 }
               }
@@ -736796,12 +736854,12 @@
         "minItems": 1
       },
       "tls-certificates-and-hostnames_hostnames-2": {
+        "description": "Unordered set of hostnames. Hostnames are stored as lowercase punycode.",
         "type": "array",
         "items": {
-          "example": "api.example.com",
-          "type": "string",
-          "x-auditable": true
-        }
+          "$ref": "#/components/schemas/tls-certificates-and-hostnames_client_certificate_hostname"
+        },
+        "x-stainless-collection-type": "set"
       },
       "tls-certificates-and-hostnames_hosts": {
         "type": "array",
@@ -738108,7 +738166,7 @@
         "x-auditable": true
       },
       "tls-certificates-and-hostnames_updated_at-2": {
-        "description": "When the certificate was last modified.",
+        "description": "When the certificate was last modified. Only returned when uploading a certificate.",
         "type": "string",
         "format": "date-time",
         "example": "2014-01-01T05:20:00Z",
@@ -738302,7 +738360,7 @@
         "x-auditable": true
       },
       "tls-certificates-and-hostnames_validity_period": {
-        "description": "The validity period in days for the certificates ordered via Total TLS.",
+        "description": "The validity period in days for the certificates ordered via Total TLS. Not returned when Total TLS is disabled.",
         "type": "integer",
         "enum": [
           90
