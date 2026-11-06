@@ -255268,8 +255268,7 @@ paths:
       description: |-
         Retrieve the accounts immediately attached to a specific organization. Accounts
         attached to sub-organizations are not included. Use `page_token` and `page_size` for cursor
-        pagination, or provide `page` and `per_page` together for legacy offset pagination. Cursor
-        pagination takes precedence when requested. The default response uses Account fields;
+        pagination. The default response uses Account fields;
         `Accept: application/json; legacy=true` requests the LegacyAccount representation.
       parameters:
         - name: Accept
@@ -255393,13 +255392,10 @@ paths:
             pagination. Defaults to true. When false, total_size is omitted. page_size and
             include_total may change between pages; next_page_token remains the authoritative
             continuation signal.
-            Legacy page/per_page requests always calculate total_count.
           schema:
             type: boolean
             default: true
           explode: false
-        - $ref: '#/components/parameters/organizations-api_LegacyPaginationParamsPage'
-        - $ref: '#/components/parameters/organizations-api_LegacyPaginationParamsPerPage'
         - $ref: '#/components/parameters/organizations-api_PageTokenParamsPageToken'
         - $ref: '#/components/parameters/organizations-api_PageTokenParamsPageSize'
       responses:
@@ -255426,7 +255422,7 @@ paths:
                         - $ref: '#/components/schemas/organizations-api_Account'
                         - $ref: '#/components/schemas/organizations-api_LegacyAccount'
                   result_info:
-                    $ref: '#/components/schemas/organizations-api_AccountListResultInfo'
+                    $ref: '#/components/schemas/organizations-api_PageTokenResultInfo'
                   success:
                     type: boolean
                     enum:
@@ -355222,8 +355218,7 @@ paths:
         Lists all Cloudflare accounts across this tenant's hierarchy using the legacy Account
         response shape. Use `GET /organizations/{organization_id}/accounts` to list only accounts
         immediately attached to a specific Organization using the modern Account response shape.
-        Use `page_token` and `page_size` for cursor pagination, or provide `page` and `per_page`
-        together for legacy offset pagination. Cursor pagination takes precedence when requested.
+        Use `page_token` and `page_size` for cursor pagination.
       parameters:
         - name: tenant_id
           in: path
@@ -355332,14 +355327,11 @@ paths:
           in: query
           description: |-
             Whether to calculate and return the exact `result_info.total_size` for cursor
-            pagination. Defaults to true. When false, `total_size` is omitted. Legacy
-            `page`/`per_page` requests always calculate `total_count`.
+            pagination. Defaults to true. When false, `total_size` is omitted.
           schema:
             type: boolean
             default: true
           explode: false
-        - $ref: '#/components/parameters/organizations-api_LegacyPaginationParamsPage'
-        - $ref: '#/components/parameters/organizations-api_LegacyPaginationParamsPerPage'
         - $ref: '#/components/parameters/organizations-api_PageTokenParamsPageToken'
         - $ref: '#/components/parameters/organizations-api_PageTokenParamsPageSize'
       responses:
@@ -355364,7 +355356,7 @@ paths:
                     items:
                       $ref: '#/components/schemas/organizations-api_LegacyAccount'
                   result_info:
-                    $ref: '#/components/schemas/organizations-api_AccountListResultInfo'
+                    $ref: '#/components/schemas/organizations-api_PageTokenResultInfo'
                   success:
                     type: boolean
                     enum:
@@ -399768,24 +399760,6 @@ components:
       required: true
       schema:
         $ref: '#/components/schemas/ohttp-gateway_identifier'
-    organizations-api_LegacyPaginationParamsPage:
-      description: |-
-        Legacy offset page number. Must be provided with `per_page`. Values below 1 are treated as
-        1. Cursor pagination takes precedence when requested.
-      explode: false
-      in: query
-      name: page
-      schema:
-        type: integer
-    organizations-api_LegacyPaginationParamsPerPage:
-      description: |-
-        Legacy offset page size. Must be provided with `page`. Values are clamped to the range
-        1-100. Cursor pagination takes precedence when requested.
-      explode: false
-      in: query
-      name: per_page
-      schema:
-        type: integer
     organizations-api_OrganizationListFiltersContainingAccount:
       description: |-
         Filter the list of organizations to the ones that contain this particular
@@ -473359,9 +473333,7 @@ components:
         - settings
         - created_on
     organizations-api_AccountListResultInfo:
-      anyOf:
-        - $ref: '#/components/schemas/organizations-api_PageTokenResultInfo'
-        - $ref: '#/components/schemas/organizations-api_LegacyPaginationResultInfo'
+      $ref: '#/components/schemas/organizations-api_PageTokenResultInfo'
     organizations-api_BatchCreateMembersRequest:
       type: object
       properties:
@@ -473503,22 +473475,6 @@ components:
         - account_type
         - created_on
         - settings
-    organizations-api_LegacyPaginationResultInfo:
-      type: object
-      properties:
-        count:
-          type: integer
-        page:
-          type: integer
-        per_page:
-          type: integer
-        total_count:
-          type: integer
-      required:
-        - count
-        - page
-        - per_page
-        - total_count
     organizations-api_LegacyTenant:
       type: object
       properties:
@@ -473736,7 +473692,7 @@ components:
       type: object
       properties:
         name:
-          description: The Organization's display name, limited to 65 UTF-8 bytes. An omitted, empty, or unchanged value is a no-op.
+          description: The Organization name, limited to 65 UTF-8 bytes. An omitted, empty, or unchanged value is a no-op.
           type: string
           x-auditable: true
         parent_id:
