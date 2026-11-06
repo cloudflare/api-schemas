@@ -150258,6 +150258,8 @@ paths:
       x-cfPermissionsRequired:
         enum:
           - com.cloudflare.api.account.email.domain.list
+      x-fern-availability: alpha
+      x-fern-ignore: true
       x-fern-sdk-group-name: email-domains
       x-fern-sdk-method-name: changes
   /accounts/{account_id}/email/domains:
@@ -150370,6 +150372,8 @@ paths:
       x-cfPermissionsRequired:
         enum:
           - com.cloudflare.api.account.email.domain.list
+      x-fern-availability: alpha
+      x-fern-ignore: true
       x-fern-sdk-group-name: email-domains
       x-fern-sdk-method-name: list
     post:
@@ -150493,6 +150497,8 @@ paths:
       x-cfPermissionsRequired:
         enum:
           - com.cloudflare.api.account.email.domain.create
+      x-fern-availability: alpha
+      x-fern-ignore: true
       x-fern-sdk-group-name: email-domains
       x-fern-sdk-method-name: create
   /accounts/{account_id}/email/domains/{email_domain_id}:
@@ -150592,6 +150598,8 @@ paths:
       x-cfPermissionsRequired:
         enum:
           - com.cloudflare.api.account.email.domain.delete
+      x-fern-availability: alpha
+      x-fern-ignore: true
       x-fern-sdk-group-name: email-domains
       x-fern-sdk-method-name: delete
     get:
@@ -150688,6 +150696,8 @@ paths:
       x-cfPermissionsRequired:
         enum:
           - com.cloudflare.api.account.email.domain.read
+      x-fern-availability: alpha
+      x-fern-ignore: true
       x-fern-sdk-group-name: email-domains
       x-fern-sdk-method-name: get
   /accounts/{account_id}/email/domains/{email_domain_id}/verify:
@@ -150802,6 +150812,8 @@ paths:
       x-cfPermissionsRequired:
         enum:
           - com.cloudflare.api.account.email.domain.update
+      x-fern-availability: alpha
+      x-fern-ignore: true
       x-fern-sdk-group-name: email-domains
       x-fern-sdk-method-name: verify
   /accounts/{account_id}/email/routing/addresses:
@@ -448230,8 +448242,8 @@ components:
         tombstone:
           description: Bounded reconciliation record for a completed removal. Present only when kind is tombstone.
           example:
-            hostname: agents.customer.com
-            id: 918f3a1a-04ed-4383-9cbe-df5e561d28f8
+            hostname: removed.customer.com
+            id: c0a527d8-2fe5-4d73-8df4-86b1eaa5cce6
             modified_at: 2099-01-01T12:00:00Z
             reason: deleted
           allOf:
@@ -448539,13 +448551,13 @@ components:
         hostname:
           description: Canonical hostname released by the removal.
           type: string
-          example: agents.customer.com
+          example: removed.customer.com
           maxLength: 253
         id:
           description: Identifier of the removed EmailDomain.
           type: string
           format: uuid
-          example: 918f3a1a-04ed-4383-9cbe-df5e561d28f8
+          example: c0a527d8-2fe5-4d73-8df4-86b1eaa5cce6
         modified_at:
           description: Time the removal completed.
           type: string
@@ -448988,6 +449000,14 @@ components:
               type: integer
               example: 1000
           readOnly: true
+        recipient_mode:
+          description: "Which recipients the account can send to, derived from the account's Email Sending entitlement. arbitrary: any recipient. verified_only: only the account's verified destination addresses."
+          type: string
+          example: verified_only
+          enum:
+            - arbitrary
+            - verified_only
+          readOnly: true
         usage:
           description: The account's current daily sending usage. Null when there is no resolved quota or usage is temporarily unavailable.
           type: object
@@ -449314,6 +449334,7 @@ components:
           enum:
             - true
             - false
+          x-stainless-terraform-configurability: computed_optional
     email_update_rule_properties:
       type: object
       properties:
