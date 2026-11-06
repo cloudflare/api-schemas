@@ -982,6 +982,24 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/abuse-reports_CloudflareAPIErrorResponse'
+        '409':
+          description: |-
+            The report-level appeal was rejected because the report already has an open,
+            undecided appeal ("An appeal is already open for this report"), or has reached its
+            per-report appeal limit ("This report has reached its appeal limit").
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/abuse-reports_Message'
+                  success:
+                    type: boolean
+                required:
+                  - success
         '500':
           description: Failed to request review on delayed action.
           content:
