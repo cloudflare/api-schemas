@@ -13590,6 +13590,133 @@
         "x-fern-sdk-group-name": "zero-trust.organization",
         "x-fern-sdk-method-name": "get"
       },
+      "patch": {
+        "operationId": "zero-trust-organization-patch-your-zero-trust-organization",
+        "summary": "Partially update your Zero Trust organization",
+        "description": "Updates only the fields included in the request body. Omitted fields keep their current values. To clear `mfa_config` or `mfa_piv_key_requirements`, send the field as `{}`.",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/access_identifier"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "allow_authenticate_via_warp": {
+                    "$ref": "#/components/schemas/access_allow_authenticate_via_warp"
+                  },
+                  "auth_domain": {
+                    "$ref": "#/components/schemas/access_auth_domain"
+                  },
+                  "auto_redirect_to_identity": {
+                    "$ref": "#/components/schemas/access_auto_redirect_to_identity"
+                  },
+                  "custom_pages": {
+                    "$ref": "#/components/schemas/access_custom_pages"
+                  },
+                  "deny_unmatched_requests": {
+                    "$ref": "#/components/schemas/access_deny_unmatched_requests"
+                  },
+                  "deny_unmatched_requests_exempted_zone_names": {
+                    "$ref": "#/components/schemas/access_deny_unmatched_requests_exempted_zone_names"
+                  },
+                  "disable_end_user_app_creation": {
+                    "$ref": "#/components/schemas/access_disable_end_user_app_creation"
+                  },
+                  "is_ui_read_only": {
+                    "$ref": "#/components/schemas/access_is_ui_read_only"
+                  },
+                  "login_design": {
+                    "$ref": "#/components/schemas/access_login_design"
+                  },
+                  "mfa_config": {
+                    "$ref": "#/components/schemas/access_org_mfa_config"
+                  },
+                  "mfa_piv_key_requirements": {
+                    "$ref": "#/components/schemas/access_mfa_piv_key_requirements"
+                  },
+                  "mfa_required_for_all_apps": {
+                    "$ref": "#/components/schemas/access_mfa_required_for_all_apps"
+                  },
+                  "name": {
+                    "$ref": "#/components/schemas/access_name"
+                  },
+                  "service_token_inactivity": {
+                    "$ref": "#/components/schemas/access_service_token_inactivity"
+                  },
+                  "session_duration": {
+                    "$ref": "#/components/schemas/access_session_duration"
+                  },
+                  "strict_service_token_auth": {
+                    "$ref": "#/components/schemas/access_strict_service_token_auth"
+                  },
+                  "ui_read_only_toggle_reason": {
+                    "$ref": "#/components/schemas/access_ui_read_only_toggle_reason"
+                  },
+                  "user_seat_expiration_inactive_time": {
+                    "$ref": "#/components/schemas/access_user_seat_expiration_inactive_time"
+                  },
+                  "warp_auth_non_browser_401": {
+                    "$ref": "#/components/schemas/access_warp_auth_non_browser_401"
+                  },
+                  "warp_auth_session_duration": {
+                    "$ref": "#/components/schemas/access_warp_auth_session_duration"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Partially update your Zero Trust organization response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/access_single_response"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Partially update your Zero Trust organization response failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/access_api-response-common-failure"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Zero Trust organization"
+        ],
+        "x-api-token-group": [
+          "Access: Organizations, Identity Providers, and Groups Write"
+        ],
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "zero-trust.organization",
+        "x-fern-sdk-method-name": "edit"
+      },
       "post": {
         "operationId": "zero-trust-organization-create-your-zero-trust-organization",
         "summary": "Create your Zero Trust organization",
@@ -14045,7 +14172,8 @@
                   "devices": {
                     "description": "When set to `true`, all devices associated with the user will be revoked.",
                     "type": "boolean",
-                    "example": true
+                    "example": true,
+                    "x-auditable": true
                   },
                   "email": {
                     "description": "The email of the user to revoke.",
@@ -14055,12 +14183,14 @@
                   "user_uid": {
                     "description": "The uuid of the user to revoke.",
                     "type": "string",
-                    "example": "699d98642c564d2e855e9661899b7252"
+                    "example": "699d98642c564d2e855e9661899b7252",
+                    "x-auditable": true
                   },
                   "warp_session_reauth": {
                     "description": "When set to `true`, the user will be required to re-authenticate to WARP for all Gateway policies that enforce a WARP client session duration. When `false`, the user’s WARP session will remain active",
                     "type": "boolean",
-                    "example": true
+                    "example": true,
+                    "x-auditable": true
                   }
                 },
                 "required": [
@@ -525894,7 +526024,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/access_id_response-5"
+                  "$ref": "#/components/schemas/access_id_response-2"
                 }
               }
             }
@@ -526896,7 +527026,7 @@
                 "type": "object",
                 "properties": {
                   "associated_hostnames": {
-                    "$ref": "#/components/schemas/access_associated_hostnames-2"
+                    "$ref": "#/components/schemas/access_associated_hostnames"
                   },
                   "certificate": {
                     "description": "The certificate content.",
@@ -526904,7 +527034,7 @@
                     "example": "-----BEGIN CERTIFICATE-----\nMIIGAjCCA+qgAwIBAgIJAI7kymlF7CWT...N4RI7KKB7nikiuUf8vhULKy5IX10\nDrUtmu/B\n-----END CERTIFICATE-----"
                   },
                   "name": {
-                    "$ref": "#/components/schemas/access_name-18"
+                    "$ref": "#/components/schemas/access_name-7"
                   }
                 },
                 "required": [
@@ -527254,10 +527384,10 @@
                 "type": "object",
                 "properties": {
                   "associated_hostnames": {
-                    "$ref": "#/components/schemas/access_associated_hostnames-2"
+                    "$ref": "#/components/schemas/access_associated_hostnames"
                   },
                   "name": {
-                    "$ref": "#/components/schemas/access_name-18"
+                    "$ref": "#/components/schemas/access_name-7"
                   }
                 },
                 "required": [
@@ -527396,7 +527526,7 @@
                     "$ref": "#/components/schemas/access_include"
                   },
                   "name": {
-                    "$ref": "#/components/schemas/access_name-16"
+                    "$ref": "#/components/schemas/access_name-6"
                   },
                   "require": {
                     "$ref": "#/components/schemas/access_require"
@@ -527619,7 +527749,7 @@
                     "$ref": "#/components/schemas/access_include"
                   },
                   "name": {
-                    "$ref": "#/components/schemas/access_name-16"
+                    "$ref": "#/components/schemas/access_name-6"
                   },
                   "require": {
                     "$ref": "#/components/schemas/access_require"
@@ -528408,13 +528538,13 @@
                     "$ref": "#/components/schemas/access_client_secret_version"
                   },
                   "duration": {
-                    "$ref": "#/components/schemas/access_duration-2"
+                    "$ref": "#/components/schemas/access_duration"
                   },
                   "enabled": {
                     "$ref": "#/components/schemas/access_enabled"
                   },
                   "name": {
-                    "$ref": "#/components/schemas/access_name-17"
+                    "$ref": "#/components/schemas/access_name-2"
                   },
                   "previous_client_secret_expires_at": {
                     "$ref": "#/components/schemas/access_previous_client_secret_expires_at"
@@ -528636,13 +528766,13 @@
                     "$ref": "#/components/schemas/access_client_secret_version"
                   },
                   "duration": {
-                    "$ref": "#/components/schemas/access_duration-2"
+                    "$ref": "#/components/schemas/access_duration"
                   },
                   "enabled": {
                     "$ref": "#/components/schemas/access_enabled"
                   },
                   "name": {
-                    "$ref": "#/components/schemas/access_name-17"
+                    "$ref": "#/components/schemas/access_name-2"
                   },
                   "previous_client_secret_expires_at": {
                     "$ref": "#/components/schemas/access_previous_client_secret_expires_at"
@@ -594376,7 +594506,8 @@
         "description": "The Authenticator Attestation GUID (AAGUID) uniquely identifying a FIDO2 authenticator model",
         "type": "string",
         "format": "uuid",
-        "example": "2fc0579f-8113-47ea-b116-bb5a8db9202a"
+        "example": "2fc0579f-8113-47ea-b116-bb5a8db9202a",
+        "x-auditable": true
       },
       "access_access-requests": {
         "type": "object",
@@ -594420,7 +594551,8 @@
               "id": {
                 "description": "The ID of a previously created Access group.",
                 "type": "string",
-                "example": "aa0a4aab-672b-4bdb-bc33-a59f1130a11f"
+                "example": "aa0a4aab-672b-4bdb-bc33-a59f1130a11f",
+                "x-auditable": true
               }
             },
             "required": [
@@ -594560,15 +594692,18 @@
       "access_allow_all_headers": {
         "description": "Allows all HTTP request headers.",
         "type": "boolean",
-        "example": true
+        "example": true,
+        "x-auditable": true
       },
       "access_allow_all_methods": {
         "description": "Allows all HTTP request methods.",
-        "type": "boolean"
+        "type": "boolean",
+        "x-auditable": true
       },
       "access_allow_all_origins": {
         "description": "Allows all origins.",
-        "type": "boolean"
+        "type": "boolean",
+        "x-auditable": true
       },
       "access_allow_authenticate_via_warp": {
         "description": "When set to true, users can authenticate via WARP for any application in your organization. Application settings will take precedence over this value.",
@@ -594580,11 +594715,13 @@
       "access_allow_authenticate_via_warp-2": {
         "description": "When set to true, users can authenticate to this application using their WARP session.  When set to false this application will always require direct IdP authentication. This setting always overrides the organization setting for WARP authentication.",
         "type": "boolean",
-        "example": true
+        "example": true,
+        "x-auditable": true
       },
       "access_allow_credentials": {
         "description": "When set to `true`, includes credentials (cookies, authorization headers, or TLS client certificates) with requests.",
-        "type": "boolean"
+        "type": "boolean",
+        "x-auditable": true
       },
       "access_allow_email_alias": {
         "description": "Enables using Identity Provider email alias as SSH username.",
@@ -594594,7 +594731,8 @@
       "access_allow_iframe": {
         "description": "Enables loading application content in an iFrame.",
         "type": "boolean",
-        "example": true
+        "example": true,
+        "x-auditable": true
       },
       "access_allowed": {
         "description": "The result of the authentication event.",
@@ -594627,7 +594765,8 @@
         "description": "Allowed HTTP request headers.",
         "type": "array",
         "items": {
-          "type": "string"
+          "type": "string",
+          "x-auditable": true
         }
       },
       "access_allowed_idps": {
@@ -594636,7 +594775,8 @@
         "items": {
           "description": "The identity providers selected for application.",
           "example": "699d98642c564d2e855e9661899b7252",
-          "type": "string"
+          "type": "string",
+          "x-auditable": true
         }
       },
       "access_allowed_methods": {
@@ -594654,7 +594794,8 @@
             "TRACE",
             "PATCH"
           ],
-          "type": "string"
+          "type": "string",
+          "x-auditable": true
         },
         "example": [
           "GET"
@@ -594664,7 +594805,8 @@
         "description": "Allowed origins.",
         "type": "array",
         "items": {
-          "type": "string"
+          "type": "string",
+          "x-auditable": true
         },
         "example": [
           "https://example.com"
@@ -594857,7 +594999,8 @@
               "domain": {
                 "type": "string",
                 "example": "authdomain.cloudflareaccess.com",
-                "readOnly": true
+                "readOnly": true,
+                "x-auditable": true
               },
               "footer_links": {
                 "$ref": "#/components/schemas/access_footer_links"
@@ -594872,7 +595015,8 @@
                 "type": "string",
                 "example": "App Launcher",
                 "default": "App Launcher",
-                "readOnly": true
+                "readOnly": true,
+                "x-auditable": true
               },
               "skip_app_launcher_login_page": {
                 "$ref": "#/components/schemas/access_skip_app_launcher_login_page"
@@ -594884,7 +595028,8 @@
                   },
                   {
                     "example": "app_launcher",
-                    "type": "string"
+                    "type": "string",
+                    "x-auditable": true
                   }
                 ]
               }
@@ -594903,18 +595048,21 @@
               "domain": {
                 "type": "string",
                 "example": "authdomain.cloudflareaccess.com",
-                "readOnly": true
+                "readOnly": true,
+                "x-auditable": true
               },
               "name": {
                 "type": "string",
                 "example": "App Launcher",
                 "default": "App Launcher",
-                "readOnly": true
+                "readOnly": true,
+                "x-auditable": true
               },
               "type": {
                 "description": "The application type.",
                 "type": "string",
-                "example": "app_launcher"
+                "example": "app_launcher",
+                "x-auditable": true
               }
             },
             "type": "object"
@@ -594925,7 +595073,8 @@
         "description": "Displays the application in the App Launcher.",
         "type": "boolean",
         "example": true,
-        "default": true
+        "default": true,
+        "x-auditable": true
       },
       "access_app_launcher_visible-2": {
         "description": "Displays the application in the App Launcher.",
@@ -595018,7 +595167,8 @@
                   "allOf": [
                     {
                       "description": "A policy UID to link to this application.",
-                      "type": "string"
+                      "type": "string",
+                      "x-auditable": true
                     },
                     {
                       "$ref": "#/components/schemas/access_uuid-2"
@@ -595520,13 +595670,15 @@
             "description": "The number of approvals needed to obtain access.",
             "type": "number",
             "example": 1,
-            "minimum": 0
+            "minimum": 0,
+            "x-auditable": true
           },
           "email_addresses": {
             "description": "A list of emails that can approve the access request.",
             "type": "array",
             "items": {
-              "type": "string"
+              "type": "string",
+              "x-auditable": true
             },
             "example": [
               "test@cloudflare.com",
@@ -595535,7 +595687,8 @@
           },
           "email_list_uuid": {
             "description": "The UUID of an re-usable email list.",
-            "type": "string"
+            "type": "string",
+            "x-auditable": true
           }
         },
         "required": [
@@ -595586,13 +595739,15 @@
       "access_approval_required": {
         "description": "Requires the user to request access from an administrator at the start of each session.",
         "type": "boolean",
-        "example": true
+        "example": true,
+        "x-auditable": true
       },
       "access_approval_required-2": {
         "description": "Requires the user to request access from an administrator at the start of each session.",
         "type": "boolean",
         "example": true,
-        "default": false
+        "default": false,
+        "x-auditable": true
       },
       "access_apps": {
         "type": "object",
@@ -595705,15 +595860,6 @@
           "x-auditable": true
         }
       },
-      "access_associated_hostnames-2": {
-        "description": "The hostnames of the applications that will use this certificate.",
-        "type": "array",
-        "items": {
-          "description": "A fully-qualified domain name (FQDN).",
-          "example": "admin.example.com",
-          "type": "string"
-        }
-      },
       "access_aud": {
         "description": "The Application Audience (AUD) tag. Identifies the application associated with the CA.",
         "type": "string",
@@ -595727,7 +595873,8 @@
         "type": "string",
         "example": "737646a56ab1df6ec9bddc7e5ca84eaf3b0768850f3ffb5d74f1534911fe3893",
         "maxLength": 64,
-        "readOnly": true
+        "readOnly": true,
+        "x-auditable": true
       },
       "access_aud-3": {
         "description": "The Application Audience (AUD) tag. Identifies the application associated with the CA.",
@@ -595746,17 +595893,20 @@
               "ac_id": {
                 "description": "The ACID of an Authentication context.",
                 "type": "string",
-                "example": "ea85612a-29c8-46c2-bacb-669d65136971"
+                "example": "ea85612a-29c8-46c2-bacb-669d65136971",
+                "x-auditable": true
               },
               "id": {
                 "description": "The ID of an Authentication context.",
                 "type": "string",
-                "example": "aa0a4aab-672b-4bdb-bc33-a59f1130a11f"
+                "example": "aa0a4aab-672b-4bdb-bc33-a59f1130a11f",
+                "x-auditable": true
               },
               "identity_provider_id": {
                 "description": "The ID of your Azure identity provider.",
                 "type": "string",
-                "example": "ea85612a-29c8-46c2-bacb-669d65136971"
+                "example": "ea85612a-29c8-46c2-bacb-669d65136971",
+                "x-auditable": true
               }
             },
             "required": [
@@ -595780,7 +595930,8 @@
       "access_auth_domain-2": {
         "description": "The unique subdomain assigned to your Zero Trust organization. Auto-generated if omitted on creation.",
         "type": "string",
-        "example": "test.cloudflareaccess.com"
+        "example": "test.cloudflareaccess.com",
+        "x-auditable": true
       },
       "access_authentication_method_rule": {
         "description": "Enforce different MFA options",
@@ -595792,7 +595943,8 @@
               "auth_method": {
                 "description": "The type of authentication method https://datatracker.ietf.org/doc/html/rfc8176#section-2.",
                 "type": "string",
-                "example": "mfa"
+                "example": "mfa",
+                "x-auditable": true
               }
             },
             "required": [
@@ -595835,7 +595987,8 @@
       "access_auto_redirect_to_identity-2": {
         "description": "When set to `true`, users skip the identity provider selection step during login. You must specify only one identity provider in allowed_idps.",
         "type": "boolean",
-        "default": false
+        "default": false,
+        "x-auditable": true
       },
       "access_azureAD": {
         "type": "object",
@@ -595910,12 +596063,14 @@
                     "properties": {
                       "conditional_access_enabled": {
                         "description": "Should Cloudflare try to load authentication contexts from your account",
-                        "type": "boolean"
+                        "type": "boolean",
+                        "x-auditable": true
                       },
                       "directory_id": {
                         "description": "Your Azure directory uuid",
                         "type": "string",
-                        "example": "<your azure directory uuid>"
+                        "example": "<your azure directory uuid>",
+                        "x-auditable": true
                       },
                       "prompt": {
                         "description": "Indicates the type of user interaction that is required. prompt=login forces the user to enter their credentials on that request, negating single-sign on. prompt=none is the opposite. It ensures that the user isn't presented with any interactive prompt. If the request can't be completed silently by using single-sign on, the Microsoft identity platform returns an interaction_required error. prompt=select_account interrupts single sign-on providing account selection experience listing all the accounts either in session or any remembered account or an option to choose to use a different account altogether.",
@@ -595924,11 +596079,13 @@
                           "login",
                           "select_account",
                           "none"
-                        ]
+                        ],
+                        "x-auditable": true
                       },
                       "support_groups": {
                         "description": "Should Cloudflare try to load groups from your account",
-                        "type": "boolean"
+                        "type": "boolean",
+                        "x-auditable": true
                       }
                     },
                     "type": "object"
@@ -595951,12 +596108,14 @@
               "id": {
                 "description": "The ID of an Azure group.",
                 "type": "string",
-                "example": "aa0a4aab-672b-4bdb-bc33-a59f1130a11f"
+                "example": "aa0a4aab-672b-4bdb-bc33-a59f1130a11f",
+                "x-auditable": true
               },
               "identity_provider_id": {
                 "description": "The ID of your Azure identity provider.",
                 "type": "string",
-                "example": "ea85612a-29c8-46c2-bacb-669d65136971"
+                "example": "ea85612a-29c8-46c2-bacb-669d65136971",
+                "x-auditable": true
               }
             },
             "required": [
@@ -596070,7 +596229,8 @@
       "access_bg_color": {
         "description": "The background color of the App Launcher page.",
         "type": "string",
-        "example": "#ff0000"
+        "example": "#ff0000",
+        "x-auditable": true
       },
       "access_biso_props": {
         "allOf": [
@@ -596082,13 +596242,15 @@
               "domain": {
                 "type": "string",
                 "example": "authdomain.cloudflareaccess.com/browser",
-                "readOnly": true
+                "readOnly": true,
+                "x-auditable": true
               },
               "name": {
                 "type": "string",
                 "example": "Clientless Web Isolation",
                 "default": "Clientless Web Isolation",
-                "readOnly": true
+                "readOnly": true,
+                "x-auditable": true
               },
               "type": {
                 "allOf": [
@@ -596097,7 +596259,8 @@
                   },
                   {
                     "example": "biso",
-                    "type": "string"
+                    "type": "string",
+                    "x-auditable": true
                   }
                 ]
               }
@@ -596116,18 +596279,21 @@
               "domain": {
                 "type": "string",
                 "example": "authdomain.cloudflareaccess.com/browser",
-                "readOnly": true
+                "readOnly": true,
+                "x-auditable": true
               },
               "name": {
                 "type": "string",
                 "example": "Clientless Web Isolation",
                 "default": "Clientless Web Isolation",
-                "readOnly": true
+                "readOnly": true,
+                "x-auditable": true
               },
               "type": {
                 "description": "The application type.",
                 "type": "string",
-                "example": "biso"
+                "example": "biso",
+                "x-auditable": true
               }
             },
             "type": "object"
@@ -596143,7 +596309,8 @@
           "domain": {
             "description": "The URL or domain of the bookmark.",
             "type": "string",
-            "example": "https://mybookmark.com"
+            "example": "https://mybookmark.com",
+            "x-auditable": true
           },
           "logo_url": {
             "$ref": "#/components/schemas/access_logo_url"
@@ -596161,7 +596328,8 @@
               },
               {
                 "example": "bookmark",
-                "type": "string"
+                "type": "string",
+                "x-auditable": true
               }
             ]
           }
@@ -596173,12 +596341,14 @@
         "properties": {
           "app_launcher_visible": {
             "type": "boolean",
-            "default": true
+            "default": true,
+            "x-auditable": true
           },
           "domain": {
             "description": "The URL or domain of the bookmark.",
             "type": "string",
-            "example": "https://mybookmark.com"
+            "example": "https://mybookmark.com",
+            "x-auditable": true
           },
           "logo_url": {
             "$ref": "#/components/schemas/access_logo_url"
@@ -596189,7 +596359,8 @@
           "type": {
             "description": "The application type.",
             "type": "string",
-            "example": "bookmark"
+            "example": "bookmark",
+            "x-auditable": true
           }
         },
         "required": [
@@ -596212,10 +596383,11 @@
           },
           "id": {
             "description": "The unique identifier for the Bookmark application.",
-            "type": "string"
+            "type": "string",
+            "x-auditable": true
           },
           "logo_url": {
-            "$ref": "#/components/schemas/access_logo_url-2"
+            "$ref": "#/components/schemas/access_logo_url"
           },
           "name": {
             "$ref": "#/components/schemas/access_name-12"
@@ -596228,12 +596400,14 @@
       "access_button_color": {
         "description": "The background color of the log in button on the landing page.",
         "type": "string",
-        "example": "#ff0000"
+        "example": "#ff0000",
+        "x-auditable": true
       },
       "access_button_text_color": {
         "description": "The color of the text in the log in button on the landing page.",
         "type": "string",
-        "example": "#ff0000"
+        "example": "#ff0000",
+        "x-auditable": true
       },
       "access_ca": {
         "type": "object",
@@ -596256,7 +596430,7 @@
             "$ref": "#/components/schemas/access_aud-3"
           },
           "id": {
-            "$ref": "#/components/schemas/access_id-3"
+            "$ref": "#/components/schemas/access_id-2"
           },
           "public_key": {
             "$ref": "#/components/schemas/access_public_key"
@@ -596322,12 +596496,14 @@
                       "centrify_account": {
                         "description": "Your centrify account url",
                         "type": "string",
-                        "example": "https://abc123.my.centrify.com/"
+                        "example": "https://abc123.my.centrify.com/",
+                        "x-auditable": true
                       },
                       "centrify_app_id": {
                         "description": "Your centrify app id",
                         "type": "string",
-                        "example": "exampleapp"
+                        "example": "exampleapp",
+                        "x-auditable": true
                       }
                     },
                     "type": "object"
@@ -596437,7 +596613,7 @@
         "type": "object",
         "properties": {
           "associated_hostnames": {
-            "$ref": "#/components/schemas/access_associated_hostnames-2"
+            "$ref": "#/components/schemas/access_associated_hostnames"
           },
           "created_at": {
             "$ref": "#/components/schemas/access_timestamp"
@@ -596450,10 +596626,11 @@
           },
           "id": {
             "description": "The ID of the application that will use this certificate.",
-            "type": "string"
+            "type": "string",
+            "x-auditable": true
           },
           "name": {
-            "$ref": "#/components/schemas/access_name-18"
+            "$ref": "#/components/schemas/access_name-7"
           },
           "updated_at": {
             "$ref": "#/components/schemas/access_timestamp"
@@ -596495,7 +596672,8 @@
       "access_client_id": {
         "description": "The Client ID for the service token. Access will check for this value in the `CF-Access-Client-ID` request header.",
         "type": "string",
-        "example": "88bf3b6d86161464f6509f7219099e57.access.example.com"
+        "example": "88bf3b6d86161464f6509f7219099e57.access.example.com",
+        "x-auditable": true
       },
       "access_client_secret": {
         "description": "The Client Secret for the service token. Access will check for this value in the `CF-Access-Client-Secret` request header.",
@@ -596527,7 +596705,8 @@
                   "restrict_to_account_members": {
                     "description": "When enabled, only users who are members of your Cloudflare account can authenticate through this identity provider. When disabled, any user with a Cloudflare account can authenticate, subject to your Access policies.",
                     "type": "boolean",
-                    "default": false
+                    "default": false,
+                    "x-auditable": true
                   }
                 }
               },
@@ -596535,7 +596714,8 @@
                 "type": "string",
                 "enum": [
                   "cloudflare"
-                ]
+                ],
+                "x-auditable": true
               }
             },
             "type": "object"
@@ -596561,7 +596741,8 @@
                   "restrict_to_account_members": {
                     "description": "When enabled, only users who are members of your Cloudflare account can authenticate through this identity provider. When disabled, any user with a Cloudflare account can authenticate, subject to your Access policies.",
                     "type": "boolean",
-                    "default": false
+                    "default": false,
+                    "x-auditable": true
                   }
                 }
               },
@@ -596605,7 +596786,8 @@
               "common_name": {
                 "description": "The common name to match.",
                 "type": "string",
-                "example": "james@example.com"
+                "example": "james@example.com",
+                "x-auditable": true
               }
             },
             "required": [
@@ -596716,7 +596898,8 @@
               "country_code": {
                 "description": "The country code that should be matched.",
                 "type": "string",
-                "example": "US"
+                "example": "US",
+                "x-auditable": true
               }
             },
             "required": [
@@ -596757,7 +596940,8 @@
                   },
                   "id": {
                     "description": "The ID of the service token.",
-                    "type": "string"
+                    "type": "string",
+                    "x-auditable": true
                   },
                   "name": {
                     "$ref": "#/components/schemas/access_name-2"
@@ -596796,17 +596980,18 @@
                     "$ref": "#/components/schemas/access_timestamp"
                   },
                   "duration": {
-                    "$ref": "#/components/schemas/access_duration-2"
+                    "$ref": "#/components/schemas/access_duration"
                   },
                   "enabled": {
                     "$ref": "#/components/schemas/access_enabled"
                   },
                   "id": {
                     "description": "The ID of the service token.",
-                    "type": "string"
+                    "type": "string",
+                    "x-auditable": true
                   },
                   "name": {
-                    "$ref": "#/components/schemas/access_name-17"
+                    "$ref": "#/components/schemas/access_name-2"
                   },
                   "tags": {
                     "$ref": "#/components/schemas/access_tags"
@@ -596825,6 +597010,7 @@
         "allOf": [
           {
             "type": "string",
+            "x-auditable": true,
             "x-stainless-skip": true
           },
           {
@@ -596839,14 +597025,14 @@
             "description": "Custom claims",
             "type": "array",
             "items": {
-              "type": "string"
+              "type": "string",
+              "x-auditable": true
             },
             "example": [
               "email_verified",
               "preferred_username",
               "custom_claim_name"
-            ],
-            "x-auditable": true
+            ]
           },
           "email_claim_name": {
             "description": "The claim name for email in the id_token response.",
@@ -596862,15 +597048,18 @@
       },
       "access_custom_deny_url": {
         "description": "The custom URL a user is redirected to when they are denied access to the application when failing identity-based rules.",
-        "type": "string"
+        "type": "string",
+        "x-auditable": true
       },
       "access_custom_deny_url-2": {
         "description": "The custom URL a user is redirected to when they are denied access to the application.",
-        "type": "string"
+        "type": "string",
+        "x-auditable": true
       },
       "access_custom_non_identity_deny_url": {
         "description": "The custom URL a user is redirected to when they are denied access to the application when failing non-identity rules.",
-        "type": "string"
+        "type": "string",
+        "x-auditable": true
       },
       "access_custom_page": {
         "type": "object",
@@ -596887,8 +597076,7 @@
           "custom_html": {
             "description": "Custom page HTML.",
             "type": "string",
-            "example": "<html><body><h1>Access Denied</h1></body></html>",
-            "x-auditable": true
+            "example": "<html><body><h1>Access Denied</h1></body></html>"
           },
           "name": {
             "$ref": "#/components/schemas/access_name-11"
@@ -596915,8 +597103,7 @@
         "properties": {
           "template": {
             "description": "The Liquid template to validate.",
-            "type": "string",
-            "x-auditable": true
+            "type": "string"
           },
           "type": {
             "$ref": "#/components/schemas/access_type-2"
@@ -596976,12 +597163,14 @@
           "forbidden": {
             "description": "The uid of the custom page to use when a user is denied access after failing a non-identity rule.",
             "type": "string",
-            "example": "699d98642c564d2e855e9661899b7252"
+            "example": "699d98642c564d2e855e9661899b7252",
+            "x-auditable": true
           },
           "identity_denied": {
             "description": "The uid of the custom page to use when a user is denied access.",
             "type": "string",
-            "example": "699d98642c564d2e855e9661899b7252"
+            "example": "699d98642c564d2e855e9661899b7252",
+            "x-auditable": true
           }
         }
       },
@@ -596991,7 +597180,8 @@
         "items": {
           "description": "The custom pages selected for application.",
           "example": "699d98642c564d2e855e9661899b7252",
-          "type": "string"
+          "type": "string",
+          "x-auditable": true
         }
       },
       "access_days_until_next_rotation": {
@@ -597010,7 +597200,8 @@
           "deny",
           "non_identity",
           "bypass"
-        ]
+        ],
+        "x-auditable": true
       },
       "access_decision-2": {
         "description": "The action Access will take if a user matches this policy.",
@@ -597021,7 +597212,8 @@
           "deny",
           "non_identity",
           "bypass"
-        ]
+        ],
+        "x-auditable": true
       },
       "access_delete_authenticator_response": {
         "type": "object",
@@ -597067,12 +597259,12 @@
         "description": "Contains zone names to exempt from the `deny_unmatched_requests` feature. Requests to a subdomain in an exempted zone will block unauthenticated traffic by default if there is a configured Access application and policy that matches the request.",
         "type": "array",
         "items": {
-          "type": "string"
+          "type": "string",
+          "x-auditable": true
         },
         "example": [
           "example.com"
-        ],
-        "x-auditable": true
+        ]
       },
       "access_destination_overrides": {
         "description": "Rules that override how Access handles requests to this destination. Each rule can make a matching path public, bypassing Access authentication. Overrides are supported for public destinations and Worker destinations.\n",
@@ -597084,14 +597276,16 @@
               "type": "string",
               "enum": [
                 "public"
-              ]
+              ],
+              "x-auditable": true
             },
             "path_pattern": {
               "description": "The request path pattern to match. Wildcards (`*`) are supported, but each path segment may have at most one wildcard. Unlike the `uri` in public destinations, override path patterns do not implicitly cover subpaths; to do that, use a wildcard.\n",
               "type": "string",
               "example": "/health/*",
               "maxLength": 512,
-              "pattern": "^/"
+              "pattern": "^/",
+              "x-auditable": true
             }
           },
           "required": [
@@ -597117,11 +597311,13 @@
                   "type": "string",
                   "enum": [
                     "public"
-                  ]
+                  ],
+                  "x-auditable": true
                 },
                 "uri": {
                   "description": "The URI of the destination. Public destinations' URIs can include a domain and path with [wildcards](https://developers.cloudflare.com/cloudflare-one/policies/access/app-paths/).\n",
-                  "type": "string"
+                  "type": "string",
+                  "x-auditable": true
                 }
               },
               "title": "Public destination",
@@ -597131,11 +597327,13 @@
               "properties": {
                 "cidr": {
                   "description": "The CIDR range of the destination. Single IPs will be computed as /32.",
-                  "type": "string"
+                  "type": "string",
+                  "x-auditable": true
                 },
                 "hostname": {
                   "description": "The hostname of the destination. Matches a valid SNI served by an HTTPS origin.",
-                  "type": "string"
+                  "type": "string",
+                  "x-auditable": true
                 },
                 "l4_protocol": {
                   "description": "The L4 protocol of the destination. When omitted, both UDP and TCP traffic will match.",
@@ -597143,21 +597341,25 @@
                   "enum": [
                     "tcp",
                     "udp"
-                  ]
+                  ],
+                  "x-auditable": true
                 },
                 "port_range": {
                   "description": "The port range of the destination. Can be a single port or a range of ports. When omitted, all ports will match.\n",
-                  "type": "string"
+                  "type": "string",
+                  "x-auditable": true
                 },
                 "type": {
                   "type": "string",
                   "enum": [
                     "private"
-                  ]
+                  ],
+                  "x-auditable": true
                 },
                 "vnet_id": {
                   "description": "The VNET ID to match the destination. When omitted, all VNETs will match.",
-                  "type": "string"
+                  "type": "string",
+                  "x-auditable": true
                 }
               },
               "title": "Private destination",
@@ -597168,13 +597370,15 @@
               "properties": {
                 "mcp_server_id": {
                   "description": "The MCP server id configured in ai-controls.",
-                  "type": "string"
+                  "type": "string",
+                  "x-auditable": true
                 },
                 "type": {
                   "type": "string",
                   "enum": [
                     "via_mcp_server_portal"
-                  ]
+                  ],
+                  "x-auditable": true
                 }
               },
               "title": "Via MCP Server Portal destination",
@@ -597190,11 +597394,13 @@
                   "type": "string",
                   "enum": [
                     "worker"
-                  ]
+                  ],
+                  "x-auditable": true
                 },
                 "worker_id": {
                   "description": "The ID of the Cloudflare Worker to protect with Access.",
-                  "type": "string"
+                  "type": "string",
+                  "x-auditable": true
                 }
               },
               "required": [
@@ -597214,11 +597420,13 @@
                   "type": "string",
                   "enum": [
                     "preview_worker"
-                  ]
+                  ],
+                  "x-auditable": true
                 },
                 "worker_id": {
                   "description": "The ID of the Cloudflare Worker whose preview deployments to protect with Access.",
-                  "type": "string"
+                  "type": "string",
+                  "x-auditable": true
                 }
               },
               "required": [
@@ -597238,7 +597446,8 @@
                   "type": "string",
                   "enum": [
                     "all_workers"
-                  ]
+                  ],
+                  "x-auditable": true
                 }
               },
               "required": [
@@ -597257,7 +597466,8 @@
                   "type": "string",
                   "enum": [
                     "all_preview_workers"
-                  ]
+                  ],
+                  "x-auditable": true
                 }
               },
               "required": [
@@ -597349,7 +597559,8 @@
               "integration_uid": {
                 "description": "The ID of a device posture integration.",
                 "type": "string",
-                "example": "aa0a4aab-672b-4bdb-bc33-a59f1130a11f"
+                "example": "aa0a4aab-672b-4bdb-bc33-a59f1130a11f",
+                "x-auditable": true
               }
             },
             "required": [
@@ -597438,7 +597649,8 @@
       "access_domain": {
         "description": "The primary hostname and path secured by Access. This domain will be displayed if the app is visible in the App Launcher.",
         "type": "string",
-        "example": "test.example.com/admin"
+        "example": "test.example.com/admin",
+        "x-auditable": true
       },
       "access_domain-2": {
         "description": "The domain of the Bookmark application.",
@@ -597449,7 +597661,8 @@
       "access_domain-3": {
         "description": "The domain and path that Access will secure.",
         "type": "string",
-        "example": "test.example.com/admin"
+        "example": "test.example.com/admin",
+        "x-auditable": true
       },
       "access_domain_rule": {
         "description": "Match an entire email domain.",
@@ -597461,7 +597674,8 @@
               "domain": {
                 "description": "The email domain to match.",
                 "type": "string",
-                "example": "example.com"
+                "example": "example.com",
+                "x-auditable": true
               }
             },
             "required": [
@@ -597488,7 +597702,53 @@
                   "client_id": {
                     "description": "The client ID from the Duo Generic OIDC Relying Party metadata.",
                     "type": "string",
-                    "example": "DIABC123678901234567"
+                    "example": "DIABC123678901234567",
+                    "x-auditable": true
+                  },
+                  "client_secret": {
+                    "description": "The client secret from the Duo Generic OIDC Relying Party metadata.",
+                    "type": "string",
+                    "example": "<your client secret>",
+                    "x-sensitive": true
+                  },
+                  "issuer_url": {
+                    "description": "The issuer URL from the Duo Generic OIDC Relying Party metadata.",
+                    "type": "string",
+                    "format": "uri",
+                    "example": "https://sso-abc1def2.sso.duosecurity.com/oidc/DIABC123678901234567",
+                    "x-auditable": true
+                  }
+                }
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "duo"
+                ],
+                "x-auditable": true
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "title": "Duo"
+      },
+      "access_duo-2": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/access_identity-provider-2"
+          },
+          {
+            "properties": {
+              "config": {
+                "type": "object",
+                "properties": {
+                  "client_id": {
+                    "description": "The client ID from the Duo Generic OIDC Relying Party metadata.",
+                    "type": "string",
+                    "example": "DIABC123678901234567",
+                    "x-auditable": true
                   },
                   "client_secret": {
                     "description": "The client secret from the Duo Generic OIDC Relying Party metadata.",
@@ -597515,48 +597775,6 @@
             "type": "object"
           }
         ],
-        "title": "Duo"
-      },
-      "access_duo-2": {
-        "type": "object",
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/access_identity-provider-2"
-          },
-          {
-            "properties": {
-              "config": {
-                "type": "object",
-                "properties": {
-                  "client_id": {
-                    "description": "The client ID from the Duo Generic OIDC Relying Party metadata.",
-                    "type": "string",
-                    "example": "DIABC123678901234567"
-                  },
-                  "client_secret": {
-                    "description": "The client secret from the Duo Generic OIDC Relying Party metadata.",
-                    "type": "string",
-                    "example": "<your client secret>",
-                    "x-sensitive": true
-                  },
-                  "issuer_url": {
-                    "description": "The issuer URL from the Duo Generic OIDC Relying Party metadata.",
-                    "type": "string",
-                    "format": "uri",
-                    "example": "https://sso-abc1def2.sso.duosecurity.com/oidc/DIABC123678901234567"
-                  }
-                }
-              },
-              "type": {
-                "type": "string",
-                "enum": [
-                  "duo"
-                ]
-              }
-            },
-            "type": "object"
-          }
-        ],
         "title": "Zone-Level Duo"
       },
       "access_duration": {
@@ -597566,17 +597784,12 @@
         "default": "8760h",
         "x-auditable": true
       },
-      "access_duration-2": {
-        "description": "The duration for how long the service token will be valid. Must be in the format `300ms` or `2h45m`, or the special value `forever` for non-expiring tokens. Valid time units are: ns, us (or µs), ms, s, m, h. The default is 1 year in hours (8760h).",
-        "type": "string",
-        "example": "60m",
-        "default": "8760h"
-      },
       "access_eager_redirect_cookie_setting": {
         "description": "Preemptively sets the Access session cookie on every hostname in a multi-hostname self-hosted application during the initial redirect chain, rather than setting it lazily on first visit. Defaults to true. Set to false to disable the eager redirect cookie behavior.",
         "type": "boolean",
         "example": true,
-        "default": true
+        "default": true,
+        "x-auditable": true
       },
       "access_email": {
         "description": "The email address of the SCIM User resource.",
@@ -597605,7 +597818,8 @@
               "id": {
                 "description": "The ID of a previously created email list.",
                 "type": "string",
-                "example": "aa0a4aab-672b-4bdb-bc33-a59f1130a11f"
+                "example": "aa0a4aab-672b-4bdb-bc33-a59f1130a11f",
+                "x-auditable": true
               }
             },
             "required": [
@@ -597629,7 +597843,8 @@
                 "description": "The email of the user.",
                 "type": "string",
                 "format": "email",
-                "example": "test@example.com"
+                "example": "test@example.com",
+                "x-auditable": true
               }
             },
             "required": [
@@ -597693,7 +597908,8 @@
       "access_enable_binding_cookie": {
         "description": "Enables the binding cookie, which increases security against compromised authorization tokens and CSRF attacks.",
         "type": "boolean",
-        "default": false
+        "default": false,
+        "x-auditable": true
       },
       "access_enabled": {
         "description": "Whether the service token is enabled. A disabled service token cannot be used to authenticate; both its current and previous `client_secret` stop being accepted, but the token itself is preserved and can be re-enabled. A service token reported as leaked is disabled automatically and cannot be re-enabled until its secret is rotated; attempting to do so returns a 409. Defaults to enabled when omitted on create.",
@@ -597710,7 +597926,8 @@
             "type": "string",
             "enum": [
               "all_preview_workers"
-            ]
+            ],
+            "x-auditable": true
           }
         },
         "required": [
@@ -597727,7 +597944,8 @@
             "type": "string",
             "enum": [
               "all_workers"
-            ]
+            ],
+            "x-auditable": true
           }
         },
         "required": [
@@ -597770,7 +597988,8 @@
                 "default": true,
                 "enum": [
                   true
-                ]
+                ],
+                "x-auditable": true
               }
             },
             "type": "object"
@@ -597787,11 +598006,13 @@
             "type": "string",
             "enum": [
               "preview_worker"
-            ]
+            ],
+            "x-auditable": true
           },
           "worker_id": {
             "description": "The ID of the Cloudflare Worker whose previews to secure.",
-            "type": "string"
+            "type": "string",
+            "x-auditable": true
           }
         },
         "required": [
@@ -597831,7 +598052,8 @@
                   "end_user"
                 ],
                 "example": "end_user",
-                "type": "string"
+                "type": "string",
+                "x-auditable": true
               }
             ]
           },
@@ -597862,11 +598084,13 @@
             "type": "string",
             "enum": [
               "public"
-            ]
+            ],
+            "x-auditable": true
           },
           "uri": {
             "description": "The public hostname and optional path to secure.",
-            "type": "string"
+            "type": "string",
+            "x-auditable": true
           }
         },
         "required": [
@@ -597883,11 +598107,13 @@
             "type": "string",
             "enum": [
               "worker"
-            ]
+            ],
+            "x-auditable": true
           },
           "worker_id": {
             "description": "The ID of the Cloudflare Worker to secure.",
-            "type": "string"
+            "type": "string",
+            "x-auditable": true
           }
         },
         "required": [
@@ -597949,12 +598175,14 @@
               "evaluate_url": {
                 "description": "The API endpoint containing your business logic.",
                 "type": "string",
-                "example": "https://eval.example.com"
+                "example": "https://eval.example.com",
+                "x-auditable": true
               },
               "keys_url": {
                 "description": "The API endpoint containing the key that Access uses to verify that the response came from your API.",
                 "type": "string",
-                "example": "https://eval.example.com/keys"
+                "example": "https://eval.example.com/keys",
+                "x-auditable": true
               }
             },
             "required": [
@@ -598149,7 +598377,8 @@
           "client_id": {
             "description": "Your OAuth Client ID",
             "type": "string",
-            "example": "<your client id>"
+            "example": "<your client id>",
+            "x-auditable": true
           },
           "client_secret": {
             "description": "Your OAuth Client Secret",
@@ -598165,7 +598394,8 @@
           "client_id": {
             "description": "Your OAuth Client ID",
             "type": "string",
-            "example": "<your client id>"
+            "example": "<your client id>",
+            "x-auditable": true
           },
           "client_secret": {
             "description": "Your OAuth Client Secret",
@@ -598207,7 +598437,8 @@
                         "description": "The account tags of organizations trusted by this organization for policy and device posture sharing.",
                         "type": "array",
                         "items": {
-                          "type": "string"
+                          "type": "string",
+                          "x-auditable": true
                         },
                         "example": [
                           "023e105f4ecef8ad9ca31a8372d0c353"
@@ -598304,17 +598535,20 @@
               "identity_provider_id": {
                 "description": "The ID of your Github identity provider.",
                 "type": "string",
-                "example": "ea85612a-29c8-46c2-bacb-669d65136971"
+                "example": "ea85612a-29c8-46c2-bacb-669d65136971",
+                "x-auditable": true
               },
               "name": {
                 "description": "The name of the organization.",
                 "type": "string",
-                "example": "cloudflare"
+                "example": "cloudflare",
+                "x-auditable": true
               },
               "team": {
                 "description": "The name of the team",
                 "type": "string",
-                "example": "api-team"
+                "example": "api-team",
+                "x-auditable": true
               }
             },
             "required": [
@@ -598390,7 +598624,8 @@
                       "apps_domain": {
                         "description": "Your companies TLD",
                         "type": "string",
-                        "example": "mycompany.com"
+                        "example": "mycompany.com",
+                        "x-auditable": true
                       },
                       "prompt": {
                         "description": "Configures the prompt behavior for Google authentication.",
@@ -598438,7 +598673,8 @@
                       "apps_domain": {
                         "description": "Your companies TLD",
                         "type": "string",
-                        "example": "mycompany.com"
+                        "example": "mycompany.com",
+                        "x-auditable": true
                       },
                       "prompt": {
                         "description": "Configures the prompt behavior for Google authentication.",
@@ -598448,12 +598684,14 @@
                           "none",
                           "consent",
                           "select_account"
-                        ]
+                        ],
+                        "x-auditable": true
                       },
                       "use_login_hint": {
                         "description": "Whether to use a previously authenticated Access email as a Google login hint when exactly one email matches the Workspace domain.",
                         "type": "boolean",
-                        "example": true
+                        "example": true,
+                        "x-auditable": true
                       }
                     },
                     "type": "object"
@@ -598478,7 +598716,8 @@
           "displayName": {
             "description": "The display name of the SCIM Group resource.",
             "type": "string",
-            "example": "ALL EMPLOYEES"
+            "example": "ALL EMPLOYEES",
+            "x-auditable": true
           },
           "externalId": {
             "$ref": "#/components/schemas/access_externalId"
@@ -598544,7 +598783,8 @@
           "displayName": {
             "description": "The display name of the SCIM Group resource.",
             "type": "string",
-            "example": "ALL EMPLOYEES"
+            "example": "ALL EMPLOYEES",
+            "x-auditable": true
           },
           "externalId": {
             "$ref": "#/components/schemas/access_externalId"
@@ -598612,7 +598852,7 @@
             "$ref": "#/components/schemas/access_include"
           },
           "name": {
-            "$ref": "#/components/schemas/access_name-16"
+            "$ref": "#/components/schemas/access_name-6"
           },
           "require": {
             "$ref": "#/components/schemas/access_require"
@@ -598632,12 +598872,14 @@
               "email": {
                 "description": "The email of the Google Workspace group.",
                 "type": "string",
-                "example": "devs@cloudflare.com"
+                "example": "devs@cloudflare.com",
+                "x-auditable": true
               },
               "identity_provider_id": {
                 "description": "The ID of your Google Workspace identity provider.",
                 "type": "string",
-                "example": "ea85612a-29c8-46c2-bacb-669d65136971"
+                "example": "ea85612a-29c8-46c2-bacb-669d65136971",
+                "x-auditable": true
               }
             },
             "required": [
@@ -598654,13 +598896,15 @@
       "access_header_bg_color": {
         "description": "The background color of the App Launcher header.",
         "type": "string",
-        "example": "#ff0000"
+        "example": "#ff0000",
+        "x-auditable": true
       },
       "access_http_only_cookie_attribute": {
         "description": "Enables the HttpOnly cookie attribute, which increases security against XSS attacks.",
         "type": "boolean",
         "example": true,
-        "default": true
+        "default": true,
+        "x-auditable": true
       },
       "access_id": {
         "description": "The unique Cloudflare-generated Id of the SCIM resource.",
@@ -598674,13 +598918,6 @@
         "maxLength": 48,
         "readOnly": true,
         "x-auditable": true
-      },
-      "access_id-3": {
-        "description": "The ID of the CA.",
-        "type": "string",
-        "example": "7eddae4619b50ab1361ba8ae9bd72269a432fea041529ed9",
-        "maxLength": 48,
-        "readOnly": true
       },
       "access_id_response": {
         "type": "object",
@@ -598766,27 +599003,6 @@
           }
         ]
       },
-      "access_id_response-5": {
-        "type": "object",
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/access_api-response-single"
-          },
-          {
-            "properties": {
-              "result": {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "$ref": "#/components/schemas/access_id-3"
-                  }
-                }
-              }
-            },
-            "type": "object"
-          }
-        ]
-      },
       "access_identifier": {
         "description": "Identifier.",
         "type": "string",
@@ -598801,7 +599017,8 @@
           },
           {
             "example": "699d98642c564d2e855e9661899b7252",
-            "type": "string"
+            "type": "string",
+            "x-auditable": true
           }
         ]
       },
@@ -598933,7 +599150,8 @@
             "description": "Indicates that the identity provider is immutable and cannot be updated or deleted via the API.\n",
             "type": "boolean",
             "example": true,
-            "readOnly": true
+            "readOnly": true,
+            "x-auditable": true
           },
           "saml_certificate_set": {
             "description": "The SAML encryption certificate set details, including current and previous certificates.\nOnly present for SAML identity providers with a certificate set assigned.\n",
@@ -598948,7 +599166,8 @@
             "description": "The UID of the SAML encryption certificate set assigned to this Identity Provider.\nOnly present for SAML identity providers with encryption configured.\nCreate a certificate set via POST to `/identity_providers/{id}/saml_certificate`.\n",
             "type": "string",
             "format": "uuid",
-            "example": "c409ef44-e72c-41c8-8c0b-278c8a6f4fd8"
+            "example": "c409ef44-e72c-41c8-8c0b-278c8a6f4fd8",
+            "x-auditable": true
           },
           "scim_config": {
             "description": "The configuration settings for enabling a System for Cross-Domain Identity Management (SCIM) with the identity provider.",
@@ -599023,7 +599242,8 @@
               "yandex",
               "cloudflare",
               "passkeys"
-            ]
+            ],
+            "x-auditable": true
           }
         },
         "required": [
@@ -599053,6 +599273,7 @@
                 "description": "A flag to enable or disable SCIM for the identity provider.",
                 "type": "boolean",
                 "default": false,
+                "x-auditable": true,
                 "x-stainless-terraform-configurability": "computed_optional"
               },
               "identity_update_behavior": {
@@ -599064,17 +599285,20 @@
                   "reauth",
                   "no_action"
                 ],
+                "x-auditable": true,
                 "x-stainless-terraform-configurability": "computed_optional"
               },
               "scim_base_url": {
                 "description": "The base URL of Cloudflare's SCIM V2.0 API endpoint.",
                 "type": "string",
-                "readOnly": true
+                "readOnly": true,
+                "x-auditable": true
               },
               "seat_deprovision": {
                 "description": "A flag to remove a user's seat in Zero Trust when they have been deprovisioned in the Identity Provider.  This cannot be enabled unless user_deprovision is also enabled.",
                 "type": "boolean",
                 "default": false,
+                "x-auditable": true,
                 "x-stainless-terraform-configurability": "computed_optional"
               },
               "secret": {
@@ -599087,6 +599311,7 @@
                 "description": "A flag to enable revoking a user's session in Access and Gateway when they have been deprovisioned in the Identity Provider.",
                 "type": "boolean",
                 "default": false,
+                "x-auditable": true,
                 "x-stainless-terraform-configurability": "computed_optional"
               }
             }
@@ -599112,7 +599337,8 @@
               "pingone",
               "yandex",
               "cloudflare"
-            ]
+            ],
+            "x-auditable": true
           }
         },
         "required": [
@@ -599239,8 +599465,7 @@
                 "$ref": "#/components/schemas/access_identifier"
               }
             ],
-            "readOnly": true,
-            "x-auditable": true
+            "readOnly": true
           },
           "idp_id": {
             "description": "UID of the identity provider being federated.",
@@ -599429,7 +599654,8 @@
                 "piv_key",
                 "ssh_fido2_key"
               ],
-              "type": "string"
+              "type": "string",
+              "x-auditable": true
             },
             "example": [
               "piv_key",
@@ -599439,15 +599665,16 @@
           "mfa_disabled": {
             "description": "Indicates whether to disable MFA for this resource. This option is available at the application and policy level.",
             "type": "boolean",
-            "example": false
+            "example": false,
+            "x-auditable": true
           },
           "session_duration": {
             "description": "Defines the duration of an MFA session. Must be in minutes (m) or hours (h). Minimum: 0m. Maximum: 720h (30 days). Examples: `5m` or `24h`.",
             "type": "string",
-            "example": "24h"
+            "example": "24h",
+            "x-auditable": true
           }
-        },
-        "x-auditable": true
+        }
       },
       "access_infra_policy_req": {
         "type": "object",
@@ -599496,7 +599723,8 @@
                 "description": "The maximum duration of a connection to this application's targets. Connections are terminated once it elapses. Must be in the format `30m` or `2h45m`, in whole seconds. Valid time units are: s, m, h.",
                 "type": "string",
                 "example": "8h",
-                "default": "24h"
+                "default": "24h",
+                "x-auditable": true
               },
               "type": {
                 "allOf": [
@@ -599505,7 +599733,8 @@
                   },
                   {
                     "example": "infrastructure",
-                    "type": "string"
+                    "type": "string",
+                    "x-auditable": true
                   }
                 ]
               }
@@ -599537,7 +599766,8 @@
               "id": {
                 "description": "The ID of a previously created IP list.",
                 "type": "string",
-                "example": "aa0a4aab-672b-4bdb-bc33-a59f1130a11f"
+                "example": "aa0a4aab-672b-4bdb-bc33-a59f1130a11f",
+                "x-auditable": true
               }
             },
             "required": [
@@ -599560,7 +599790,8 @@
               "ip": {
                 "description": "An IPv4 or IPv6 CIDR block.",
                 "type": "string",
-                "example": "2400:cb00:21:10a::/64"
+                "example": "2400:cb00:21:10a::/64",
+                "x-auditable": true
               }
             },
             "required": [
@@ -599588,18 +599819,21 @@
       "access_is_ui_read_only-2": {
         "description": "Lock all settings as Read-Only in the Dashboard, regardless of user permission. Updates may only be made via the API or Terraform for this account when enabled.",
         "type": "boolean",
-        "example": "false"
+        "example": "false",
+        "x-auditable": true
       },
       "access_isolation_required": {
         "description": "Require this application to be served in an isolated browser for users matching this policy. 'Client Web Isolation' must be on for the account in order to use this feature.",
         "type": "boolean",
-        "example": false
+        "example": false,
+        "x-auditable": true
       },
       "access_isolation_required-2": {
         "description": "Require this application to be served in an isolated browser for users matching this policy.",
         "type": "boolean",
         "example": false,
-        "default": false
+        "default": false,
+        "x-auditable": true
       },
       "access_jit_request_event": {
         "type": "object",
@@ -599861,7 +600095,8 @@
               "app_uid": {
                 "description": "The ID of an Access OIDC SaaS application",
                 "type": "string",
-                "example": "aa0a4aab-672b-4bdb-bc33-a59f1130a11f"
+                "example": "aa0a4aab-672b-4bdb-bc33-a59f1130a11f",
+                "x-auditable": true
               }
             },
             "required": [
@@ -599914,17 +600149,20 @@
           "background_color": {
             "description": "The background color on your login page.",
             "type": "string",
-            "example": "#c5ed1b"
+            "example": "#c5ed1b",
+            "x-auditable": true
           },
           "footer_text": {
             "description": "The text at the bottom of your login page.",
             "type": "string",
-            "example": "This is an example description."
+            "example": "This is an example description.",
+            "x-auditable": true
           },
           "header_text": {
             "description": "The text at the top of your login page.",
             "type": "string",
-            "example": "This is an example description."
+            "example": "This is an example description.",
+            "x-auditable": true
           },
           "logo_path": {
             "description": "The URL of the logo on your login page.",
@@ -599934,7 +600172,8 @@
           "text_color": {
             "description": "The text color on your login page.",
             "type": "string",
-            "example": "#c5ed1b"
+            "example": "#c5ed1b",
+            "x-auditable": true
           }
         }
       },
@@ -599948,7 +600187,8 @@
               "id": {
                 "description": "The ID of an identity provider.",
                 "type": "string",
-                "example": "aa0a4aab-672b-4bdb-bc33-a59f1130a11f"
+                "example": "aa0a4aab-672b-4bdb-bc33-a59f1130a11f",
+                "x-auditable": true
               }
             },
             "required": [
@@ -599966,18 +600206,13 @@
         "type": "string",
         "example": "https://www.cloudflare.com/img/logo-web-badges/cf-logo-on-white-bg.svg"
       },
-      "access_logo_url-2": {
-        "description": "The image URL for the logo shown in the App Launcher dashboard.",
-        "type": "string",
-        "example": "https://www.cloudflare.com/img/logo-web-badges/cf-logo-on-white-bg.svg",
-        "x-auditable": true
-      },
       "access_max_age": {
         "description": "The maximum number of seconds the results of a preflight request can be cached.",
         "type": "number",
         "example": -1,
         "maximum": 86400,
-        "minimum": -1
+        "minimum": -1,
+        "x-auditable": true
       },
       "access_mcp_portal_props": {
         "type": "object",
@@ -600043,7 +600278,8 @@
               },
               {
                 "example": "mcp_portal",
-                "type": "string"
+                "type": "string",
+                "x-auditable": true
               }
             ]
           }
@@ -600114,7 +600350,8 @@
               },
               {
                 "example": "mcp",
-                "type": "string"
+                "type": "string",
+                "x-auditable": true
               }
             ]
           }
@@ -600192,7 +600429,8 @@
                 "biometrics",
                 "security_key"
               ],
-              "type": "string"
+              "type": "string",
+              "x-auditable": true
             },
             "example": [
               "totp",
@@ -600203,15 +600441,16 @@
           "mfa_disabled": {
             "description": "Indicates whether to disable MFA for this resource. This option is available at the application and policy level.",
             "type": "boolean",
-            "example": false
+            "example": false,
+            "x-auditable": true
           },
           "session_duration": {
             "description": "Defines the duration of an MFA session. Must be in minutes (m) or hours (h). Minimum: 0m. Maximum: 720h (30 days). Examples:`5m` or `24h`.",
             "type": "string",
-            "example": "24h"
+            "example": "24h",
+            "x-auditable": true
           }
-        },
-        "x-auditable": true
+        }
       },
       "access_mfa_piv_key_requirements": {
         "description": "Configures PIV key requirements for MFA using hardware security keys.",
@@ -600225,12 +600464,14 @@
               "never",
               "once",
               "always"
-            ]
+            ],
+            "x-auditable": true
           },
           "require_fips_device": {
             "description": "Requires the PIV key to be stored on a FIPS 140-2 Level 1 or higher validated device.",
             "type": "boolean",
-            "example": true
+            "example": true,
+            "x-auditable": true
           },
           "ssh_key_size": {
             "description": "Specifies the allowed SSH key sizes in bits. Valid sizes depend on key type. Ed25519 has a fixed key size and does not accept this parameter.",
@@ -600244,7 +600485,8 @@
                 3072,
                 4096
               ],
-              "type": "integer"
+              "type": "integer",
+              "x-auditable": true
             },
             "example": [
               256,
@@ -600260,7 +600502,8 @@
                 "ed25519",
                 "rsa"
               ],
-              "type": "string"
+              "type": "string",
+              "x-auditable": true
             },
             "example": [
               "ecdsa",
@@ -600275,10 +600518,10 @@
               "never",
               "always",
               "cached"
-            ]
+            ],
+            "x-auditable": true
           }
-        },
-        "x-auditable": true
+        }
       },
       "access_mfa_required_for_all_apps": {
         "description": "Determines whether global MFA settings apply to applications by default. The organization must have MFA enabled with at least one authentication method and a session duration configured. Note: 'allowed_authenticators' cannot contain only the infrastructure SSH authenticators ('piv_key' and 'ssh_fido2_key') if the organization has any non-infrastructure applications.",
@@ -600312,32 +600555,20 @@
       "access_name-13": {
         "description": "The name of the tag",
         "type": "string",
-        "example": "engineers"
+        "example": "engineers",
+        "x-auditable": true
       },
       "access_name-14": {
         "description": "The human-readable name of the FIDO2 authenticator",
         "type": "string",
-        "example": "YubiKey 5 NFC"
+        "example": "YubiKey 5 NFC",
+        "x-auditable": true
       },
       "access_name-15": {
         "description": "The name of your Zero Trust organization. When omitted on creation, defaults to the provided auth_domain; when both are omitted, defaults to the auto-generated subdomain.",
         "type": "string",
-        "example": "Widget Corps Internal Applications"
-      },
-      "access_name-16": {
-        "description": "The name of the Access group.",
-        "type": "string",
-        "example": "Allow devs"
-      },
-      "access_name-17": {
-        "description": "The name of the service token.",
-        "type": "string",
-        "example": "CI/CD token"
-      },
-      "access_name-18": {
-        "description": "The name of the certificate.",
-        "type": "string",
-        "example": "Allow devs"
+        "example": "Widget Corps Internal Applications",
+        "x-auditable": true
       },
       "access_name-2": {
         "description": "The name of the service token.",
@@ -600348,7 +600579,8 @@
       "access_name-3": {
         "description": "The name of the identity provider, shown to users on the login page.",
         "type": "string",
-        "example": "Widget Corps IDP"
+        "example": "Widget Corps IDP",
+        "x-auditable": true
       },
       "access_name-4": {
         "description": "The display name of the SCIM Group resource.",
@@ -600375,12 +600607,14 @@
       "access_name-8": {
         "description": "The name of the application.",
         "type": "string",
-        "example": "Admin Site"
+        "example": "Admin Site",
+        "x-auditable": true
       },
       "access_name-9": {
         "description": "The name of the Access policy.",
         "type": "string",
-        "example": "Allow devs"
+        "example": "Allow devs",
+        "x-auditable": true
       },
       "access_name_response": {
         "type": "object",
@@ -600417,17 +600651,20 @@
             "properties": {
               "allow_any_on_localhost": {
                 "description": "Allows any client with redirect URIs on localhost.",
-                "type": "boolean"
+                "type": "boolean",
+                "x-auditable": true
               },
               "allow_any_on_loopback": {
                 "description": "Allows any client with redirect URIs on 127.0.0.1.",
-                "type": "boolean"
+                "type": "boolean",
+                "x-auditable": true
               },
               "allowed_uris": {
                 "description": "The URIs that are allowed as redirect URIs for dynamically registered clients. HTTP and HTTPS paths may end in `/*` to match all sub-paths. Custom-scheme URIs must be explicitly configured and match exactly.\n",
                 "type": "array",
                 "items": {
-                  "type": "string"
+                  "type": "string",
+                  "x-auditable": true
                 },
                 "example": [
                   "https://example.com/callback",
@@ -600436,14 +600673,16 @@
               },
               "enabled": {
                 "description": "Whether dynamic client registration is enabled.",
-                "type": "boolean"
+                "type": "boolean",
+                "x-auditable": true
               }
             }
           },
           "enabled": {
             "description": "Whether the OAuth configuration is enabled for this application. When set to `false`, Access will not handle OAuth for this application. Defaults to `true` if omitted.\n",
             "type": "boolean",
-            "default": true
+            "default": true,
+            "x-auditable": true
           },
           "grant": {
             "description": "Settings for OAuth grant behavior.",
@@ -600452,12 +600691,14 @@
               "access_token_lifetime": {
                 "description": "The lifetime of the access token. Must be in the format `300ms` or `2h45m`. Valid time units are ns, us (or µs), ms, s, m, h.",
                 "type": "string",
-                "example": "5m"
+                "example": "5m",
+                "x-auditable": true
               },
               "session_duration": {
                 "description": "The duration of the OAuth session. Must be in the format `300ms` or `2h45m`. Valid time units are ns, us (or µs), ms, s, m, h.",
                 "type": "string",
-                "example": "24h"
+                "example": "24h",
+                "x-auditable": true
               }
             }
           }
@@ -600484,22 +600725,26 @@
                       "auth_url": {
                         "description": "The authorization_endpoint URL of your IdP",
                         "type": "string",
-                        "example": "https://accounts.google.com/o/oauth2/auth"
+                        "example": "https://accounts.google.com/o/oauth2/auth",
+                        "x-auditable": true
                       },
                       "certs_url": {
                         "description": "The jwks_uri endpoint of your IdP to allow the IdP keys to sign the tokens",
                         "type": "string",
-                        "example": "https://www.googleapis.com/oauth2/v3/certs"
+                        "example": "https://www.googleapis.com/oauth2/v3/certs",
+                        "x-auditable": true
                       },
                       "pkce_enabled": {
                         "description": "Enable Proof Key for Code Exchange (PKCE)",
-                        "type": "boolean"
+                        "type": "boolean",
+                        "x-auditable": true
                       },
                       "scopes": {
                         "description": "OAuth scopes",
                         "type": "array",
                         "items": {
-                          "type": "string"
+                          "type": "string",
+                          "x-auditable": true
                         },
                         "example": [
                           "openid",
@@ -600510,7 +600755,8 @@
                       "token_url": {
                         "description": "The token_endpoint URL of your IdP. Updates that change its origin (scheme, host, or port) require client_secret in the request. Path-only changes do not require client_secret.",
                         "type": "string",
-                        "example": "https://accounts.google.com/o/oauth2/token"
+                        "example": "https://accounts.google.com/o/oauth2/token",
+                        "x-auditable": true
                       }
                     },
                     "type": "object"
@@ -600541,18 +600787,21 @@
                       "auth_url": {
                         "description": "The authorization_endpoint URL of your IdP",
                         "type": "string",
-                        "example": "https://accounts.google.com/o/oauth2/auth"
+                        "example": "https://accounts.google.com/o/oauth2/auth",
+                        "x-auditable": true
                       },
                       "certs_url": {
                         "description": "The jwks_uri endpoint of your IdP to allow the IdP keys to sign the tokens",
                         "type": "string",
-                        "example": "https://www.googleapis.com/oauth2/v3/certs"
+                        "example": "https://www.googleapis.com/oauth2/v3/certs",
+                        "x-auditable": true
                       },
                       "claims": {
                         "description": "List of custom claims that will be pulled from your id_token and added to your signed Access JWT token.",
                         "type": "array",
                         "items": {
-                          "type": "string"
+                          "type": "string",
+                          "x-auditable": true
                         },
                         "example": [
                           "given_name",
@@ -600563,7 +600812,8 @@
                         "description": "OAuth scopes",
                         "type": "array",
                         "items": {
-                          "type": "string"
+                          "type": "string",
+                          "x-auditable": true
                         },
                         "example": [
                           "openid",
@@ -600574,7 +600824,8 @@
                       "token_url": {
                         "description": "The token_endpoint URL of your IdP. Updates that change its origin (scheme, host, or port) require client_secret in the request. Path-only changes do not require client_secret.",
                         "type": "string",
-                        "example": "https://accounts.google.com/o/oauth2/token"
+                        "example": "https://accounts.google.com/o/oauth2/token",
+                        "x-auditable": true
                       }
                     },
                     "type": "object"
@@ -600597,17 +600848,20 @@
               "claim_name": {
                 "description": "The name of the OIDC claim.",
                 "type": "string",
-                "example": "group"
+                "example": "group",
+                "x-auditable": true
               },
               "claim_value": {
                 "description": "The OIDC claim value to look for.",
                 "type": "string",
-                "example": "devs@cloudflare.com"
+                "example": "devs@cloudflare.com",
+                "x-auditable": true
               },
               "identity_provider_id": {
                 "description": "The ID of your OIDC identity provider.",
                 "type": "string",
-                "example": "ea85612a-29c8-46c2-bacb-669d65136971"
+                "example": "ea85612a-29c8-46c2-bacb-669d65136971",
+                "x-auditable": true
               }
             },
             "required": [
@@ -600628,12 +600882,14 @@
           "access_token_lifetime": {
             "description": "The lifetime of the OIDC Access Token after creation. Valid units are m,h. Must be greater than or equal to 1m and less than or equal to 24h.",
             "type": "string",
-            "example": "5m"
+            "example": "5m",
+            "x-auditable": true
           },
           "allow_pkce_without_client_secret": {
             "description": "If client secret should be required on the token endpoint when authorization_code_with_pkce grant is used.",
             "type": "boolean",
-            "example": true
+            "example": true,
+            "x-auditable": true
           },
           "app_launcher_url": {
             "description": "The URL where this applications tile redirects users",
@@ -600647,12 +600903,14 @@
             "enum": [
               "saml",
               "oidc"
-            ]
+            ],
+            "x-auditable": true
           },
           "client_id": {
             "description": "The application client id",
             "type": "string",
-            "example": "oidc client id"
+            "example": "oidc client id",
+            "x-auditable": true
           },
           "client_secret": {
             "description": "The application client secret, only returned on POST request.",
@@ -600670,12 +600928,14 @@
                 "name": {
                   "description": "The name of the claim.",
                   "type": "string",
-                  "example": "family_name"
+                  "example": "family_name",
+                  "x-auditable": true
                 },
                 "required": {
                   "description": "If the claim is required when building an OIDC token.",
                   "type": "boolean",
-                  "example": true
+                  "example": true,
+                  "x-auditable": true
                 },
                 "scope": {
                   "description": "The scope of the claim.",
@@ -600686,7 +600946,8 @@
                     "profile",
                     "email",
                     "openid"
-                  ]
+                  ],
+                  "x-auditable": true
                 },
                 "source": {
                   "type": "object",
@@ -600694,7 +600955,8 @@
                     "name": {
                       "description": "The name of the IdP claim.",
                       "type": "string",
-                      "example": "last_name"
+                      "example": "last_name",
+                      "x-auditable": true
                     },
                     "name_by_idp": {
                       "description": "A mapping from IdP ID to claim name.",
@@ -600724,7 +600986,8 @@
                 "hybrid",
                 "implicit"
               ],
-              "type": "string"
+              "type": "string",
+              "x-auditable": true
             },
             "example": [
               "authorization_code"
@@ -600733,18 +600996,21 @@
           "group_filter_regex": {
             "description": "A regex to filter Cloudflare groups returned in ID token and userinfo endpoint",
             "type": "string",
-            "example": "^GROUP_FILTER-*$"
+            "example": "^GROUP_FILTER-*$",
+            "x-auditable": true
           },
           "hybrid_and_implicit_options": {
             "type": "object",
             "properties": {
               "return_access_token_from_authorization_endpoint": {
                 "description": "If an Access Token should be returned from the OIDC Authorization endpoint",
-                "type": "boolean"
+                "type": "boolean",
+                "x-auditable": true
               },
               "return_id_token_from_authorization_endpoint": {
                 "description": "If an ID Token should be returned from the OIDC Authorization endpoint",
-                "type": "boolean"
+                "type": "boolean",
+                "x-auditable": true
               }
             }
           },
@@ -600757,7 +601023,8 @@
             "description": "The permitted URL's for Cloudflare to return Authorization codes and Access/ID tokens",
             "type": "array",
             "items": {
-              "type": "string"
+              "type": "string",
+              "x-auditable": true
             },
             "example": [
               "https://example.com"
@@ -600769,7 +601036,8 @@
               "lifetime": {
                 "description": "How long a refresh token will be valid for after creation. Valid units are m,h,d. Must be longer than 1m.",
                 "type": "string",
-                "example": "30d"
+                "example": "30d",
+                "x-auditable": true
               }
             }
           },
@@ -600783,7 +601051,8 @@
                 "email",
                 "profile"
               ],
-              "type": "string"
+              "type": "string",
+              "x-auditable": true
             },
             "example": [
               "openid",
@@ -600804,12 +601073,14 @@
           "access_token_lifetime": {
             "description": "The lifetime of the OIDC Access Token after creation. Valid units are m,h. Must be greater than or equal to 1m and less than or equal to 24h.",
             "type": "string",
-            "example": "5m"
+            "example": "5m",
+            "x-auditable": true
           },
           "allow_pkce_without_client_secret": {
             "description": "If client secret should be required on the token endpoint when authorization_code_with_pkce grant is used.",
             "type": "boolean",
-            "example": true
+            "example": true,
+            "x-auditable": true
           },
           "app_launcher_url": {
             "description": "The URL where this applications tile redirects users",
@@ -600823,12 +601094,14 @@
             "enum": [
               "saml",
               "oidc"
-            ]
+            ],
+            "x-auditable": true
           },
           "client_id": {
             "description": "The application client id",
             "type": "string",
-            "example": "oidc client id"
+            "example": "oidc client id",
+            "x-auditable": true
           },
           "client_secret": {
             "description": "The application client secret, only returned on POST request.",
@@ -600846,12 +601119,14 @@
                 "name": {
                   "description": "The name of the claim.",
                   "type": "string",
-                  "example": "family_name"
+                  "example": "family_name",
+                  "x-auditable": true
                 },
                 "required": {
                   "description": "If the claim is required when building an OIDC token.",
                   "type": "boolean",
-                  "example": true
+                  "example": true,
+                  "x-auditable": true
                 },
                 "scope": {
                   "description": "The scope of the claim.",
@@ -600862,7 +601137,8 @@
                     "profile",
                     "email",
                     "openid"
-                  ]
+                  ],
+                  "x-auditable": true
                 },
                 "source": {
                   "type": "object",
@@ -600870,7 +601146,8 @@
                     "name": {
                       "description": "The name of the IdP claim.",
                       "type": "string",
-                      "example": "last_name"
+                      "example": "last_name",
+                      "x-auditable": true
                     },
                     "name_by_idp": {
                       "description": "A mapping from IdP ID to attribute name.",
@@ -600880,12 +601157,14 @@
                           "idp_id": {
                             "description": "The UID of the IdP.",
                             "type": "string",
-                            "example": "exampleIdPID1"
+                            "example": "exampleIdPID1",
+                            "x-auditable": true
                           },
                           "source_name": {
                             "description": "The name of the IdP provided attribute.",
                             "type": "string",
-                            "example": "AttributeName1"
+                            "example": "AttributeName1",
+                            "x-auditable": true
                           }
                         },
                         "type": "object"
@@ -600908,7 +601187,8 @@
                 "hybrid",
                 "implicit"
               ],
-              "type": "string"
+              "type": "string",
+              "x-auditable": true
             },
             "example": [
               "authorization_code"
@@ -600917,18 +601197,21 @@
           "group_filter_regex": {
             "description": "A regex to filter Cloudflare groups returned in ID token and userinfo endpoint.",
             "type": "string",
-            "example": "^GROUP_FILTER-*$"
+            "example": "^GROUP_FILTER-*$",
+            "x-auditable": true
           },
           "hybrid_and_implicit_options": {
             "type": "object",
             "properties": {
               "return_access_token_from_authorization_endpoint": {
                 "description": "If an Access Token should be returned from the OIDC Authorization endpoint",
-                "type": "boolean"
+                "type": "boolean",
+                "x-auditable": true
               },
               "return_id_token_from_authorization_endpoint": {
                 "description": "If an ID Token should be returned from the OIDC Authorization endpoint",
-                "type": "boolean"
+                "type": "boolean",
+                "x-auditable": true
               }
             }
           },
@@ -600941,7 +601224,8 @@
             "description": "The permitted URL's for Cloudflare to return Authorization codes and Access/ID tokens",
             "type": "array",
             "items": {
-              "type": "string"
+              "type": "string",
+              "x-auditable": true
             },
             "example": [
               "https://example.com"
@@ -600953,7 +601237,8 @@
               "lifetime": {
                 "description": "How long a refresh token will be valid for after creation. Valid units are m,h,d. Must be longer than 1m.",
                 "type": "string",
-                "example": "30d"
+                "example": "30d",
+                "x-auditable": true
               }
             }
           },
@@ -600967,7 +601252,8 @@
                 "email",
                 "profile"
               ],
-              "type": "string"
+              "type": "string",
+              "x-auditable": true
             },
             "example": [
               "openid",
@@ -601003,7 +601289,8 @@
                       "authorization_server_id": {
                         "description": "Your okta authorization server id",
                         "type": "string",
-                        "example": "aus9o8wzkhckw9TLa0h7z"
+                        "example": "aus9o8wzkhckw9TLa0h7z",
+                        "x-auditable": true
                       },
                       "okta_account": {
                         "description": "Your okta account url",
@@ -601040,7 +601327,8 @@
                       "okta_account": {
                         "description": "Your okta account url",
                         "type": "string",
-                        "example": "https://dev-abc123.oktapreview.com"
+                        "example": "https://dev-abc123.oktapreview.com",
+                        "x-auditable": true
                       }
                     },
                     "type": "object"
@@ -601063,12 +601351,14 @@
               "identity_provider_id": {
                 "description": "The ID of your Okta identity provider.",
                 "type": "string",
-                "example": "ea85612a-29c8-46c2-bacb-669d65136971"
+                "example": "ea85612a-29c8-46c2-bacb-669d65136971",
+                "x-auditable": true
               },
               "name": {
                 "description": "The name of the Okta group.",
                 "type": "string",
-                "example": "devs"
+                "example": "devs",
+                "x-auditable": true
               }
             },
             "required": [
@@ -601135,7 +601425,8 @@
                       "onelogin_account": {
                         "description": "Your OneLogin account url",
                         "type": "string",
-                        "example": "https://mycompany.onelogin.com"
+                        "example": "https://mycompany.onelogin.com",
+                        "x-auditable": true
                       }
                     },
                     "type": "object"
@@ -601169,7 +601460,8 @@
                 "type": "string",
                 "enum": [
                   "onetimepin"
-                ]
+                ],
+                "x-auditable": true
               }
             },
             "type": "object"
@@ -601209,13 +601501,15 @@
       "access_options_preflight_bypass": {
         "description": "Allows options preflight requests to bypass Access authentication and go directly to the origin. Cannot turn on if cors_headers is set.",
         "type": "boolean",
-        "example": true
+        "example": true,
+        "x-auditable": true
       },
       "access_options_preflight_bypass-2": {
         "description": "Allows options preflight requests to bypass Access authentication and go directly to the origin. Cannot turn on if cors_headers is set.",
         "type": "boolean",
         "example": true,
-        "default": false
+        "default": false,
+        "x-auditable": true
       },
       "access_org_mfa_config": {
         "description": "Configures multi-factor authentication (MFA) settings for an organization.",
@@ -601232,7 +601526,8 @@
                 "piv_key",
                 "ssh_fido2_key"
               ],
-              "type": "string"
+              "type": "string",
+              "x-auditable": true
             },
             "example": [
               "totp",
@@ -601243,21 +601538,23 @@
           "amr_matching_session_duration": {
             "description": "Allows a user to skip MFA via Authentication Method Reference (AMR) matching when the AMR claim provided by the IdP the user used to authenticate contains \"mfa\". Must be in minutes (m) or hours (h). Minimum: 0m. Maximum: 720h (30 days).",
             "type": "string",
-            "example": "12h"
+            "example": "12h",
+            "x-auditable": true
           },
           "required_aaguids": {
             "description": "Specifies a Cloudflare List of required FIDO2 authenticator device AAGUIDs.",
             "type": "string",
             "format": "uuid",
-            "example": "2fc0579f-8113-47ea-b116-bb5a8db9202a"
+            "example": "2fc0579f-8113-47ea-b116-bb5a8db9202a",
+            "x-auditable": true
           },
           "session_duration": {
             "description": "Defines the duration of an MFA session. Must be in minutes (m) or hours (h). Minimum: 0m. Maximum: 720h (30 days). Examples:`5m` or `24h`.",
             "type": "string",
-            "example": "24h"
+            "example": "24h",
+            "x-auditable": true
           }
-        },
-        "x-auditable": true
+        }
       },
       "access_organizations": {
         "type": "object",
@@ -601395,7 +601692,8 @@
                 "type": "string",
                 "enum": [
                   "passkeys"
-                ]
+                ],
+                "x-auditable": true
               }
             },
             "type": "object"
@@ -601407,25 +601705,23 @@
         "description": "Enables cookie paths to scope an application's JWT to the application path. If disabled, the JWT will scope to the hostname by default",
         "type": "boolean",
         "example": true,
-        "default": false
+        "default": false,
+        "x-auditable": true
       },
       "access_percent_approved": {
         "description": "The percentage of (processed) users approved based on policy evaluation results.",
         "type": "integer",
-        "example": 25,
-        "x-auditable": true
+        "example": 25
       },
       "access_percent_blocked": {
         "description": "The percentage of (processed) users blocked based on policy evaluation results.",
         "type": "integer",
-        "example": 25,
-        "x-auditable": true
+        "example": 25
       },
       "access_percent_errored": {
         "description": "The percentage of (processed) users errored based on policy evaluation results.",
         "type": "integer",
-        "example": 25,
-        "x-auditable": true
+        "example": 25
       },
       "access_percent_users_processed": {
         "description": "The percentage of users processed so far (of the entire user base).",
@@ -601485,7 +601781,8 @@
                       "ping_env_id": {
                         "description": "Your PingOne environment identifier",
                         "type": "string",
-                        "example": "342b5660-0c32-4936-a5a4-ce21fae57b0a"
+                        "example": "342b5660-0c32-4936-a5a4-ce21fae57b0a",
+                        "x-auditable": true
                       }
                     },
                     "type": "object"
@@ -601786,7 +602083,8 @@
                 {
                   "description": "The UUID of the reusable policy you wish to test",
                   "example": "f1a8b3c9d4e5f6789a0b1c2d3e4f5678a9b0c1d2e3f4a5b67890c1d2e3f4b5a6",
-                  "type": "string"
+                  "type": "string",
+                  "x-auditable": true
                 }
               ]
             }
@@ -601853,7 +602151,8 @@
       },
       "access_policy_resolution_account_id": {
         "description": "The account ID used to resolve policy resources and identity for cross-account WARP authentication. The account must be trusted by the account that owns this policy.",
-        "type": "string"
+        "type": "string",
+        "x-auditable": true
       },
       "access_policy_resp": {
         "type": "object",
@@ -601984,15 +602283,18 @@
       "access_port": {
         "description": "The port that the targets use for the chosen communication protocol. A port cannot be assigned to multiple protocols.",
         "type": "integer",
-        "example": 22
+        "example": 22,
+        "x-auditable": true
       },
       "access_precedence": {
         "description": "The order of execution for this policy. Must be unique for each policy within an app.\n",
-        "type": "integer"
+        "type": "integer",
+        "x-auditable": true
       },
       "access_precedence-2": {
         "description": "The order of execution for this policy. Must be unique for each policy.",
-        "type": "integer"
+        "type": "integer",
+        "x-auditable": true
       },
       "access_previous_client_secret_expires_at": {
         "description": "The expiration of the previous `client_secret`. This can be modified at any point after a rotation. For example, you may extend it further into the future if you need more time to update services with the new secret; or move it into the past to immediately invalidate the previous token in case of compromise. Rotating a service token that was reported as leaked discards the previous secret entirely, so no grace period can be set.",
@@ -602030,12 +602332,14 @@
                 "description": "The proxy endpoint domain in the format: 10 alphanumeric characters followed by .proxy.cloudflare-gateway.com",
                 "type": "string",
                 "example": "abcd123456.proxy.cloudflare-gateway.com",
-                "pattern": "^[A-Za-z0-9]{10}\\.proxy\\.cloudflare-gateway\\.com$"
+                "pattern": "^[A-Za-z0-9]{10}\\.proxy\\.cloudflare-gateway\\.com$",
+                "x-auditable": true
               },
               "name": {
                 "type": "string",
                 "example": "Gateway Proxy",
-                "default": "Gateway Proxy"
+                "default": "Gateway Proxy",
+                "x-auditable": true
               },
               "type": {
                 "allOf": [
@@ -602044,7 +602348,8 @@
                   },
                   {
                     "example": "proxy_endpoint",
-                    "type": "string"
+                    "type": "string",
+                    "x-auditable": true
                   }
                 ]
               }
@@ -602062,18 +602367,21 @@
       "access_purpose_justification_prompt": {
         "description": "A custom message that will appear on the purpose justification screen.",
         "type": "string",
-        "example": "Please enter a justification for entering this protected domain."
+        "example": "Please enter a justification for entering this protected domain.",
+        "x-auditable": true
       },
       "access_purpose_justification_required": {
         "description": "Require users to enter a justification when they log in to the application.",
         "type": "boolean",
-        "example": true
+        "example": true,
+        "x-auditable": true
       },
       "access_purpose_justification_required-2": {
         "description": "Require users to enter a justification when they log in to the application.",
         "type": "boolean",
         "example": true,
-        "default": false
+        "default": false,
+        "x-auditable": true
       },
       "access_ray_id": {
         "description": "The unique identifier for the request to Cloudflare.",
@@ -602107,7 +602415,8 @@
                   },
                   {
                     "example": "rdp",
-                    "type": "string"
+                    "type": "string",
+                    "x-auditable": true
                   }
                 ]
               }
@@ -602122,7 +602431,8 @@
       "access_read_service_tokens_from_header": {
         "description": "Allows matching Access Service Tokens passed HTTP in a single header with this name.\nThis works as an alternative to the (CF-Access-Client-Id, CF-Access-Client-Secret) pair of headers.\nThe header value will be interpreted as a json object similar to:\n  {\n    \"cf-access-client-id\": \"88bf3b6d86161464f6509f7219099e57.access.example.com\",\n    \"cf-access-client-secret\": \"bdd31cbc4dec990953e39163fbbb194c93313ca9f0a6e420346af9d326b1d2a5\"\n  }\n",
         "type": "string",
-        "example": "Authorization"
+        "example": "Authorization",
+        "x-auditable": true
       },
       "access_request_method": {
         "description": "The request method of the SCIM request.",
@@ -603078,7 +603388,8 @@
               },
               {
                 "example": "saas",
-                "type": "string"
+                "type": "string",
+                "x-auditable": true
               }
             ]
           }
@@ -603117,7 +603428,8 @@
           "type": {
             "description": "The application type.",
             "type": "string",
-            "example": "saas"
+            "example": "saas",
+            "x-auditable": true
           }
         },
         "title": "Zone-Level SaaS Application"
@@ -603125,7 +603437,8 @@
       "access_same_site_cookie_attribute": {
         "description": "Sets the SameSite cookie setting, which provides increased security against CSRF attacks.",
         "type": "string",
-        "example": "strict"
+        "example": "strict",
+        "x-auditable": true
       },
       "access_saml": {
         "type": "object",
@@ -603142,7 +603455,8 @@
                     "description": "A list of SAML attribute names that will be added to your signed JWT token and can be used in SAML policy rules.",
                     "type": "array",
                     "items": {
-                      "type": "string"
+                      "type": "string",
+                      "x-auditable": true
                     },
                     "example": [
                       "group",
@@ -603175,11 +603489,13 @@
                       "properties": {
                         "attribute_name": {
                           "description": "attribute name from the IDP",
-                          "type": "string"
+                          "type": "string",
+                          "x-auditable": true
                         },
                         "header_name": {
                           "description": "header that will be added on the request to the origin",
-                          "type": "string"
+                          "type": "string",
+                          "x-auditable": true
                         }
                       },
                       "type": "object"
@@ -603209,7 +603525,8 @@
                   "sign_request": {
                     "description": "Sign the SAML authentication request with Access credentials. To verify the signature, use the public key from the Access certs endpoints.",
                     "type": "boolean",
-                    "default": false
+                    "default": false,
+                    "x-auditable": true
                   },
                   "sso_target_url": {
                     "description": "URL to send the SAML authentication requests to",
@@ -603240,7 +603557,8 @@
                     "description": "A list of SAML attribute names that will be added to your signed JWT token and can be used in SAML policy rules.",
                     "type": "array",
                     "items": {
-                      "type": "string"
+                      "type": "string",
+                      "x-auditable": true
                     },
                     "example": [
                       "group",
@@ -603251,12 +603569,14 @@
                   "email_attribute_name": {
                     "description": "The attribute name for email in the SAML response.",
                     "type": "string",
-                    "example": "Email"
+                    "example": "Email",
+                    "x-auditable": true
                   },
                   "force_authn": {
                     "description": "Asks the IdP to reauthenticate the user for each SAML authentication request.",
                     "type": "boolean",
-                    "default": false
+                    "default": false,
+                    "x-auditable": true
                   },
                   "header_attributes": {
                     "description": "Add a list of attribute names that will be returned in the response header from the Access callback.",
@@ -603265,11 +603585,13 @@
                       "properties": {
                         "attribute_name": {
                           "description": "attribute name from the IDP",
-                          "type": "string"
+                          "type": "string",
+                          "x-auditable": true
                         },
                         "header_name": {
                           "description": "header that will be added on the request to the origin",
-                          "type": "string"
+                          "type": "string",
+                          "x-auditable": true
                         }
                       },
                       "type": "object"
@@ -603285,23 +603607,27 @@
                   "issuer_url": {
                     "description": "IdP Entity ID or Issuer URL",
                     "type": "string",
-                    "example": "https://whoami.com"
+                    "example": "https://whoami.com",
+                    "x-auditable": true
                   },
                   "max_sso_url_length": {
                     "description": "The maximum URL length the IdP accepts for the SSO redirect URL.\nWhen the constructed SSO URL would exceed this length, the RelayState\nis stored server-side and a short nonce is passed to the IdP instead.\nSet this if your IdP enforces a URL length limit.\n",
                     "type": "integer",
                     "example": 8192,
                     "maximum": 100000,
-                    "minimum": 512
+                    "minimum": 512,
+                    "x-auditable": true
                   },
                   "sign_request": {
                     "description": "Sign the SAML authentication request with Access credentials. To verify the signature, use the public key from the Access certs endpoints.",
-                    "type": "boolean"
+                    "type": "boolean",
+                    "x-auditable": true
                   },
                   "sso_target_url": {
                     "description": "URL to send the SAML authentication requests to",
                     "type": "string",
-                    "example": "https://edgeaccess.org/idp/saml/login"
+                    "example": "https://edgeaccess.org/idp/saml/login",
+                    "x-auditable": true
                   }
                 }
               }
@@ -603318,13 +603644,15 @@
           "is_current": {
             "description": "Indicates whether this is the currently active certificate",
             "type": "boolean",
-            "example": true
+            "example": true,
+            "x-auditable": true
           },
           "not_after": {
             "description": "Certificate expiration date. Certificates are automatically rotated 30 days before expiration.",
             "type": "string",
             "format": "date-time",
-            "example": "2027-05-07T19:11:00Z"
+            "example": "2027-05-07T19:11:00Z",
+            "x-auditable": true
           },
           "public_certificate": {
             "description": "PEM-encoded X.509 certificate containing the public key.\nConfigure this certificate in your external SAML Identity Provider to enable encryption.\n",
@@ -603335,7 +603663,8 @@
             "description": "Unique identifier for the certificate",
             "type": "string",
             "format": "uuid",
-            "example": "f174e90a-fafe-4643-bbbc-4a0ed4fc8415"
+            "example": "f174e90a-fafe-4643-bbbc-4a0ed4fc8415",
+            "x-auditable": true
           }
         },
         "required": [
@@ -603351,13 +603680,15 @@
           "is_current": {
             "description": "Indicates whether the certificate can be used for IdP configuration.",
             "type": "boolean",
-            "example": true
+            "example": true,
+            "x-auditable": true
           },
           "not_after": {
             "description": "Certificate expiration date",
             "type": "string",
             "format": "date-time",
-            "example": "2027-03-21T12:00:00Z"
+            "example": "2027-03-21T12:00:00Z",
+            "x-auditable": true
           },
           "public_certificate": {
             "description": "The public certificate in PEM format",
@@ -603367,7 +603698,8 @@
           "uid": {
             "description": "Unique identifier for the certificate",
             "type": "string",
-            "example": "f174e90a-fafe-4643-bbbc-4a0ed4fc8415"
+            "example": "f174e90a-fafe-4643-bbbc-4a0ed4fc8415",
+            "x-auditable": true
           }
         },
         "required": [
@@ -603404,7 +603736,8 @@
             "description": "Unique identifier for the certificate set",
             "type": "string",
             "format": "uuid",
-            "example": "c409ef44-e72c-41c8-8c0b-278c8a6f4fd8"
+            "example": "c409ef44-e72c-41c8-8c0b-278c8a6f4fd8",
+            "x-auditable": true
           },
           "updated_at": {
             "description": "Timestamp when the certificate set was last updated (e.g., during rotation)",
@@ -603444,7 +603777,8 @@
           "uid": {
             "description": "Unique identifier for the certificate set",
             "type": "string",
-            "example": "a5bb4b3f-c2d1-4e6a-8f9b-1d3e4f5a6b7c"
+            "example": "a5bb4b3f-c2d1-4e6a-8f9b-1d3e4f5a6b7c",
+            "x-auditable": true
           },
           "updated_at": {
             "description": "When the certificate set was last updated",
@@ -603484,17 +603818,20 @@
               "attribute_name": {
                 "description": "The name of the SAML attribute.",
                 "type": "string",
-                "example": "group"
+                "example": "group",
+                "x-auditable": true
               },
               "attribute_value": {
                 "description": "The SAML attribute value to look for.",
                 "type": "string",
-                "example": "devs@cloudflare.com"
+                "example": "devs@cloudflare.com",
+                "x-auditable": true
               },
               "identity_provider_id": {
                 "description": "The ID of your SAML identity provider.",
                 "type": "string",
-                "example": "ea85612a-29c8-46c2-bacb-669d65136971"
+                "example": "ea85612a-29c8-46c2-bacb-669d65136971",
+                "x-auditable": true
               }
             },
             "required": [
@@ -603519,12 +603856,14 @@
             "enum": [
               "saml",
               "oidc"
-            ]
+            ],
+            "x-auditable": true
           },
           "consumer_service_url": {
             "description": "The service provider's endpoint that is responsible for receiving and parsing a SAML assertion.",
             "type": "string",
-            "example": "https://example.com"
+            "example": "https://example.com",
+            "x-auditable": true
           },
           "created_at": {
             "$ref": "#/components/schemas/access_created_at"
@@ -603536,12 +603875,14 @@
                 "friendly_name": {
                   "description": "The SAML FriendlyName of the attribute.",
                   "type": "string",
-                  "example": "Last Name"
+                  "example": "Last Name",
+                  "x-auditable": true
                 },
                 "name": {
                   "description": "The name of the attribute.",
                   "type": "string",
-                  "example": "family_name"
+                  "example": "family_name",
+                  "x-auditable": true
                 },
                 "name_format": {
                   "description": "A globally unique name for an identity or service provider.",
@@ -603551,12 +603892,14 @@
                     "urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified",
                     "urn:oasis:names:tc:SAML:2.0:attrname-format:basic",
                     "urn:oasis:names:tc:SAML:2.0:attrname-format:uri"
-                  ]
+                  ],
+                  "x-auditable": true
                 },
                 "required": {
                   "description": "If the attribute is required when building a SAML assertion.",
                   "type": "boolean",
-                  "example": true
+                  "example": true,
+                  "x-auditable": true
                 },
                 "source": {
                   "type": "object",
@@ -603564,7 +603907,8 @@
                     "name": {
                       "description": "The name of the IdP attribute.",
                       "type": "string",
-                      "example": "last_name"
+                      "example": "last_name",
+                      "x-auditable": true
                     },
                     "name_by_idp": {
                       "description": "A mapping from IdP ID to attribute name.",
@@ -603574,12 +603918,14 @@
                           "idp_id": {
                             "description": "The UID of the IdP.",
                             "type": "string",
-                            "example": "exampleIdPID1"
+                            "example": "exampleIdPID1",
+                            "x-auditable": true
                           },
                           "source_name": {
                             "description": "The name of the IdP provided attribute.",
                             "type": "string",
-                            "example": "AttributeName1"
+                            "example": "AttributeName1",
+                            "x-auditable": true
                           }
                         },
                         "type": "object"
@@ -603594,12 +603940,14 @@
           "default_relay_state": {
             "description": "The URL that the user will be redirected to after a successful login for IDP initiated logins.",
             "type": "string",
-            "example": "https://example.com"
+            "example": "https://example.com",
+            "x-auditable": true
           },
           "idp_entity_id": {
             "description": "The unique identifier for your SaaS application.",
             "type": "string",
             "example": "https://example.cloudflareaccess.com",
+            "x-auditable": true,
             "x-stainless-terraform-configurability": "computed_optional"
           },
           "name_id_format": {
@@ -603609,7 +603957,8 @@
             "enum": [
               "id",
               "email"
-            ]
+            ],
+            "x-auditable": true
           },
           "name_id_transform_jsonata": {
             "description": "A [JSONata](https://jsonata.org/) expression that transforms an application's user identities into a NameID value for its SAML assertion. This expression should evaluate to a singular string. The output of this expression can override the `name_id_format` setting.\n",
@@ -603630,12 +603979,14 @@
           "sp_entity_id": {
             "description": "A globally unique name for an identity or service provider.",
             "type": "string",
-            "example": "example unique name"
+            "example": "example unique name",
+            "x-auditable": true
           },
           "sso_endpoint": {
             "description": "The endpoint where your SaaS application will send login requests.",
             "type": "string",
             "example": "https://example.cloudflareaccess.com/cdn-cgi/access/sso/saml/b3f58a2b414e0b51d45c8c2af26fccca0e27c63763c426fa52f98dcf0b3b3bfd",
+            "x-auditable": true,
             "x-stainless-terraform-configurability": "computed_optional"
           },
           "updated_at": {
@@ -603654,12 +604005,14 @@
             "enum": [
               "saml",
               "oidc"
-            ]
+            ],
+            "x-auditable": true
           },
           "consumer_service_url": {
             "description": "The service provider's endpoint that is responsible for receiving and parsing a SAML assertion.",
             "type": "string",
-            "example": "https://example.com"
+            "example": "https://example.com",
+            "x-auditable": true
           },
           "created_at": {
             "$ref": "#/components/schemas/access_timestamp"
@@ -603671,12 +604024,14 @@
                 "friendly_name": {
                   "description": "The SAML FriendlyName of the attribute.",
                   "type": "string",
-                  "example": "Last Name"
+                  "example": "Last Name",
+                  "x-auditable": true
                 },
                 "name": {
                   "description": "The name of the attribute.",
                   "type": "string",
-                  "example": "family_name"
+                  "example": "family_name",
+                  "x-auditable": true
                 },
                 "name_format": {
                   "description": "A globally unique name for an identity or service provider.",
@@ -603686,12 +604041,14 @@
                     "urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified",
                     "urn:oasis:names:tc:SAML:2.0:attrname-format:basic",
                     "urn:oasis:names:tc:SAML:2.0:attrname-format:uri"
-                  ]
+                  ],
+                  "x-auditable": true
                 },
                 "required": {
                   "description": "If the attribute is required when building a SAML assertion.",
                   "type": "boolean",
-                  "example": true
+                  "example": true,
+                  "x-auditable": true
                 },
                 "source": {
                   "type": "object",
@@ -603699,7 +604056,8 @@
                     "name": {
                       "description": "The name of the IdP attribute.",
                       "type": "string",
-                      "example": "last_name"
+                      "example": "last_name",
+                      "x-auditable": true
                     },
                     "name_by_idp": {
                       "description": "A mapping from IdP ID to attribute name.",
@@ -603722,6 +604080,7 @@
             "description": "The unique identifier for your SaaS application.",
             "type": "string",
             "example": "https://example.cloudflareaccess.com",
+            "x-auditable": true,
             "x-stainless-terraform-configurability": "computed_optional"
           },
           "name_id_format": {
@@ -603731,7 +604090,8 @@
             "enum": [
               "id",
               "email"
-            ]
+            ],
+            "x-auditable": true
           },
           "name_id_transform_jsonata": {
             "description": "A [JSONata](https://jsonata.org/) expression that transforms an application's user identities into a NameID value for its SAML assertion. This expression should evaluate to a singular string. The output of this expression can override the `name_id_format` setting.\n",
@@ -603747,12 +604107,14 @@
           "sp_entity_id": {
             "description": "A globally unique name for an identity or service provider.",
             "type": "string",
-            "example": "example unique name"
+            "example": "example unique name",
+            "x-auditable": true
           },
           "sso_endpoint": {
             "description": "The endpoint where your SaaS application will send login requests.",
             "type": "string",
             "example": "https://example.cloudflareaccess.com/cdn-cgi/access/sso/saml/b3f58a2b414e0b51d45c8c2af26fccca0e27c63763c426fa52f98dcf0b3b3bfd",
+            "x-auditable": true,
             "x-stainless-terraform-configurability": "computed_optional"
           },
           "updated_at": {
@@ -603777,15 +604139,18 @@
           },
           "deactivate_on_delete": {
             "description": "If false, propagates DELETE requests to the target application for SCIM resources. If true, sets 'active' to false on the SCIM resource. Note: Some targets do not support DELETE operations.",
-            "type": "boolean"
+            "type": "boolean",
+            "x-auditable": true
           },
           "enabled": {
             "description": "Whether SCIM provisioning is turned on for this application.",
-            "type": "boolean"
+            "type": "boolean",
+            "x-auditable": true
           },
           "idp_uid": {
             "description": "The UID of the IdP to use as the source for SCIM resources to provision to this application.",
-            "type": "string"
+            "type": "string",
+            "x-auditable": true
           },
           "mappings": {
             "description": "A list of mappings to apply to SCIM resources before provisioning them in this application. These can transform or filter the resources to be provisioned.",
@@ -603796,7 +604161,8 @@
           },
           "remote_uri": {
             "description": "The base URI for the application's SCIM-compatible API.",
-            "type": "string"
+            "type": "string",
+            "x-auditable": true
           }
         },
         "required": [
@@ -603820,15 +604186,18 @@
           },
           "deactivate_on_delete": {
             "description": "If false, we propagate DELETE requests to the target application for SCIM resources. If true, we only set `active` to false on the SCIM resource. This is useful because some targets do not support DELETE operations.",
-            "type": "boolean"
+            "type": "boolean",
+            "x-auditable": true
           },
           "enabled": {
             "description": "Whether SCIM provisioning is turned on for this application.",
-            "type": "boolean"
+            "type": "boolean",
+            "x-auditable": true
           },
           "idp_uid": {
             "description": "The UID of the IdP to use as the source for SCIM resources to provision to this application.",
-            "type": "string"
+            "type": "string",
+            "x-auditable": true
           },
           "mappings": {
             "description": "A list of mappings to apply to SCIM resources before provisioning them in this application. These can transform or filter the resources to be provisioned.",
@@ -603839,7 +604208,8 @@
           },
           "remote_uri": {
             "description": "The base URI for the application's SCIM-compatible API.",
-            "type": "string"
+            "type": "string",
+            "x-auditable": true
           }
         },
         "required": [
@@ -603853,7 +604223,8 @@
         "properties": {
           "client_id": {
             "description": "Client ID of the Access service token used to authenticate with the remote service.",
-            "type": "string"
+            "type": "string",
+            "x-auditable": true
           },
           "client_secret": {
             "description": "Client secret of the Access service token used to authenticate with the remote service.",
@@ -603865,7 +604236,8 @@
             "type": "string",
             "enum": [
               "access_service_token"
-            ]
+            ],
+            "x-auditable": true
           }
         },
         "required": [
@@ -603889,7 +604261,8 @@
             "type": "string",
             "enum": [
               "httpbasic"
-            ]
+            ],
+            "x-auditable": true
           },
           "user": {
             "description": "User name used to authenticate with the remote SCIM service.",
@@ -603909,11 +604282,13 @@
         "properties": {
           "authorization_url": {
             "description": "URL used to generate the auth code used during token generation.",
-            "type": "string"
+            "type": "string",
+            "x-auditable": true
           },
           "client_id": {
             "description": "Client ID used to authenticate when generating a token for authenticating with the remote SCIM service.",
-            "type": "string"
+            "type": "string",
+            "x-auditable": true
           },
           "client_secret": {
             "description": "Secret used to authenticate when generating a token for authenticating with the remove SCIM service.",
@@ -603925,18 +604300,21 @@
             "type": "string",
             "enum": [
               "oauth2"
-            ]
+            ],
+            "x-auditable": true
           },
           "scopes": {
             "description": "The authorization scopes to request when generating the token used to authenticate with the remove SCIM service.",
             "type": "array",
             "items": {
-              "type": "string"
+              "type": "string",
+              "x-auditable": true
             }
           },
           "token_url": {
             "description": "URL used to generate the token used to authenticate with the remote SCIM service.",
-            "type": "string"
+            "type": "string",
+            "x-auditable": true
           }
         },
         "required": [
@@ -603957,7 +604335,8 @@
             "type": "string",
             "enum": [
               "oauthbearertoken"
-            ]
+            ],
+            "x-auditable": true
           },
           "token": {
             "description": "Token used to authenticate with the remote SCIM service.",
@@ -603980,7 +604359,8 @@
             "type": "string",
             "enum": [
               "oauthbearertoken"
-            ]
+            ],
+            "x-auditable": true
           },
           "token": {
             "description": "Token used to authenticate with the remote SCIM service.",
@@ -603999,7 +604379,8 @@
         "properties": {
           "enabled": {
             "description": "Whether or not this mapping is enabled.",
-            "type": "boolean"
+            "type": "boolean",
+            "x-auditable": true
           },
           "filter": {
             "description": "A [SCIM filter expression](https://datatracker.ietf.org/doc/html/rfc7644#section-3.4.2.2) that matches resources that should be provisioned to this application.",
@@ -604012,22 +604393,26 @@
             "properties": {
               "create": {
                 "description": "Whether or not this mapping applies to create (POST) operations.",
-                "type": "boolean"
+                "type": "boolean",
+                "x-auditable": true
               },
               "delete": {
                 "description": "Whether or not this mapping applies to DELETE operations.",
-                "type": "boolean"
+                "type": "boolean",
+                "x-auditable": true
               },
               "update": {
                 "description": "Whether or not this mapping applies to update (PATCH/PUT) operations.",
-                "type": "boolean"
+                "type": "boolean",
+                "x-auditable": true
               }
             }
           },
           "schema": {
             "description": "Which SCIM resource type this mapping applies to.",
             "type": "string",
-            "example": "urn:ietf:params:scim:schemas:core:2.0:User"
+            "example": "urn:ietf:params:scim:schemas:core:2.0:User",
+            "x-auditable": true
           },
           "strictness": {
             "description": "The level of adherence to outbound resource schemas when provisioning to this mapping. ‘Strict’ removes unknown values, while ‘passthrough’ passes unknown values to the target.",
@@ -604035,7 +604420,8 @@
             "enum": [
               "strict",
               "passthrough"
-            ]
+            ],
+            "x-auditable": true
           },
           "transform_jsonata": {
             "description": "A [JSONata](https://jsonata.org/) expression that transforms the resource before provisioning it in the application.",
@@ -604483,7 +604869,8 @@
         "type": "array",
         "items": {
           "description": "A domain that Access will secure.",
-          "type": "string"
+          "type": "string",
+          "x-auditable": true
         },
         "example": [
           "test.example.com/admin",
@@ -604595,7 +604982,8 @@
                   ],
                   "type": "string"
                 },
-                "type": "string"
+                "type": "string",
+                "x-auditable": true
               }
             ]
           },
@@ -604669,7 +605057,8 @@
           "type": {
             "description": "The application type.",
             "type": "string",
-            "example": "self_hosted"
+            "example": "self_hosted",
+            "x-auditable": true
           },
           "use_clientless_isolation_app_launcher_url": {
             "$ref": "#/components/schemas/access_use_clientless_isolation_app_launcher_url"
@@ -604703,7 +605092,8 @@
             "allOf": [
               {
                 "description": "The ID of the service token.",
-                "type": "string"
+                "type": "string",
+                "x-auditable": true
               },
               {
                 "$ref": "#/components/schemas/access_uuid"
@@ -604714,6 +605104,7 @@
             "allOf": [
               {
                 "type": "string",
+                "x-auditable": true,
                 "x-stainless-skip": true
               },
               {
@@ -604751,7 +605142,7 @@
             "$ref": "#/components/schemas/access_timestamp"
           },
           "duration": {
-            "$ref": "#/components/schemas/access_duration-2"
+            "$ref": "#/components/schemas/access_duration"
           },
           "enabled": {
             "$ref": "#/components/schemas/access_enabled"
@@ -604763,7 +605154,8 @@
             "allOf": [
               {
                 "description": "The ID of the service token.",
-                "type": "string"
+                "type": "string",
+                "x-auditable": true
               },
               {
                 "$ref": "#/components/schemas/access_uuid"
@@ -604783,7 +605175,7 @@
             "$ref": "#/components/schemas/access_leak_reporter"
           },
           "name": {
-            "$ref": "#/components/schemas/access_name-17"
+            "$ref": "#/components/schemas/access_name-2"
           },
           "tags": {
             "$ref": "#/components/schemas/access_tags"
@@ -604796,7 +605188,8 @@
       "access_service_auth_401_redirect": {
         "description": "Returns a 401 status code when the request is blocked by a Service Auth policy.",
         "type": "boolean",
-        "example": true
+        "example": true,
+        "x-auditable": true
       },
       "access_service_token_inactivity": {
         "description": "Configures automatic enforcement for inactive service tokens. A service token is inactive if no policy references it, and it has not successfully authenticated with an Access application during the selected inactivity period. This setting applies to every service token in your Zero Trust account.",
@@ -604809,27 +605202,29 @@
             "enum": [
               "disable",
               "delete"
-            ]
+            ],
+            "x-auditable": true
           },
           "enabled": {
             "description": "Whether automatic enforcement for inactive service tokens is enabled.",
             "type": "boolean",
-            "example": true
+            "example": true,
+            "x-auditable": true
           },
           "inactivity_threshold_days": {
             "description": "The number of days a service token must be inactive before the configured action is applied.",
             "type": "integer",
             "example": 30,
             "maximum": 365,
-            "minimum": 30
+            "minimum": 30,
+            "x-auditable": true
           }
         },
         "required": [
           "enabled",
           "inactivity_threshold_days",
           "action"
-        ],
-        "x-auditable": true
+        ]
       },
       "access_service_token_rule": {
         "description": "Matches a specific Access Service Token",
@@ -604841,7 +605236,8 @@
               "token_id": {
                 "description": "The ID of a Service Token.",
                 "type": "string",
-                "example": "aa0a4aab-672b-4bdb-bc33-a59f1130a11f"
+                "example": "aa0a4aab-672b-4bdb-bc33-a59f1130a11f",
+                "x-auditable": true
               }
             },
             "required": [
@@ -604890,19 +605286,22 @@
       "access_session_duration": {
         "description": "The amount of time that tokens issued for applications will be valid. Must be in the format `300ms` or `2h45m`. Valid time units are: ns, us (or µs), ms, s, m, h.",
         "type": "string",
-        "example": "24h"
+        "example": "24h",
+        "x-auditable": true
       },
       "access_session_duration-2": {
         "description": "The amount of time that tokens issued for this application will be valid. Must be in the format `300ms` or `2h45m`. Valid time units are: ns, us (or µs), ms, s, m, h.",
         "type": "string",
         "example": "24h",
-        "default": "24h"
+        "default": "24h",
+        "x-auditable": true
       },
       "access_session_duration-3": {
         "description": "The amount of time that tokens issued for the application will be valid. Must be in the format `300ms` or `2h45m`. Valid time units are: ns, us (or µs), ms, s, m, h.",
         "type": "string",
         "example": "24h",
-        "nullable": true
+        "nullable": true,
+        "x-auditable": true
       },
       "access_settings": {
         "type": "object",
@@ -604940,17 +605339,20 @@
           "china_network": {
             "description": "Request client certificates for this hostname in China. Can only be set to true if this zone is china network enabled.",
             "type": "boolean",
-            "example": false
+            "example": false,
+            "x-auditable": true
           },
           "client_certificate_forwarding": {
             "description": "Client Certificate Forwarding is a feature that takes the client cert provided by the eyeball to the edge, and forwards it to the origin as a HTTP header to allow logging on the origin.",
             "type": "boolean",
-            "example": true
+            "example": true,
+            "x-auditable": true
           },
           "hostname": {
             "description": "The hostname that these settings apply to.",
             "type": "string",
-            "example": "admin.example.com"
+            "example": "admin.example.com",
+            "x-auditable": true
           }
         },
         "additionalProperties": false,
@@ -605390,12 +605792,14 @@
         "description": "Determines when to skip the App Launcher landing page.",
         "type": "boolean",
         "example": true,
-        "default": false
+        "default": false,
+        "x-auditable": true
       },
       "access_skip_interstitial": {
         "description": "Enables automatic authentication through cloudflared.",
         "type": "boolean",
-        "example": true
+        "example": true,
+        "x-auditable": true
       },
       "access_ssh_props": {
         "allOf": [
@@ -605411,7 +605815,8 @@
                   },
                   {
                     "example": "ssh",
-                    "type": "string"
+                    "type": "string",
+                    "x-auditable": true
                   }
                 ]
               }
@@ -605430,7 +605835,8 @@
               "type": {
                 "description": "The application type.",
                 "type": "string",
-                "example": "ssh"
+                "example": "ssh",
+                "x-auditable": true
               }
             },
             "type": "object"
@@ -605524,11 +605930,11 @@
         },
         "additionalProperties": {
           "maxLength": 256,
-          "type": "string"
+          "type": "string",
+          "x-auditable": true
         },
         "maxProperties": 5,
-        "nullable": true,
-        "x-auditable": true
+        "nullable": true
       },
       "access_tags-2": {
         "description": "The tags you want assigned to an application. Tags are used to filter applications in the App Launcher dashboard.",
@@ -605536,7 +605942,8 @@
         "items": {
           "description": "The tag associated with an application.",
           "example": "engineers",
-          "type": "string"
+          "type": "string",
+          "x-auditable": true
         },
         "default": [],
         "x-stainless-collection-type": "set"
@@ -605556,7 +605963,8 @@
             "production-server"
           ],
           "items": {
-            "type": "string"
+            "type": "string",
+            "x-auditable": true
           },
           "type": "array"
         },
@@ -605714,7 +606122,8 @@
             "additionalProperties": {
               "items": {
                 "minLength": 1,
-                "type": "string"
+                "type": "string",
+                "x-auditable": true
               },
               "maxItems": 50,
               "minItems": 1,
@@ -605744,7 +606153,8 @@
             "type": "array",
             "items": {
               "minLength": 1,
-              "type": "string"
+              "type": "string",
+              "x-auditable": true
             },
             "maxItems": 5000,
             "minItems": 1
@@ -605765,13 +606175,11 @@
         "properties": {
           "message": {
             "description": "Human-readable description of the finding.",
-            "type": "string",
-            "x-auditable": true
+            "type": "string"
           },
           "ref": {
             "description": "Optional pointer to the part of the template the finding refers to.",
-            "type": "string",
-            "x-auditable": true
+            "type": "string"
           },
           "tier": {
             "description": "The validation tier that produced the finding (e.g. html, liquid).",
@@ -605794,13 +606202,13 @@
         "description": "The title shown on the landing page.",
         "type": "string",
         "example": "Welcome back!",
-        "default": "Welcome!"
+        "default": "Welcome!",
+        "x-auditable": true
       },
       "access_total_users": {
         "description": "The total number of users in the user base.",
         "type": "integer",
-        "example": 20,
-        "x-auditable": true
+        "example": 20
       },
       "access_trust_settings_response": {
         "allOf": [
@@ -605833,12 +606241,12 @@
         "type": "array",
         "items": {
           "pattern": "^[0-9a-fA-F]{32}$",
-          "type": "string"
+          "type": "string",
+          "x-auditable": true
         },
         "example": [
           "023e105f4ecef8ad9ca31a8372d0c353"
-        ],
-        "x-auditable": true
+        ]
       },
       "access_type": {
         "description": "The application type.",
@@ -605860,7 +606268,8 @@
           "mcp",
           "mcp_portal",
           "proxy_endpoint"
-        ]
+        ],
+        "x-auditable": true
       },
       "access_type-2": {
         "description": "Custom page type.",
@@ -605887,7 +606296,8 @@
           "biso",
           "bookmark",
           "dash_sso"
-        ]
+        ],
+        "x-auditable": true
       },
       "access_ui_read_only_toggle_reason": {
         "description": "A description of the reason why the UI read only field is being toggled.",
@@ -605897,7 +606307,8 @@
       },
       "access_uid": {
         "description": "The unique API identifier for the user.",
-        "type": "string"
+        "type": "string",
+        "x-auditable": true
       },
       "access_until": {
         "description": "the timestamp of the most-recent update log.",
@@ -605914,13 +606325,13 @@
           "processing",
           "exceeded time",
           "complete"
-        ],
-        "x-auditable": true
+        ]
       },
       "access_updated_at": {
         "allOf": [
           {
             "type": "string",
+            "x-auditable": true,
             "x-stainless-skip": true
           },
           {
@@ -605932,7 +606343,8 @@
         "description": "Determines if users can access this application via a clientless browser isolation URL.\nThis allows users to access private domains without connecting to Gateway. The option requires\nClientless Browser Isolation to be set up with policies that allow users of this application.\n",
         "type": "boolean",
         "example": false,
-        "default": false
+        "default": false,
+        "x-auditable": true
       },
       "access_user_id": {
         "description": "The UUID of the authenticating user.",
@@ -605969,7 +606381,8 @@
         "example": "Employees",
         "maxLength": 128,
         "minLength": 1,
-        "pattern": "[^\\s]"
+        "pattern": "[^\\s]",
+        "x-auditable": true
       },
       "access_user_population_request": {
         "type": "object",
@@ -605991,8 +606404,7 @@
           "approved",
           "blocked",
           "error"
-        ],
-        "x-auditable": true
+        ]
       },
       "access_user_risk_score_rule": {
         "description": "Matches a user's risk score.",
@@ -606011,7 +606423,8 @@
                     "high",
                     "unscored"
                   ],
-                  "type": "string"
+                  "type": "string",
+                  "x-auditable": true
                 },
                 "example": [
                   "low",
@@ -606039,7 +606452,8 @@
       "access_user_seat_expiration_inactive_time-2": {
         "description": "The amount of time a user seat is inactive before it expires. When the user seat exceeds the set time of inactivity, the user is removed as an active seat and no longer counts against your Teams seat count. Must be in the format `300ms` or `2h45m`. Valid time units are: `ns`, `us` (or `µs`), `ms`, `s`, `m`, `h`.",
         "type": "string",
-        "example": "720h"
+        "example": "720h",
+        "x-auditable": true
       },
       "access_username": {
         "description": "The username of the SCIM User resource.",
@@ -606159,14 +606573,12 @@
       "access_users_approved": {
         "description": "The number of (processed) users approved based on policy evaluation results.",
         "type": "integer",
-        "example": 5,
-        "x-auditable": true
+        "example": 5
       },
       "access_users_blocked": {
         "description": "The number of (processed) users blocked based on policy evaluation results.",
         "type": "integer",
-        "example": 5,
-        "x-auditable": true
+        "example": 5
       },
       "access_users_errored": {
         "description": "The number of (processed) users errored based on policy evaluation results.",
@@ -606184,7 +606596,8 @@
         "description": "The UUID of the policy",
         "type": "string",
         "example": "f174e90a-fafe-4643-bbbc-4a0ed4fc8415",
-        "maxLength": 36
+        "maxLength": 36,
+        "x-auditable": true
       },
       "access_validate_response": {
         "type": "object",
@@ -606250,7 +606663,8 @@
                   },
                   {
                     "example": "vnc",
-                    "type": "string"
+                    "type": "string",
+                    "x-auditable": true
                   }
                 ]
               }
@@ -606269,7 +606683,8 @@
               "type": {
                 "description": "The application type.",
                 "type": "string",
-                "example": "vnc"
+                "example": "vnc",
+                "x-auditable": true
               }
             },
             "type": "object"
@@ -606299,13 +606714,15 @@
               "domain": {
                 "type": "string",
                 "example": "authdomain.cloudflareaccess.com/warp",
-                "readOnly": true
+                "readOnly": true,
+                "x-auditable": true
               },
               "name": {
                 "type": "string",
                 "example": "Warp Login App",
                 "default": "Warp Login App",
-                "readOnly": true
+                "readOnly": true,
+                "x-auditable": true
               },
               "type": {
                 "allOf": [
@@ -606314,7 +606731,8 @@
                   },
                   {
                     "example": "warp",
-                    "type": "string"
+                    "type": "string",
+                    "x-auditable": true
                   }
                 ]
               }
@@ -606333,18 +606751,21 @@
               "domain": {
                 "type": "string",
                 "example": "authdomain.cloudflareaccess.com/warp",
-                "readOnly": true
+                "readOnly": true,
+                "x-auditable": true
               },
               "name": {
                 "type": "string",
                 "example": "Warp Login App",
                 "default": "Warp Login App",
-                "readOnly": true
+                "readOnly": true,
+                "x-auditable": true
               },
               "type": {
                 "description": "The application type.",
                 "type": "string",
-                "example": "warp"
+                "example": "warp",
+                "x-auditable": true
               }
             },
             "type": "object"
