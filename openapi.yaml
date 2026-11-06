@@ -17767,7 +17767,7 @@ paths:
     post:
       operationId: aig-billing-topup-eligibility
       summary: Get top-up eligibility
-      description: Determine whether an account can self-serve a credit top-up, and if not, why. The dashboard forwards the account's payment-method list in the body; the reason logic is owned here.
+      description: 'Determine top-up eligibility. Requests without contract_version retain the legacy forwarded-method contract. Explicit contract_version: 2 opts into the gated, read-only authoritative advisory API; forwarded method metadata is not authoritative. No response authorizes a charge.'
       parameters:
         - name: account_id
           in: path
@@ -17781,8 +17781,15 @@ paths:
             schema:
               type: object
               properties:
+                contract_version:
+                  type: number
+                  enum:
+                    - 2
+                payment_method_id:
+                  type: string
+                  maxLength: 255
                 payment_methods:
-                  description: Account-level payment methods, forwarded by the dashboard.
+                  description: Account-level payment methods, forwarded by the dashboard for legacy eligibility only.
                   type: array
                   items:
                     properties:
@@ -17821,6 +17828,12 @@ paths:
                 $ref: '#/components/schemas/aig-billing_ErrorResponse'
         '404':
           description: Not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/aig-billing_ErrorResponse'
+        '409':
+          description: Explicit V2 is unavailable for this account, including flag fallback.
           content:
             application/json:
               schema:
@@ -414440,6 +414453,160 @@ components:
         - result
         - success
         - errors
+    aig-billing_GetAuthoritativeTopupEligibilityResult:
+      type: object
+      properties:
+        advisory:
+          type: boolean
+          enum:
+            - true
+        auto_topup:
+          type: object
+          properties:
+            default_payment_method_id:
+              type: string
+              nullable: true
+            eligible_payment_method_ids:
+              type: array
+              items:
+                type: string
+            reason:
+              type: string
+              enum:
+                - ELIGIBLE
+                - NO_ACCOUNT_PAYMENT_METHOD
+                - UNSUPPORTED_ACCOUNT_PAYMENT_METHOD
+                - ACCOUNT_PAYMENT_METHOD_NOT_DEFAULT
+                - ACCOUNT_PAYMENT_METHOD_NOT_LINKED_TO_AIG
+                - CONTRACT_BILLING_NOT_SELF_SERVE
+                - ELIGIBILITY_UNAVAILABLE
+                - INVALID_PAYMENT_METHOD_SELECTION
+                - PAYMENT_METHOD_EXPIRED
+                - FIRST_TOPUP_REQUIRED
+                - AUTO_TOPUP_SETUP_REQUIRED
+                - AUTO_TOPUP_NOT_CONFIGURED
+                - ACCOUNT_PAYMENT_METHOD_DEFAULT_MISSING
+                - ACCOUNT_POLICY_UNAVAILABLE
+            recommended_action:
+              type: string
+              enum:
+                - NONE
+                - ADD_SUPPORTED_PAYMENT_METHOD
+                - USE_EXISTING_CARD
+                - SET_CARD_AS_DEFAULT
+                - CONTACT_SUPPORT
+                - RETRY
+                - SELECT_SUPPORTED_PAYMENT_METHOD
+                - COMPLETE_MANUAL_TOPUP
+                - AUTHENTICATE_CARD
+                - CONFIGURE_AUTO_TOPUP
+            status:
+              type: string
+              enum:
+                - eligible
+                - ineligible
+                - unavailable
+          required:
+            - status
+            - reason
+            - recommended_action
+            - eligible_payment_method_ids
+            - default_payment_method_id
+        contract_version:
+          type: number
+          enum:
+            - 2
+        evaluated_at:
+          type: string
+          format: date-time
+        manual_topup:
+          type: object
+          properties:
+            default_payment_method_id:
+              type: string
+              nullable: true
+            eligible_payment_method_ids:
+              type: array
+              items:
+                type: string
+            reason:
+              type: string
+              enum:
+                - ELIGIBLE
+                - NO_ACCOUNT_PAYMENT_METHOD
+                - UNSUPPORTED_ACCOUNT_PAYMENT_METHOD
+                - ACCOUNT_PAYMENT_METHOD_NOT_DEFAULT
+                - ACCOUNT_PAYMENT_METHOD_NOT_LINKED_TO_AIG
+                - CONTRACT_BILLING_NOT_SELF_SERVE
+                - ELIGIBILITY_UNAVAILABLE
+                - INVALID_PAYMENT_METHOD_SELECTION
+                - PAYMENT_METHOD_EXPIRED
+                - FIRST_TOPUP_REQUIRED
+                - AUTO_TOPUP_SETUP_REQUIRED
+                - AUTO_TOPUP_NOT_CONFIGURED
+                - ACCOUNT_PAYMENT_METHOD_DEFAULT_MISSING
+                - ACCOUNT_POLICY_UNAVAILABLE
+            recommended_action:
+              type: string
+              enum:
+                - NONE
+                - ADD_SUPPORTED_PAYMENT_METHOD
+                - USE_EXISTING_CARD
+                - SET_CARD_AS_DEFAULT
+                - CONTACT_SUPPORT
+                - RETRY
+                - SELECT_SUPPORTED_PAYMENT_METHOD
+                - COMPLETE_MANUAL_TOPUP
+                - AUTHENTICATE_CARD
+                - CONFIGURE_AUTO_TOPUP
+            status:
+              type: string
+              enum:
+                - eligible
+                - ineligible
+                - unavailable
+          required:
+            - status
+            - reason
+            - recommended_action
+            - eligible_payment_method_ids
+            - default_payment_method_id
+        payment_methods:
+          type: array
+          items:
+            properties:
+              account_payment_method_id:
+                type: string
+              brand:
+                type: string
+              is_default:
+                type: boolean
+              kind:
+                type: string
+                enum:
+                  - card
+                  - wallet
+                  - unsupported
+              last4:
+                type: string
+              stripe_payment_method_id:
+                type: string
+                nullable: true
+              wallet_type:
+                type: string
+            required:
+              - account_payment_method_id
+              - stripe_payment_method_id
+              - kind
+              - is_default
+            type: object
+      required:
+        - contract_version
+        - evaluated_at
+        - advisory
+        - payment_methods
+        - manual_topup
+        - auto_topup
     aig-billing_GetCreditBalanceResponse:
       type: object
       properties:
@@ -414983,7 +415150,9 @@ components:
               - message
             type: object
         result:
-          $ref: '#/components/schemas/aig-billing_GetTopupEligibilityResult'
+          anyOf:
+            - $ref: '#/components/schemas/aig-billing_GetTopupEligibilityResult'
+            - $ref: '#/components/schemas/aig-billing_GetAuthoritativeTopupEligibilityResult'
         result_info:
           type: object
           properties:
