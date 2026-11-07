@@ -206720,6 +206720,353 @@
         "x-fern-sdk-method-name": "get"
       }
     },
+    "/accounts/{account_id}/dex/notifications": {
+      "get": {
+        "operationId": "list-dex-notifications",
+        "summary": "List notification history",
+        "description": "Lists notification sendouts created for an account within the 31-day history retention period.",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "description": "Unique Cloudflare account ID.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/digital-experience-monitoring_account_identifier"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number of paginated results.",
+            "schema": {
+              "type": "integer",
+              "default": 1,
+              "minimum": 1
+            }
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "description": "Number of results per page.",
+            "schema": {
+              "type": "integer",
+              "default": 10,
+              "maximum": 50,
+              "minimum": 1
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "description": "Filters notifications by title or message.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "description": "Earliest notification creation time to include.",
+            "schema": {
+              "$ref": "#/components/schemas/digital-experience-monitoring_timestamp_datetime"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "description": "Latest notification creation time to include.",
+            "schema": {
+              "$ref": "#/components/schemas/digital-experience-monitoring_timestamp_datetime"
+            }
+          },
+          {
+            "name": "scope",
+            "in": "query",
+            "description": "Filters notifications by recipient scope.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "account",
+                "device"
+              ]
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Filters notifications by dispatch status, not device delivery outcome.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "pending",
+                "sent",
+                "failed"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Notification history response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/digital-experience-monitoring_api-response-collection"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/digital-experience-monitoring_get_notifications_response"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Notification history failure response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/digital-experience-monitoring_api-response-common-failure"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          },
+          {
+            "user_service_key": []
+          }
+        ],
+        "tags": [
+          "DEX Notifications"
+        ],
+        "x-api-token-group": [
+          "Cloudflare DEX Write",
+          "Cloudflare DEX Read",
+          "Zero Trust Report",
+          "Zero Trust Read"
+        ],
+        "x-fern-availability": "beta",
+        "x-fern-ignore": true,
+        "x-fern-sdk-group-name": "zero-trust.dex.notifications",
+        "x-fern-sdk-method-name": "list"
+      },
+      "post": {
+        "operationId": "create-dex-notification",
+        "summary": "Create a notification",
+        "description": "Creates an account-wide notification or a notification for selected device registrations.",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "description": "Unique Cloudflare account ID.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/digital-experience-monitoring_account_identifier"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/digital-experience-monitoring_create_notification_request"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Notification created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/digital-experience-monitoring_api-response-single"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/digital-experience-monitoring_client_notification"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Notification creation failure response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/digital-experience-monitoring_api-response-common-failure"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          },
+          {
+            "user_service_key": []
+          }
+        ],
+        "tags": [
+          "DEX Notifications"
+        ],
+        "x-api-token-group": [
+          "Cloudflare DEX Write"
+        ],
+        "x-fern-availability": "beta",
+        "x-fern-ignore": true,
+        "x-fern-sdk-group-name": "zero-trust.dex.notifications",
+        "x-fern-sdk-method-name": "create"
+      }
+    },
+    "/accounts/{account_id}/dex/notifications/{notification_id}/outcomes": {
+      "get": {
+        "operationId": "list-dex-notification-outcomes",
+        "summary": "List notification outcomes",
+        "description": "Lists observed device outcomes for a notification sendout. Sampling may omit outcomes; each result includes its sampling interval.",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "description": "Unique Cloudflare account ID.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/digital-experience-monitoring_account_identifier"
+            }
+          },
+          {
+            "name": "notification_id",
+            "in": "path",
+            "description": "Unique identifier for the notification sendout.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/digital-experience-monitoring_uuid"
+            }
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "description": "Number of results per page.",
+            "schema": {
+              "type": "integer",
+              "default": 50,
+              "maximum": 50,
+              "minimum": 1
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "description": "Cursor for the next page of results.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "outcome",
+            "in": "query",
+            "description": "Filters results by outcome.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "delivered",
+                "failed",
+                "expired"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Notification outcomes response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/digital-experience-monitoring_api-response-collection"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/digital-experience-monitoring_get_notification_outcomes_response"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Notification outcomes failure response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/digital-experience-monitoring_api-response-common-failure"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          },
+          {
+            "user_service_key": []
+          }
+        ],
+        "tags": [
+          "DEX Notifications"
+        ],
+        "x-api-token-group": [
+          "Cloudflare DEX Write",
+          "Cloudflare DEX Read",
+          "Zero Trust Report",
+          "Zero Trust Read"
+        ],
+        "x-fern-availability": "beta",
+        "x-fern-ignore": true,
+        "x-fern-sdk-group-name": "zero-trust.dex.notifications.outcomes",
+        "x-fern-sdk-method-name": "list"
+      }
+    },
     "/accounts/{account_id}/dex/rules": {
       "get": {
         "operationId": "list-dex-rules",
@@ -640269,6 +640616,78 @@
           }
         ]
       },
+      "digital-experience-monitoring_client_notification": {
+        "type": "object",
+        "properties": {
+          "created_at": {
+            "description": "Time at which the notification sendout was created.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/digital-experience-monitoring_timestamp_datetime"
+              }
+            ]
+          },
+          "id": {
+            "description": "Unique identifier for the notification sendout.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/digital-experience-monitoring_uuid"
+              }
+            ]
+          },
+          "message": {
+            "description": "Plain-text notification message.",
+            "type": "string"
+          },
+          "outcome_counts": {
+            "description": "Weighted delivery outcome counts derived from sampled delivery events.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/digital-experience-monitoring_notification_outcome_counts"
+              }
+            ]
+          },
+          "recipient_count": {
+            "description": "Number of targeted device registrations. Omitted for account-wide notifications.",
+            "type": "integer",
+            "maximum": 100,
+            "minimum": 1
+          },
+          "scope": {
+            "description": "Whether the notification was sent account-wide or to selected device registrations.",
+            "type": "string",
+            "enum": [
+              "account",
+              "device"
+            ]
+          },
+          "status": {
+            "description": "Dispatch status indicating whether the notification was accepted for delivery, not a device delivery outcome.",
+            "type": "string",
+            "enum": [
+              "pending",
+              "sent",
+              "failed"
+            ]
+          },
+          "support_url": {
+            "description": "URL supplied to recipients for additional information.",
+            "type": "string"
+          },
+          "title": {
+            "description": "Plain-text notification title.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "scope",
+          "title",
+          "message",
+          "created_at",
+          "status"
+        ]
+      },
       "digital-experience-monitoring_colo": {
         "description": "Cloudflare colo airport code.",
         "type": "string",
@@ -640375,6 +640794,39 @@
             "nullable": true
           }
         }
+      },
+      "digital-experience-monitoring_create_notification_request": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "description": "Plain-text notification message.",
+            "type": "string",
+            "maxLength": 500,
+            "minLength": 1
+          },
+          "registration_ids": {
+            "description": "Device registration IDs to notify. Omit to send an account-wide notification.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/digital-experience-monitoring_uuid"
+            },
+            "maxItems": 100
+          },
+          "support_url": {
+            "description": "URL supplied to recipients for additional information. Required when registration_ids is set.",
+            "type": "string"
+          },
+          "title": {
+            "description": "Plain-text notification title.",
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1
+          }
+        },
+        "required": [
+          "title",
+          "message"
+        ]
       },
       "digital-experience-monitoring_create_rule_body": {
         "type": "object",
@@ -641370,6 +641822,36 @@
           }
         }
       },
+      "digital-experience-monitoring_get_notification_outcomes_response": {
+        "type": "object",
+        "properties": {
+          "outcomes": {
+            "description": "Observed notification outcomes ordered from newest to oldest.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/digital-experience-monitoring_notification_outcome"
+            }
+          }
+        },
+        "required": [
+          "outcomes"
+        ]
+      },
+      "digital-experience-monitoring_get_notifications_response": {
+        "type": "object",
+        "properties": {
+          "notifications": {
+            "description": "Notification sendouts ordered from newest to oldest.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/digital-experience-monitoring_client_notification"
+            }
+          }
+        },
+        "required": [
+          "notifications"
+        ]
+      },
       "digital-experience-monitoring_http_details_percentiles_response": {
         "type": "object",
         "properties": {
@@ -641696,6 +642178,84 @@
         "description": "The mode under which the WARP client is run.",
         "type": "string",
         "example": "proxy"
+      },
+      "digital-experience-monitoring_notification_outcome": {
+        "type": "object",
+        "properties": {
+          "duration_ms": {
+            "description": "Active notification duration in milliseconds. Expired outcomes report zero.",
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          },
+          "registration_id": {
+            "description": "Registration ID of the device that produced the outcome.",
+            "type": "string"
+          },
+          "sample_interval": {
+            "description": "Sampling interval for this event. Values above one indicate a sampled result.",
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1
+          },
+          "status": {
+            "description": "Observed notification delivery status.",
+            "type": "string",
+            "enum": [
+              "delivered",
+              "failed",
+              "expired"
+            ]
+          },
+          "timestamp": {
+            "description": "Time when the outcome was observed.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/digital-experience-monitoring_timestamp_datetime"
+              }
+            ]
+          }
+        },
+        "required": [
+          "registration_id",
+          "status",
+          "timestamp",
+          "duration_ms",
+          "sample_interval"
+        ]
+      },
+      "digital-experience-monitoring_notification_outcome_counts": {
+        "type": "object",
+        "properties": {
+          "delivered": {
+            "description": "Number of delivered outcomes.",
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          },
+          "estimated": {
+            "description": "Whether these weighted counts may be affected by equitable sampling before full-resolution storage.",
+            "type": "boolean"
+          },
+          "expired": {
+            "description": "Number of expired outcomes.",
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          },
+          "failed": {
+            "description": "Number of failed outcomes.",
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "delivered",
+          "failed",
+          "expired",
+          "estimated"
+        ]
       },
       "digital-experience-monitoring_page": {
         "description": "Page number of paginated results.",
