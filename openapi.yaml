@@ -135381,6 +135381,7 @@ paths:
       tags:
         - Devices
       x-fern-availability: generally-available
+      x-fern-ignore: true
       x-fern-sdk-group-name: zero-trust.devices.profiles.custom
       x-fern-sdk-method-name: list
   /accounts/{account_id}/devices/policy:
@@ -135414,6 +135415,7 @@ paths:
       tags:
         - Devices
       x-fern-availability: generally-available
+      x-fern-ignore: true
       x-fern-sdk-group-name: zero-trust.devices.profiles.default
       x-fern-sdk-method-name: get
     patch:
@@ -135449,6 +135451,8 @@ paths:
                   $ref: '#/components/schemas/teams-devices_dns_search_suffixes'
                 enable_device_credential_authentication:
                   $ref: '#/components/schemas/teams-devices_enable_device_credential_authentication'
+                enable_netbt:
+                  $ref: '#/components/schemas/teams-devices_enable_netbt'
                 exclude:
                   $ref: '#/components/schemas/teams-devices_exclude_request'
                 exclude_office_ips:
@@ -135499,6 +135503,7 @@ paths:
       x-api-token-group:
         - Zero Trust Write
       x-fern-availability: generally-available
+      x-fern-ignore: true
       x-fern-sdk-group-name: zero-trust.devices.profiles.default
       x-fern-sdk-method-name: update
     post:
@@ -135545,6 +135550,8 @@ paths:
                   $ref: '#/components/schemas/teams-devices_dns_search_suffixes'
                 enable_device_credential_authentication:
                   $ref: '#/components/schemas/teams-devices_enable_device_credential_authentication'
+                enable_netbt:
+                  $ref: '#/components/schemas/teams-devices_enable_netbt'
                 enabled:
                   description: Whether the policy will be applied to matching devices.
                   type: boolean
@@ -135615,6 +135622,7 @@ paths:
       x-api-token-group:
         - Zero Trust Write
       x-fern-availability: generally-available
+      x-fern-ignore: true
       x-fern-sdk-group-name: zero-trust.devices.profiles.custom
       x-fern-sdk-method-name: create
   /accounts/{account_id}/devices/policy/{policy_id}:
@@ -135655,6 +135663,7 @@ paths:
       x-api-token-group:
         - Zero Trust Write
       x-fern-availability: generally-available
+      x-fern-ignore: true
       x-fern-sdk-group-name: zero-trust.devices.profiles.custom
       x-fern-sdk-method-name: delete
     get:
@@ -135692,6 +135701,7 @@ paths:
       tags:
         - Devices
       x-fern-availability: generally-available
+      x-fern-ignore: true
       x-fern-sdk-group-name: zero-trust.devices.profiles.custom
       x-fern-sdk-method-name: get
     patch:
@@ -135738,6 +135748,8 @@ paths:
                   $ref: '#/components/schemas/teams-devices_dns_search_suffixes'
                 enable_device_credential_authentication:
                   $ref: '#/components/schemas/teams-devices_enable_device_credential_authentication'
+                enable_netbt:
+                  $ref: '#/components/schemas/teams-devices_enable_netbt'
                 enabled:
                   description: Whether the policy will be applied to matching devices.
                   type: boolean
@@ -135803,6 +135815,7 @@ paths:
       x-api-token-group:
         - Zero Trust Write
       x-fern-availability: generally-available
+      x-fern-ignore: true
       x-fern-sdk-group-name: zero-trust.devices.profiles.custom
       x-fern-sdk-method-name: update
   /accounts/{account_id}/devices/policy/{policy_id}/exclude:
@@ -502280,6 +502293,8 @@ components:
           $ref: '#/components/schemas/teams-devices_dns_search_suffixes'
         enable_device_credential_authentication:
           $ref: '#/components/schemas/teams-devices_enable_device_credential_authentication'
+        enable_netbt:
+          $ref: '#/components/schemas/teams-devices_enable_netbt'
         enabled:
           description: Whether the policy will be applied to matching devices.
           type: boolean
@@ -502298,6 +502313,10 @@ components:
           $ref: '#/components/schemas/teams-devices_global_acceleration'
         include:
           $ref: '#/components/schemas/teams-devices_include'
+        lan_allow_minutes:
+          $ref: '#/components/schemas/teams-devices_lan_allow_minutes'
+        lan_allow_subnet_size:
+          $ref: '#/components/schemas/teams-devices_lan_allow_subnet_size'
         policy_id:
           $ref: '#/components/schemas/teams-devices_schemas-uuid'
         profile_type:
@@ -502548,6 +502567,8 @@ components:
           $ref: '#/components/schemas/teams-devices_dns_search_suffixes'
         enable_device_credential_authentication:
           $ref: '#/components/schemas/teams-devices_enable_device_credential_authentication'
+        enable_netbt:
+          $ref: '#/components/schemas/teams-devices_enable_netbt'
         enabled:
           description: Whether the policy will be applied to matching devices.
           type: boolean
@@ -502788,6 +502809,12 @@ components:
       nullable: true
     teams-devices_enable_device_credential_authentication:
       description: Determines whether the WARP client can silently reauthenticate the user with device credentials (Microsoft Entra) instead of prompting for browser-based reauthentication.
+      type: boolean
+      example: false
+      default: false
+      x-auditable: true
+    teams-devices_enable_netbt:
+      description: Determines whether NetBIOS over TCP/IP (NetBT) is enabled on the WARP tunnel interface. (Windows only). NetBT is disabled by default for security reasons.
       type: boolean
       example: false
       default: false
