@@ -25811,6 +25811,182 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: ai-gateway.gateways.providers
       x-fern-sdk-method-name: update
+  /accounts/{account_id}/ai-gateway/gateways/{gateway_id}/provider_configs/{id}/test:
+    post:
+      operationId: aig-config-test-providers
+      summary: Check stored provider credentials
+      description: Checks whether stored credentials can list models through the provider implementation in AI Gateway. Requires AI Gateway content update permission. Does not run inference, check credits or inference permissions, or return provider response bodies. HTTP 401 from the model-list request is classified as invalid, as is AWS Bedrock HTTP 403 with an UnrecognizedClientException error type. Other failures are inconclusive, including other HTTP 400 or 403 responses; a 403 alone does not distinguish rejected credentials from insufficient permissions. Unsupported providers or credential formats also return an inconclusive result.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: string
+            example: 3ebbcb006d4d46d7bb6a8c7f14676cb0
+        - name: gateway_id
+          in: path
+          required: true
+          schema:
+            description: Unique identifier of the AI Gateway within the account.
+            type: string
+            example: my-gateway
+            maxLength: 64
+            minLength: 1
+            pattern: ^[a-z0-9_]+(?:-[a-z0-9_]+)*$
+            x-auditable: true
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+      responses:
+        '200':
+          description: Credential probe outcome; error means validity is unknown
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      httpStatus:
+                        type: number
+                        nullable: true
+                      providerSlug:
+                        type: string
+                      reason:
+                        type: string
+                        enum:
+                          - unsupported_provider
+                          - missing_secret
+                          - provider_error
+                          - permission_denied
+                          - request_failed
+                      status:
+                        type: string
+                        enum:
+                          - valid
+                          - invalid
+                          - error
+                    required:
+                      - status
+                      - providerSlug
+                      - httpStatus
+                  success:
+                    type: boolean
+                required:
+                  - success
+                  - result
+        '400':
+          description: Input Validation Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          type: number
+                          example: 7001
+                        message:
+                          type: string
+                          example: Input Validation Error
+                        path:
+                          type: array
+                          items:
+                            example: body
+                            type: string
+                      required:
+                        - code
+                        - message
+                        - path
+                      type: object
+                  success:
+                    type: boolean
+                required:
+                  - success
+                  - errors
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          type: number
+                          example: 7002
+                        message:
+                          type: string
+                          example: Not Found
+                      required:
+                        - code
+                        - message
+                      type: object
+                  success:
+                    type: boolean
+                required:
+                  - success
+                  - errors
+        '501':
+          description: Provider key testing is not available in this environment.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          type: number
+                          example: 7022
+                        message:
+                          type: string
+                          example: Provider key testing is not available in this environment.
+                      required:
+                        - code
+                        - message
+                      type: object
+                  success:
+                    type: boolean
+                required:
+                  - success
+                  - errors
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - AI Gateway Provider Configs
+      x-api-token-group:
+        - Secrets Store Write
+      x-cfPermissionsRequired:
+        enum:
+          - com.cloudflare.api.account.aig
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: true
+        pro: true
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: ai-gateway.gateways.providers
+      x-fern-sdk-method-name: test
   /accounts/{account_id}/ai-gateway/gateways/{gateway_id}/routes:
     get:
       operationId: aig-config-list-gateway-dynamic-routes
@@ -67467,6 +67643,7 @@ paths:
                 result:
                   warehouses:
                     - bucket: analytics-bucket
+                      catalog_uri: https://catalog.cloudflarestorage.com/account123/analytics-bucket
                       id: 550e8400-e29b-41d4-a716-446655440000
                       jurisdiction: default
                       maintenance_config:
@@ -67565,6 +67742,7 @@ paths:
                 messages: []
                 result:
                   bucket: analytics-bucket
+                  catalog_uri: https://catalog.cloudflarestorage.com/account123/analytics-bucket
                   credential_status: present
                   id: 550e8400-e29b-41d4-a716-446655440000
                   jurisdiction: default
@@ -67963,6 +68141,7 @@ paths:
                 errors: []
                 messages: []
                 result:
+                  catalog_uri: https://catalog.cloudflarestorage.com/account123/my-bucket
                   id: 550e8400-e29b-41d4-a716-446655440000
                   name: account123_my-bucket
                 success: true
@@ -190240,6 +190419,7 @@ paths:
                 result:
                   warehouses:
                     - bucket: analytics-bucket
+                      catalog_uri: https://catalog.cloudflarestorage.com/account123/analytics-bucket
                       id: 550e8400-e29b-41d4-a716-446655440000
                       jurisdiction: default
                       maintenance_config:
@@ -190340,6 +190520,7 @@ paths:
                 messages: []
                 result:
                   bucket: analytics-bucket
+                  catalog_uri: https://catalog.cloudflarestorage.com/account123/analytics-bucket
                   credential_status: present
                   id: 550e8400-e29b-41d4-a716-446655440000
                   jurisdiction: default
@@ -190748,6 +190929,7 @@ paths:
                 errors: []
                 messages: []
                 result:
+                  catalog_uri: https://catalog.cloudflarestorage.com/account123/my-bucket
                   id: 550e8400-e29b-41d4-a716-446655440000
                   name: account123_my-bucket
                 success: true
@@ -481174,6 +481356,11 @@ components:
           description: Specifies the associated R2 bucket name.
           type: string
           example: my-data-bucket
+        catalog_uri:
+          description: Specifies the Iceberg REST catalog URI that clients use to connect to the catalog.
+          type: string
+          format: uri
+          example: https://catalog.cloudflarestorage.com/account123/my-data-bucket
         credential_status:
           description: Shows the credential configuration status.
           type: string
@@ -481220,6 +481407,11 @@ components:
       description: Contains response from activating an R2 bucket as a catalog.
       type: object
       properties:
+        catalog_uri:
+          description: Specifies the Iceberg REST catalog URI that clients use to connect to the catalog.
+          type: string
+          format: uri
+          example: https://catalog.cloudflarestorage.com/account123/my-bucket
         id:
           description: Use this to uniquely identify the activated catalog.
           type: string
