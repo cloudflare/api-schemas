@@ -122427,8 +122427,8 @@
           "Workers CI Read"
         ],
         "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "builds.logs",
-        "x-fern-sdk-method-name": "get"
+        "x-fern-sdk-group-name": "builds",
+        "x-fern-sdk-method-name": "logs"
       }
     },
     "/accounts/{account_id}/builds/repos/connections": {
@@ -122539,7 +122539,8 @@
         ],
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "builds.repos.connections",
-        "x-fern-sdk-method-name": "delete"
+        "x-fern-sdk-method-name": "delete",
+        "x-forge-require-confirmation": "This operation deletes the repository connection."
       }
     },
     "/accounts/{account_id}/builds/repos/{provider_type}/{provider_account_id}/{repo_id}/config_autofill": {
@@ -122821,7 +122822,8 @@
         ],
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "builds.tokens",
-        "x-fern-sdk-method-name": "delete"
+        "x-fern-sdk-method-name": "delete",
+        "x-forge-require-confirmation": "This operation deletes the build token. Builds that use it will fail to deploy."
       }
     },
     "/accounts/{account_id}/builds/triggers": {
@@ -122886,6 +122888,9 @@
         "x-api-token-group": [
           "Workers CI Write"
         ],
+        "x-fern-audiences": [
+          "sdk"
+        ],
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "builds.triggers",
         "x-fern-sdk-method-name": "create"
@@ -122929,6 +122934,9 @@
         ],
         "x-api-token-group": [
           "Workers CI Write"
+        ],
+        "x-fern-audiences": [
+          "sdk"
         ],
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "builds.triggers",
@@ -123002,6 +123010,9 @@
         "x-api-token-group": [
           "Workers CI Write"
         ],
+        "x-fern-audiences": [
+          "sdk"
+        ],
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "builds.triggers",
         "x-fern-sdk-method-name": "update"
@@ -123072,9 +123083,12 @@
         "x-api-token-group": [
           "Workers CI Write"
         ],
+        "x-fern-audiences": [
+          "sdk"
+        ],
         "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "builds",
-        "x-fern-sdk-method-name": "create"
+        "x-fern-sdk-group-name": "builds.triggers",
+        "x-fern-sdk-method-name": "create-build"
       }
     },
     "/accounts/{account_id}/builds/triggers/{trigger_uuid}/environment_variables": {
@@ -123132,6 +123146,9 @@
         "x-api-token-group": [
           "Workers CI Write",
           "Workers CI Read"
+        ],
+        "x-fern-audiences": [
+          "sdk"
         ],
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "builds.triggers.environment-variables",
@@ -123204,6 +123221,9 @@
         "x-api-token-group": [
           "Workers CI Write"
         ],
+        "x-fern-audiences": [
+          "sdk"
+        ],
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "builds.triggers.environment-variables",
         "x-fern-sdk-method-name": "upsert"
@@ -123256,6 +123276,9 @@
         "x-api-token-group": [
           "Workers CI Write"
         ],
+        "x-fern-audiences": [
+          "sdk"
+        ],
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "builds.triggers.environment-variables",
         "x-fern-sdk-method-name": "delete"
@@ -123299,6 +123322,9 @@
         ],
         "x-api-token-group": [
           "Workers CI Write"
+        ],
+        "x-fern-audiences": [
+          "sdk"
         ],
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "builds.triggers.cache",
@@ -123419,14 +123445,20 @@
         ],
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "builds.workers",
-        "x-fern-sdk-method-name": "create"
+        "x-fern-sdk-method-name": "create",
+        "x-forge-params": {
+          "script_tag": {
+            "description": "Script tag of the Worker.",
+            "positional": true
+          }
+        }
       }
     },
     "/accounts/{account_id}/builds/workers/{external_script_id}/builds": {
       "get": {
         "operationId": "listBuildsByScript",
         "summary": "List builds for a Worker",
-        "description": "List paginated build records associated with a Worker tag.",
+        "description": "List paginated build records associated with a Worker.",
         "parameters": [
           {
             "$ref": "#/components/parameters/builds_AccountId"
@@ -123434,10 +123466,13 @@
           {
             "name": "external_script_id",
             "in": "path",
+            "description": "Script tag of the Worker.",
             "required": true,
             "schema": {
-              "$ref": "#/components/schemas/builds_external_script_id"
-            }
+              "type": "string",
+              "example": "0123456789abcdef0123456789abcdef"
+            },
+            "x-fern-parameter-name": "worker"
           },
           {
             "$ref": "#/components/parameters/builds_Page"
@@ -123498,6 +123533,88 @@
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "builds",
         "x-fern-sdk-method-name": "list"
+      },
+      "post": {
+        "operationId": "createBuildByScript",
+        "summary": "Start a Worker build",
+        "description": "Start a production build for a branch or commit.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/builds_AccountId"
+          },
+          {
+            "name": "external_script_id",
+            "in": "path",
+            "description": "Script tag of the Worker.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "0123456789abcdef0123456789abcdef"
+            },
+            "x-fern-parameter-name": "worker"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/builds_CreateBuildRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Build created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/builds_APIResponse"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/builds_BuildResponse"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/builds_BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/builds_Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/builds_NotFound"
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Workers"
+        ],
+        "x-api-token-group": [
+          "Workers CI Write"
+        ],
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "builds",
+        "x-fern-sdk-method-name": "create"
       }
     },
     "/accounts/{account_id}/builds/workers/{external_script_id}/triggers": {
@@ -123563,6 +123680,9 @@
         "x-api-token-group": [
           "Workers CI Write",
           "Workers CI Read"
+        ],
+        "x-fern-audiences": [
+          "sdk"
         ],
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "builds.triggers",
@@ -123773,7 +123893,8 @@
         ],
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "builds.deploy-hooks",
-        "x-fern-sdk-method-name": "delete"
+        "x-fern-sdk-method-name": "delete",
+        "x-forge-require-confirmation": "This operation deletes the deploy hook. Requests to its URL will no longer start builds."
       },
       "get": {
         "operationId": "getDeployHook",
@@ -124141,6 +124262,75 @@
         "x-fern-sdk-method-name": "update"
       }
     },
+    "/accounts/{account_id}/builds/workers/{script_tag}/builds/{build_uuid}/retry": {
+      "post": {
+        "operationId": "retryWorkerBuild",
+        "summary": "Retry a Worker build",
+        "description": "Start a new build from the branch and commit of a stopped build.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/builds_AccountId"
+          },
+          {
+            "$ref": "#/components/parameters/builds_ScriptTag"
+          },
+          {
+            "$ref": "#/components/parameters/builds_BuildUuid"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Build created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/builds_APIResponse"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/builds_BuildResponse"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/builds_BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/builds_Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/builds_NotFound"
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Workers"
+        ],
+        "x-api-token-group": [
+          "Workers CI Write"
+        ],
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "builds",
+        "x-fern-sdk-method-name": "retry"
+      }
+    },
     "/accounts/{account_id}/builds/workers/{script_tag}/migrate_to_previews": {
       "post": {
         "operationId": "migrateWorkerToPreviews",
@@ -124214,8 +124404,9 @@
           "Workers CI Write"
         ],
         "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "workers-builds.workers",
-        "x-fern-sdk-method-name": "migrate-to-previews"
+        "x-fern-sdk-group-name": "builds.workers",
+        "x-fern-sdk-method-name": "migrate-to-previews",
+        "x-forge-require-confirmation": "This operation switches the Worker to Previews and removes its legacy non-production trigger. It cannot be reversed."
       }
     },
     "/accounts/{account_id}/builds/workers/{script_tag}/previews": {
@@ -124287,7 +124478,7 @@
           "Workers CI Read"
         ],
         "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "workers-builds.workers.previews",
+        "x-fern-sdk-group-name": "builds.previews",
         "x-fern-sdk-method-name": "list"
       }
     },
@@ -124354,7 +124545,7 @@
           "Workers CI Read"
         ],
         "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "workers-builds.workers.previews",
+        "x-fern-sdk-group-name": "builds.previews",
         "x-fern-sdk-method-name": "get"
       },
       "patch": {
@@ -124440,8 +124631,8 @@
           "Workers CI Write"
         ],
         "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "workers-builds.workers.previews",
-        "x-fern-sdk-method-name": "edit"
+        "x-fern-sdk-group-name": "builds.previews",
+        "x-fern-sdk-method-name": "update"
       }
     },
     "/accounts/{account_id}/builds/workers/{script_tag}/previews/{preview_id}/builds": {
@@ -124519,7 +124710,7 @@
           "Workers CI Read"
         ],
         "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "workers-builds.workers.previews",
+        "x-fern-sdk-group-name": "builds.previews",
         "x-fern-sdk-method-name": "list-builds"
       },
       "post": {
@@ -124596,8 +124787,53 @@
           "Workers CI Write"
         ],
         "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "workers-builds.workers.previews",
+        "x-fern-sdk-group-name": "builds.previews",
         "x-fern-sdk-method-name": "create-build"
+      }
+    },
+    "/accounts/{account_id}/builds/workers/{script_tag}/purge_build_cache": {
+      "post": {
+        "operationId": "purgeWorkerBuildCache",
+        "summary": "Purge a Worker's build cache",
+        "description": "Delete cached dependencies and build artifacts for a Worker's production and Preview builds.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/builds_AccountId"
+          },
+          {
+            "$ref": "#/components/parameters/builds_ScriptTag"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/builds_SuccessEmpty"
+          },
+          "401": {
+            "$ref": "#/components/responses/builds_Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/builds_NotFound"
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Workers"
+        ],
+        "x-api-token-group": [
+          "Workers CI Write"
+        ],
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "builds.workers",
+        "x-fern-sdk-method-name": "purge-cache",
+        "x-forge-require-confirmation": "This operation purges the build cache for the Worker."
       }
     },
     "/accounts/{account_id}/bulk/subscriptions": {
@@ -525611,6 +525847,9 @@
         "tags": [
           "Deploy Hooks"
         ],
+        "x-fern-audiences": [
+          "sdk"
+        ],
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "builds.deploy-hooks",
         "x-fern-sdk-method-name": "trigger"
@@ -588520,6 +588759,7 @@
         }
       },
       "builds_BuildUuid": {
+        "description": "UUID of the build, as returned by builds list.",
         "in": "path",
         "name": "build_uuid",
         "required": true,
@@ -588528,7 +588768,7 @@
         }
       },
       "builds_DeployHookUuid": {
-        "description": "Deploy hook UUID",
+        "description": "UUID of the deploy hook, as returned by deploy-hooks list.",
         "in": "path",
         "name": "deploy_hook_uuid",
         "required": true,
@@ -588558,13 +588798,15 @@
         }
       },
       "builds_PreviewId": {
-        "description": "The script tag of the Preview, which is a Worker in its own right",
+        "description": "ID of the Preview.",
         "in": "path",
         "name": "preview_id",
         "required": true,
         "schema": {
-          "$ref": "#/components/schemas/builds_external_script_id"
-        }
+          "type": "string",
+          "example": "0123456789abcdef0123456789abcdef"
+        },
+        "x-fern-parameter-name": "preview"
       },
       "builds_RepoConnectionUuid": {
         "in": "path",
@@ -588575,22 +588817,26 @@
         }
       },
       "builds_ScriptName": {
-        "description": "Human-readable name of the worker.",
+        "description": "Name or script tag of the Worker.",
         "in": "path",
         "name": "script_name",
         "required": true,
         "schema": {
-          "$ref": "#/components/schemas/builds_script_name"
-        }
+          "type": "string",
+          "example": "my-worker"
+        },
+        "x-fern-parameter-name": "worker"
       },
       "builds_ScriptTag": {
-        "description": "The Worker script tag (external script ID)",
+        "description": "Script tag of the Worker.",
         "in": "path",
         "name": "script_tag",
         "required": true,
         "schema": {
-          "$ref": "#/components/schemas/builds_external_script_id"
-        }
+          "type": "string",
+          "example": "0123456789abcdef0123456789abcdef"
+        },
+        "x-fern-parameter-name": "worker"
       },
       "builds_TriggerUuid": {
         "in": "path",
@@ -622919,6 +623165,17 @@
             "example": "my-worker",
             "nullable": true
           },
+          "deploy_tool": {
+            "description": "Deployment CLI detected in the selected root directory. A Wrangler config takes precedence. `cf` requires `cloudflare.config.ts` and a `cf` dependency or dev dependency in `package.json`.",
+            "type": "string",
+            "example": "cf",
+            "enum": [
+              "cf",
+              "wrangler",
+              null
+            ],
+            "nullable": true
+          },
           "env_worker_names": {
             "type": "object",
             "example": {
@@ -624042,12 +624299,12 @@
       "builds_external_script_id": {
         "description": "System-generated tag of the Worker. This is not the Worker name.",
         "type": "string",
-        "example": "dd7160bb9cef458093557736f4b9e75b"
+        "example": "0123456789abcdef0123456789abcdef"
       },
       "builds_external_script_ids": {
         "description": "Comma-separated list of system-generated worker script tags (max 20).",
         "type": "string",
-        "example": "dd7160bb9cef458093557736f4b9e75b,42fb14fe81df47139d3be684e4c637a6,ff7cf9a7582f4c0d90a4b95cb17d659e"
+        "example": "0123456789abcdef0123456789abcdef"
       },
       "builds_is_secret": {
         "description": "Whether to hide the value after it is saved. Secret values remain available to builds but appear as `null` when you list variables; non-secret values remain visible.",
@@ -624124,11 +624381,6 @@
         "description": "Repository directory in which build and deploy commands run.",
         "type": "string",
         "example": "/"
-      },
-      "builds_script_name": {
-        "description": "Human-readable name of the Worker.",
-        "type": "string",
-        "example": "my-worker"
       },
       "builds_stopped_on": {
         "type": "string",
@@ -778229,17 +778481,14 @@
         "limits": {
           "description": "View build-minute availability and refresh information."
         },
-        "logs": {
-          "description": "Retrieve build logs."
+        "previews": {
+          "description": "Manage the Previews that Workers Builds creates for non-production branches."
         },
         "repos": {
           "description": "Manage source repository connections for Workers Builds."
         },
         "tokens": {
           "description": "Manage credentials used by Workers Builds to deploy Workers."
-        },
-        "triggers": {
-          "description": "Configure how repository changes build and deploy Workers."
         },
         "versions": {
           "description": "Find builds associated with Worker versions."

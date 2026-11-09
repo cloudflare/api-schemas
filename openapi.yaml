@@ -82562,8 +82562,8 @@ paths:
         - Workers CI Write
         - Workers CI Read
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: builds.logs
-      x-fern-sdk-method-name: get
+      x-fern-sdk-group-name: builds
+      x-fern-sdk-method-name: logs
   /accounts/{account_id}/builds/builds/latest:
     get:
       operationId: getLatestBuildsByScripts
@@ -82725,6 +82725,7 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: builds.repos.connections
       x-fern-sdk-method-name: delete
+      x-forge-require-confirmation: This operation deletes the repository connection.
   /accounts/{account_id}/builds/tokens:
     get:
       operationId: listBuildTokens
@@ -82831,6 +82832,7 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: builds.tokens
       x-fern-sdk-method-name: delete
+      x-forge-require-confirmation: This operation deletes the build token. Builds that use it will fail to deploy.
   /accounts/{account_id}/builds/triggers:
     post:
       operationId: createTrigger
@@ -82866,6 +82868,8 @@ paths:
         - Triggers
       x-api-token-group:
         - Workers CI Write
+      x-fern-audiences:
+        - sdk
       x-fern-availability: generally-available
       x-fern-sdk-group-name: builds.triggers
       x-fern-sdk-method-name: create
@@ -82892,6 +82896,8 @@ paths:
         - Triggers
       x-api-token-group:
         - Workers CI Write
+      x-fern-audiences:
+        - sdk
       x-fern-availability: generally-available
       x-fern-sdk-group-name: builds.triggers
       x-fern-sdk-method-name: delete
@@ -82933,6 +82939,8 @@ paths:
         - Triggers
       x-api-token-group:
         - Workers CI Write
+      x-fern-audiences:
+        - sdk
       x-fern-availability: generally-available
       x-fern-sdk-group-name: builds.triggers
       x-fern-sdk-method-name: update
@@ -82972,9 +82980,11 @@ paths:
         - Triggers
       x-api-token-group:
         - Workers CI Write
+      x-fern-audiences:
+        - sdk
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: builds
-      x-fern-sdk-method-name: create
+      x-fern-sdk-group-name: builds.triggers
+      x-fern-sdk-method-name: create-build
   /accounts/{account_id}/builds/triggers/{trigger_uuid}/environment_variables:
     get:
       operationId: listEnvironmentVariables
@@ -83006,6 +83016,8 @@ paths:
       x-api-token-group:
         - Workers CI Write
         - Workers CI Read
+      x-fern-audiences:
+        - sdk
       x-fern-availability: generally-available
       x-fern-sdk-group-name: builds.triggers.environment-variables
       x-fern-sdk-method-name: list
@@ -83046,6 +83058,8 @@ paths:
         - Environment Variables
       x-api-token-group:
         - Workers CI Write
+      x-fern-audiences:
+        - sdk
       x-fern-availability: generally-available
       x-fern-sdk-group-name: builds.triggers.environment-variables
       x-fern-sdk-method-name: upsert
@@ -83077,6 +83091,8 @@ paths:
         - Environment Variables
       x-api-token-group:
         - Workers CI Write
+      x-fern-audiences:
+        - sdk
       x-fern-availability: generally-available
       x-fern-sdk-group-name: builds.triggers.environment-variables
       x-fern-sdk-method-name: delete
@@ -83103,6 +83119,8 @@ paths:
         - Triggers
       x-api-token-group:
         - Workers CI Write
+      x-fern-audiences:
+        - sdk
       x-fern-availability: generally-available
       x-fern-sdk-group-name: builds.triggers.cache
       x-fern-sdk-method-name: purge
@@ -83183,18 +83201,25 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: builds.workers
       x-fern-sdk-method-name: create
+      x-forge-params:
+        script_tag:
+          description: Script tag of the Worker.
+          positional: true
   /accounts/{account_id}/builds/workers/{external_script_id}/builds:
     get:
       operationId: listBuildsByScript
       summary: List builds for a Worker
-      description: List paginated build records associated with a Worker tag.
+      description: List paginated build records associated with a Worker.
       parameters:
         - $ref: '#/components/parameters/builds_AccountId'
         - name: external_script_id
           in: path
+          description: Script tag of the Worker.
           required: true
           schema:
-            $ref: '#/components/schemas/builds_external_script_id'
+            type: string
+            example: 0123456789abcdef0123456789abcdef
+          x-fern-parameter-name: worker
         - $ref: '#/components/parameters/builds_Page'
         - $ref: '#/components/parameters/builds_PerPage'
       responses:
@@ -83227,6 +83252,55 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: builds
       x-fern-sdk-method-name: list
+    post:
+      operationId: createBuildByScript
+      summary: Start a Worker build
+      description: Start a production build for a branch or commit.
+      parameters:
+        - $ref: '#/components/parameters/builds_AccountId'
+        - name: external_script_id
+          in: path
+          description: Script tag of the Worker.
+          required: true
+          schema:
+            type: string
+            example: 0123456789abcdef0123456789abcdef
+          x-fern-parameter-name: worker
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/builds_CreateBuildRequest'
+      responses:
+        '200':
+          description: Build created successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/builds_APIResponse'
+                  - properties:
+                      result:
+                        $ref: '#/components/schemas/builds_BuildResponse'
+                    type: object
+        '400':
+          $ref: '#/components/responses/builds_BadRequest'
+        '401':
+          $ref: '#/components/responses/builds_Unauthorized'
+        '404':
+          $ref: '#/components/responses/builds_NotFound'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Workers
+      x-api-token-group:
+        - Workers CI Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: builds
+      x-fern-sdk-method-name: create
   /accounts/{account_id}/builds/workers/{external_script_id}/triggers:
     get:
       operationId: listTriggersByScript
@@ -83264,6 +83338,8 @@ paths:
       x-api-token-group:
         - Workers CI Write
         - Workers CI Read
+      x-fern-audiences:
+        - sdk
       x-fern-availability: generally-available
       x-fern-sdk-group-name: builds.triggers
       x-fern-sdk-method-name: list
@@ -83383,6 +83459,7 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: builds.deploy-hooks
       x-fern-sdk-method-name: delete
+      x-forge-require-confirmation: This operation deletes the deploy hook. Requests to its URL will no longer start builds.
     get:
       operationId: getDeployHook
       summary: Get a deploy hook
@@ -83591,6 +83668,44 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: builds.workers
       x-fern-sdk-method-name: update
+  /accounts/{account_id}/builds/workers/{script_tag}/builds/{build_uuid}/retry:
+    post:
+      operationId: retryWorkerBuild
+      summary: Retry a Worker build
+      description: Start a new build from the branch and commit of a stopped build.
+      parameters:
+        - $ref: '#/components/parameters/builds_AccountId'
+        - $ref: '#/components/parameters/builds_ScriptTag'
+        - $ref: '#/components/parameters/builds_BuildUuid'
+      responses:
+        '200':
+          description: Build created successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/builds_APIResponse'
+                  - properties:
+                      result:
+                        $ref: '#/components/schemas/builds_BuildResponse'
+                    type: object
+        '400':
+          $ref: '#/components/responses/builds_BadRequest'
+        '401':
+          $ref: '#/components/responses/builds_Unauthorized'
+        '404':
+          $ref: '#/components/responses/builds_NotFound'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Workers
+      x-api-token-group:
+        - Workers CI Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: builds
+      x-fern-sdk-method-name: retry
   /accounts/{account_id}/builds/workers/{script_tag}/migrate_to_previews:
     post:
       operationId: migrateWorkerToPreviews
@@ -83633,8 +83748,9 @@ paths:
       x-api-token-group:
         - Workers CI Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: workers-builds.workers
+      x-fern-sdk-group-name: builds.workers
       x-fern-sdk-method-name: migrate-to-previews
+      x-forge-require-confirmation: This operation switches the Worker to Previews and removes its legacy non-production trigger. It cannot be reversed.
   /accounts/{account_id}/builds/workers/{script_tag}/previews:
     get:
       operationId: listWorkerPreviews
@@ -83673,7 +83789,7 @@ paths:
         - Workers CI Write
         - Workers CI Read
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: workers-builds.workers.previews
+      x-fern-sdk-group-name: builds.previews
       x-fern-sdk-method-name: list
   /accounts/{account_id}/builds/workers/{script_tag}/previews/{preview_id}:
     get:
@@ -83710,7 +83826,7 @@ paths:
         - Workers CI Write
         - Workers CI Read
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: workers-builds.workers.previews
+      x-fern-sdk-group-name: builds.previews
       x-fern-sdk-method-name: get
     patch:
       operationId: updateWorkerPreview
@@ -83759,8 +83875,8 @@ paths:
       x-api-token-group:
         - Workers CI Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: workers-builds.workers.previews
-      x-fern-sdk-method-name: edit
+      x-fern-sdk-group-name: builds.previews
+      x-fern-sdk-method-name: update
   /accounts/{account_id}/builds/workers/{script_tag}/previews/{preview_id}/builds:
     get:
       operationId: listBuildsByPreview
@@ -83802,7 +83918,7 @@ paths:
         - Workers CI Write
         - Workers CI Read
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: workers-builds.workers.previews
+      x-fern-sdk-group-name: builds.previews
       x-fern-sdk-method-name: list-builds
     post:
       operationId: createPreviewBuild
@@ -83845,8 +83961,35 @@ paths:
       x-api-token-group:
         - Workers CI Write
       x-fern-availability: generally-available
-      x-fern-sdk-group-name: workers-builds.workers.previews
+      x-fern-sdk-group-name: builds.previews
       x-fern-sdk-method-name: create-build
+  /accounts/{account_id}/builds/workers/{script_tag}/purge_build_cache:
+    post:
+      operationId: purgeWorkerBuildCache
+      summary: Purge a Worker's build cache
+      description: Delete cached dependencies and build artifacts for a Worker's production and Preview builds.
+      parameters:
+        - $ref: '#/components/parameters/builds_AccountId'
+        - $ref: '#/components/parameters/builds_ScriptTag'
+      responses:
+        '200':
+          $ref: '#/components/responses/builds_SuccessEmpty'
+        '401':
+          $ref: '#/components/responses/builds_Unauthorized'
+        '404':
+          $ref: '#/components/responses/builds_NotFound'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Workers
+      x-api-token-group:
+        - Workers CI Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: builds.workers
+      x-fern-sdk-method-name: purge-cache
+      x-forge-require-confirmation: This operation purges the build cache for the Worker.
   /accounts/{account_id}/bulk/subscriptions:
     post:
       operationId: account-subscriptions-bulk-create-subscription
@@ -359245,6 +359388,8 @@ paths:
         - {}
       tags:
         - Deploy Hooks
+      x-fern-audiences:
+        - sdk
       x-fern-availability: generally-available
       x-fern-sdk-group-name: builds.deploy-hooks
       x-fern-sdk-method-name: trigger
@@ -399754,13 +399899,14 @@ components:
       schema:
         $ref: '#/components/schemas/builds_account_id'
     builds_BuildUuid:
+      description: UUID of the build, as returned by builds list.
       in: path
       name: build_uuid
       required: true
       schema:
         $ref: '#/components/schemas/builds_build_uuid'
     builds_DeployHookUuid:
-      description: Deploy hook UUID
+      description: UUID of the deploy hook, as returned by deploy-hooks list.
       in: path
       name: deploy_hook_uuid
       required: true
@@ -399784,12 +399930,14 @@ components:
         maximum: 200
         minimum: 1
     builds_PreviewId:
-      description: The script tag of the Preview, which is a Worker in its own right
+      description: ID of the Preview.
       in: path
       name: preview_id
       required: true
       schema:
-        $ref: '#/components/schemas/builds_external_script_id'
+        type: string
+        example: 0123456789abcdef0123456789abcdef
+      x-fern-parameter-name: preview
     builds_RepoConnectionUuid:
       in: path
       name: repo_connection_uuid
@@ -399797,19 +399945,23 @@ components:
       schema:
         $ref: '#/components/schemas/builds_repo_connection_uuid'
     builds_ScriptName:
-      description: Human-readable name of the worker.
+      description: Name or script tag of the Worker.
       in: path
       name: script_name
       required: true
       schema:
-        $ref: '#/components/schemas/builds_script_name'
+        type: string
+        example: my-worker
+      x-fern-parameter-name: worker
     builds_ScriptTag:
-      description: The Worker script tag (external script ID)
+      description: Script tag of the Worker.
       in: path
       name: script_tag
       required: true
       schema:
-        $ref: '#/components/schemas/builds_external_script_id'
+        type: string
+        example: 0123456789abcdef0123456789abcdef
+      x-fern-parameter-name: worker
     builds_TriggerUuid:
       in: path
       name: trigger_uuid
@@ -423843,6 +423995,15 @@ components:
           type: string
           example: my-worker
           nullable: true
+        deploy_tool:
+          description: Deployment CLI detected in the selected root directory. A Wrangler config takes precedence. `cf` requires `cloudflare.config.ts` and a `cf` dependency or dev dependency in `package.json`.
+          type: string
+          example: cf
+          enum:
+            - cf
+            - wrangler
+            - null
+          nullable: true
         env_worker_names:
           type: object
           example:
@@ -424629,11 +424790,11 @@ components:
     builds_external_script_id:
       description: System-generated tag of the Worker. This is not the Worker name.
       type: string
-      example: dd7160bb9cef458093557736f4b9e75b
+      example: 0123456789abcdef0123456789abcdef
     builds_external_script_ids:
       description: Comma-separated list of system-generated worker script tags (max 20).
       type: string
-      example: dd7160bb9cef458093557736f4b9e75b,42fb14fe81df47139d3be684e4c637a6,ff7cf9a7582f4c0d90a4b95cb17d659e
+      example: 0123456789abcdef0123456789abcdef
     builds_is_secret:
       description: Whether to hide the value after it is saved. Secret values remain available to builds but appear as `null` when you list variables; non-secret values remain visible.
       type: boolean
@@ -424692,10 +424853,6 @@ components:
       description: Repository directory in which build and deploy commands run.
       type: string
       example: /
-    builds_script_name:
-      description: Human-readable name of the Worker.
-      type: string
-      example: my-worker
     builds_stopped_on:
       type: string
       format: date-time
@@ -534257,14 +534414,12 @@ x-forge-commands:
         description: Manage branch-specific HTTP hooks that start builds.
       limits:
         description: View build-minute availability and refresh information.
-      logs:
-        description: Retrieve build logs.
+      previews:
+        description: Manage the Previews that Workers Builds creates for non-production branches.
       repos:
         description: Manage source repository connections for Workers Builds.
       tokens:
         description: Manage credentials used by Workers Builds to deploy Workers.
-      triggers:
-        description: Configure how repository changes build and deploy Workers.
       versions:
         description: Find builds associated with Worker versions.
       workers:
