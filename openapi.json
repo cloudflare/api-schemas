@@ -120123,8 +120123,8 @@
         ],
         "x-cfOwnership": "workers-builds-automation",
         "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "builds.logs",
-        "x-fern-sdk-method-name": "get",
+        "x-fern-sdk-group-name": "builds",
+        "x-fern-sdk-method-name": "logs",
         "x-forge-oauth-scopes": [
           "workers-ci.read",
           "workers-ci.write",
@@ -120242,7 +120242,8 @@
         "x-fern-sdk-method-name": "delete",
         "x-forge-oauth-scopes": [
           "workers-ci.write"
-        ]
+        ],
+        "x-forge-require-confirmation": "This operation deletes the repository connection."
       }
     },
     "/accounts/{account_id}/builds/repos/{provider_type}/{provider_account_id}/{repo_id}/config_autofill": {
@@ -120530,7 +120531,8 @@
         "x-fern-sdk-method-name": "delete",
         "x-forge-oauth-scopes": [
           "workers-ci.write"
-        ]
+        ],
+        "x-forge-require-confirmation": "This operation deletes the build token. Builds that use it will fail to deploy."
       }
     },
     "/accounts/{account_id}/builds/triggers": {
@@ -120593,6 +120595,9 @@
           "Triggers"
         ],
         "x-cfOwnership": "workers-builds-automation",
+        "x-fern-audiences": [
+          "sdk"
+        ],
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "builds.triggers",
         "x-fern-sdk-method-name": "create",
@@ -120638,6 +120643,9 @@
           "Triggers"
         ],
         "x-cfOwnership": "workers-builds-automation",
+        "x-fern-audiences": [
+          "sdk"
+        ],
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "builds.triggers",
         "x-fern-sdk-method-name": "delete",
@@ -120711,6 +120719,9 @@
           "Triggers"
         ],
         "x-cfOwnership": "workers-builds-automation",
+        "x-fern-audiences": [
+          "sdk"
+        ],
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "builds.triggers",
         "x-fern-sdk-method-name": "update",
@@ -120782,9 +120793,12 @@
           "Triggers"
         ],
         "x-cfOwnership": "workers-builds-automation",
+        "x-fern-audiences": [
+          "sdk"
+        ],
         "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "builds",
-        "x-fern-sdk-method-name": "create",
+        "x-fern-sdk-group-name": "builds.triggers",
+        "x-fern-sdk-method-name": "create-build",
         "x-forge-oauth-scopes": [
           "workers-ci.write"
         ]
@@ -120843,6 +120857,9 @@
           "Environment Variables"
         ],
         "x-cfOwnership": "workers-builds-automation",
+        "x-fern-audiences": [
+          "sdk"
+        ],
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "builds.triggers.environment-variables",
         "x-fern-sdk-method-name": "list",
@@ -120917,6 +120934,9 @@
           "Environment Variables"
         ],
         "x-cfOwnership": "workers-builds-automation",
+        "x-fern-audiences": [
+          "sdk"
+        ],
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "builds.triggers.environment-variables",
         "x-fern-sdk-method-name": "upsert",
@@ -120970,6 +120990,9 @@
           "Environment Variables"
         ],
         "x-cfOwnership": "workers-builds-automation",
+        "x-fern-audiences": [
+          "sdk"
+        ],
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "builds.triggers.environment-variables",
         "x-fern-sdk-method-name": "delete",
@@ -121015,6 +121038,9 @@
           "Triggers"
         ],
         "x-cfOwnership": "workers-builds-automation",
+        "x-fern-audiences": [
+          "sdk"
+        ],
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "builds.triggers.cache",
         "x-fern-sdk-method-name": "purge",
@@ -121141,14 +121167,20 @@
         "x-fern-sdk-method-name": "create",
         "x-forge-oauth-scopes": [
           "workers-ci.write"
-        ]
+        ],
+        "x-forge-params": {
+          "script_tag": {
+            "description": "Script tag of the Worker.",
+            "positional": true
+          }
+        }
       }
     },
     "/accounts/{account_id}/builds/workers/{external_script_id}/builds": {
       "get": {
         "operationId": "listBuildsByScript",
         "summary": "List builds for a Worker",
-        "description": "List paginated build records associated with a Worker tag.",
+        "description": "List paginated build records associated with a Worker.",
         "parameters": [
           {
             "$ref": "#/components/parameters/builds_AccountId"
@@ -121156,10 +121188,13 @@
           {
             "name": "external_script_id",
             "in": "path",
+            "description": "Script tag of the Worker.",
             "required": true,
             "schema": {
-              "$ref": "#/components/schemas/builds_external_script_id"
-            }
+              "type": "string",
+              "example": "0123456789abcdef0123456789abcdef"
+            },
+            "x-fern-parameter-name": "worker"
           },
           {
             "$ref": "#/components/parameters/builds_Page"
@@ -121221,6 +121256,92 @@
           "workers-ci.read",
           "workers-ci.write",
           "workers-scripts.metadata_read"
+        ]
+      },
+      "post": {
+        "operationId": "createBuildByScript",
+        "summary": "Start a Worker build",
+        "description": "Start a production build for a branch or commit.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/builds_AccountId"
+          },
+          {
+            "name": "external_script_id",
+            "in": "path",
+            "description": "Script tag of the Worker.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "0123456789abcdef0123456789abcdef"
+            },
+            "x-fern-parameter-name": "worker"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/builds_CreateBuildRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Build created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/builds_APIResponse"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/builds_BuildResponse"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/builds_BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/builds_Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/builds_NotFound"
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Workers"
+        ],
+        "x-api-token-group": [
+          "Workers CI Write"
+        ],
+        "x-cfOwnership": "workers-builds-automation",
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "builds",
+        "x-fern-sdk-method-name": "create",
+        "x-forge-oauth-scopes": [
+          "workers-ci.write"
         ]
       }
     },
@@ -121285,6 +121406,9 @@
           "Workers"
         ],
         "x-cfOwnership": "workers-builds-automation",
+        "x-fern-audiences": [
+          "sdk"
+        ],
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "builds.triggers",
         "x-fern-sdk-method-name": "list",
@@ -121503,7 +121627,8 @@
         "x-fern-sdk-method-name": "delete",
         "x-forge-oauth-scopes": [
           "workers-ci.write"
-        ]
+        ],
+        "x-forge-require-confirmation": "This operation deletes the deploy hook. Requests to its URL will no longer start builds."
       },
       "get": {
         "operationId": "getDeployHook",
@@ -121888,6 +122013,79 @@
         ]
       }
     },
+    "/accounts/{account_id}/builds/workers/{script_tag}/builds/{build_uuid}/retry": {
+      "post": {
+        "operationId": "retryWorkerBuild",
+        "summary": "Retry a Worker build",
+        "description": "Start a new build from the branch and commit of a stopped build.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/builds_AccountId"
+          },
+          {
+            "$ref": "#/components/parameters/builds_ScriptTag"
+          },
+          {
+            "$ref": "#/components/parameters/builds_BuildUuid"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Build created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/builds_APIResponse"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/builds_BuildResponse"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/builds_BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/builds_Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/builds_NotFound"
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Workers"
+        ],
+        "x-api-token-group": [
+          "Workers CI Write"
+        ],
+        "x-cfOwnership": "workers-builds-automation",
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "builds",
+        "x-fern-sdk-method-name": "retry",
+        "x-forge-oauth-scopes": [
+          "workers-ci.write"
+        ]
+      }
+    },
     "/accounts/{account_id}/builds/workers/{script_tag}/migrate_to_previews": {
       "post": {
         "operationId": "migrateWorkerToPreviews",
@@ -121962,11 +122160,12 @@
         ],
         "x-cfOwnership": "workers-builds-automation",
         "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "workers-builds.workers",
+        "x-fern-sdk-group-name": "builds.workers",
         "x-fern-sdk-method-name": "migrate-to-previews",
         "x-forge-oauth-scopes": [
           "workers-ci.write"
-        ]
+        ],
+        "x-forge-require-confirmation": "This operation switches the Worker to Previews and removes its legacy non-production trigger. It cannot be reversed."
       }
     },
     "/accounts/{account_id}/builds/workers/{script_tag}/previews": {
@@ -122039,7 +122238,7 @@
         ],
         "x-cfOwnership": "workers-builds-automation",
         "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "workers-builds.workers.previews",
+        "x-fern-sdk-group-name": "builds.previews",
         "x-fern-sdk-method-name": "list",
         "x-forge-oauth-scopes": [
           "workers-ci.read",
@@ -122112,7 +122311,7 @@
         ],
         "x-cfOwnership": "workers-builds-automation",
         "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "workers-builds.workers.previews",
+        "x-fern-sdk-group-name": "builds.previews",
         "x-fern-sdk-method-name": "get",
         "x-forge-oauth-scopes": [
           "workers-ci.read",
@@ -122204,8 +122403,8 @@
         ],
         "x-cfOwnership": "workers-builds-automation",
         "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "workers-builds.workers.previews",
-        "x-fern-sdk-method-name": "edit",
+        "x-fern-sdk-group-name": "builds.previews",
+        "x-fern-sdk-method-name": "update",
         "x-forge-oauth-scopes": [
           "workers-ci.write"
         ]
@@ -122287,7 +122486,7 @@
         ],
         "x-cfOwnership": "workers-builds-automation",
         "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "workers-builds.workers.previews",
+        "x-fern-sdk-group-name": "builds.previews",
         "x-fern-sdk-method-name": "list-builds",
         "x-forge-oauth-scopes": [
           "workers-ci.read",
@@ -122370,11 +122569,60 @@
         ],
         "x-cfOwnership": "workers-builds-automation",
         "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "workers-builds.workers.previews",
+        "x-fern-sdk-group-name": "builds.previews",
         "x-fern-sdk-method-name": "create-build",
         "x-forge-oauth-scopes": [
           "workers-ci.write"
         ]
+      }
+    },
+    "/accounts/{account_id}/builds/workers/{script_tag}/purge_build_cache": {
+      "post": {
+        "operationId": "purgeWorkerBuildCache",
+        "summary": "Purge a Worker's build cache",
+        "description": "Delete cached dependencies and build artifacts for a Worker's production and Preview builds.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/builds_AccountId"
+          },
+          {
+            "$ref": "#/components/parameters/builds_ScriptTag"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/builds_SuccessEmpty"
+          },
+          "401": {
+            "$ref": "#/components/responses/builds_Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/builds_NotFound"
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Workers"
+        ],
+        "x-api-token-group": [
+          "Workers CI Write"
+        ],
+        "x-cfOwnership": "workers-builds-automation",
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "builds.workers",
+        "x-fern-sdk-method-name": "purge-cache",
+        "x-forge-oauth-scopes": [
+          "workers-ci.write"
+        ],
+        "x-forge-require-confirmation": "This operation purges the build cache for the Worker."
       }
     },
     "/accounts/{account_id}/bulk/subscriptions": {
@@ -260615,6 +260863,2608 @@
         ]
       }
     },
+    "/accounts/{account_id}/pages/projects": {
+      "get": {
+        "operationId": "pages-project-get-projects",
+        "summary": "List Cloudflare Pages projects",
+        "description": "List the Cloudflare Pages projects in an account.",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/pages_identifier"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "description": "Page number of results to return.",
+              "type": "integer",
+              "example": 1
+            }
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "schema": {
+              "description": "Number of results to return per page.",
+              "type": "integer",
+              "example": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get projects response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/pages_api-response-collection"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/pages_project"
+                          }
+                        }
+                      },
+                      "required": [
+                        "result"
+                      ],
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Get projects response failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/pages_api-response-common-failure"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Pages Project"
+        ],
+        "x-cfOwnership": "workers-deploy-config",
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "pages",
+        "x-fern-sdk-method-name": "list",
+        "x-forge-oauth-scopes": [
+          "pages.metadata_read",
+          "page.read",
+          "page.write"
+        ]
+      },
+      "post": {
+        "operationId": "pages-project-create-project",
+        "summary": "Create a Cloudflare Pages project",
+        "description": "Create a Cloudflare Pages project for configuring and deploying a site or application.",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/pages_identifier"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "build_config": {
+                    "description": "Configs for the project build process.",
+                    "type": "object",
+                    "properties": {
+                      "build_caching": {
+                        "description": "Enable build caching for the project.",
+                        "type": "boolean",
+                        "example": true,
+                        "x-auditable": true
+                      },
+                      "build_command": {
+                        "description": "Command used to build project.",
+                        "type": "string",
+                        "example": "npm run build",
+                        "x-auditable": true
+                      },
+                      "destination_dir": {
+                        "description": "Output directory of the build.",
+                        "type": "string",
+                        "example": "build",
+                        "x-auditable": true
+                      },
+                      "root_dir": {
+                        "description": "Directory to run the command.",
+                        "type": "string",
+                        "example": "/",
+                        "x-auditable": true
+                      },
+                      "web_analytics_tag": {
+                        "description": "The classifying tag for analytics.",
+                        "type": "string",
+                        "example": "cee1c73f6e4743d0b5e6bb1a0bcaabcc",
+                        "nullable": true,
+                        "x-auditable": true
+                      },
+                      "web_analytics_token": {
+                        "description": "The auth token for analytics.",
+                        "type": "string",
+                        "example": "021e1057c18547eca7b79f2516f06o7x",
+                        "nullable": true,
+                        "x-sensitive": true
+                      }
+                    }
+                  },
+                  "deployment_configs": {
+                    "description": "Configs for deployments in a project.",
+                    "type": "object",
+                    "properties": {
+                      "preview": {
+                        "description": "Configs for preview deploys.",
+                        "allOf": [
+                          {
+                            "$ref": "#/components/schemas/pages_deployment_config_values_request"
+                          }
+                        ]
+                      },
+                      "production": {
+                        "description": "Configs for production deploys.",
+                        "allOf": [
+                          {
+                            "$ref": "#/components/schemas/pages_deployment_config_values_request"
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "name": {
+                    "description": "Name for the Pages project. Must begin with a lowercase letter or digit and contain only lowercase letters, digits, and hyphens.",
+                    "type": "string",
+                    "example": "my-pages-app",
+                    "x-auditable": true
+                  },
+                  "production_branch": {
+                    "description": "Production branch of the project. Used to identify production deployments.",
+                    "type": "string",
+                    "example": "main",
+                    "x-auditable": true
+                  },
+                  "source": {
+                    "description": "Configs for the project source control.",
+                    "type": "object",
+                    "properties": {
+                      "config": {
+                        "type": "object",
+                        "properties": {
+                          "deployments_enabled": {
+                            "description": "Whether to enable automatic deployments when pushing to the source repository.\nWhen disabled, no deployments (production or preview) will be triggered automatically.\n",
+                            "type": "boolean",
+                            "deprecated": true,
+                            "x-auditable": true,
+                            "x-stainless-deprecation-message": "Use `production_deployments_enabled` and `preview_deployment_setting` for more granular control."
+                          },
+                          "owner": {
+                            "description": "The owner of the repository.",
+                            "type": "string",
+                            "example": "my-org",
+                            "x-auditable": true
+                          },
+                          "owner_id": {
+                            "description": "The owner ID of the repository.",
+                            "type": "string",
+                            "example": "12345678",
+                            "x-auditable": true
+                          },
+                          "path_excludes": {
+                            "description": "A list of paths that should be excluded from triggering a preview deployment. Wildcard syntax (`*`) is supported.",
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "x-auditable": true
+                            }
+                          },
+                          "path_includes": {
+                            "description": "A list of paths that should be watched to trigger a preview deployment. Wildcard syntax (`*`) is supported.",
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "x-auditable": true
+                            }
+                          },
+                          "pr_comments_enabled": {
+                            "description": "Whether to enable PR comments.",
+                            "type": "boolean",
+                            "x-auditable": true
+                          },
+                          "preview_branch_excludes": {
+                            "description": "A list of branches that should not trigger a preview deployment. Wildcard syntax (`*`) is supported. Must be used with `preview_deployment_setting` set to `custom`.",
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "x-auditable": true
+                            }
+                          },
+                          "preview_branch_includes": {
+                            "description": "A list of branches that should trigger a preview deployment. Wildcard syntax (`*`) is supported. Must be used with `preview_deployment_setting` set to `custom`.",
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "x-auditable": true
+                            }
+                          },
+                          "preview_deployment_setting": {
+                            "description": "Controls whether commits to preview branches trigger a preview deployment.",
+                            "type": "string",
+                            "enum": [
+                              "all",
+                              "none",
+                              "custom"
+                            ],
+                            "x-auditable": true
+                          },
+                          "production_branch": {
+                            "description": "The production branch of the repository.",
+                            "type": "string",
+                            "example": "main",
+                            "x-auditable": true
+                          },
+                          "production_deployments_enabled": {
+                            "description": "Whether to trigger a production deployment on commits to the production branch.",
+                            "type": "boolean",
+                            "x-auditable": true
+                          },
+                          "repo_id": {
+                            "description": "The ID of the repository.",
+                            "type": "string",
+                            "example": "12345678",
+                            "x-auditable": true
+                          },
+                          "repo_name": {
+                            "description": "The name of the repository.",
+                            "type": "string",
+                            "example": "my-repo",
+                            "x-auditable": true
+                          }
+                        }
+                      },
+                      "type": {
+                        "description": "The source control management provider.",
+                        "type": "string",
+                        "example": "github",
+                        "enum": [
+                          "github",
+                          "gitlab"
+                        ],
+                        "x-auditable": true
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "config"
+                    ]
+                  }
+                },
+                "required": [
+                  "name",
+                  "production_branch"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Create project response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/pages_api-response-common"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/pages_project"
+                        }
+                      },
+                      "required": [
+                        "result"
+                      ],
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Create project response failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/pages_api-response-common-failure"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Pages Project"
+        ],
+        "x-cfOwnership": "workers-deploy-config",
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "pages",
+        "x-fern-sdk-method-name": "create",
+        "x-forge-oauth-scopes": [
+          "page.write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/pages/projects/{project_name}": {
+      "delete": {
+        "operationId": "pages-project-delete-project",
+        "summary": "Delete a Cloudflare Pages project",
+        "description": "Permanently delete a Cloudflare Pages project and its deployments.",
+        "parameters": [
+          {
+            "name": "project_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/pages_project_name"
+            }
+          },
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/pages_identifier"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Delete project response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/pages_api-response-common"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "type": "object",
+                          "nullable": true
+                        }
+                      },
+                      "required": [
+                        "result"
+                      ],
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Delete project response failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/pages_api-response-common-failure"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Pages Project"
+        ],
+        "x-cfOwnership": "workers-deploy-config",
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "pages",
+        "x-fern-sdk-method-name": "delete",
+        "x-forge-oauth-scopes": [
+          "page.write"
+        ]
+      },
+      "get": {
+        "operationId": "pages-project-get-project",
+        "summary": "Get a Cloudflare Pages project",
+        "description": "Retrieve the configuration and deployment settings for a Cloudflare Pages project.",
+        "parameters": [
+          {
+            "name": "project_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/pages_project_name"
+            }
+          },
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/pages_identifier"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get project response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/pages_api-response-common"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/pages_project"
+                        }
+                      },
+                      "required": [
+                        "result"
+                      ],
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Get project response failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/pages_api-response-common-failure"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Pages Project"
+        ],
+        "x-cfOwnership": "workers-deploy-config",
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "pages",
+        "x-fern-sdk-method-name": "get",
+        "x-forge-oauth-scopes": [
+          "pages.metadata_read",
+          "page.read",
+          "page.write"
+        ]
+      },
+      "patch": {
+        "operationId": "pages-project-update-project",
+        "summary": "Update a Cloudflare Pages project",
+        "description": "Update the build, deployment, source, or environment settings for a Cloudflare Pages project. To delete an environment variable, set its key to `null`.",
+        "parameters": [
+          {
+            "name": "project_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/pages_project_name"
+            }
+          },
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/pages_identifier"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "build_config": {
+                    "description": "Configs for the project build process.",
+                    "type": "object",
+                    "properties": {
+                      "build_caching": {
+                        "description": "Enable build caching for the project.",
+                        "type": "boolean",
+                        "example": true,
+                        "x-auditable": true
+                      },
+                      "build_command": {
+                        "description": "Command used to build project.",
+                        "type": "string",
+                        "example": "npm run build",
+                        "x-auditable": true
+                      },
+                      "destination_dir": {
+                        "description": "Output directory of the build.",
+                        "type": "string",
+                        "example": "build",
+                        "x-auditable": true
+                      },
+                      "root_dir": {
+                        "description": "Directory to run the command.",
+                        "type": "string",
+                        "example": "/",
+                        "x-auditable": true
+                      },
+                      "web_analytics_tag": {
+                        "description": "The classifying tag for analytics.",
+                        "type": "string",
+                        "example": "cee1c73f6e4743d0b5e6bb1a0bcaabcc",
+                        "nullable": true,
+                        "x-auditable": true
+                      },
+                      "web_analytics_token": {
+                        "description": "The auth token for analytics.",
+                        "type": "string",
+                        "example": "021e1057c18547eca7b79f2516f06o7x",
+                        "nullable": true,
+                        "x-sensitive": true
+                      }
+                    }
+                  },
+                  "deployment_configs": {
+                    "description": "Configs for deployments in a project.",
+                    "type": "object",
+                    "properties": {
+                      "preview": {
+                        "description": "Configs for preview deploys.",
+                        "allOf": [
+                          {
+                            "$ref": "#/components/schemas/pages_deployment_config_values_request"
+                          }
+                        ]
+                      },
+                      "production": {
+                        "description": "Configs for production deploys.",
+                        "allOf": [
+                          {
+                            "$ref": "#/components/schemas/pages_deployment_config_values_request"
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "name": {
+                    "description": "Name for the Pages project. Must begin with a lowercase letter or digit and contain only lowercase letters, digits, and hyphens.",
+                    "type": "string",
+                    "example": "my-pages-app",
+                    "x-auditable": true
+                  },
+                  "production_branch": {
+                    "description": "Production branch of the project. Used to identify production deployments.",
+                    "type": "string",
+                    "example": "main",
+                    "x-auditable": true
+                  },
+                  "source": {
+                    "description": "Configs for the project source control.",
+                    "type": "object",
+                    "properties": {
+                      "config": {
+                        "type": "object",
+                        "properties": {
+                          "deployments_enabled": {
+                            "description": "Whether to enable automatic deployments when pushing to the source repository.\nWhen disabled, no deployments (production or preview) will be triggered automatically.\n",
+                            "type": "boolean",
+                            "deprecated": true,
+                            "x-auditable": true,
+                            "x-stainless-deprecation-message": "Use `production_deployments_enabled` and `preview_deployment_setting` for more granular control."
+                          },
+                          "owner": {
+                            "description": "The owner of the repository.",
+                            "type": "string",
+                            "example": "my-org",
+                            "x-auditable": true
+                          },
+                          "owner_id": {
+                            "description": "The owner ID of the repository.",
+                            "type": "string",
+                            "example": "12345678",
+                            "x-auditable": true
+                          },
+                          "path_excludes": {
+                            "description": "A list of paths that should be excluded from triggering a preview deployment. Wildcard syntax (`*`) is supported.",
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "x-auditable": true
+                            }
+                          },
+                          "path_includes": {
+                            "description": "A list of paths that should be watched to trigger a preview deployment. Wildcard syntax (`*`) is supported.",
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "x-auditable": true
+                            }
+                          },
+                          "pr_comments_enabled": {
+                            "description": "Whether to enable PR comments.",
+                            "type": "boolean",
+                            "x-auditable": true
+                          },
+                          "preview_branch_excludes": {
+                            "description": "A list of branches that should not trigger a preview deployment. Wildcard syntax (`*`) is supported. Must be used with `preview_deployment_setting` set to `custom`.",
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "x-auditable": true
+                            }
+                          },
+                          "preview_branch_includes": {
+                            "description": "A list of branches that should trigger a preview deployment. Wildcard syntax (`*`) is supported. Must be used with `preview_deployment_setting` set to `custom`.",
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "x-auditable": true
+                            }
+                          },
+                          "preview_deployment_setting": {
+                            "description": "Controls whether commits to preview branches trigger a preview deployment.",
+                            "type": "string",
+                            "enum": [
+                              "all",
+                              "none",
+                              "custom"
+                            ],
+                            "x-auditable": true
+                          },
+                          "production_branch": {
+                            "description": "The production branch of the repository.",
+                            "type": "string",
+                            "example": "main",
+                            "x-auditable": true
+                          },
+                          "production_deployments_enabled": {
+                            "description": "Whether to trigger a production deployment on commits to the production branch.",
+                            "type": "boolean",
+                            "x-auditable": true
+                          },
+                          "repo_id": {
+                            "description": "The ID of the repository.",
+                            "type": "string",
+                            "example": "12345678",
+                            "x-auditable": true
+                          },
+                          "repo_name": {
+                            "description": "The name of the repository.",
+                            "type": "string",
+                            "example": "my-repo",
+                            "x-auditable": true
+                          }
+                        }
+                      },
+                      "type": {
+                        "description": "The source control management provider.",
+                        "type": "string",
+                        "example": "github",
+                        "enum": [
+                          "github",
+                          "gitlab"
+                        ],
+                        "x-auditable": true
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "config"
+                    ]
+                  }
+                },
+                "example": {
+                  "deployment_configs": {
+                    "production": {
+                      "compatibility_date": "2022-01-01T00:00:00Z",
+                      "compatibility_flags": [
+                        "url_standard"
+                      ],
+                      "env_vars": {
+                        "NODE_VERSION": {
+                          "value": "22"
+                        },
+                        "delete_this_env_var": null,
+                        "secret_var": {
+                          "type": "secret_text",
+                          "value": "A_CMS_API_TOKEN"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Update project response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/pages_api-response-common"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/pages_project"
+                        }
+                      },
+                      "required": [
+                        "result"
+                      ],
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Update project response failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/pages_api-response-common-failure"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Pages Project"
+        ],
+        "x-cfOwnership": "workers-deploy-config",
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "pages",
+        "x-fern-sdk-method-name": "edit",
+        "x-forge-oauth-scopes": [
+          "page.write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/pages/projects/{project_name}/deployments": {
+      "get": {
+        "operationId": "pages-deployment-get-deployments",
+        "summary": "List Pages deployments",
+        "description": "List the production or preview deployments for a Cloudflare Pages project.",
+        "parameters": [
+          {
+            "name": "project_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/pages_project_name"
+            }
+          },
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/pages_identifier"
+            }
+          },
+          {
+            "name": "env",
+            "in": "query",
+            "schema": {
+              "description": "Deployment environment to return. Valid values are `production` and `preview`.",
+              "type": "string",
+              "example": "preview",
+              "enum": [
+                "production",
+                "preview"
+              ]
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "description": "Page number of results to return.",
+              "type": "integer",
+              "example": 1
+            }
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "schema": {
+              "description": "Number of results to return per page.",
+              "type": "integer",
+              "example": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get deployments response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/pages_api-response-collection"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/pages_deployment"
+                          }
+                        }
+                      },
+                      "required": [
+                        "result"
+                      ],
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Get deployments response failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/pages_api-response-common-failure"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Pages Deployment"
+        ],
+        "x-cfOwnership": "workers-deploy-config",
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "pages.deployments",
+        "x-fern-sdk-method-name": "list",
+        "x-forge-oauth-scopes": [
+          "pages.metadata_read",
+          "page.read",
+          "page.write"
+        ]
+      },
+      "post": {
+        "operationId": "pages-deployment-create-deployment",
+        "summary": "Create a Pages deployment",
+        "description": "Create a Cloudflare Pages deployment from a Git branch or Direct Upload manifest. Git repositories must already be authorized in Cloudflare Pages.",
+        "parameters": [
+          {
+            "name": "project_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/pages_project_name"
+            }
+          },
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/pages_identifier"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "encoding": {
+                "_headers": {
+                  "contentType": "text/plain"
+                },
+                "_redirects": {
+                  "contentType": "text/plain"
+                },
+                "_routes.json": {
+                  "contentType": "application/json"
+                },
+                "_worker.bundle": {
+                  "contentType": "multipart/form-data"
+                },
+                "_worker.js": {
+                  "contentType": "application/javascript+module, text/javascript+module, application/javascript, text/javascript"
+                },
+                "functions-filepath-routing-config.json": {
+                  "contentType": "application/json"
+                },
+                "manifest": {
+                  "contentType": "application/json"
+                }
+              },
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "_headers": {
+                    "description": "Headers configuration file for the deployment.",
+                    "type": "string",
+                    "format": "binary"
+                  },
+                  "_redirects": {
+                    "description": "Redirects configuration file for the deployment.",
+                    "type": "string",
+                    "format": "binary"
+                  },
+                  "_routes.json": {
+                    "description": "Routes configuration file defining routing rules.",
+                    "type": "string",
+                    "format": "binary"
+                  },
+                  "_worker.bundle": {
+                    "description": "Worker bundle file in multipart/form-data format. Mutually exclusive with `_worker.js`.\nCannot specify both `_worker.js` and `_worker.bundle` in the same request.\nMaximum size: 25 MiB.\n",
+                    "type": "string",
+                    "format": "binary"
+                  },
+                  "_worker.js": {
+                    "description": "Worker JavaScript file. Mutually exclusive with `_worker.bundle`.\nCannot specify both `_worker.js` and `_worker.bundle` in the same request.\n",
+                    "type": "string",
+                    "format": "binary"
+                  },
+                  "branch": {
+                    "description": "Git branch to deploy. Uses the branch's `HEAD`; defaults to the project's production branch.",
+                    "type": "string",
+                    "example": "staging",
+                    "x-auditable": true
+                  },
+                  "commit_dirty": {
+                    "description": "Whether the associated Git working tree has uncommitted changes. Provide `true` or `false`.",
+                    "type": "string",
+                    "example": "false",
+                    "enum": [
+                      "true",
+                      "false"
+                    ]
+                  },
+                  "commit_hash": {
+                    "description": "Git commit SHA associated with the deployment.",
+                    "type": "string",
+                    "example": "a1b2c3d4e5f6"
+                  },
+                  "commit_message": {
+                    "description": "Git commit message associated with the deployment.",
+                    "type": "string",
+                    "example": "Update homepage"
+                  },
+                  "functions-filepath-routing-config.json": {
+                    "description": "Functions routing configuration file.",
+                    "type": "string",
+                    "format": "binary"
+                  },
+                  "manifest": {
+                    "description": "JSON-encoded object mapping deployment file paths to their uploaded content hashes.\nRequired for Direct Upload deployments. Maximum 20,000 entries.\n",
+                    "type": "string",
+                    "example": "{\"index.html\": \"abc123\", \"style.css\": \"def456\"}"
+                  },
+                  "pages_build_output_dir": {
+                    "description": "The build output directory path.",
+                    "type": "string",
+                    "example": "dist"
+                  },
+                  "wrangler_config_hash": {
+                    "description": "Hash of the Wrangler configuration file used for this deployment.",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Create deployment response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/pages_api-response-common"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/pages_deployment"
+                        }
+                      },
+                      "required": [
+                        "result"
+                      ],
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Create deployment response failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/pages_api-response-common-failure"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Pages Deployment"
+        ],
+        "x-cfOwnership": "workers-deploy-config",
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "pages.deployments",
+        "x-fern-sdk-method-name": "create",
+        "x-forge-oauth-scopes": [
+          "page.write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/pages/projects/{project_name}/deployments/{deployment_id}": {
+      "delete": {
+        "operationId": "pages-deployment-delete-deployment",
+        "summary": "Delete a Pages deployment",
+        "description": "Remove a deployment from a Cloudflare Pages project.",
+        "parameters": [
+          {
+            "name": "deployment_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/pages_deployment_id"
+            }
+          },
+          {
+            "name": "project_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/pages_project_name"
+            }
+          },
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/pages_identifier"
+            }
+          },
+          {
+            "name": "force",
+            "in": "query",
+            "schema": {
+              "description": "Allow deletion when a non-production deployment has an active alias.",
+              "type": "boolean",
+              "example": true
+            },
+            "x-fern-parameter-name": "allow-aliased"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Delete deployment response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/pages_api-response-common"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "type": "object",
+                          "nullable": true
+                        }
+                      },
+                      "required": [
+                        "result"
+                      ],
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Delete deployment response failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/pages_api-response-common-failure"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Pages Deployment"
+        ],
+        "x-cfOwnership": "workers-deploy-config",
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "pages.deployments",
+        "x-fern-sdk-method-name": "delete",
+        "x-forge-oauth-scopes": [
+          "page.write"
+        ]
+      },
+      "get": {
+        "operationId": "pages-deployment-get-deployment-info",
+        "summary": "Get a Pages deployment",
+        "description": "Retrieve the status and details of a Cloudflare Pages deployment.",
+        "parameters": [
+          {
+            "name": "deployment_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/pages_deployment_id"
+            }
+          },
+          {
+            "name": "project_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/pages_project_name"
+            }
+          },
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/pages_identifier"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get deployment info response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/pages_api-response-common"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/pages_deployment"
+                        }
+                      },
+                      "required": [
+                        "result"
+                      ],
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Get deployment info response failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/pages_api-response-common-failure"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Pages Deployment"
+        ],
+        "x-cfOwnership": "workers-deploy-config",
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "pages.deployments",
+        "x-fern-sdk-method-name": "get",
+        "x-forge-oauth-scopes": [
+          "pages.metadata_read",
+          "page.read",
+          "page.write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/pages/projects/{project_name}/deployments/{deployment_id}/history/logs": {
+      "get": {
+        "operationId": "pages-deployment-get-deployment-logs",
+        "summary": "Get Pages deployment logs",
+        "description": "Retrieve the build logs for a Cloudflare Pages deployment.",
+        "parameters": [
+          {
+            "name": "deployment_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/pages_deployment_id"
+            }
+          },
+          {
+            "name": "project_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/pages_project_name"
+            }
+          },
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/pages_identifier"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get deployment logs response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/pages_api-response-common"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/pages_deployment_log"
+                        }
+                      },
+                      "required": [
+                        "result"
+                      ],
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Get deployment logs response failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/pages_api-response-common-failure"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Pages Deployment"
+        ],
+        "x-cfOwnership": "workers-deploy-config",
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "pages.deployments.history.logs",
+        "x-fern-sdk-method-name": "get",
+        "x-forge-oauth-scopes": [
+          "pages.metadata_read",
+          "page.read",
+          "page.write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/pages/projects/{project_name}/deployments/{deployment_id}/retry": {
+      "post": {
+        "operationId": "pages-deployment-retry-deployment",
+        "summary": "Retry a Pages deployment",
+        "description": "Retry a previous Cloudflare Pages deployment.",
+        "parameters": [
+          {
+            "name": "deployment_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/pages_deployment_id"
+            }
+          },
+          {
+            "name": "project_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/pages_project_name"
+            }
+          },
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/pages_identifier"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Retry deployment response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/pages_api-response-common"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/pages_deployment"
+                        }
+                      },
+                      "required": [
+                        "result"
+                      ],
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Retry deployment response failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/pages_api-response-common-failure"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Pages Deployment"
+        ],
+        "x-cfOwnership": "workers-deploy-config",
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "pages.deployments",
+        "x-fern-sdk-method-name": "retry",
+        "x-forge-oauth-scopes": [
+          "page.write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/pages/projects/{project_name}/deployments/{deployment_id}/rollback": {
+      "post": {
+        "operationId": "pages-deployment-rollback-deployment",
+        "summary": "Roll back a Pages deployment",
+        "description": "Roll back production to a previous successful Cloudflare Pages deployment.",
+        "parameters": [
+          {
+            "name": "deployment_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/pages_deployment_id"
+            }
+          },
+          {
+            "name": "project_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/pages_project_name"
+            }
+          },
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/pages_identifier"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Rollback deployment response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/pages_api-response-common"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/pages_deployment"
+                        }
+                      },
+                      "required": [
+                        "result"
+                      ],
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Rollback deployment response failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/pages_api-response-common-failure"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Pages Deployment"
+        ],
+        "x-cfOwnership": "workers-deploy-config",
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "pages.deployments",
+        "x-fern-sdk-method-name": "rollback",
+        "x-forge-oauth-scopes": [
+          "page.write"
+        ],
+        "x-forge-require-confirmation": "This operation rolls back the production deployment to an earlier deployment."
+      }
+    },
+    "/accounts/{account_id}/pages/projects/{project_name}/deployments/{deployment_id}/tails": {
+      "post": {
+        "operationId": "pages-deployment-create-tail",
+        "summary": "Create deployment tail",
+        "description": "Start a tail that receives logs and exception data.",
+        "parameters": [
+          {
+            "name": "deployment_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/pages_deployment_id"
+            }
+          },
+          {
+            "name": "project_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/pages_project_name"
+            }
+          },
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/pages_identifier"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "filters": {
+                    "description": "Filters to apply to the tail session.",
+                    "type": "array",
+                    "items": {
+                      "additionalProperties": true,
+                      "type": "object"
+                    }
+                  }
+                },
+                "example": {
+                  "filters": [
+                    {
+                      "outcome": [
+                        "exception"
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Create deployment tail response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/pages_api-response-common"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/pages_tail"
+                        }
+                      },
+                      "required": [
+                        "result"
+                      ],
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Create deployment tail response failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/pages_api-response-common-failure"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Pages Deployment"
+        ],
+        "x-cfOwnership": "workers-deploy-config",
+        "x-fern-availability": "generally-available",
+        "x-fern-ignore": true,
+        "x-fern-sdk-group-name": "pages.deployments.tails",
+        "x-fern-sdk-method-name": "create",
+        "x-forge-oauth-scopes": [
+          "page.write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/pages/projects/{project_name}/deployments/{deployment_id}/tails/{tail_id}": {
+      "delete": {
+        "operationId": "pages-deployment-delete-tail",
+        "summary": "Delete deployment tail",
+        "description": "Deletes a tail from a Pages deployment.",
+        "parameters": [
+          {
+            "name": "tail_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/pages_identifier"
+            }
+          },
+          {
+            "name": "deployment_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/pages_deployment_id"
+            }
+          },
+          {
+            "name": "project_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/pages_project_name"
+            }
+          },
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/pages_identifier"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Delete deployment tail response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/pages_api-response-common"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "type": "object",
+                          "nullable": true
+                        }
+                      },
+                      "required": [
+                        "result"
+                      ],
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Delete deployment tail response failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/pages_api-response-common-failure"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Pages Deployment"
+        ],
+        "x-cfOwnership": "workers-deploy-config",
+        "x-fern-availability": "generally-available",
+        "x-fern-ignore": true,
+        "x-fern-sdk-group-name": "pages.deployments.tails",
+        "x-fern-sdk-method-name": "delete",
+        "x-forge-oauth-scopes": [
+          "page.write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/pages/projects/{project_name}/domains": {
+      "get": {
+        "operationId": "pages-domains-get-domains",
+        "summary": "List Pages custom domains",
+        "description": "List the custom domains associated with a Cloudflare Pages project.",
+        "parameters": [
+          {
+            "name": "project_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/pages_project_name"
+            }
+          },
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/pages_identifier"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get domains response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/pages_api-response-collection"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/pages_domain"
+                          }
+                        }
+                      },
+                      "required": [
+                        "result"
+                      ],
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Get domains response failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/pages_api-response-common-failure"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Pages Domains"
+        ],
+        "x-cfOwnership": "workers-deploy-config",
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "pages.domains",
+        "x-fern-sdk-method-name": "list",
+        "x-forge-oauth-scopes": [
+          "pages.metadata_read",
+          "page.read",
+          "page.write"
+        ]
+      },
+      "post": {
+        "operationId": "pages-domains-add-domain",
+        "summary": "Add a Pages custom domain",
+        "description": "Attach a custom domain to a Cloudflare Pages project.",
+        "parameters": [
+          {
+            "name": "project_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/pages_project_name"
+            }
+          },
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/pages_identifier"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "$ref": "#/components/schemas/pages_domain_name"
+                  }
+                },
+                "required": [
+                  "name"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Add domain response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/pages_api-response-common"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/pages_domain"
+                        }
+                      },
+                      "required": [
+                        "result"
+                      ],
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Add domain response failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/pages_api-response-common-failure"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Pages Domains"
+        ],
+        "x-cfOwnership": "workers-deploy-config",
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "pages.domains",
+        "x-fern-sdk-method-name": "create",
+        "x-forge-oauth-scopes": [
+          "page.write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/pages/projects/{project_name}/domains/{domain_name}": {
+      "delete": {
+        "operationId": "pages-domains-delete-domain",
+        "summary": "Delete a Pages custom domain",
+        "description": "Remove a custom domain from a Cloudflare Pages project.",
+        "parameters": [
+          {
+            "name": "domain_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/pages_domain_name"
+            }
+          },
+          {
+            "name": "project_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/pages_project_name"
+            }
+          },
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/pages_identifier"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Delete domain response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/pages_api-response-common"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "type": "object",
+                          "nullable": true
+                        }
+                      },
+                      "required": [
+                        "result"
+                      ],
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Delete domain response failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/pages_api-response-common-failure"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Pages Domains"
+        ],
+        "x-cfOwnership": "workers-deploy-config",
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "pages.domains",
+        "x-fern-sdk-method-name": "delete",
+        "x-forge-oauth-scopes": [
+          "page.write"
+        ]
+      },
+      "get": {
+        "operationId": "pages-domains-get-domain",
+        "summary": "Get a Pages custom domain",
+        "description": "Retrieve the configuration and validation status of a custom domain attached to a Cloudflare Pages project.",
+        "parameters": [
+          {
+            "name": "domain_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/pages_domain_name"
+            }
+          },
+          {
+            "name": "project_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/pages_project_name"
+            }
+          },
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/pages_identifier"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get domain response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/pages_api-response-common"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/pages_domain"
+                        }
+                      },
+                      "required": [
+                        "result"
+                      ],
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Get domain response failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/pages_api-response-common-failure"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Pages Domains"
+        ],
+        "x-cfOwnership": "workers-deploy-config",
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "pages.domains",
+        "x-fern-sdk-method-name": "get",
+        "x-forge-oauth-scopes": [
+          "pages.metadata_read",
+          "page.read",
+          "page.write"
+        ]
+      },
+      "patch": {
+        "operationId": "pages-domains-patch-domain",
+        "summary": "Retry custom domain validation",
+        "description": "Retry validation for a custom domain attached to a Cloudflare Pages project.",
+        "parameters": [
+          {
+            "name": "domain_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/pages_domain_name"
+            }
+          },
+          {
+            "name": "project_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/pages_project_name"
+            }
+          },
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/pages_identifier"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Patch domain response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/pages_api-response-common"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/pages_domain"
+                        }
+                      },
+                      "required": [
+                        "result"
+                      ],
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Patch domain response failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/pages_api-response-common-failure"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Pages Domains"
+        ],
+        "x-cfOwnership": "workers-deploy-config",
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "pages.domains.validation",
+        "x-fern-sdk-method-name": "retry",
+        "x-forge-oauth-scopes": [
+          "page.write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/pages/projects/{project_name}/purge_build_cache": {
+      "post": {
+        "operationId": "pages-purge-build-cache",
+        "summary": "Purge the Pages build cache",
+        "description": "Remove cached build artifacts so subsequent builds run without the project's existing build cache.",
+        "parameters": [
+          {
+            "name": "project_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/pages_project_name"
+            }
+          },
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/pages_identifier"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Purge build cache response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/pages_api-response-common"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "type": "object",
+                          "nullable": true
+                        }
+                      },
+                      "required": [
+                        "result"
+                      ],
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Purge build cache failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/pages_api-response-common-failure"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Pages Build Cache"
+        ],
+        "x-cfOwnership": "workers-deploy-config",
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "pages.build-cache",
+        "x-fern-sdk-method-name": "purge",
+        "x-forge-oauth-scopes": [
+          "page.write"
+        ],
+        "x-forge-require-confirmation": "This operation purges the build cache for a Pages project."
+      }
+    },
+    "/accounts/{account_id}/pages/projects/{project_name}/source": {
+      "delete": {
+        "operationId": "pages-project-disconnect-project-source",
+        "summary": "Disconnect a Git repository",
+        "description": "Disconnect the Git repository from a Cloudflare Pages project to stop Git-based deployments.",
+        "parameters": [
+          {
+            "name": "project_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/pages_project_name"
+            }
+          },
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/pages_identifier"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Disconnect project source response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/pages_api-response-common"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/pages_project"
+                        }
+                      },
+                      "required": [
+                        "result"
+                      ],
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Disconnect project source response failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/pages_api-response-common-failure"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Pages Project"
+        ],
+        "x-cfOwnership": "workers-deploy-config",
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "pages.source",
+        "x-fern-sdk-method-name": "disconnect",
+        "x-forge-oauth-scopes": [
+          "page.write"
+        ]
+      },
+      "post": {
+        "operationId": "pages-project-connect-project-source",
+        "summary": "Connect a Git repository",
+        "description": "Connect a GitHub or GitLab repository to a Cloudflare Pages project to enable Git-based deployments.",
+        "parameters": [
+          {
+            "name": "project_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/pages_project_name"
+            }
+          },
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/pages_identifier"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/pages_source_connect_request"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Connect project source response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/pages_api-response-common"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/pages_project"
+                        }
+                      },
+                      "required": [
+                        "result"
+                      ],
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Connect project source response failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/pages_api-response-common-failure"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Pages Project"
+        ],
+        "x-cfOwnership": "workers-deploy-config",
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "pages.source",
+        "x-fern-sdk-method-name": "connect",
+        "x-forge-oauth-scopes": [
+          "page.write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/pages/projects/{project_name}/upload-token": {
+      "get": {
+        "operationId": "pages-project-get-upload-token",
+        "summary": "Get upload token",
+        "description": "Get a short-lived JWT for Pages Direct Upload asset operations.",
+        "parameters": [
+          {
+            "name": "project_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/pages_project_name"
+            }
+          },
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/pages_identifier"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Upload token response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/pages_api-response-common"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/pages_pages_upload_token_response"
+                        }
+                      },
+                      "required": [
+                        "result"
+                      ],
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Upload token failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/pages_api-response-common-failure"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Pages Project"
+        ],
+        "x-cfOwnership": "workers-deploy-config",
+        "x-fern-availability": "generally-available",
+        "x-fern-ignore": true,
+        "x-fern-sdk-group-name": "pages.upload-token",
+        "x-fern-sdk-method-name": "get",
+        "x-forge-oauth-scopes": [
+          "page.write"
+        ]
+      }
+    },
     "/accounts/{account_id}/pay-invoice": {
       "post": {
         "operationId": "account-billing-pay-invoice",
@@ -368523,6 +371373,197 @@
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "organizations.shares",
         "x-fern-sdk-method-name": "list"
+      }
+    },
+    "/pages/assets/check-missing": {
+      "post": {
+        "operationId": "pages-assets-check-missing",
+        "summary": "Check missing assets",
+        "description": "Check which of the provided file hashes are missing from the Pages\nasset store. Returns a list of missing hashes that need to be uploaded.\nUsed as part of the Pages Direct Upload workflow.\n\nAuthenticate with the JWT obtained from the upload-token endpoint:\nGET /accounts/{account_id}/pages/projects/{project_name}/upload-token\n",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "example": {
+                "hashes": [
+                  "a948904f2f0f479b8f936b8a0c5d9882",
+                  "b026324c6904b2a9cb4b88d6d61c81d1"
+                ]
+              },
+              "schema": {
+                "$ref": "#/components/schemas/pages_pages_assets_check_missing_request"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Check missing response.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "errors": [],
+                  "messages": [],
+                  "result": [
+                    "b026324c6904b2a9cb4b88d6d61c81d1"
+                  ],
+                  "success": true
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/pages_pages_assets_check_missing_response"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Check missing failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/pages_api-response-common-failure"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "pages_upload_token": []
+          }
+        ],
+        "tags": [
+          "Pages Assets"
+        ],
+        "x-cfOwnership": "workers-deploy-config",
+        "x-fern-availability": "generally-available",
+        "x-fern-ignore": true,
+        "x-fern-sdk-group-name": "pages.assets.hashes",
+        "x-fern-sdk-method-name": "check"
+      }
+    },
+    "/pages/assets/upload": {
+      "post": {
+        "operationId": "pages-assets-upload",
+        "summary": "Upload asset",
+        "description": "Upload one or more files to the Pages asset store. Each file is\nidentified by its content hash and is uploaded using the same JSON shape\nas the Cloudflare KV bulk write API. Used as part of the Pages Direct\nUpload workflow.\n\nAuthenticate with the JWT obtained from the upload-token endpoint:\nGET /accounts/{account_id}/pages/projects/{project_name}/upload-token\n",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "example": [
+                {
+                  "base64": true,
+                  "key": "b026324c6904b2a9cb4b88d6d61c81d1",
+                  "metadata": {
+                    "contentType": "text/plain"
+                  },
+                  "value": "SGVsbG8sIFdvcmxkIQ=="
+                }
+              ],
+              "schema": {
+                "$ref": "#/components/schemas/pages_pages_assets_upload_request"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Upload asset response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/pages_api-response-common"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Upload asset failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/pages_api-response-common-failure"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "pages_upload_token": []
+          }
+        ],
+        "tags": [
+          "Pages Assets"
+        ],
+        "x-cfOwnership": "workers-deploy-config",
+        "x-fern-availability": "generally-available",
+        "x-fern-ignore": true,
+        "x-fern-sdk-group-name": "pages.assets",
+        "x-fern-sdk-method-name": "upload"
+      }
+    },
+    "/pages/assets/upsert-hashes": {
+      "post": {
+        "operationId": "pages-assets-upsert-hashes",
+        "summary": "Upsert asset hashes",
+        "description": "Register the provided file hashes as recently uploaded to the Pages\nasset store. Used as part of the Pages Direct Upload workflow so future\ndeployments can avoid re-uploading files that are already present.\n\nAuthenticate with the JWT obtained from the upload-token endpoint:\nGET /accounts/{account_id}/pages/projects/{project_name}/upload-token\n",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "example": {
+                "hashes": [
+                  "a948904f2f0f479b8f936b8a0c5d9882",
+                  "b026324c6904b2a9cb4b88d6d61c81d1"
+                ]
+              },
+              "schema": {
+                "$ref": "#/components/schemas/pages_pages_assets_upsert_hashes_request"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Upsert hashes response.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "errors": [],
+                  "messages": [],
+                  "success": true
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/pages_api-response-common"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Upsert hashes failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/pages_api-response-common-failure"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "pages_upload_token": []
+          }
+        ],
+        "tags": [
+          "Pages Assets"
+        ],
+        "x-cfOwnership": "workers-deploy-config",
+        "x-fern-availability": "generally-available",
+        "x-fern-ignore": true,
+        "x-fern-sdk-group-name": "pages.assets.hashes",
+        "x-fern-sdk-method-name": "upsert"
       }
     },
     "/produce": {
@@ -506041,6 +509082,9 @@
           "Deploy Hooks"
         ],
         "x-cfOwnership": "workers-builds-automation",
+        "x-fern-audiences": [
+          "sdk"
+        ],
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "builds.deploy-hooks",
         "x-fern-sdk-method-name": "trigger"
@@ -577278,6 +580322,7 @@
         }
       },
       "builds_BuildUuid": {
+        "description": "UUID of the build, as returned by builds list.",
         "in": "path",
         "name": "build_uuid",
         "required": true,
@@ -577286,7 +580331,7 @@
         }
       },
       "builds_DeployHookUuid": {
-        "description": "Deploy hook UUID",
+        "description": "UUID of the deploy hook, as returned by deploy-hooks list.",
         "in": "path",
         "name": "deploy_hook_uuid",
         "required": true,
@@ -577316,13 +580361,15 @@
         }
       },
       "builds_PreviewId": {
-        "description": "The script tag of the Preview, which is a Worker in its own right",
+        "description": "ID of the Preview.",
         "in": "path",
         "name": "preview_id",
         "required": true,
         "schema": {
-          "$ref": "#/components/schemas/builds_external_script_id"
-        }
+          "type": "string",
+          "example": "0123456789abcdef0123456789abcdef"
+        },
+        "x-fern-parameter-name": "preview"
       },
       "builds_RepoConnectionUuid": {
         "in": "path",
@@ -577333,22 +580380,26 @@
         }
       },
       "builds_ScriptName": {
-        "description": "Human-readable name of the worker.",
+        "description": "Name or script tag of the Worker.",
         "in": "path",
         "name": "script_name",
         "required": true,
         "schema": {
-          "$ref": "#/components/schemas/builds_script_name"
-        }
+          "type": "string",
+          "example": "my-worker"
+        },
+        "x-fern-parameter-name": "worker"
       },
       "builds_ScriptTag": {
-        "description": "The Worker script tag (external script ID)",
+        "description": "Script tag of the Worker.",
         "in": "path",
         "name": "script_tag",
         "required": true,
         "schema": {
-          "$ref": "#/components/schemas/builds_external_script_id"
-        }
+          "type": "string",
+          "example": "0123456789abcdef0123456789abcdef"
+        },
+        "x-fern-parameter-name": "worker"
       },
       "builds_TriggerUuid": {
         "in": "path",
@@ -611154,6 +614205,17 @@
             "example": "my-worker",
             "nullable": true
           },
+          "deploy_tool": {
+            "description": "Deployment CLI detected in the selected root directory. A Wrangler config takes precedence. `cf` requires `cloudflare.config.ts` and a `cf` dependency or dev dependency in `package.json`.",
+            "type": "string",
+            "example": "cf",
+            "enum": [
+              "cf",
+              "wrangler",
+              null
+            ],
+            "nullable": true
+          },
           "env_worker_names": {
             "type": "object",
             "example": {
@@ -612277,12 +615339,12 @@
       "builds_external_script_id": {
         "description": "System-generated tag of the Worker. This is not the Worker name.",
         "type": "string",
-        "example": "dd7160bb9cef458093557736f4b9e75b"
+        "example": "0123456789abcdef0123456789abcdef"
       },
       "builds_external_script_ids": {
         "description": "Comma-separated list of system-generated worker script tags (max 20).",
         "type": "string",
-        "example": "dd7160bb9cef458093557736f4b9e75b,42fb14fe81df47139d3be684e4c637a6,ff7cf9a7582f4c0d90a4b95cb17d659e"
+        "example": "0123456789abcdef0123456789abcdef"
       },
       "builds_is_secret": {
         "description": "Whether to hide the value after it is saved. Secret values remain available to builds but appear as `null` when you list variables; non-secret values remain visible.",
@@ -612359,11 +615421,6 @@
         "description": "Repository directory in which build and deploy commands run.",
         "type": "string",
         "example": "/"
-      },
-      "builds_script_name": {
-        "description": "Human-readable name of the Worker.",
-        "type": "string",
-        "example": "my-worker"
       },
       "builds_stopped_on": {
         "type": "string",
@@ -671940,6 +674997,2199 @@
         "required": [
           "code",
           "message"
+        ]
+      },
+      "pages_api-response-collection": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/pages_api-response-common"
+          },
+          {
+            "properties": {
+              "result_info": {
+                "type": "object",
+                "properties": {
+                  "count": {
+                    "description": "Total number of results for the requested service.",
+                    "type": "number",
+                    "example": 1
+                  },
+                  "page": {
+                    "description": "Current page within paginated list of results.",
+                    "type": "number",
+                    "example": 1
+                  },
+                  "per_page": {
+                    "description": "Number of results per page of results.",
+                    "type": "number",
+                    "example": 20
+                  },
+                  "total_count": {
+                    "description": "Total results available without any search parameters.",
+                    "type": "number",
+                    "example": 2000
+                  },
+                  "total_pages": {
+                    "description": "The number of total pages in the entire result set.",
+                    "type": "number",
+                    "example": 100
+                  }
+                }
+              }
+            },
+            "type": "object"
+          }
+        ]
+      },
+      "pages_api-response-common": {
+        "type": "object",
+        "properties": {
+          "errors": {
+            "$ref": "#/components/schemas/pages_messages"
+          },
+          "messages": {
+            "$ref": "#/components/schemas/pages_messages"
+          },
+          "success": {
+            "description": "Whether the API call was successful.",
+            "type": "boolean",
+            "example": true,
+            "enum": [
+              true
+            ]
+          }
+        },
+        "required": [
+          "success",
+          "errors",
+          "messages"
+        ]
+      },
+      "pages_api-response-common-failure": {
+        "type": "object",
+        "properties": {
+          "errors": {
+            "example": [
+              {
+                "code": 7003,
+                "message": "No route for the URI"
+              }
+            ],
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/pages_messages"
+              }
+            ],
+            "minLength": 1
+          },
+          "messages": {
+            "example": [],
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/pages_messages"
+              }
+            ]
+          },
+          "result": {
+            "type": "object",
+            "enum": [
+              null
+            ],
+            "nullable": true
+          },
+          "success": {
+            "description": "Whether the API call was successful.",
+            "type": "boolean",
+            "example": false,
+            "enum": [
+              false
+            ]
+          }
+        },
+        "required": [
+          "success",
+          "errors",
+          "messages",
+          "result"
+        ]
+      },
+      "pages_build_config": {
+        "description": "Configs for the project build process.",
+        "type": "object",
+        "properties": {
+          "build_caching": {
+            "description": "Enable build caching for the project.",
+            "type": "boolean",
+            "example": true,
+            "nullable": true,
+            "x-auditable": true
+          },
+          "build_command": {
+            "description": "Command used to build project.",
+            "type": "string",
+            "example": "npm run build",
+            "nullable": true,
+            "x-auditable": true
+          },
+          "destination_dir": {
+            "description": "Assets output directory of the build.",
+            "type": "string",
+            "example": "build",
+            "nullable": true,
+            "x-auditable": true
+          },
+          "root_dir": {
+            "description": "Directory to run the command.",
+            "type": "string",
+            "example": "/",
+            "nullable": true,
+            "x-auditable": true
+          },
+          "web_analytics_tag": {
+            "description": "The classifying tag for analytics.",
+            "type": "string",
+            "example": "cee1c73f6e4743d0b5e6bb1a0bcaabcc",
+            "nullable": true,
+            "x-auditable": true
+          },
+          "web_analytics_token": {
+            "description": "The auth token for analytics.",
+            "type": "string",
+            "example": "021e1057c18547eca7b79f2516f06o7x",
+            "nullable": true,
+            "x-sensitive": true
+          }
+        },
+        "required": [
+          "web_analytics_tag",
+          "web_analytics_token"
+        ]
+      },
+      "pages_deployment": {
+        "type": "object",
+        "properties": {
+          "aliases": {
+            "description": "A list of alias URLs pointing to this deployment.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "x-auditable": true
+            },
+            "example": [
+              "https://branchname.projectname.pages.dev"
+            ],
+            "nullable": true,
+            "readOnly": true
+          },
+          "build_config": {
+            "$ref": "#/components/schemas/pages_build_config"
+          },
+          "created_on": {
+            "description": "When the deployment was created.",
+            "type": "string",
+            "format": "date-time",
+            "example": "2021-03-09T00:55:03.923456Z",
+            "readOnly": true,
+            "x-auditable": true
+          },
+          "deployment_trigger": {
+            "description": "Info about what caused the deployment.",
+            "type": "object",
+            "properties": {
+              "metadata": {
+                "description": "Additional info about the trigger.",
+                "type": "object",
+                "properties": {
+                  "branch": {
+                    "description": "Where the trigger happened.",
+                    "type": "string",
+                    "example": "main",
+                    "x-auditable": true
+                  },
+                  "commit_dirty": {
+                    "description": "Whether the deployment trigger commit was dirty.",
+                    "type": "boolean",
+                    "example": false,
+                    "x-auditable": true
+                  },
+                  "commit_hash": {
+                    "description": "Hash of the deployment trigger commit.",
+                    "type": "string",
+                    "example": "ad9ccd918a81025731e10e40267e11273a263421",
+                    "x-auditable": true
+                  },
+                  "commit_message": {
+                    "description": "Message of the deployment trigger commit.",
+                    "type": "string",
+                    "example": "Update index.html",
+                    "x-auditable": true
+                  }
+                },
+                "required": [
+                  "branch",
+                  "commit_hash",
+                  "commit_message",
+                  "commit_dirty"
+                ]
+              },
+              "type": {
+                "description": "What caused the deployment.",
+                "type": "string",
+                "example": "ad_hoc",
+                "enum": [
+                  "github:push",
+                  "ad_hoc",
+                  "deploy_hook"
+                ],
+                "x-auditable": true
+              }
+            },
+            "readOnly": true,
+            "required": [
+              "type",
+              "metadata"
+            ]
+          },
+          "env_vars": {
+            "$ref": "#/components/schemas/pages_env_vars"
+          },
+          "environment": {
+            "description": "Type of deploy.",
+            "type": "string",
+            "example": "preview",
+            "enum": [
+              "preview",
+              "production"
+            ],
+            "readOnly": true,
+            "x-auditable": true
+          },
+          "id": {
+            "description": "Id of the deployment.",
+            "type": "string",
+            "example": "f64788e9-fccd-4d4a-a28a-cb84f88f6",
+            "readOnly": true,
+            "x-auditable": true
+          },
+          "is_skipped": {
+            "description": "Whether the deployment was skipped.",
+            "type": "boolean",
+            "example": true,
+            "readOnly": true,
+            "x-auditable": true
+          },
+          "latest_stage": {
+            "$ref": "#/components/schemas/pages_stage"
+          },
+          "modified_on": {
+            "description": "When the deployment was last modified.",
+            "type": "string",
+            "format": "date-time",
+            "example": "2021-03-09T00:58:59.045655",
+            "readOnly": true,
+            "x-auditable": true
+          },
+          "project_id": {
+            "description": "Id of the project.",
+            "type": "string",
+            "example": "7b162ea7-7367-4d67-bcde-1160995d5",
+            "readOnly": true,
+            "x-auditable": true
+          },
+          "project_name": {
+            "$ref": "#/components/schemas/pages_project_name"
+          },
+          "short_id": {
+            "description": "Short Id (8 character) of the deployment.",
+            "type": "string",
+            "example": "f64788e9",
+            "readOnly": true,
+            "x-auditable": true
+          },
+          "skip_reason": {
+            "description": "Why the deployment was skipped.",
+            "type": "string",
+            "example": "commit_message",
+            "enum": [
+              "commit_message",
+              "preview_deployments_disabled",
+              "production_deployments_disabled",
+              "path_config",
+              "branch_config",
+              "pages_to_workers_conversion",
+              "superseded_queued_build"
+            ],
+            "nullable": true,
+            "readOnly": true,
+            "x-auditable": true
+          },
+          "source": {
+            "$ref": "#/components/schemas/pages_source"
+          },
+          "stages": {
+            "description": "List of past stages.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/pages_stage"
+            },
+            "example": [
+              {
+                "ended_on": "2021-06-03T15:39:03.134378Z",
+                "name": "queued",
+                "started_on": "2021-06-03T15:38:15.608194Z",
+                "status": "active"
+              },
+              {
+                "ended_on": null,
+                "name": "initialize",
+                "started_on": null,
+                "status": "idle"
+              },
+              {
+                "ended_on": null,
+                "name": "clone_repo",
+                "started_on": null,
+                "status": "idle"
+              },
+              {
+                "ended_on": null,
+                "name": "build",
+                "started_on": null,
+                "status": "idle"
+              },
+              {
+                "ended_on": null,
+                "name": "deploy",
+                "started_on": null,
+                "status": "idle"
+              }
+            ],
+            "readOnly": true
+          },
+          "url": {
+            "description": "The live URL to view this deployment.",
+            "type": "string",
+            "example": "https://f64788e9.ninjakittens.pages.dev",
+            "readOnly": true,
+            "x-auditable": true
+          },
+          "uses_functions": {
+            "description": "Whether the deployment uses functions.",
+            "type": "boolean",
+            "nullable": true,
+            "readOnly": true,
+            "x-auditable": true
+          }
+        },
+        "required": [
+          "aliases",
+          "build_config",
+          "created_on",
+          "deployment_trigger",
+          "environment",
+          "env_vars",
+          "id",
+          "is_skipped",
+          "latest_stage",
+          "modified_on",
+          "project_id",
+          "project_name",
+          "short_id",
+          "source",
+          "stages",
+          "url"
+        ]
+      },
+      "pages_deployment_config_values": {
+        "type": "object",
+        "properties": {
+          "ai_bindings": {
+            "description": "Constellation bindings used for Pages Functions.",
+            "type": "object",
+            "example": {
+              "AI_BINDING": {
+                "project_id": "some-project-id"
+              }
+            },
+            "additionalProperties": {
+              "description": "AI binding.",
+              "properties": {
+                "project_id": {
+                  "type": "string",
+                  "x-auditable": true
+                }
+              },
+              "required": [
+                "project_id"
+              ],
+              "type": "object"
+            }
+          },
+          "always_use_latest_compatibility_date": {
+            "description": "Whether to always use the latest compatibility date for Pages Functions.",
+            "type": "boolean",
+            "example": false,
+            "x-auditable": true
+          },
+          "analytics_engine_datasets": {
+            "description": "Analytics Engine bindings used for Pages Functions.",
+            "type": "object",
+            "example": {
+              "ANALYTICS_ENGINE_BINDING": {
+                "dataset": "api_analytics"
+              }
+            },
+            "additionalProperties": {
+              "description": "Analytics Engine binding.",
+              "properties": {
+                "dataset": {
+                  "description": "Name of the dataset.",
+                  "type": "string",
+                  "example": "api_analytics",
+                  "x-auditable": true
+                }
+              },
+              "required": [
+                "dataset"
+              ],
+              "type": "object"
+            }
+          },
+          "browsers": {
+            "description": "Browser bindings used for Pages Functions.",
+            "type": "object",
+            "example": {
+              "BROWSER": {}
+            },
+            "additionalProperties": {
+              "description": "Browser binding.",
+              "nullable": true,
+              "type": "object",
+              "x-stainless-empty-object": true
+            }
+          },
+          "build_image_major_version": {
+            "description": "The major version of the build image to use for Pages Functions. Version 1 is retired and its projects are moved to version 3. Once a project's builds have been moved, this is the version the builds run on and `build_image_auto_upgrade` is set on the project.",
+            "type": "integer",
+            "example": 3,
+            "x-auditable": true
+          },
+          "compatibility_date": {
+            "description": "Compatibility date used for Pages Functions.",
+            "type": "string",
+            "example": "2025-01-01T00:00:00Z",
+            "x-auditable": true,
+            "x-stainless-terraform-configurability": "computed_optional"
+          },
+          "compatibility_flags": {
+            "description": "Compatibility flags used for Pages Functions.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "x-auditable": true
+            },
+            "example": [
+              "url_standard"
+            ]
+          },
+          "d1_databases": {
+            "description": "D1 databases used for Pages Functions.",
+            "type": "object",
+            "example": {
+              "D1_BINDING": {
+                "id": "445e2955-951a-43f8-a35b-a4d0c8138f63"
+              }
+            },
+            "additionalProperties": {
+              "description": "D1 binding.",
+              "properties": {
+                "id": {
+                  "description": "UUID of the D1 database.",
+                  "type": "string",
+                  "example": "445e2955-951a-43f8-a35b-a4d0c8138f63",
+                  "x-auditable": true
+                }
+              },
+              "required": [
+                "id"
+              ],
+              "type": "object"
+            }
+          },
+          "durable_object_namespaces": {
+            "description": "Durable Object namespaces used for Pages Functions.",
+            "type": "object",
+            "example": {
+              "DO_BINDING": {
+                "namespace_id": "5eb63bbbe01eeed093cb22bb8f5acdc3"
+              }
+            },
+            "additionalProperties": {
+              "description": "Durable Object binding.",
+              "properties": {
+                "namespace_id": {
+                  "description": "ID of the Durable Object namespace.",
+                  "type": "string",
+                  "example": "5eb63bbbe01eeed093cb22bb8f5acdc3",
+                  "x-auditable": true
+                }
+              },
+              "required": [
+                "namespace_id"
+              ],
+              "type": "object"
+            }
+          },
+          "env_vars": {
+            "$ref": "#/components/schemas/pages_env_vars"
+          },
+          "fail_open": {
+            "description": "Whether to fail open when the deployment config cannot be applied.",
+            "type": "boolean",
+            "example": true,
+            "x-auditable": true
+          },
+          "hyperdrive_bindings": {
+            "description": "Hyperdrive bindings used for Pages Functions.",
+            "type": "object",
+            "example": {
+              "HYPERDRIVE": {
+                "id": "a76a99bc342644deb02c38d66082262a"
+              }
+            },
+            "additionalProperties": {
+              "description": "Hyperdrive binding.",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "example": "a76a99bc342644deb02c38d66082262a",
+                  "x-auditable": true
+                }
+              },
+              "required": [
+                "id"
+              ],
+              "type": "object"
+            }
+          },
+          "kv_namespaces": {
+            "description": "KV namespaces used for Pages Functions.",
+            "type": "object",
+            "example": {
+              "KV_BINDING": {
+                "namespace_id": "5eb63bbbe01eeed093cb22bb8f5acdc3"
+              }
+            },
+            "additionalProperties": {
+              "description": "KV namespace binding.",
+              "properties": {
+                "namespace_id": {
+                  "description": "ID of the KV namespace.",
+                  "type": "string",
+                  "example": "5eb63bbbe01eeed093cb22bb8f5acdc3",
+                  "x-auditable": true
+                }
+              },
+              "required": [
+                "namespace_id"
+              ],
+              "type": "object"
+            }
+          },
+          "limits": {
+            "description": "Limits for Pages Functions.",
+            "type": "object",
+            "example": {
+              "cpu_ms": 100
+            },
+            "properties": {
+              "cpu_ms": {
+                "description": "CPU time limit in milliseconds.",
+                "type": "integer",
+                "example": 100,
+                "x-auditable": true
+              }
+            },
+            "required": [
+              "cpu_ms"
+            ]
+          },
+          "mtls_certificates": {
+            "description": "mTLS bindings used for Pages Functions.",
+            "type": "object",
+            "example": {
+              "MTLS": {
+                "certificate_id": "d7cdd17c-916f-4cb7-aabe-585eb382ec4e"
+              }
+            },
+            "additionalProperties": {
+              "description": "mTLS binding.",
+              "properties": {
+                "certificate_id": {
+                  "type": "string",
+                  "example": "d7cdd17c-916f-4cb7-aabe-585eb382ec4e",
+                  "x-auditable": true
+                }
+              },
+              "required": [
+                "certificate_id"
+              ],
+              "type": "object"
+            }
+          },
+          "placement": {
+            "description": "Placement setting used for Pages Functions.",
+            "type": "object",
+            "example": {
+              "mode": "smart"
+            },
+            "properties": {
+              "mode": {
+                "description": "Placement mode.",
+                "type": "string",
+                "example": "smart",
+                "x-auditable": true
+              }
+            },
+            "required": [
+              "mode"
+            ]
+          },
+          "queue_producers": {
+            "description": "Queue Producer bindings used for Pages Functions.",
+            "type": "object",
+            "example": {
+              "QUEUE_PRODUCER_BINDING": {
+                "name": "some-queue"
+              }
+            },
+            "additionalProperties": {
+              "description": "Queue Producer binding.",
+              "properties": {
+                "name": {
+                  "description": "Name of the Queue.",
+                  "type": "string",
+                  "example": "some-queue",
+                  "x-auditable": true
+                }
+              },
+              "required": [
+                "name"
+              ],
+              "type": "object"
+            }
+          },
+          "r2_buckets": {
+            "description": "R2 buckets used for Pages Functions.",
+            "type": "object",
+            "example": {
+              "R2_BINDING": {
+                "name": "some-bucket"
+              }
+            },
+            "additionalProperties": {
+              "description": "R2 binding.",
+              "properties": {
+                "jurisdiction": {
+                  "description": "Jurisdiction of the R2 bucket.",
+                  "type": "string",
+                  "example": "eu",
+                  "nullable": true,
+                  "x-auditable": true
+                },
+                "name": {
+                  "description": "Name of the R2 bucket.",
+                  "type": "string",
+                  "example": "some-bucket",
+                  "x-auditable": true
+                }
+              },
+              "required": [
+                "name"
+              ],
+              "type": "object"
+            }
+          },
+          "services": {
+            "description": "Services used for Pages Functions.",
+            "type": "object",
+            "example": {
+              "SERVICE_BINDING": {
+                "entrypoint": "MyHandler",
+                "environment": "production",
+                "service": "example-worker"
+              }
+            },
+            "additionalProperties": {
+              "description": "Service binding.",
+              "properties": {
+                "entrypoint": {
+                  "description": "The entrypoint to bind to.",
+                  "type": "string",
+                  "nullable": true,
+                  "x-auditable": true
+                },
+                "environment": {
+                  "description": "The Service environment.",
+                  "type": "string",
+                  "x-auditable": true
+                },
+                "service": {
+                  "description": "The Service name.",
+                  "type": "string",
+                  "x-auditable": true
+                }
+              },
+              "required": [
+                "service",
+                "environment"
+              ],
+              "type": "object"
+            }
+          },
+          "usage_model": {
+            "description": "The usage model for Pages Functions.",
+            "type": "string",
+            "example": "standard",
+            "enum": [
+              "standard",
+              "bundled",
+              "unbound"
+            ],
+            "deprecated": true,
+            "x-auditable": true,
+            "x-stainless-deprecation-message": "All new projects now use the Standard usage model."
+          },
+          "vectorize_bindings": {
+            "description": "Vectorize bindings used for Pages Functions.",
+            "type": "object",
+            "example": {
+              "VECTORIZE": {
+                "index_name": "my_index"
+              }
+            },
+            "additionalProperties": {
+              "description": "Vectorize binding.",
+              "properties": {
+                "index_name": {
+                  "type": "string",
+                  "example": "my_index",
+                  "x-auditable": true
+                }
+              },
+              "required": [
+                "index_name"
+              ],
+              "type": "object"
+            }
+          },
+          "wrangler_config_hash": {
+            "description": "Hash of the Wrangler configuration used for the deployment.",
+            "type": "string",
+            "example": "abc123def456",
+            "x-auditable": true
+          }
+        },
+        "required": [
+          "env_vars",
+          "fail_open",
+          "always_use_latest_compatibility_date",
+          "compatibility_date",
+          "compatibility_flags",
+          "build_image_major_version",
+          "usage_model"
+        ]
+      },
+      "pages_deployment_config_values_request": {
+        "type": "object",
+        "properties": {
+          "ai_bindings": {
+            "description": "Constellation bindings used for Pages Functions.",
+            "type": "object",
+            "example": {
+              "AI_BINDING": {
+                "project_id": "some-project-id"
+              }
+            },
+            "additionalProperties": {
+              "description": "AI binding.",
+              "nullable": true,
+              "properties": {
+                "project_id": {
+                  "type": "string",
+                  "x-auditable": true
+                }
+              },
+              "required": [
+                "project_id"
+              ],
+              "type": "object"
+            }
+          },
+          "always_use_latest_compatibility_date": {
+            "description": "Whether to always use the latest compatibility date for Pages Functions.",
+            "type": "boolean",
+            "example": false,
+            "default": false,
+            "x-auditable": true
+          },
+          "analytics_engine_datasets": {
+            "description": "Analytics Engine bindings used for Pages Functions.",
+            "type": "object",
+            "example": {
+              "ANALYTICS_ENGINE_BINDING": {
+                "dataset": "api_analytics"
+              }
+            },
+            "additionalProperties": {
+              "description": "Analytics Engine binding.",
+              "nullable": true,
+              "properties": {
+                "dataset": {
+                  "description": "Name of the dataset.",
+                  "type": "string",
+                  "example": "api_analytics",
+                  "x-auditable": true
+                }
+              },
+              "required": [
+                "dataset"
+              ],
+              "type": "object"
+            }
+          },
+          "browsers": {
+            "description": "Browser bindings used for Pages Functions.",
+            "type": "object",
+            "example": {
+              "BROWSER": {}
+            },
+            "additionalProperties": {
+              "description": "Browser binding.",
+              "nullable": true,
+              "type": "object",
+              "x-stainless-empty-object": true
+            }
+          },
+          "build_image_major_version": {
+            "description": "The major version of the build image to use for Pages Functions. Version 1 is retired and its projects are moved to version 3. Once a project's builds have been moved, a request that sets version 1 is rejected.",
+            "type": "integer",
+            "example": 3,
+            "default": 3,
+            "x-auditable": true
+          },
+          "compatibility_date": {
+            "description": "Compatibility date used for Pages Functions.",
+            "type": "string",
+            "example": "2025-01-01T00:00:00Z",
+            "x-auditable": true,
+            "x-stainless-terraform-configurability": "computed_optional"
+          },
+          "compatibility_flags": {
+            "description": "Compatibility flags used for Pages Functions.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "x-auditable": true
+            },
+            "example": [
+              "url_standard"
+            ]
+          },
+          "d1_databases": {
+            "description": "D1 databases used for Pages Functions.",
+            "type": "object",
+            "example": {
+              "D1_BINDING": {
+                "id": "445e2955-951a-43f8-a35b-a4d0c8138f63"
+              }
+            },
+            "additionalProperties": {
+              "description": "D1 binding.",
+              "nullable": true,
+              "properties": {
+                "id": {
+                  "description": "UUID of the D1 database.",
+                  "type": "string",
+                  "example": "445e2955-951a-43f8-a35b-a4d0c8138f63",
+                  "x-auditable": true
+                }
+              },
+              "required": [
+                "id"
+              ],
+              "type": "object"
+            }
+          },
+          "durable_object_namespaces": {
+            "description": "Durable Object namespaces used for Pages Functions.",
+            "type": "object",
+            "example": {
+              "DO_BINDING": {
+                "namespace_id": "5eb63bbbe01eeed093cb22bb8f5acdc3"
+              }
+            },
+            "additionalProperties": {
+              "description": "Durable Object binding.",
+              "nullable": true,
+              "properties": {
+                "namespace_id": {
+                  "description": "ID of the Durable Object namespace.",
+                  "type": "string",
+                  "example": "5eb63bbbe01eeed093cb22bb8f5acdc3",
+                  "x-auditable": true
+                }
+              },
+              "required": [
+                "namespace_id"
+              ],
+              "type": "object"
+            }
+          },
+          "env_vars": {
+            "description": "Environment variables used for builds and Pages Functions.",
+            "type": "object",
+            "additionalProperties": {
+              "discriminator": {
+                "mapping": {
+                  "plain_text": "#/components/schemas/pages_plain_text_env_var",
+                  "secret_text": "#/components/schemas/pages_secret_text_env_var"
+                },
+                "propertyName": "type"
+              },
+              "nullable": true,
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/pages_plain_text_env_var"
+                },
+                {
+                  "$ref": "#/components/schemas/pages_secret_text_env_var"
+                }
+              ],
+              "type": "object"
+            }
+          },
+          "fail_open": {
+            "description": "Whether to fail open when the deployment config cannot be applied.",
+            "type": "boolean",
+            "example": true,
+            "default": true,
+            "x-auditable": true
+          },
+          "hyperdrive_bindings": {
+            "description": "Hyperdrive bindings used for Pages Functions.",
+            "type": "object",
+            "example": {
+              "HYPERDRIVE": {
+                "id": "a76a99bc342644deb02c38d66082262a"
+              }
+            },
+            "additionalProperties": {
+              "description": "Hyperdrive binding.",
+              "nullable": true,
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "example": "a76a99bc342644deb02c38d66082262a",
+                  "x-auditable": true
+                }
+              },
+              "required": [
+                "id"
+              ],
+              "type": "object"
+            }
+          },
+          "kv_namespaces": {
+            "description": "KV namespaces used for Pages Functions.",
+            "type": "object",
+            "example": {
+              "KV_BINDING": {
+                "namespace_id": "5eb63bbbe01eeed093cb22bb8f5acdc3"
+              }
+            },
+            "additionalProperties": {
+              "description": "KV namespace binding.",
+              "nullable": true,
+              "properties": {
+                "namespace_id": {
+                  "description": "ID of the KV namespace.",
+                  "type": "string",
+                  "example": "5eb63bbbe01eeed093cb22bb8f5acdc3",
+                  "x-auditable": true
+                }
+              },
+              "required": [
+                "namespace_id"
+              ],
+              "type": "object"
+            }
+          },
+          "limits": {
+            "description": "Limits for Pages Functions.",
+            "type": "object",
+            "example": {
+              "cpu_ms": 100
+            },
+            "properties": {
+              "cpu_ms": {
+                "description": "CPU time limit in milliseconds.",
+                "type": "integer",
+                "example": 100,
+                "x-auditable": true
+              }
+            },
+            "required": [
+              "cpu_ms"
+            ]
+          },
+          "mtls_certificates": {
+            "description": "mTLS bindings used for Pages Functions.",
+            "type": "object",
+            "example": {
+              "MTLS": {
+                "certificate_id": "d7cdd17c-916f-4cb7-aabe-585eb382ec4e"
+              }
+            },
+            "additionalProperties": {
+              "description": "mTLS binding.",
+              "nullable": true,
+              "properties": {
+                "certificate_id": {
+                  "type": "string",
+                  "example": "d7cdd17c-916f-4cb7-aabe-585eb382ec4e",
+                  "x-auditable": true
+                }
+              },
+              "required": [
+                "certificate_id"
+              ],
+              "type": "object"
+            }
+          },
+          "placement": {
+            "description": "Placement setting used for Pages Functions.",
+            "type": "object",
+            "example": {
+              "mode": "smart"
+            },
+            "properties": {
+              "mode": {
+                "description": "Placement mode.",
+                "type": "string",
+                "example": "smart",
+                "x-auditable": true
+              }
+            },
+            "required": [
+              "mode"
+            ]
+          },
+          "queue_producers": {
+            "description": "Queue Producer bindings used for Pages Functions.",
+            "type": "object",
+            "example": {
+              "QUEUE_PRODUCER_BINDING": {
+                "name": "some-queue"
+              }
+            },
+            "additionalProperties": {
+              "description": "Queue Producer binding.",
+              "nullable": true,
+              "properties": {
+                "name": {
+                  "description": "Name of the Queue.",
+                  "type": "string",
+                  "example": "some-queue",
+                  "x-auditable": true
+                }
+              },
+              "required": [
+                "name"
+              ],
+              "type": "object"
+            }
+          },
+          "r2_buckets": {
+            "description": "R2 buckets used for Pages Functions.",
+            "type": "object",
+            "example": {
+              "R2_BINDING": {
+                "name": "some-bucket"
+              }
+            },
+            "additionalProperties": {
+              "description": "R2 binding.",
+              "nullable": true,
+              "properties": {
+                "jurisdiction": {
+                  "description": "Jurisdiction of the R2 bucket.",
+                  "type": "string",
+                  "example": "eu",
+                  "nullable": true,
+                  "x-auditable": true
+                },
+                "name": {
+                  "description": "Name of the R2 bucket.",
+                  "type": "string",
+                  "example": "some-bucket",
+                  "x-auditable": true
+                }
+              },
+              "required": [
+                "name"
+              ],
+              "type": "object"
+            }
+          },
+          "services": {
+            "description": "Services used for Pages Functions.",
+            "type": "object",
+            "example": {
+              "SERVICE_BINDING": {
+                "entrypoint": "MyHandler",
+                "environment": "production",
+                "service": "example-worker"
+              }
+            },
+            "additionalProperties": {
+              "description": "Service binding.",
+              "nullable": true,
+              "properties": {
+                "entrypoint": {
+                  "description": "The entrypoint to bind to.",
+                  "type": "string",
+                  "nullable": true,
+                  "x-auditable": true
+                },
+                "environment": {
+                  "description": "The Service environment.",
+                  "type": "string",
+                  "x-auditable": true
+                },
+                "service": {
+                  "description": "The Service name.",
+                  "type": "string",
+                  "x-auditable": true
+                }
+              },
+              "required": [
+                "service"
+              ],
+              "type": "object"
+            }
+          },
+          "usage_model": {
+            "description": "The usage model for Pages Functions.",
+            "type": "string",
+            "example": "standard",
+            "default": "standard",
+            "enum": [
+              "standard",
+              "bundled",
+              "unbound"
+            ],
+            "deprecated": true,
+            "x-auditable": true,
+            "x-stainless-deprecation-message": "All new projects now use the Standard usage model."
+          },
+          "vectorize_bindings": {
+            "description": "Vectorize bindings used for Pages Functions.",
+            "type": "object",
+            "example": {
+              "VECTORIZE": {
+                "index_name": "my_index"
+              }
+            },
+            "additionalProperties": {
+              "description": "Vectorize binding.",
+              "nullable": true,
+              "properties": {
+                "index_name": {
+                  "type": "string",
+                  "example": "my_index",
+                  "x-auditable": true
+                }
+              },
+              "required": [
+                "index_name"
+              ],
+              "type": "object"
+            }
+          },
+          "wrangler_config_hash": {
+            "description": "Hash of the Wrangler configuration used for the deployment.",
+            "type": "string",
+            "example": "abc123def456",
+            "x-auditable": true
+          }
+        }
+      },
+      "pages_deployment_id": {
+        "description": "UUID of the Pages deployment, as returned by deployment list or create operations.",
+        "type": "string",
+        "format": "uuid",
+        "example": "f64788e9-fccd-4d4a-a28a-cb84f88f6e12",
+        "x-auditable": true
+      },
+      "pages_deployment_log": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "properties": {
+                "line": {
+                  "type": "string",
+                  "readOnly": true
+                },
+                "ts": {
+                  "type": "string",
+                  "readOnly": true
+                }
+              },
+              "required": [
+                "ts",
+                "line"
+              ],
+              "type": "object"
+            }
+          },
+          "includes_container_logs": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "total": {
+            "type": "integer",
+            "readOnly": true
+          }
+        },
+        "example": {
+          "data": [
+            {
+              "line": "Cloning repository...",
+              "ts": "2021-04-20T19:35:29.0749819Z"
+            },
+            {
+              "line": "From https://github.com/cloudflare/example",
+              "ts": "2021-04-20T19:35:30.0749819Z"
+            },
+            {
+              "line": " * branch            209c5bb11d89533f426b2f8469bcae12fdccf71b -> FETCH_HEAD",
+              "ts": "2021-04-20T19:35:30.0749819Z"
+            },
+            {
+              "line": "",
+              "ts": "2021-04-20T19:35:30.0749819Z"
+            },
+            {
+              "line": "HEAD is now at 209c5bb Update index.html",
+              "ts": "2021-04-20T19:35:30.0749819Z"
+            },
+            {
+              "line": "",
+              "ts": "2021-04-20T19:35:30.0749819Z"
+            },
+            {
+              "line": "",
+              "ts": "2021-04-20T19:35:30.0749819Z"
+            },
+            {
+              "line": "Success: Finished cloning repository files",
+              "ts": "2021-04-20T19:35:30.0749819Z"
+            },
+            {
+              "line": "Installing dependencies",
+              "ts": "2021-04-20T19:35:59.0749819Z"
+            },
+            {
+              "line": "Python version set to 2.7",
+              "ts": "2021-04-20T19:35:59.0931208Z"
+            },
+            {
+              "line": "v12.18.0 is already installed.",
+              "ts": "2021-04-20T19:36:02.2369501Z"
+            },
+            {
+              "line": "Now using node v12.18.0 (npm v6.14.4)",
+              "ts": "2021-04-20T19:36:02.6028886Z"
+            },
+            {
+              "line": "Started restoring cached build plugins",
+              "ts": "2021-04-20T19:36:02.624555Z"
+            },
+            {
+              "line": "Finished restoring cached build plugins",
+              "ts": "2021-04-20T19:36:02.6340688Z"
+            },
+            {
+              "line": "Attempting ruby version 2.7.1, read from environment",
+              "ts": "2021-04-20T19:36:02.963095Z"
+            },
+            {
+              "line": "Using ruby version 2.7.1",
+              "ts": "2021-04-20T19:36:04.2236084Z"
+            },
+            {
+              "line": "Using PHP version 5.6",
+              "ts": "2021-04-20T19:36:04.5450152Z"
+            },
+            {
+              "line": "5.2 is already installed.",
+              "ts": "2021-04-20T19:36:04.5740509Z"
+            },
+            {
+              "line": "Using Swift version 5.2",
+              "ts": "2021-04-20T19:36:04.577035Z"
+            },
+            {
+              "line": "Installing Hugo 0.54.0",
+              "ts": "2021-04-20T19:36:04.5771615Z"
+            },
+            {
+              "line": "Hugo Static Site Generator v0.54.0-B1A82C61A/extended linux/amd64 BuildDate: 2019-02-01T10:04:38Z",
+              "ts": "2021-04-20T19:36:05.4786868Z"
+            },
+            {
+              "line": "Started restoring cached go cache",
+              "ts": "2021-04-20T19:36:05.4794366Z"
+            },
+            {
+              "line": "Finished restoring cached go cache",
+              "ts": "2021-04-20T19:36:05.481977Z"
+            },
+            {
+              "line": "go version go1.14.4 linux/amd64",
+              "ts": "2021-04-20T19:36:05.9049776Z"
+            },
+            {
+              "line": "go version go1.14.4 linux/amd64",
+              "ts": "2021-04-20T19:36:05.9086053Z"
+            },
+            {
+              "line": "Installing missing commands",
+              "ts": "2021-04-20T19:36:05.9163568Z"
+            },
+            {
+              "line": "Verify run directory",
+              "ts": "2021-04-20T19:36:05.9163934Z"
+            },
+            {
+              "line": "Executing user command: echo \"skipping build step: no build command specified\"",
+              "ts": "2021-04-20T19:36:05.9164636Z"
+            },
+            {
+              "line": "skipping build step: no build command specified",
+              "ts": "2021-04-20T19:36:05.9165087Z"
+            },
+            {
+              "line": "Finished",
+              "ts": "2021-04-20T19:36:05.917412Z"
+            }
+          ],
+          "includes_container_logs": true,
+          "total": 30
+        },
+        "required": [
+          "total",
+          "includes_container_logs",
+          "data"
+        ]
+      },
+      "pages_deployments": {
+        "$ref": "#/components/schemas/pages_deployment"
+      },
+      "pages_domain": {
+        "type": "object",
+        "properties": {
+          "certificate_authority": {
+            "type": "string",
+            "example": "lets_encrypt",
+            "enum": [
+              "google",
+              "lets_encrypt"
+            ],
+            "readOnly": true,
+            "x-auditable": true
+          },
+          "created_on": {
+            "type": "string",
+            "readOnly": true,
+            "x-auditable": true
+          },
+          "domain_id": {
+            "type": "string",
+            "readOnly": true,
+            "x-auditable": true
+          },
+          "id": {
+            "type": "string",
+            "readOnly": true,
+            "x-auditable": true
+          },
+          "name": {
+            "$ref": "#/components/schemas/pages_domain_name"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "initializing",
+              "pending",
+              "active",
+              "deactivated",
+              "blocked",
+              "error"
+            ],
+            "readOnly": true,
+            "x-auditable": true
+          },
+          "validation_data": {
+            "type": "object",
+            "properties": {
+              "error_message": {
+                "type": "string",
+                "x-auditable": true
+              },
+              "method": {
+                "type": "string",
+                "enum": [
+                  "http",
+                  "txt"
+                ],
+                "x-auditable": true
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "initializing",
+                  "pending",
+                  "active",
+                  "deactivated",
+                  "error"
+                ],
+                "x-auditable": true
+              },
+              "txt_name": {
+                "type": "string",
+                "x-auditable": true
+              },
+              "txt_value": {
+                "type": "string",
+                "x-auditable": true
+              }
+            },
+            "readOnly": true,
+            "required": [
+              "status",
+              "method"
+            ]
+          },
+          "verification_data": {
+            "type": "object",
+            "properties": {
+              "error_message": {
+                "type": "string",
+                "x-auditable": true
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "pending",
+                  "active",
+                  "deactivated",
+                  "blocked",
+                  "error"
+                ]
+              }
+            },
+            "readOnly": true,
+            "required": [
+              "status"
+            ]
+          },
+          "zone_tag": {
+            "type": "string",
+            "readOnly": true,
+            "x-auditable": true
+          }
+        },
+        "required": [
+          "id",
+          "domain_id",
+          "name",
+          "status",
+          "created_on",
+          "certificate_authority",
+          "zone_tag",
+          "validation_data",
+          "verification_data"
+        ]
+      },
+      "pages_domain_name": {
+        "description": "Fully qualified domain name for the Pages project, such as `example.com`.",
+        "type": "string",
+        "example": "example.com",
+        "pattern": "^([a-zA-Z0-9][\\-a-zA-Z0-9]*\\.)+[\\-a-zA-Z0-9]{2,20}$",
+        "x-auditable": true
+      },
+      "pages_env_vars": {
+        "description": "Environment variables used for builds and Pages Functions.",
+        "type": "object",
+        "additionalProperties": {
+          "discriminator": {
+            "mapping": {
+              "plain_text": "#/components/schemas/pages_plain_text_env_var",
+              "secret_text": "#/components/schemas/pages_secret_text_env_var"
+            },
+            "propertyName": "type"
+          },
+          "nullable": true,
+          "oneOf": [
+            {
+              "$ref": "#/components/schemas/pages_plain_text_env_var"
+            },
+            {
+              "$ref": "#/components/schemas/pages_secret_text_env_var"
+            }
+          ],
+          "type": "object"
+        },
+        "nullable": true
+      },
+      "pages_identifier": {
+        "description": "Identifier.",
+        "type": "string",
+        "example": "023e105f4ecef8ad9ca31a8372d0c353",
+        "maxLength": 32,
+        "x-auditable": true
+      },
+      "pages_messages": {
+        "type": "array",
+        "items": {
+          "properties": {
+            "code": {
+              "type": "integer",
+              "minimum": 1000
+            },
+            "documentation_url": {
+              "type": "string"
+            },
+            "message": {
+              "type": "string"
+            },
+            "source": {
+              "type": "object",
+              "properties": {
+                "pointer": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ],
+          "type": "object",
+          "uniqueItems": true
+        },
+        "example": []
+      },
+      "pages_pages_assets_check_missing_request": {
+        "type": "object",
+        "properties": {
+          "hashes": {
+            "description": "List of file content hashes to check for existence in the asset store.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "a948904f2f0f479b8f936b8a0c5d9882",
+              "b026324c6904b2a9cb4b88d6d61c81d1"
+            ]
+          }
+        },
+        "required": [
+          "hashes"
+        ]
+      },
+      "pages_pages_assets_check_missing_response": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/pages_api-response-common"
+          },
+          {
+            "properties": {
+              "result": {
+                "description": "List of file content hashes that are missing from the asset store and need to be uploaded.",
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "example": [
+                  "b026324c6904b2a9cb4b88d6d61c81d1"
+                ]
+              }
+            },
+            "required": [
+              "result"
+            ],
+            "type": "object"
+          }
+        ]
+      },
+      "pages_pages_assets_upload_request": {
+        "type": "array",
+        "items": {
+          "properties": {
+            "base64": {
+              "description": "Whether value is base64 encoded.",
+              "type": "boolean",
+              "example": true
+            },
+            "key": {
+              "description": "File content hash used as the object key in the Pages asset store.",
+              "type": "string",
+              "example": "b026324c6904b2a9cb4b88d6d61c81d1"
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "contentType": {
+                  "description": "MIME type for the uploaded file.",
+                  "type": "string",
+                  "example": "text/plain"
+                }
+              },
+              "required": [
+                "contentType"
+              ]
+            },
+            "value": {
+              "description": "File content. When base64 is true, this value is base64 encoded.",
+              "type": "string",
+              "example": "SGVsbG8sIFdvcmxkIQ=="
+            }
+          },
+          "required": [
+            "key",
+            "value",
+            "metadata",
+            "base64"
+          ],
+          "type": "object"
+        }
+      },
+      "pages_pages_assets_upsert_hashes_request": {
+        "type": "object",
+        "properties": {
+          "hashes": {
+            "description": "List of file content hashes to register in the asset store.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "a948904f2f0f479b8f936b8a0c5d9882",
+              "b026324c6904b2a9cb4b88d6d61c81d1"
+            ]
+          }
+        },
+        "required": [
+          "hashes"
+        ]
+      },
+      "pages_pages_upload_token_response": {
+        "type": "object",
+        "properties": {
+          "jwt": {
+            "description": "Short-lived JWT used to authenticate Pages Direct Upload asset operations.",
+            "type": "string",
+            "x-sensitive": true
+          }
+        },
+        "required": [
+          "jwt"
+        ]
+      },
+      "pages_plain_text_env_var": {
+        "description": "A plaintext environment variable.",
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "plain_text"
+            ],
+            "x-auditable": true
+          },
+          "value": {
+            "description": "Environment variable value.",
+            "type": "string"
+          }
+        },
+        "example": {
+          "type": "plain_text",
+          "value": "hello world"
+        },
+        "nullable": true,
+        "required": [
+          "type",
+          "value"
+        ]
+      },
+      "pages_project": {
+        "type": "object",
+        "properties": {
+          "build_config": {
+            "$ref": "#/components/schemas/pages_build_config"
+          },
+          "build_image_auto_upgrade": {
+            "description": "Present when the project is set to a retired build image major version and its builds have been moved to a newer one. `build_image_major_version` in `deployment_configs` then reports the version the builds run on.",
+            "type": "object",
+            "properties": {
+              "from_version": {
+                "description": "The retired build image major version the project is set to.",
+                "type": "integer",
+                "example": 1,
+                "readOnly": true,
+                "x-auditable": true
+              },
+              "to_version": {
+                "description": "The build image major version the project's builds run on.",
+                "type": "integer",
+                "example": 3,
+                "readOnly": true,
+                "x-auditable": true
+              }
+            },
+            "readOnly": true,
+            "required": [
+              "from_version",
+              "to_version"
+            ]
+          },
+          "canonical_deployment": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/pages_deployment"
+              },
+              {
+                "description": "Most recent production deployment of the project.",
+                "nullable": true,
+                "readOnly": true,
+                "type": "object"
+              }
+            ]
+          },
+          "created_on": {
+            "description": "When the project was created.",
+            "type": "string",
+            "format": "date-time",
+            "example": "2017-01-01T00:00:00Z",
+            "readOnly": true,
+            "x-auditable": true
+          },
+          "deployment_configs": {
+            "description": "Configs for deployments in a project.",
+            "type": "object",
+            "properties": {
+              "preview": {
+                "description": "Configs for preview deploys.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/pages_deployment_config_values"
+                  }
+                ]
+              },
+              "production": {
+                "description": "Configs for production deploys.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/pages_deployment_config_values"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "production",
+              "preview"
+            ]
+          },
+          "domains": {
+            "description": "A list of associated custom domains for the project.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "x-auditable": true
+            },
+            "example": [
+              "customdomain.com",
+              "customdomain.org"
+            ],
+            "readOnly": true
+          },
+          "framework": {
+            "description": "Framework the project is using.",
+            "type": "string",
+            "readOnly": true,
+            "x-auditable": true
+          },
+          "framework_version": {
+            "description": "Version of the framework the project is using.",
+            "type": "string",
+            "readOnly": true,
+            "x-auditable": true
+          },
+          "id": {
+            "description": "ID of the project.",
+            "type": "string",
+            "example": "7b162ea7-7367-4d67-bcde-1160995d5",
+            "readOnly": true,
+            "x-auditable": true
+          },
+          "latest_deployment": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/pages_deployment"
+              },
+              {
+                "description": "Most recent deployment of the project.",
+                "nullable": true,
+                "readOnly": true,
+                "type": "object"
+              }
+            ]
+          },
+          "name": {
+            "$ref": "#/components/schemas/pages_project_name"
+          },
+          "preview_script_name": {
+            "description": "Name of the preview script.",
+            "type": "string",
+            "example": "pages-worker--1234567-preview",
+            "readOnly": true,
+            "x-auditable": true
+          },
+          "production_branch": {
+            "description": "Production branch of the project. Used to identify production deployments.",
+            "type": "string",
+            "example": "main",
+            "x-auditable": true
+          },
+          "production_script_name": {
+            "description": "Name of the production script.",
+            "type": "string",
+            "example": "pages-worker--1234567-production",
+            "readOnly": true,
+            "x-auditable": true
+          },
+          "source": {
+            "$ref": "#/components/schemas/pages_source"
+          },
+          "subdomain": {
+            "description": "The Cloudflare subdomain associated with the project.",
+            "type": "string",
+            "example": "helloworld.pages.dev",
+            "readOnly": true,
+            "x-auditable": true
+          },
+          "uses_functions": {
+            "description": "Whether the project uses functions.",
+            "type": "boolean",
+            "nullable": true,
+            "readOnly": true,
+            "x-auditable": true
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "deployment_configs",
+          "latest_deployment",
+          "canonical_deployment",
+          "created_on",
+          "production_branch",
+          "production_script_name",
+          "preview_script_name",
+          "uses_functions",
+          "framework",
+          "framework_version"
+        ]
+      },
+      "pages_project-object": {
+        "$ref": "#/components/schemas/pages_project"
+      },
+      "pages_project_name": {
+        "description": "Name of the Pages project. Must begin with a lowercase letter or digit and contain only lowercase letters, digits, and hyphens.",
+        "type": "string",
+        "example": "this-is-my-project-01",
+        "pattern": "^[a-z0-9][a-z0-9-]*$",
+        "x-auditable": true
+      },
+      "pages_secret_text_env_var": {
+        "description": "An encrypted environment variable.",
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "secret_text"
+            ],
+            "x-auditable": true
+          },
+          "value": {
+            "description": "Secret value.",
+            "type": "string",
+            "x-sensitive": true
+          }
+        },
+        "example": {
+          "type": "secret_text",
+          "value": ""
+        },
+        "nullable": true,
+        "required": [
+          "type",
+          "value"
+        ]
+      },
+      "pages_source": {
+        "description": "Configs for the project source control.",
+        "type": "object",
+        "properties": {
+          "config": {
+            "$ref": "#/components/schemas/pages_source_config"
+          },
+          "type": {
+            "$ref": "#/components/schemas/pages_source_type"
+          }
+        },
+        "required": [
+          "type",
+          "config"
+        ]
+      },
+      "pages_source_config": {
+        "type": "object",
+        "properties": {
+          "deployments_enabled": {
+            "description": "Whether to enable automatic deployments when pushing to the source repository.\nWhen disabled, no deployments (production or preview) will be triggered automatically.\n",
+            "type": "boolean",
+            "deprecated": true,
+            "x-auditable": true,
+            "x-stainless-deprecation-message": "Use `production_deployments_enabled` and `preview_deployment_setting` for more granular control."
+          },
+          "owner": {
+            "description": "The owner of the repository.",
+            "type": "string",
+            "example": "my-org",
+            "x-auditable": true
+          },
+          "owner_id": {
+            "description": "The owner ID of the repository.",
+            "type": "string",
+            "example": "12345678",
+            "x-auditable": true
+          },
+          "path_excludes": {
+            "description": "A list of paths that should be excluded from triggering a preview deployment. Wildcard syntax (`*`) is supported.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "x-auditable": true
+            }
+          },
+          "path_includes": {
+            "description": "A list of paths that should be watched to trigger a preview deployment. Wildcard syntax (`*`) is supported.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "x-auditable": true
+            }
+          },
+          "pr_comments_enabled": {
+            "description": "Whether to enable PR comments.",
+            "type": "boolean",
+            "x-auditable": true
+          },
+          "preview_branch_excludes": {
+            "description": "A list of branches that should not trigger a preview deployment. Wildcard syntax (`*`) is supported. Must be used with `preview_deployment_setting` set to `custom`.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "x-auditable": true
+            }
+          },
+          "preview_branch_includes": {
+            "description": "A list of branches that should trigger a preview deployment. Wildcard syntax (`*`) is supported. Must be used with `preview_deployment_setting` set to `custom`.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "x-auditable": true
+            }
+          },
+          "preview_deployment_setting": {
+            "description": "Controls whether commits to preview branches trigger a preview deployment.",
+            "type": "string",
+            "enum": [
+              "all",
+              "none",
+              "custom"
+            ],
+            "x-auditable": true
+          },
+          "production_branch": {
+            "description": "The production branch of the repository.",
+            "type": "string",
+            "example": "main",
+            "x-auditable": true
+          },
+          "production_deployments_enabled": {
+            "description": "Whether to trigger a production deployment on commits to the production branch.",
+            "type": "boolean",
+            "x-auditable": true
+          },
+          "repo_id": {
+            "description": "The ID of the repository.",
+            "type": "string",
+            "example": "12345678",
+            "x-auditable": true
+          },
+          "repo_name": {
+            "description": "The name of the repository.",
+            "type": "string",
+            "example": "my-repo",
+            "x-auditable": true
+          }
+        },
+        "required": [
+          "deployments_enabled",
+          "owner",
+          "owner_id",
+          "path_excludes",
+          "path_includes",
+          "pr_comments_enabled",
+          "preview_branch_excludes",
+          "preview_branch_includes",
+          "preview_deployment_setting",
+          "production_branch",
+          "production_deployments_enabled",
+          "repo_id",
+          "repo_name"
+        ]
+      },
+      "pages_source_connect_request": {
+        "description": "Repository and deployment settings for connecting a Git repository to a Pages project.",
+        "type": "object",
+        "properties": {
+          "config": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/pages_source_config"
+              }
+            ],
+            "x-fern-property-name": "source-config"
+          },
+          "type": {
+            "$ref": "#/components/schemas/pages_source_type"
+          }
+        },
+        "required": [
+          "type",
+          "config"
+        ]
+      },
+      "pages_source_type": {
+        "description": "The source control management provider.",
+        "type": "string",
+        "example": "github",
+        "enum": [
+          "github",
+          "gitlab"
+        ],
+        "x-auditable": true
+      },
+      "pages_stage": {
+        "description": "The status of the deployment.",
+        "type": "object",
+        "properties": {
+          "ended_on": {
+            "description": "When the stage ended.",
+            "type": "string",
+            "format": "date-time",
+            "example": "2021-03-09T00:58:59.045655",
+            "nullable": true,
+            "readOnly": true,
+            "x-auditable": true
+          },
+          "name": {
+            "description": "The current build stage.",
+            "type": "string",
+            "example": "deploy",
+            "enum": [
+              "queued",
+              "initialize",
+              "clone_repo",
+              "build",
+              "deploy"
+            ],
+            "x-auditable": true
+          },
+          "started_on": {
+            "description": "When the stage started.",
+            "type": "string",
+            "format": "date-time",
+            "example": "2021-03-09T00:55:03.923456Z",
+            "nullable": true,
+            "readOnly": true,
+            "x-auditable": true
+          },
+          "status": {
+            "description": "State of the current stage.",
+            "type": "string",
+            "example": "success",
+            "enum": [
+              "success",
+              "idle",
+              "active",
+              "failure",
+              "canceled",
+              "skipped"
+            ],
+            "readOnly": true,
+            "x-auditable": true
+          }
+        },
+        "readOnly": true,
+        "required": [
+          "name",
+          "started_on",
+          "ended_on",
+          "status"
+        ]
+      },
+      "pages_tail": {
+        "description": "A tail session for streaming logs from a Pages deployment.",
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "Identifier of the tail session.",
+            "type": "string",
+            "example": "49a4dcf81a3940fab8453b2be3fb86ef",
+            "readOnly": true
+          },
+          "url": {
+            "description": "Optional WebSocket URL to connect to for receiving tail events, when returned by the tail service.",
+            "type": "string",
+            "example": "wss://tail.developers.workers.dev/49a4dcf81a3940fab8453b2be3fb86ef",
+            "readOnly": true
+          }
+        },
+        "required": [
+          "id"
         ]
       },
       "pay-per-crawl_BotAccessMode": {
@@ -751096,17 +756346,14 @@
         "limits": {
           "description": "View build-minute availability and refresh information."
         },
-        "logs": {
-          "description": "Retrieve build logs."
+        "previews": {
+          "description": "Manage the Previews that Workers Builds creates for non-production branches."
         },
         "repos": {
           "description": "Manage source repository connections for Workers Builds."
         },
         "tokens": {
           "description": "Manage credentials used by Workers Builds to deploy Workers."
-        },
-        "triggers": {
-          "description": "Configure how repository changes build and deploy Workers."
         },
         "versions": {
           "description": "Find builds associated with Worker versions."
@@ -751565,6 +756812,14 @@
     },
     "origin-post-quantum-encryption": {
       "description": "Enable post-quantum key exchange for connections between Cloudflare and your origin server"
+    },
+    "pages": {
+      "description": "Full-stack application hosting with Git-integrated builds, preview deployments, and custom domains",
+      "groups": {
+        "projects": {
+          "description": "Pages projects, deployments, build logs, and custom domain bindings"
+        }
+      }
     },
     "pipelines": {
       "description": "Ingest, transform, and route event streams into R2, analytics, or other destinations in real time",
