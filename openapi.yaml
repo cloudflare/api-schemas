@@ -426291,6 +426291,9 @@ components:
       maxLength: 64
       minLength: 64
       x-sensitive: true
+      x-stainless-naming:
+        terraform:
+          property_name: key
     calls_turn_key_collection:
       allOf:
         - $ref: '#/components/schemas/calls_api-response-common'
@@ -426346,18 +426349,18 @@ components:
       properties:
         created:
           $ref: '#/components/schemas/calls_created'
-        key:
-          $ref: '#/components/schemas/calls_turn_key'
         modified:
           $ref: '#/components/schemas/calls_modified'
         name:
           $ref: '#/components/schemas/calls_turn_key_name'
+        secret:
+          $ref: '#/components/schemas/calls_turn_key'
         uid:
           $ref: '#/components/schemas/calls_identifier'
       required:
         - uid
         - name
-        - key
+        - secret
         - created
         - modified
     cc_AccountID:
@@ -501692,7 +501695,7 @@ components:
           format: uri
           example: https://example.com/myvideo.mp4
         watermark:
-          $ref: '#/components/schemas/stream_watermarkAtUpload'
+          $ref: '#/components/schemas/stream_watermark_at_upload'
       required:
         - clippedFromVideoUID
         - startTimeSeconds
@@ -501834,15 +501837,6 @@ components:
       type: number
       example: 29472
       x-auditable: true
-    stream_watermarkAtUpload:
-      type: object
-      properties:
-        uid:
-          description: The unique identifier for the watermark profile.
-          type: string
-          example: ea95132c15732412d22c1476fa83f27a
-          maxLength: 32
-          x-auditable: true
     stream_watermarks:
       type: object
       properties:
@@ -501877,6 +501871,8 @@ components:
           format: uri
           example: https://example.com
           x-auditable: true
+          x-fern-ignore: true
+          x-stainless-skip: true
         notificationUrl:
           $ref: '#/components/schemas/stream_notificationUrl'
       anyOf:
@@ -501903,6 +501899,7 @@ components:
                   type: string
                   format: uri
                   example: https://example.com
+                  x-fern-ignore: true
                   x-stainless-skip: true
                 notificationUrl:
                   description: The URL where webhooks will be sent.
