@@ -181964,9 +181964,12 @@ paths:
             example: 023e105f4ecef8ad9ca31a8372d0c353
         - name: environment
           in: query
-          description: Filter by supported environment (standard, fedramp).
+          description: "Environment to request (standard, fedramp). The result follows the account's FedRAMP entitlement: FedRAMP-enabled accounts always receive FedRAMP applications and other accounts receive standard applications. Any other non-empty value returns 400."
           schema:
             type: string
+            enum:
+              - fedramp
+              - standard
         - name: page
           in: query
           description: A page number within the paginated result set.
@@ -182074,6 +182077,14 @@ paths:
               - SERVICENOW
               - SLACK
               - ZOOM
+        - name: environment
+          in: query
+          description: "Environment to request (standard, fedramp). The result follows the account's FedRAMP entitlement: FedRAMP-enabled accounts always receive FedRAMP applications and other accounts receive standard applications. Any other non-empty value returns 400."
+          schema:
+            type: string
+            enum:
+              - fedramp
+              - standard
       responses:
         '200':
           description: Application details.
@@ -182122,6 +182133,8 @@ paths:
                     success: true
               schema:
                 $ref: '#/components/schemas/one_ApplicationDetailResponse'
+        '400':
+          description: Invalid environment.
         '404':
           description: Application not found.
       security:
@@ -182170,6 +182183,14 @@ paths:
               - SERVICENOW
               - SLACK
               - ZOOM
+        - name: environment
+          in: query
+          description: "Environment to request (standard, fedramp). The result follows the account's FedRAMP entitlement: FedRAMP-enabled accounts always receive FedRAMP applications and other accounts receive standard applications. Any other non-empty value returns 400."
+          schema:
+            type: string
+            enum:
+              - fedramp
+              - standard
         - name: page
           in: query
           description: A page number within the paginated result set.
@@ -182223,6 +182244,8 @@ paths:
                     success: true
               schema:
                 $ref: '#/components/schemas/one_PaginatedAuthMethodDetailList'
+        '400':
+          description: Invalid environment.
         '404':
           description: Application not found.
       security:
@@ -182278,7 +182301,7 @@ paths:
             type: string
         - name: environment
           in: query
-          description: Filter by environment.
+          description: "Environment to request (standard, fedramp). The result follows the account's FedRAMP entitlement: FedRAMP-enabled accounts always receive FedRAMP applications and other accounts receive standard applications. Any other non-empty value returns 400."
           schema:
             type: string
             enum:
@@ -182342,6 +182365,8 @@ paths:
                     success: true
               schema:
                 $ref: '#/components/schemas/one_PaginatedSetupFlowList'
+        '400':
+          description: Invalid environment.
         '404':
           description: Application not found or no flows available.
       security:
