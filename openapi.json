@@ -241551,7 +241551,7 @@
                 "items": {
                   "properties": {
                     "description": {
-                      "$ref": "#/components/schemas/zero-trust-gateway_description-2"
+                      "$ref": "#/components/schemas/zero-trust-gateway_patch-description"
                     },
                     "enabled": {
                       "$ref": "#/components/schemas/zero-trust-gateway_enabled"
@@ -241962,7 +241962,7 @@
                 "type": "object",
                 "properties": {
                   "description": {
-                    "$ref": "#/components/schemas/zero-trust-gateway_description-2"
+                    "$ref": "#/components/schemas/zero-trust-gateway_patch-description"
                   },
                   "enabled": {
                     "$ref": "#/components/schemas/zero-trust-gateway_enabled"
@@ -761192,6 +761192,7 @@
         "description": "Specify the rule description.",
         "type": "string",
         "example": "Block bad websites based on their host name.",
+        "default": "",
         "x-auditable": true
       },
       "zero-trust-gateway_description-3": {
@@ -761500,7 +761501,7 @@
         "required": [
           "expires_at"
         ],
-        "x-stainless-terraform-configurability": "computed_optional"
+        "x-stainless-terraform-configurability": "optional"
       },
       "zero-trust-gateway_extended-email-matching": {
         "description": "Configures user email settings for firewall policies. When you enable this, the system standardizes email addresses in the identity portion of the rule to match extended email variants in firewall policies. When you disable this setting, the system matches email addresses exactly as you provide them. Enable this setting if your email uses `.` or `+` modifiers.",
@@ -762420,6 +762421,12 @@
             "$ref": "#/components/schemas/zero-trust-gateway_url"
           }
         }
+      },
+      "zero-trust-gateway_patch-description": {
+        "description": "Update the rule description. If omitted, the description is unchanged. Set to an empty string to clear the description.",
+        "type": "string",
+        "example": "Block bad websites based on their host name.",
+        "x-auditable": true
       },
       "zero-trust-gateway_precedence": {
         "description": "Set the order of your rules. Lower values indicate higher precedence. At each processing phase, evaluate applicable rules in ascending order of this value. Refer to [Order of enforcement](http://developers.cloudflare.com/learning-paths/secure-internet-traffic/understand-policies/order-of-enforcement/#manage-precedence-with-terraform) to manage precedence via Terraform.",
@@ -763398,7 +763405,7 @@
             "x-stainless-terraform-configurability": "optional"
           }
         },
-        "x-stainless-terraform-configurability": "computed_optional"
+        "x-stainless-terraform-configurability": "optional"
       },
       "zero-trust-gateway_rules": {
         "type": "object",
@@ -763538,6 +763545,7 @@
             "description": "Specify the time zone for rule evaluation. When a [valid time zone city name](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List) is provided, Gateway always uses the current time for that time zone. When this parameter is omitted, Gateway uses the time zone determined from the user's IP address. Colo time zone is used when the user's IP address does not resolve to a location.",
             "type": "string",
             "example": "America/New York",
+            "default": "",
             "x-auditable": true
           },
           "tue": {
@@ -763554,7 +763562,7 @@
           }
         },
         "nullable": true,
-        "x-stainless-terraform-configurability": "computed_optional"
+        "x-stainless-terraform-configurability": "optional"
       },
       "zero-trust-gateway_settings": {
         "type": "object",
