@@ -431701,22 +431701,26 @@ components:
         - errors
         - messages
     cloudforce-one-requests_api-response-common-failure:
-      allOf:
-        - $ref: '#/components/schemas/cloudforce-one-requests_api-response-common'
-        - properties:
-            errors:
-              type: object
-              properties:
-                code:
-                  type: integer
-                  example: 10433
-                message:
-                  type: string
-                  example: request error
-            success:
-              type: boolean
-              example: false
-          type: object
+      type: object
+      properties:
+        errors:
+          example:
+            - code: 10433
+              message: request error
+          allOf:
+            - $ref: '#/components/schemas/cloudforce-one-requests_messages'
+        messages:
+          $ref: '#/components/schemas/cloudforce-one-requests_messages'
+        success:
+          description: Whether the API call was successful.
+          type: boolean
+          example: false
+          enum:
+            - false
+      required:
+        - success
+        - errors
+        - messages
     cloudforce-one-requests_asset-content:
       description: Asset file to upload.
       type: string
