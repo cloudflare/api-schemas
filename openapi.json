@@ -180257,6 +180257,249 @@
         ]
       }
     },
+    "/accounts/{account_id}/custom_ns": {
+      "get": {
+        "operationId": "account-level-custom-nameservers-list-account-custom-nameservers",
+        "summary": "List Account Custom Nameservers",
+        "description": "List an account's custom nameservers.",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/dns-custom-nameservers_identifier"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List Account Custom Nameservers response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dns-custom-nameservers_acns_response_collection"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "List Account Custom Nameservers response failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dns-custom-nameservers_acns_response_collection"
+                    },
+                    {
+                      "$ref": "#/components/schemas/dns-custom-nameservers_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Account-Level Custom Nameservers"
+        ],
+        "x-cfOwnership": "dns",
+        "x-cfPermissionsRequired": {
+          "enum": [
+            "#organization:read"
+          ]
+        },
+        "x-cfPlanAvailability": {
+          "business": true,
+          "enterprise": true,
+          "free": false,
+          "pro": false
+        },
+        "x-fern-availability": "generally-available",
+        "x-fern-ignore": true,
+        "x-forge-oauth-scopes": [
+          "account-settings.read",
+          "account-settings.write"
+        ]
+      },
+      "post": {
+        "operationId": "account-level-custom-nameservers-add-account-custom-nameserver",
+        "summary": "Add Account Custom Nameserver",
+        "description": "Adds a custom nameserver to the account for use as a vanity nameserver on zones.",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/dns-custom-nameservers_identifier"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/dns-custom-nameservers_CustomNSInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Add Account Custom Nameserver response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dns-custom-nameservers_acns_response_single"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Add Account Custom Nameserver response failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dns-custom-nameservers_acns_response_single"
+                    },
+                    {
+                      "$ref": "#/components/schemas/dns-custom-nameservers_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Account-Level Custom Nameservers"
+        ],
+        "x-cfOwnership": "dns",
+        "x-cfPermissionsRequired": {
+          "enum": [
+            "#organization:edit"
+          ]
+        },
+        "x-cfPlanAvailability": {
+          "business": true,
+          "enterprise": true,
+          "free": false,
+          "pro": false
+        },
+        "x-fern-availability": "generally-available",
+        "x-fern-ignore": true,
+        "x-forge-oauth-scopes": [
+          "account-settings.write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/custom_ns/{custom_ns_id}": {
+      "delete": {
+        "operationId": "account-level-custom-nameservers-delete-account-custom-nameserver",
+        "summary": "Delete Account Custom Nameserver",
+        "description": "Removes a custom nameserver from the account.",
+        "parameters": [
+          {
+            "name": "custom_ns_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/dns-custom-nameservers_ns_name"
+            }
+          },
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/dns-custom-nameservers_identifier"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Delete Account Custom Nameserver response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dns-custom-nameservers_empty_response"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Delete Account Custom Nameserver response failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dns-custom-nameservers_empty_response"
+                    },
+                    {
+                      "$ref": "#/components/schemas/dns-custom-nameservers_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Account-Level Custom Nameservers"
+        ],
+        "x-cfOwnership": "dns",
+        "x-cfPermissionsRequired": {
+          "enum": [
+            "#organization:edit"
+          ]
+        },
+        "x-cfPlanAvailability": {
+          "business": true,
+          "enterprise": true,
+          "free": false,
+          "pro": false
+        },
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "custom-nameservers",
+        "x-fern-sdk-method-name": "delete"
+      }
+    },
     "/accounts/{account_id}/custom_pages": {
       "get": {
         "operationId": "custom-pages-for-an-account-list-custom-pages",
@@ -505982,6 +506225,244 @@
         "x-fern-sdk-method-name": "list"
       }
     },
+    "/tenants/{tenant_id}/custom_ns": {
+      "get": {
+        "operationId": "tenant-level-custom-nameservers-list-tenant-custom-nameservers",
+        "summary": "List Tenant Custom Nameservers",
+        "description": "Lists a tenant's custom nameservers.",
+        "parameters": [
+          {
+            "name": "tenant_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/dns-custom-nameservers_identifier-3"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List Tenant Custom Nameservers response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dns-custom-nameservers_tcns_response_collection"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "List Tenant Custom Nameservers response failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dns-custom-nameservers_tcns_response_collection"
+                    },
+                    {
+                      "$ref": "#/components/schemas/dns-custom-nameservers_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Tenant-Level Custom Nameservers"
+        ],
+        "x-cfOwnership": "dns",
+        "x-cfPermissionsRequired": {
+          "enum": [
+            "#organization:read"
+          ]
+        },
+        "x-cfPlanAvailability": {
+          "business": true,
+          "enterprise": true,
+          "free": false,
+          "pro": false
+        },
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "tenant-custom-nameservers",
+        "x-fern-sdk-method-name": "get"
+      },
+      "post": {
+        "operationId": "tenant-level-custom-nameservers-add-tenant-custom-nameserver",
+        "summary": "Add Tenant Custom Nameserver",
+        "description": "Adds a custom nameserver for a tenant.",
+        "parameters": [
+          {
+            "name": "tenant_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/dns-custom-nameservers_identifier-3"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/dns-custom-nameservers_CustomNSInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Add Tenant Custom Nameserver response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dns-custom-nameservers_tcns_response_single"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Add Tenant Custom Nameserver response failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dns-custom-nameservers_tcns_response_single"
+                    },
+                    {
+                      "$ref": "#/components/schemas/dns-custom-nameservers_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Tenant-Level Custom Nameservers"
+        ],
+        "x-cfOwnership": "dns",
+        "x-cfPermissionsRequired": {
+          "enum": [
+            "#organization:edit"
+          ]
+        },
+        "x-cfPlanAvailability": {
+          "business": true,
+          "enterprise": true,
+          "free": false,
+          "pro": false
+        },
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "tenant-custom-nameservers",
+        "x-fern-sdk-method-name": "create"
+      }
+    },
+    "/tenants/{tenant_id}/custom_ns/{custom_ns_id}": {
+      "delete": {
+        "operationId": "tenant-level-custom-nameservers-delete-tenant-custom-nameserver",
+        "summary": "Delete Tenant Custom Nameserver",
+        "description": "Deletes a tenant's custom nameserver.",
+        "parameters": [
+          {
+            "name": "custom_ns_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/dns-custom-nameservers_ns_name"
+            }
+          },
+          {
+            "name": "tenant_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/dns-custom-nameservers_identifier-3"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Delete Tenant Custom Nameserver response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dns-custom-nameservers_empty_response-3"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Delete Tenant Custom Nameserver response failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dns-custom-nameservers_empty_response-3"
+                    },
+                    {
+                      "$ref": "#/components/schemas/dns-custom-nameservers_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Tenant-Level Custom Nameservers"
+        ],
+        "x-cfOwnership": "dns",
+        "x-cfPermissionsRequired": {
+          "enum": [
+            "#organization:edit"
+          ]
+        },
+        "x-cfPlanAvailability": {
+          "business": true,
+          "enterprise": true,
+          "free": false,
+          "pro": false
+        },
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "tenant-custom-nameservers",
+        "x-fern-sdk-method-name": "delete"
+      }
+    },
     "/user/analytics/dashboard": {
       "get": {
         "operationId": "user-analytics-get-dashboard",
@@ -509402,6 +509883,289 @@
           "user-details.read",
           "user-details.write"
         ]
+      }
+    },
+    "/v1/verify": {
+      "post": {
+        "operationId": "postVerify",
+        "summary": "Request domain connect validation",
+        "description": "Validates a Domain Connect signed request using DNS TXT public keys.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/domain-connect_PostData"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ok.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/domain-connect_httpStatus"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not Found."
+          },
+          "417": {
+            "description": "Expectation Failed."
+          },
+          "502": {
+            "description": "Bad Gateway."
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          }
+        ],
+        "tags": [
+          "api"
+        ],
+        "x-api-token-group": [],
+        "x-cfOwnership": "dns",
+        "x-fern-ignore": true,
+        "x-fern-sdk-group-name": "dns.domainconnect",
+        "x-fern-sdk-method-name": "post-verify"
+      }
+    },
+    "/v2/domainTemplates/providers/{provider}/services/{service}": {
+      "get": {
+        "operationId": "getProviderTemplate",
+        "summary": "Serve a provider template",
+        "description": "Providers are the external parties that are configured to interact with Cloudflare.",
+        "parameters": [
+          {
+            "name": "provider",
+            "in": "path",
+            "description": "Provider name.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "service",
+            "in": "path",
+            "description": "Service name.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "dump",
+            "in": "query",
+            "description": "Dump raw template.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/domain-connect_httpError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          }
+        ],
+        "tags": [
+          "api"
+        ],
+        "x-api-token-group": [],
+        "x-cfOwnership": "dns",
+        "x-fern-ignore": true,
+        "x-fern-sdk-group-name": "dns.domainconnect",
+        "x-fern-sdk-method-name": "get-provider-template"
+      }
+    },
+    "/v2/provconf/{provider}/{service}/{account}": {
+      "get": {
+        "operationId": "getProviderConfiguration",
+        "summary": "Serve a provider configuration",
+        "description": "Provides Stratus with extra information about domain connect provider(s).",
+        "parameters": [
+          {
+            "name": "provider",
+            "in": "path",
+            "description": "Provider ID.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "service",
+            "in": "path",
+            "description": "Service ID.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "account",
+            "in": "path",
+            "description": "Account ID.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/domain-connect_neededByStratus"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/domain-connect_httpError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/domain-connect_httpError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/domain-connect_httpError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          }
+        ],
+        "tags": [
+          "api"
+        ],
+        "x-api-token-group": [],
+        "x-cfOwnership": "dns",
+        "x-fern-ignore": true,
+        "x-fern-sdk-group-name": "dns.domainconnect",
+        "x-fern-sdk-method-name": "get-provider-configuration"
+      }
+    },
+    "/v2/{domain}/settings": {
+      "get": {
+        "operationId": "getDomainSettings",
+        "summary": "Provide settings if domain is served by Cloudflare",
+        "description": "Checks whether a domain is in Quicksilver and returns its settings.",
+        "parameters": [
+          {
+            "name": "domain",
+            "in": "path",
+            "description": "Domain name.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/domain-connect_httpError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/domain-connect_httpError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          }
+        ],
+        "tags": [
+          "api"
+        ],
+        "x-api-token-group": [],
+        "x-cfOwnership": "dns",
+        "x-fern-ignore": true,
+        "x-fern-sdk-group-name": "dns.domainconnect",
+        "x-fern-sdk-method-name": "get-domain-settings"
       }
     },
     "/workers/builds/deploy_hooks/{deploy_hook_uuid}": {
@@ -525316,6 +526080,232 @@
         "x-forge-oauth-scopes": [
           "ssl-and-certificates.write"
         ]
+      }
+    },
+    "/zones/{zone_id}/custom_ns": {
+      "get": {
+        "operationId": "account-level-custom-nameservers-usage-for-a-zone-get-account-custom-nameserver-related-zone-metadata",
+        "summary": "Get Account Custom Nameserver Related Zone Metadata",
+        "description": "Get metadata for account-level custom nameservers on a zone.\n\nDeprecated in favor of [Show DNS Settings](https://developers.cloudflare.com/api/operations/dns-settings-for-a-zone-list-dns-settings).\n",
+        "parameters": [
+          {
+            "name": "zone_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/dns-custom-nameservers_identifier-2"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get Account Custom Nameserver Related Zone Metadata response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dns-custom-nameservers_get_response"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Get Account Custom Nameserver Related Zone Metadata response failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dns-custom-nameservers_get_response"
+                    },
+                    {
+                      "$ref": "#/components/schemas/dns-custom-nameservers_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "deprecated": true,
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Account-Level Custom Nameservers Usage for a Zone"
+        ],
+        "x-cfOwnership": "dns",
+        "x-cfPermissionsRequired": {
+          "enum": [
+            "#zone:read"
+          ]
+        },
+        "x-cfPlanAvailability": {
+          "business": true,
+          "enterprise": true,
+          "free": false,
+          "pro": false
+        },
+        "x-fern-availability": "deprecated",
+        "x-fern-ignore": true,
+        "x-forge-oauth-scopes": [
+          "precursor.read",
+          "zaraz.read",
+          "apps.write",
+          "load-balancers.read",
+          "page-rules.read",
+          "registrar-domains.read",
+          "registrar-sandbox-domains.read",
+          "zone-security-center-partner-assets.read",
+          "precursor.write",
+          "zaraz.edit",
+          "zone-access.revoke",
+          "zaraz.write",
+          "access-app.read",
+          "fraud-detection-pii.read",
+          "zone-access.read",
+          "zone.read",
+          "access-app.revoke",
+          "access.revoke",
+          "cache.purge",
+          "load-balancers.write",
+          "page-rules.write",
+          "access-policy.read",
+          "analytics.read",
+          "logs.read",
+          "registrar-sandbox-domains.admin",
+          "teams-pii.read",
+          "registrar-domains.admin",
+          "dns.read",
+          "zone-access.write",
+          "access.read",
+          "trust-and-safety.read",
+          "zone-security-center-insights.read",
+          "access-app.write",
+          "access-certificate.write",
+          "stream.read",
+          "access-policy.write",
+          "trust-and-safety.write",
+          "zone.write",
+          "logs.write",
+          "dns.write",
+          "zone-security-center-insights.write",
+          "firewall-services.read",
+          "access-acct.write",
+          "workers-scripts.read",
+          "ssl-and-certificates.read",
+          "stream.write",
+          "access.write",
+          "workers-routes.read",
+          "firewall-services.write",
+          "zone-settings.read",
+          "ssl-and-certificates.write",
+          "workers-scripts.write",
+          "workers-scripts.content_read",
+          "workers-scripts.metadata_read",
+          "workers-routes.write",
+          "workers-scripts.edit",
+          "workers-scripts.admin",
+          "zone-settings.write"
+        ],
+        "x-forge-sunset": {
+          "date": "2030-01-01T00:00:00Z"
+        }
+      },
+      "put": {
+        "operationId": "account-level-custom-nameservers-usage-for-a-zone-set-account-custom-nameserver-related-zone-metadata",
+        "summary": "Set Account Custom Nameserver Related Zone Metadata",
+        "description": "Set metadata for account-level custom nameservers on a zone.\n\nIf you would like new zones in the account to use account custom nameservers by default, use PUT /accounts/:identifier to set the account setting use_account_custom_ns_by_default to true.\n\nDeprecated in favor of [Update DNS Settings](https://developers.cloudflare.com/api/operations/dns-settings-for-a-zone-update-dns-settings).\n",
+        "parameters": [
+          {
+            "name": "zone_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/dns-custom-nameservers_identifier-2"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/dns-custom-nameservers_zone_metadata"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Set Account Custom Nameserver Related Zone Metadata response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dns-custom-nameservers_empty_response-2"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Set Account Custom Nameserver Related Zone Metadata response failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dns-custom-nameservers_empty_response-2"
+                    },
+                    {
+                      "$ref": "#/components/schemas/dns-custom-nameservers_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "deprecated": true,
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Account-Level Custom Nameservers Usage for a Zone"
+        ],
+        "x-cfOwnership": "dns",
+        "x-cfPermissionsRequired": {
+          "enum": [
+            "#zone:edit"
+          ]
+        },
+        "x-cfPlanAvailability": {
+          "business": true,
+          "enterprise": true,
+          "free": false,
+          "pro": false
+        },
+        "x-fern-availability": "deprecated",
+        "x-fern-sdk-group-name": "zones.custom-nameservers",
+        "x-fern-sdk-method-name": "update",
+        "x-forge-oauth-scopes": [
+          "zone.write"
+        ],
+        "x-forge-sunset": {
+          "date": "2030-01-01T00:00:00Z"
+        }
       }
     },
     "/zones/{zone_id}/custom_pages": {
@@ -573658,6 +574648,192 @@
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "custom-csrs",
         "x-fern-sdk-method-name": "get",
+        "x-stainless-skip": true
+      }
+    },
+    "/{account_or_zone}/{account_or_zone_id}/custom_ns": {
+      "get": {
+        "operationId": "generated:get:/account_or_zone/account_or_zone_id/custom_ns",
+        "summary": "List account or zone Custom Nameservers",
+        "description": "List an account or zone's custom nameservers.",
+        "parameters": [
+          {
+            "name": "account_or_zone",
+            "in": "path",
+            "description": "Whether ${account_or_zone} is an account ID (`accounts`) or a zone ID (`zones`).",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "accounts",
+                "zones"
+              ]
+            }
+          },
+          {
+            "name": "account_or_zone_id",
+            "in": "path",
+            "description": "The account ID or zone ID, as selected by ${account_or_zone}.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/dns-custom-nameservers_identifier"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List account or zone Custom Nameservers response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dns-custom-nameservers_acns_response_collection"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "List account or zone Custom Nameservers response failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dns-custom-nameservers_acns_response_collection"
+                    },
+                    {
+                      "$ref": "#/components/schemas/dns-custom-nameservers_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Account-Level Custom Nameservers"
+        ],
+        "x-cfOwnership": "dns",
+        "x-cfPermissionsRequired": {
+          "enum": [
+            "#organization:read"
+          ]
+        },
+        "x-cfPlanAvailability": {
+          "business": true,
+          "enterprise": true,
+          "free": false,
+          "pro": false
+        },
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "custom-nameservers",
+        "x-fern-sdk-method-name": "get",
+        "x-stainless-skip": true
+      },
+      "post": {
+        "operationId": "generated:post:/account_or_zone/account_or_zone_id/custom_ns",
+        "summary": "Add account or zone Custom Nameserver",
+        "description": "Adds a custom nameserver to the account or zone for use as a vanity nameserver on zones.",
+        "parameters": [
+          {
+            "name": "account_or_zone",
+            "in": "path",
+            "description": "Whether ${account_or_zone} is an account ID (`accounts`) or a zone ID (`zones`).",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "accounts",
+                "zones"
+              ]
+            }
+          },
+          {
+            "name": "account_or_zone_id",
+            "in": "path",
+            "description": "The account ID or zone ID, as selected by ${account_or_zone}.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/dns-custom-nameservers_identifier"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/dns-custom-nameservers_CustomNSInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Add account or zone Custom Nameserver response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dns-custom-nameservers_acns_response_single"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Add account or zone Custom Nameserver response failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dns-custom-nameservers_acns_response_single"
+                    },
+                    {
+                      "$ref": "#/components/schemas/dns-custom-nameservers_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Account-Level Custom Nameservers"
+        ],
+        "x-cfOwnership": "dns",
+        "x-cfPermissionsRequired": {
+          "enum": [
+            "#organization:edit"
+          ]
+        },
+        "x-cfPlanAvailability": {
+          "business": true,
+          "enterprise": true,
+          "free": false,
+          "pro": false
+        },
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "custom-nameservers",
+        "x-fern-sdk-method-name": "create",
         "x-stainless-skip": true
       }
     },
@@ -637532,6 +638708,501 @@
         "format": "date-time",
         "example": "2023-11-11T13:00:00Z"
       },
+      "dns-custom-nameservers_CustomNS": {
+        "description": "A single account custom nameserver.",
+        "type": "object",
+        "properties": {
+          "dns_records": {
+            "description": "A and AAAA records associated with the nameserver.",
+            "type": "array",
+            "items": {
+              "properties": {
+                "type": {
+                  "description": "DNS record type.",
+                  "type": "string",
+                  "example": "A",
+                  "enum": [
+                    "A",
+                    "AAAA"
+                  ],
+                  "x-auditable": true
+                },
+                "value": {
+                  "description": "DNS record contents (an IPv4 or IPv6 address).",
+                  "type": "string",
+                  "example": "1.1.1.1",
+                  "x-auditable": true
+                }
+              },
+              "type": "object"
+            },
+            "x-stainless-collection-type": "set"
+          },
+          "ns_name": {
+            "$ref": "#/components/schemas/dns-custom-nameservers_ns_name"
+          },
+          "ns_set": {
+            "$ref": "#/components/schemas/dns-custom-nameservers_ns_set"
+          },
+          "status": {
+            "description": "Verification status of the nameserver.",
+            "type": "string",
+            "example": "verified",
+            "enum": [
+              "moved",
+              "pending",
+              "verified"
+            ],
+            "deprecated": true,
+            "x-auditable": true
+          },
+          "zone_tag": {
+            "$ref": "#/components/schemas/dns-custom-nameservers_identifier-2"
+          }
+        },
+        "required": [
+          "dns_records",
+          "ns_name",
+          "status",
+          "zone_tag"
+        ],
+        "title": "Custom NS"
+      },
+      "dns-custom-nameservers_CustomNS-2": {
+        "description": "A single tenant custom nameserver.",
+        "type": "object",
+        "properties": {
+          "dns_records": {
+            "description": "A and AAAA records associated with the nameserver.",
+            "type": "array",
+            "items": {
+              "properties": {
+                "type": {
+                  "description": "DNS record type.",
+                  "type": "string",
+                  "example": "A",
+                  "enum": [
+                    "A",
+                    "AAAA"
+                  ],
+                  "x-auditable": true
+                },
+                "value": {
+                  "description": "DNS record contents (an IPv4 or IPv6 address).",
+                  "type": "string",
+                  "example": "1.1.1.1",
+                  "x-auditable": true
+                }
+              },
+              "type": "object"
+            },
+            "x-stainless-collection-type": "set"
+          },
+          "ns_name": {
+            "$ref": "#/components/schemas/dns-custom-nameservers_ns_name"
+          },
+          "ns_set": {
+            "$ref": "#/components/schemas/dns-custom-nameservers_ns_set"
+          },
+          "status": {
+            "description": "Verification status of the nameserver.",
+            "type": "string",
+            "example": "verified",
+            "enum": [
+              "moved",
+              "pending",
+              "verified"
+            ],
+            "deprecated": true,
+            "x-auditable": true
+          },
+          "zone_tag": {
+            "$ref": "#/components/schemas/dns-custom-nameservers_identifier-2"
+          }
+        },
+        "required": [
+          "dns_records",
+          "ns_name",
+          "status",
+          "zone_tag"
+        ],
+        "title": "Custom NS"
+      },
+      "dns-custom-nameservers_CustomNSInput": {
+        "type": "object",
+        "properties": {
+          "ns_name": {
+            "$ref": "#/components/schemas/dns-custom-nameservers_ns_name"
+          },
+          "ns_set": {
+            "$ref": "#/components/schemas/dns-custom-nameservers_ns_set"
+          }
+        },
+        "required": [
+          "ns_name"
+        ],
+        "title": "Custom NS Input"
+      },
+      "dns-custom-nameservers_acns_response_collection": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/dns-custom-nameservers_api-response-collection"
+          },
+          {
+            "properties": {
+              "result": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/dns-custom-nameservers_CustomNS"
+                }
+              }
+            },
+            "type": "object"
+          }
+        ]
+      },
+      "dns-custom-nameservers_acns_response_single": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/dns-custom-nameservers_api-response-single"
+          },
+          {
+            "properties": {
+              "result": {
+                "$ref": "#/components/schemas/dns-custom-nameservers_CustomNS"
+              }
+            },
+            "type": "object"
+          }
+        ]
+      },
+      "dns-custom-nameservers_api-response-collection": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/dns-custom-nameservers_api-response-common"
+          },
+          {
+            "properties": {
+              "result_info": {
+                "type": "object",
+                "properties": {
+                  "count": {
+                    "description": "Total number of results for the requested service.",
+                    "type": "number",
+                    "example": 1
+                  },
+                  "page": {
+                    "description": "Current page within paginated list of results.",
+                    "type": "number",
+                    "example": 1
+                  },
+                  "per_page": {
+                    "description": "Number of results per page of results.",
+                    "type": "number",
+                    "example": 20
+                  },
+                  "total_count": {
+                    "description": "Total results available without any search parameters.",
+                    "type": "number",
+                    "example": 2000
+                  },
+                  "total_pages": {
+                    "description": "The number of total pages in the entire result set.",
+                    "type": "number",
+                    "example": 100
+                  }
+                }
+              }
+            },
+            "type": "object"
+          }
+        ]
+      },
+      "dns-custom-nameservers_api-response-common": {
+        "type": "object",
+        "properties": {
+          "errors": {
+            "$ref": "#/components/schemas/dns-custom-nameservers_messages"
+          },
+          "messages": {
+            "$ref": "#/components/schemas/dns-custom-nameservers_messages"
+          },
+          "success": {
+            "description": "Whether the API call was successful.",
+            "type": "boolean",
+            "example": true,
+            "enum": [
+              true
+            ]
+          }
+        },
+        "required": [
+          "success",
+          "errors",
+          "messages"
+        ]
+      },
+      "dns-custom-nameservers_api-response-common-failure": {
+        "type": "object",
+        "properties": {
+          "errors": {
+            "example": [
+              {
+                "code": 7003,
+                "message": "No route for the URI"
+              }
+            ],
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/dns-custom-nameservers_messages"
+              }
+            ],
+            "minLength": 1
+          },
+          "messages": {
+            "example": [],
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/dns-custom-nameservers_messages"
+              }
+            ]
+          },
+          "result": {
+            "type": "object",
+            "enum": [
+              null
+            ],
+            "nullable": true
+          },
+          "success": {
+            "description": "Whether the API call was successful.",
+            "type": "boolean",
+            "example": false,
+            "enum": [
+              false
+            ]
+          }
+        },
+        "required": [
+          "success",
+          "errors",
+          "messages",
+          "result"
+        ]
+      },
+      "dns-custom-nameservers_api-response-single": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/dns-custom-nameservers_api-response-common"
+          }
+        ]
+      },
+      "dns-custom-nameservers_empty_response": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/dns-custom-nameservers_api-response-collection"
+          },
+          {
+            "properties": {
+              "result": {
+                "type": "array",
+                "items": {
+                  "description": "Unused",
+                  "type": "string",
+                  "x-auditable": true
+                },
+                "maxItems": 0
+              }
+            },
+            "type": "object"
+          }
+        ]
+      },
+      "dns-custom-nameservers_empty_response-2": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/dns-custom-nameservers_api-response-collection"
+          },
+          {
+            "properties": {
+              "result": {
+                "type": "array",
+                "items": {
+                  "description": "Unused",
+                  "type": "string",
+                  "x-auditable": true
+                },
+                "maxItems": 0
+              }
+            },
+            "type": "object"
+          }
+        ]
+      },
+      "dns-custom-nameservers_empty_response-3": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/dns-custom-nameservers_api-response-collection"
+          },
+          {
+            "properties": {
+              "result": {
+                "type": "array",
+                "items": {
+                  "description": "Unused.",
+                  "type": "string",
+                  "x-auditable": true
+                },
+                "maxItems": 0
+              }
+            },
+            "type": "object"
+          }
+        ]
+      },
+      "dns-custom-nameservers_get_response": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/dns-custom-nameservers_api-response-collection"
+          },
+          {
+            "$ref": "#/components/schemas/dns-custom-nameservers_zone_metadata"
+          }
+        ]
+      },
+      "dns-custom-nameservers_identifier": {
+        "description": "Account identifier tag.",
+        "type": "string",
+        "example": "372e67954025e0ba6aaa6d586b9e0b59",
+        "maxLength": 32,
+        "readOnly": true,
+        "x-auditable": true
+      },
+      "dns-custom-nameservers_identifier-2": {
+        "description": "Identifier.",
+        "type": "string",
+        "example": "023e105f4ecef8ad9ca31a8372d0c353",
+        "maxLength": 32,
+        "x-auditable": true
+      },
+      "dns-custom-nameservers_identifier-3": {
+        "description": "Tenant identifier tag.",
+        "type": "string",
+        "example": "699d98642c564d2e855e9661899b7252",
+        "maxLength": 32,
+        "x-auditable": true
+      },
+      "dns-custom-nameservers_messages": {
+        "type": "array",
+        "items": {
+          "properties": {
+            "code": {
+              "type": "integer",
+              "minimum": 1000
+            },
+            "documentation_url": {
+              "type": "string"
+            },
+            "message": {
+              "type": "string"
+            },
+            "source": {
+              "type": "object",
+              "properties": {
+                "pointer": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ],
+          "type": "object",
+          "uniqueItems": true
+        },
+        "example": []
+      },
+      "dns-custom-nameservers_ns_name": {
+        "description": "The FQDN of the name server.",
+        "type": "string",
+        "format": "hostname",
+        "example": "ns1.example.com",
+        "x-auditable": true
+      },
+      "dns-custom-nameservers_ns_set": {
+        "description": "The number of the set that this name server belongs to.",
+        "type": "number",
+        "example": 1,
+        "default": 1,
+        "maximum": 5,
+        "minimum": 1,
+        "x-auditable": true
+      },
+      "dns-custom-nameservers_tcns_response_collection": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/dns-custom-nameservers_api-response-collection"
+          },
+          {
+            "properties": {
+              "result": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/dns-custom-nameservers_CustomNS-2"
+                }
+              }
+            },
+            "type": "object"
+          }
+        ]
+      },
+      "dns-custom-nameservers_tcns_response_single": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/dns-custom-nameservers_api-response-single"
+          },
+          {
+            "properties": {
+              "result": {
+                "$ref": "#/components/schemas/dns-custom-nameservers_CustomNS-2"
+              }
+            },
+            "type": "object"
+          }
+        ]
+      },
+      "dns-custom-nameservers_zone_metadata": {
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "description": "Whether zone uses account-level custom nameservers.",
+            "type": "boolean",
+            "example": true,
+            "x-auditable": true
+          },
+          "ns_set": {
+            "description": "The number of the name server set to assign to the zone.",
+            "type": "number",
+            "example": 1,
+            "default": 1,
+            "maximum": 5,
+            "minimum": 1,
+            "x-auditable": true
+          }
+        }
+      },
       "dns-firewall_api-response-collection": {
         "type": "object",
         "allOf": [
@@ -641745,6 +643416,69 @@
           "error"
         ],
         "x-auditable": true
+      },
+      "domain-connect_PostData": {
+        "type": "object",
+        "properties": {
+          "domain": {
+            "type": "string"
+          },
+          "hash": {
+            "type": "string"
+          },
+          "sig": {
+            "type": "string"
+          }
+        }
+      },
+      "domain-connect_httpError": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "example": "Error message"
+          }
+        }
+      },
+      "domain-connect_httpStatus": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "verified"
+          }
+        }
+      },
+      "domain-connect_neededByStratus": {
+        "type": "object",
+        "properties": {
+          "logo": {
+            "type": "string"
+          },
+          "template": {
+            "type": "object"
+          },
+          "template_spec": {
+            "$ref": "#/components/schemas/domain-connect_templateSpec"
+          }
+        }
+      },
+      "domain-connect_templateSpec": {
+        "type": "object",
+        "properties": {
+          "accountTags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "proxied": {
+            "type": "boolean"
+          },
+          "status": {
+            "type": "integer"
+          }
+        }
       },
       "dos_api-response-common": {
         "type": "object",
