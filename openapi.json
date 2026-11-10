@@ -140549,6 +140549,10 @@
                             "type": "string"
                           }
                         },
+                        "mixesDatasetKinds": {
+                          "description": "True when the saved datasets mix analytics and intelligence datasets, for example after a dataset's analytics setting changed. Such a preference is skipped.",
+                          "type": "boolean"
+                        },
                         "unresolvableDatasetIds": {
                           "description": "Saved datasets that you can no longer read or that were deleted. While this list is not empty, the preference is skipped.",
                           "type": "array",
@@ -140571,6 +140575,7 @@
                       "required": [
                         "datasetIds",
                         "unresolvableDatasetIds",
+                        "mixesDatasetKinds",
                         "updatedAt",
                         "updatedBy"
                       ]
@@ -140614,6 +140619,10 @@
                             "type": "string"
                           }
                         },
+                        "mixesDatasetKinds": {
+                          "description": "True when the saved datasets mix analytics and intelligence datasets, for example after a dataset's analytics setting changed. Such a preference is skipped.",
+                          "type": "boolean"
+                        },
                         "unresolvableDatasetIds": {
                           "description": "Saved datasets that you can no longer read or that were deleted. While this list is not empty, the preference is skipped.",
                           "type": "array",
@@ -140636,6 +140645,7 @@
                       "required": [
                         "datasetIds",
                         "unresolvableDatasetIds",
+                        "mixesDatasetKinds",
                         "updatedAt",
                         "updatedBy"
                       ]
@@ -140818,6 +140828,10 @@
                             "type": "string"
                           }
                         },
+                        "mixesDatasetKinds": {
+                          "description": "True when the saved datasets mix analytics and intelligence datasets, for example after a dataset's analytics setting changed. Such a preference is skipped.",
+                          "type": "boolean"
+                        },
                         "unresolvableDatasetIds": {
                           "description": "Saved datasets that you can no longer read or that were deleted. While this list is not empty, the preference is skipped.",
                           "type": "array",
@@ -140840,6 +140854,7 @@
                       "required": [
                         "datasetIds",
                         "unresolvableDatasetIds",
+                        "mixesDatasetKinds",
                         "updatedAt",
                         "updatedBy"
                       ]
@@ -140883,6 +140898,10 @@
                             "type": "string"
                           }
                         },
+                        "mixesDatasetKinds": {
+                          "description": "True when the saved datasets mix analytics and intelligence datasets, for example after a dataset's analytics setting changed. Such a preference is skipped.",
+                          "type": "boolean"
+                        },
                         "unresolvableDatasetIds": {
                           "description": "Saved datasets that you can no longer read or that were deleted. While this list is not empty, the preference is skipped.",
                           "type": "array",
@@ -140905,6 +140924,7 @@
                       "required": [
                         "datasetIds",
                         "unresolvableDatasetIds",
+                        "mixesDatasetKinds",
                         "updatedAt",
                         "updatedBy"
                       ]
@@ -141054,7 +141074,7 @@
       "put": {
         "operationId": "put_DatasetPreferencesUpdate",
         "summary": "Set default datasets",
-        "description": "Sets the datasets to use when a request omits `datasetId`, for you (`scope` `user`) or for the account (`scope` `account`). Your own default datasets take precedence over the account's. Every dataset must exist and be readable by the account.",
+        "description": "Sets the datasets to use when a request omits `datasetId`, for you (`scope` `user`) or for the account (`scope` `account`). Your own default datasets take precedence over the account's. Every dataset must exist and be readable by the account, and the list cannot mix analytics and intelligence datasets.",
         "parameters": [
           {
             "name": "account_id",
@@ -141074,7 +141094,7 @@
                 "type": "object",
                 "properties": {
                   "datasetIds": {
-                    "description": "The dataset UUIDs to use when a request omits `datasetId`: 1 to 50 datasets you can read. Duplicates are ignored.",
+                    "description": "The dataset UUIDs to use when a request omits `datasetId`: 1 to 50 datasets you can read, either all analytics datasets or all intelligence datasets. Duplicates are ignored.",
                     "type": "array",
                     "items": {
                       "format": "uuid",
@@ -141121,6 +141141,10 @@
                             "type": "string"
                           }
                         },
+                        "mixesDatasetKinds": {
+                          "description": "True when the saved datasets mix analytics and intelligence datasets, for example after a dataset's analytics setting changed. Such a preference is skipped.",
+                          "type": "boolean"
+                        },
                         "unresolvableDatasetIds": {
                           "description": "Saved datasets that you can no longer read or that were deleted. While this list is not empty, the preference is skipped.",
                           "type": "array",
@@ -141143,6 +141167,7 @@
                       "required": [
                         "datasetIds",
                         "unresolvableDatasetIds",
+                        "mixesDatasetKinds",
                         "updatedAt",
                         "updatedBy"
                       ]
@@ -141186,6 +141211,10 @@
                             "type": "string"
                           }
                         },
+                        "mixesDatasetKinds": {
+                          "description": "True when the saved datasets mix analytics and intelligence datasets, for example after a dataset's analytics setting changed. Such a preference is skipped.",
+                          "type": "boolean"
+                        },
                         "unresolvableDatasetIds": {
                           "description": "Saved datasets that you can no longer read or that were deleted. While this list is not empty, the preference is skipped.",
                           "type": "array",
@@ -141208,6 +141237,7 @@
                       "required": [
                         "datasetIds",
                         "unresolvableDatasetIds",
+                        "mixesDatasetKinds",
                         "updatedAt",
                         "updatedBy"
                       ]
@@ -160794,6 +160824,18 @@
             }
           },
           {
+            "name": "quality",
+            "in": "query",
+            "schema": {
+              "description": "Filter matches by quality. Options: 'high' or 'low'",
+              "type": "string",
+              "enum": [
+                "high",
+                "low"
+              ]
+            }
+          },
+          {
             "name": "orderBy",
             "in": "query",
             "schema": {
@@ -160831,6 +160873,16 @@
                       "type": "array",
                       "items": {
                         "properties": {
+                          "ai_verdict": {
+                            "type": "string",
+                            "enum": [
+                              "confirmed",
+                              "rejected",
+                              "unavailable",
+                              "not_sent"
+                            ],
+                            "nullable": true
+                          },
                           "dismissed": {
                             "description": "Whether the match is dismissed. Only present for single-query requests. For multi-query requests, use the dismissed field in each match_details entry.",
                             "type": "boolean"
@@ -160843,22 +160895,55 @@
                             "description": "ID of the matched domain. Present only when `include_domain_id=true`. Use it with `query_id` to dismiss or undismiss the match.",
                             "type": "integer"
                           },
+                          "edit_distance": {
+                            "type": "integer",
+                            "nullable": true
+                          },
                           "first_seen": {
                             "description": "When the domain was matched. For multi-query requests, the most recent match time across the requested queries.",
                             "type": "string"
+                          },
+                          "match_category": {
+                            "type": "string",
+                            "nullable": true
                           },
                           "match_details": {
                             "description": "Per-match detail objects with query metadata and individual dismissed state. Only present when multiple query_ids are requested.",
                             "type": "array",
                             "items": {
                               "properties": {
+                                "ai_verdict": {
+                                  "type": "string",
+                                  "enum": [
+                                    "confirmed",
+                                    "rejected",
+                                    "unavailable",
+                                    "not_sent"
+                                  ],
+                                  "nullable": true
+                                },
                                 "dismissed": {
                                   "description": "Individual dismissed state for this specific match.",
                                   "type": "boolean"
                                 },
+                                "edit_distance": {
+                                  "type": "integer",
+                                  "nullable": true
+                                },
+                                "match_category": {
+                                  "type": "string",
+                                  "nullable": true
+                                },
                                 "match_id": {
                                   "description": "ID of the match. Accepted by the legacy `match_ids` format.",
                                   "type": "integer"
+                                },
+                                "quality": {
+                                  "type": "string",
+                                  "enum": [
+                                    "high",
+                                    "low"
+                                  ]
                                 },
                                 "query_id": {
                                   "description": "ID of the domain query that produced this match.",
@@ -160874,7 +160959,11 @@
                                 "query_id",
                                 "query_tag",
                                 "match_id",
-                                "dismissed"
+                                "dismissed",
+                                "quality",
+                                "match_category",
+                                "ai_verdict",
+                                "edit_distance"
                               ],
                               "type": "object"
                             }
@@ -160889,6 +160978,13 @@
                             },
                             "required": [
                               "submission_id"
+                            ]
+                          },
+                          "quality": {
+                            "type": "string",
+                            "enum": [
+                              "high",
+                              "low"
                             ]
                           },
                           "registrar": {
@@ -160915,7 +161011,11 @@
                           "scan_status",
                           "scan_submission_id",
                           "source",
-                          "registrar"
+                          "registrar",
+                          "quality",
+                          "match_category",
+                          "ai_verdict",
+                          "edit_distance"
                         ],
                         "type": "object"
                       }
