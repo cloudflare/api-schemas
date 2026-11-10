@@ -16,38 +16,6 @@
     }
   ],
   "paths": {
-    "/_heartbeat": {
-      "get": {
-        "operationId": "getHeartbeat",
-        "summary": "Heartbeat response",
-        "description": "Used by Kubernetes readiness and liveness probes, and CI builder by executing test/staging.sh.",
-        "responses": {
-          "200": {
-            "description": "Ok.",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "503": {
-            "description": "Service Unavailable."
-          }
-        },
-        "security": [
-          {
-            "APIToken": []
-          }
-        ],
-        "tags": [
-          "health"
-        ],
-        "x-fern-sdk-group-name": "dns.domainconnect",
-        "x-fern-sdk-method-name": "getHeartbeat"
-      }
-    },
     "/accounts": {
       "get": {
         "operationId": "accounts-list-accounts",
@@ -525881,7 +525849,14 @@
         },
         "responses": {
           "200": {
-            "description": "Ok."
+            "description": "Ok.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/domain-connect_httpStatus"
+                }
+              }
+            }
           },
           "400": {
             "description": "Bad Request."
@@ -525901,15 +525876,16 @@
         },
         "security": [
           {
-            "APIToken": []
+            "api_token": []
           }
         ],
         "tags": [
           "api"
         ],
         "x-api-token-group": [],
+        "x-fern-ignore": true,
         "x-fern-sdk-group-name": "dns.domainconnect",
-        "x-fern-sdk-method-name": "postVerify"
+        "x-fern-sdk-method-name": "post-verify"
       }
     },
     "/v2/domainTemplates/providers/{provider}/services/{service}": {
@@ -525970,15 +525946,16 @@
         },
         "security": [
           {
-            "APIToken": []
+            "api_token": []
           }
         ],
         "tags": [
           "api"
         ],
         "x-api-token-group": [],
+        "x-fern-ignore": true,
         "x-fern-sdk-group-name": "dns.domainconnect",
-        "x-fern-sdk-method-name": "getProviderTemplate"
+        "x-fern-sdk-method-name": "get-provider-template"
       }
     },
     "/v2/provconf/{provider}/{service}/{account}": {
@@ -526059,15 +526036,16 @@
         },
         "security": [
           {
-            "APIToken": []
+            "api_token": []
           }
         ],
         "tags": [
           "api"
         ],
         "x-api-token-group": [],
+        "x-fern-ignore": true,
         "x-fern-sdk-group-name": "dns.domainconnect",
-        "x-fern-sdk-method-name": "getProviderConfiguration"
+        "x-fern-sdk-method-name": "get-provider-configuration"
       }
     },
     "/v2/{domain}/settings": {
@@ -526121,15 +526099,16 @@
         },
         "security": [
           {
-            "APIToken": []
+            "api_token": []
           }
         ],
         "tags": [
           "api"
         ],
         "x-api-token-group": [],
+        "x-fern-ignore": true,
         "x-fern-sdk-group-name": "dns.domainconnect",
-        "x-fern-sdk-method-name": "getDomainSettings"
+        "x-fern-sdk-method-name": "get-domain-settings"
       }
     },
     "/workers/builds/deploy_hooks/{deploy_hook_uuid}": {
@@ -654532,7 +654511,7 @@
         "properties": {
           "status": {
             "type": "string",
-            "example": "Success"
+            "example": "verified"
           }
         }
       },
