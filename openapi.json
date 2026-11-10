@@ -344501,6 +344501,9 @@
                     "type": "string",
                     "example": "my-dispatch-namespace",
                     "x-auditable": true
+                  },
+                  "trusted_workers": {
+                    "$ref": "#/components/schemas/workers_trusted_workers"
                   }
                 }
               }
@@ -347374,6 +347377,117 @@
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "durable-objects.namespaces",
         "x-fern-sdk-method-name": "list"
+      }
+    },
+    "/accounts/{account_id}/workers/durable_objects/namespaces/{id}/export": {
+      "get": {
+        "operationId": "durable-objects-namespace-export",
+        "summary": "Export a Durable Object's SQLite database",
+        "description": "Downloads a SQLite-backed Durable Object's database as a zip of main.sqlite and main.sqlite-wal, as of its last write to durable storage. If the export could not read all of the object's history, it holds the last state it could read and an INCOMPLETE.txt. Select the object by ID, or by name and jurisdiction.",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/workers_identifier"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/workers_schemas-id"
+            }
+          },
+          {
+            "name": "durable_object_id",
+            "in": "query",
+            "description": "The Durable Object's ID. Required unless durable_object_name is given.",
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          {
+            "name": "durable_object_name",
+            "in": "query",
+            "description": "The name the Durable Object's ID was derived from.",
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          {
+            "name": "jurisdiction",
+            "in": "query",
+            "description": "The jurisdiction of a Durable Object selected by name.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "fedramp",
+                "eu",
+                "none"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A zip of the Durable Object's SQLite database and WAL.",
+            "content": {
+              "application/zip": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Too many exports in progress; retry later.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/workers_api-response-common-failure"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Export failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/workers_api-response-common-failure"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Durable Objects Namespace"
+        ],
+        "x-api-token-group": [
+          "Workers Scripts Write",
+          "Workers Scripts Read"
+        ],
+        "x-fern-audiences": [
+          "sdk"
+        ],
+        "x-fern-availability": "beta",
+        "x-fern-sdk-group-name": "durable-objects.namespaces",
+        "x-fern-sdk-method-name": "export"
       }
     },
     "/accounts/{account_id}/workers/durable_objects/namespaces/{id}/objects": {
@@ -779771,7 +779885,7 @@
           }
         },
         "content": {
-          "application/vnd.google.protobuf": {
+          "application/protobuf": {
             "schema": {
               "type": "string",
               "format": "binary"
