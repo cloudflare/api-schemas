@@ -270116,11 +270116,116 @@
         ]
       }
     },
+    "/accounts/{account_id}/pay-per-use/agreements": {
+      "get": {
+        "operationId": "pay-per-crawl.listPPUAgreements",
+        "summary": "List pay-per-use agreements",
+        "description": "Lists the requesting buyer's open pay-per-use offers to publishers, newest first.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/pay-per-crawl_AccountID"
+          },
+          {
+            "$ref": "#/components/parameters/pay-per-crawl_PPUPage"
+          },
+          {
+            "$ref": "#/components/parameters/pay-per-crawl_PPUPerPage"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/pay-per-crawl_PPUAgreementsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/pay-per-crawl_PPUBadRequest"
+          },
+          "403": {
+            "$ref": "#/components/responses/pay-per-crawl_PPUForbidden"
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "ppu_agreements"
+        ],
+        "x-cfOwnership": "pay-per-crawl",
+        "x-fern-sdk-group-name": "pay-per-use.agreements",
+        "x-fern-sdk-method-name": "list",
+        "x-stability": "beta"
+      },
+      "post": {
+        "operationId": "pay-per-crawl.postPPUAgreement",
+        "summary": "Propose a pay-per-use agreement",
+        "description": "Submits the requesting buyer's offer to a publisher. A buyer has one open offer per publisher; a second returns 409. A missing or null price means no price is agreed yet. The account needs a pay-per-use operator configuration, but neither side needs to be enabled or Cloudflare verified.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/pay-per-crawl_AccountID"
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/pay-per-crawl_PPUAgreementRequest"
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/pay-per-crawl_PPUAgreementResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/pay-per-crawl_PPUBadRequest"
+          },
+          "403": {
+            "$ref": "#/components/responses/pay-per-crawl_PPUForbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/pay-per-crawl_PPUNotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/pay-per-crawl_PPUConflict"
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "ppu_agreements"
+        ],
+        "x-cfOwnership": "pay-per-crawl",
+        "x-fern-sdk-group-name": "pay-per-use.agreements",
+        "x-fern-sdk-method-name": "create",
+        "x-stability": "beta"
+      }
+    },
     "/accounts/{account_id}/pay-per-use/enabled-domains": {
       "get": {
         "operationId": "pay-per-use.listEnabledDomains",
         "summary": "List enabled Pay Per Use domains",
-        "description": "Returns publisher domains associated with the requesting Pay Per Use operator through an accepted price agreement. License expiration is the earlier non-null boundary from the price agreement and publisher zone lifecycles. A future expiration remains active and is exposed to the operator. After expiration, the license remains listed as expired for one calendar month before it is omitted; an active agreement for the same domain takes precedence. The requesting account must be an active Pay Per Use operator.",
+        "description": "Returns publisher domains associated with the requesting Pay Per Use operator through an accepted price agreement. License expiration is the earlier non-null boundary from the price agreement and publisher zone lifecycles. A future expiration remains active and is exposed to the operator. After expiration, the license remains listed as expired for one calendar month before it is omitted; an active agreement for the same domain takes precedence. Report usage for these domains with url. Publisher offers are listed by the enabled publishers endpoint instead. The requesting account must be an active Pay Per Use operator.",
         "parameters": [
           {
             "name": "account_id",
@@ -270218,7 +270323,114 @@
         ],
         "x-cfOwnership": "pay-per-crawl",
         "x-fern-sdk-group-name": "pay-per-use.enabled-domains",
-        "x-fern-sdk-method-name": "list"
+        "x-fern-sdk-method-name": "list",
+        "x-stability": "beta"
+      }
+    },
+    "/accounts/{account_id}/pay-per-use/enabled-publishers": {
+      "get": {
+        "operationId": "pay-per-use.listEnabledPublishers",
+        "summary": "List enabled Pay Per Use publishers",
+        "description": "Returns the publishers whose offers the requesting Pay Per Use operator has accepted, one item per publisher with the domains it covers. Licensing is per publisher, and the domains are informational and do not restrict usage. Report usage with the item's publisher_id. Each item shows one accepted offer; an active offer takes precedence over an expired one. License expiration is the earlier non-null boundary from the offer and the publisher lifecycle. A future expiration remains active and is exposed to the operator. After expiration, the license remains listed as expired for one calendar month before it is omitted. Zone agreements are listed by the enabled domains endpoint instead. Items are ordered alphabetically by publisher_name, ignoring case and accents, then by publisher_id; a publisher renamed while you paginate can be skipped or listed twice. The requesting account must be an active Pay Per Use operator.",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "description": "Account identifier for the participant",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-auditable": true
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "description": "Opaque, account-bound cursor returned by the previous page. Cursors expire after one hour; restart pagination without a cursor after receiving a 400 response for an expired cursor.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "description": "Maximum number of publishers to return",
+            "schema": {
+              "type": "integer",
+              "default": 100,
+              "maximum": 100,
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Enabled publishers returned successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/pay-per-crawl_EnabledPublishersResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid cursor or page size",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/pay-per-crawl_apiErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or insufficiently scoped API token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/pay-per-crawl_apiErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Account is not an active Pay Per Use operator",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/pay-per-crawl_apiErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Enabled publishers could not be retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/pay-per-crawl_apiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "ppu_enabled_publishers"
+        ],
+        "x-cfOwnership": "pay-per-crawl",
+        "x-fern-sdk-group-name": "pay-per-use.enabled-publishers",
+        "x-fern-sdk-method-name": "list",
+        "x-stability": "beta"
       }
     },
     "/accounts/{account_id}/pay-per-use/operator/configuration": {
@@ -270263,7 +270475,8 @@
         ],
         "x-cfOwnership": "pay-per-crawl",
         "x-fern-sdk-group-name": "pay-per-use.operator",
-        "x-fern-sdk-method-name": "get-configuration"
+        "x-fern-sdk-method-name": "get-configuration",
+        "x-stability": "beta"
       },
       "patch": {
         "operationId": "pay-per-crawl.patchPPUOperatorConfiguration",
@@ -270315,7 +270528,8 @@
         ],
         "x-cfOwnership": "pay-per-crawl",
         "x-fern-sdk-group-name": "pay-per-use.operator",
-        "x-fern-sdk-method-name": "update-configuration"
+        "x-fern-sdk-method-name": "update-configuration",
+        "x-stability": "beta"
       },
       "put": {
         "operationId": "pay-per-crawl.putPPUOperatorConfiguration",
@@ -270364,7 +270578,8 @@
         ],
         "x-cfOwnership": "pay-per-crawl",
         "x-fern-sdk-group-name": "pay-per-use.operator",
-        "x-fern-sdk-method-name": "set-configuration"
+        "x-fern-sdk-method-name": "set-configuration",
+        "x-stability": "beta"
       }
     },
     "/accounts/{account_id}/pay-per-use/proposals": {
@@ -270418,7 +270633,8 @@
         ],
         "x-cfOwnership": "pay-per-crawl",
         "x-fern-sdk-group-name": "pay-per-use.proposals",
-        "x-fern-sdk-method-name": "list"
+        "x-fern-sdk-method-name": "list",
+        "x-stability": "beta"
       },
       "post": {
         "operationId": "pay-per-crawl.postPPUProposalDecision",
@@ -270470,7 +270686,8 @@
         ],
         "x-cfOwnership": "pay-per-crawl",
         "x-fern-sdk-group-name": "pay-per-use.proposals",
-        "x-fern-sdk-method-name": "decide"
+        "x-fern-sdk-method-name": "decide",
+        "x-stability": "beta"
       }
     },
     "/accounts/{account_id}/pay-per-use/usage-reports": {
@@ -270495,7 +270712,7 @@
           "content": {
             "application/jsonl": {
               "schema": {
-                "description": "UTF-8 JSON Lines document with exactly one object per line and a maximum entry size of 32 KiB, excluding its LF or CRLF line terminator. Each object requires used_at (an RFC 3339 timestamp string, any UTC offset, between the Unix epoch and now), an absolute HTTP or HTTPS source URL with a hostname, and an opaque id that is a nonempty string or a number. Event IDs are assumed unique within a participant and are not enforced by this endpoint. No other or duplicate fields are accepted.",
+                "description": "UTF-8 JSON Lines document with exactly one object per line and a maximum entry size of 32 KiB, excluding its LF or CRLF line terminator. Each object requires used_at (an RFC 3339 timestamp string, any UTC offset, between the Unix epoch and now), an opaque id that is a nonempty string or a number, and exactly one of publisher_id and url. publisher_id is the 32-character lowercase hexadecimal publisher identifier returned by the enabled publishers endpoint and is charged against that publisher's offer. url is an absolute HTTP or HTTPS source URL with a hostname, for the domains returned by the enabled domains endpoint. A null value counts as absent; a line with both is rejected with code url_and_publisher_id. Event IDs are assumed unique within a participant and are not enforced by this endpoint. No other or duplicate fields are accepted.",
                 "type": "string"
               }
             }
@@ -270617,14 +270834,15 @@
         ],
         "x-cfOwnership": "pay-per-crawl",
         "x-fern-sdk-group-name": "pay-per-use.usage-reports",
-        "x-fern-sdk-method-name": "submit"
+        "x-fern-sdk-method-name": "submit",
+        "x-stability": "beta"
       }
     },
     "/accounts/{account_id}/pay-per-use/usage-stats": {
       "get": {
         "operationId": "pay-per-crawl.getPPUUsageStats",
         "summary": "Get pay-per-use usage statistics",
-        "description": "Returns reported usage and the full gross value across all Pay Per Use zones in a publisher account over an explicit UTC range of at most 31 days. Usage from every domain and snapshotted price is summed by buyer. Ranges up to and including 7 days use hourly data points; longer ranges use daily data points. Because source data is aggregated hourly, both requested bounds are rounded down to the selected UTC interval and the resolved bounds are returned in the response. The resolved range must contain at least one complete interval. Empty periods are omitted. Buyers and their data points are paginated, while totals cover every buyer in the range. Values are raw usage counts and USD microcents; total_price_usd_microcents is the full value before the publisher revenue share.",
+        "description": "Returns reported usage and the full gross value across all Pay Per Use zones and the publisher of a publisher account over an explicit UTC range of at most 31 days. Usage from every domain and snapshotted price is summed by buyer. Ranges up to and including 7 days use hourly data points; longer ranges use daily data points. Because source data is aggregated hourly, both requested bounds are rounded down to the selected UTC interval and the resolved bounds are returned in the response. The resolved range must contain at least one complete interval. Empty periods are omitted. Buyers and their data points are paginated, while totals cover every buyer in the range. Values are raw usage counts and USD microcents; total_price_usd_microcents is the full value before the publisher revenue share.",
         "parameters": [
           {
             "$ref": "#/components/parameters/pay-per-crawl_AccountID"
@@ -270697,8 +270915,8 @@
           "ppu_usage_stats"
         ],
         "x-cfOwnership": "pay-per-crawl",
-        "x-fern-sdk-group-name": "pay-per-use.usage-stats",
-        "x-fern-sdk-method-name": "get-account"
+        "x-fern-ignore": true,
+        "x-stability": "beta"
       }
     },
     "/accounts/{account_id}/pay-per-use/zones_can_be_enabled": {
@@ -270746,7 +270964,8 @@
         ],
         "x-cfOwnership": "pay-per-crawl",
         "x-fern-sdk-group-name": "pay-per-use.zones",
-        "x-fern-sdk-method-name": "set-can-be-enabled"
+        "x-fern-sdk-method-name": "set-can-be-enabled",
+        "x-stability": "beta"
       }
     },
     "/accounts/{account_id}/payment-methods": {
@@ -558203,7 +558422,8 @@
         ],
         "x-cfOwnership": "pay-per-crawl",
         "x-fern-sdk-group-name": "pay-per-use.zones",
-        "x-fern-sdk-method-name": "get-can-be-enabled"
+        "x-fern-sdk-method-name": "get-can-be-enabled",
+        "x-stability": "beta"
       }
     },
     "/zones/{zone_id}/pay-per-use/configuration": {
@@ -558245,7 +558465,8 @@
         ],
         "x-cfOwnership": "pay-per-crawl",
         "x-fern-sdk-group-name": "pay-per-use.zones",
-        "x-fern-sdk-method-name": "get-configuration"
+        "x-fern-sdk-method-name": "get-configuration",
+        "x-stability": "beta"
       },
       "patch": {
         "operationId": "pay-per-crawl.patchPPUZoneConfiguration",
@@ -558297,7 +558518,8 @@
         ],
         "x-cfOwnership": "pay-per-crawl",
         "x-fern-sdk-group-name": "pay-per-use.zones",
-        "x-fern-sdk-method-name": "update-configuration"
+        "x-fern-sdk-method-name": "update-configuration",
+        "x-stability": "beta"
       }
     },
     "/zones/{zone_id}/pay-per-use/operators": {
@@ -558351,7 +558573,8 @@
         ],
         "x-cfOwnership": "pay-per-crawl",
         "x-fern-sdk-group-name": "pay-per-use.pricing",
-        "x-fern-sdk-method-name": "list-operators"
+        "x-fern-sdk-method-name": "list-operators",
+        "x-stability": "beta"
       }
     },
     "/zones/{zone_id}/pay-per-use/operators/{operator_id}/price": {
@@ -558402,7 +558625,8 @@
         ],
         "x-cfOwnership": "pay-per-crawl",
         "x-fern-sdk-group-name": "pay-per-use.pricing",
-        "x-fern-sdk-method-name": "opt-out-operator-price"
+        "x-fern-sdk-method-name": "opt-out-operator-price",
+        "x-stability": "beta"
       },
       "post": {
         "operationId": "pay-per-crawl.postPPUPublisherPriceAction",
@@ -558457,7 +558681,8 @@
         ],
         "x-cfOwnership": "pay-per-crawl",
         "x-fern-sdk-group-name": "pay-per-use.pricing",
-        "x-fern-sdk-method-name": "set-operator-price"
+        "x-fern-sdk-method-name": "set-operator-price",
+        "x-stability": "beta"
       }
     },
     "/zones/{zone_id}/pay-per-use/usage-stats": {
@@ -558540,8 +558765,8 @@
           "ppu_usage_stats"
         ],
         "x-cfOwnership": "pay-per-crawl",
-        "x-fern-sdk-group-name": "pay-per-use.usage-stats",
-        "x-fern-sdk-method-name": "get-zone"
+        "x-fern-ignore": true,
+        "x-stability": "beta"
       }
     },
     "/zones/{zone_id}/precursor": {
@@ -586843,6 +587068,109 @@
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "logs",
         "x-fern-sdk-method-name": "query",
+        "x-stability": "beta",
+        "x-stainless-skip": true
+      }
+    },
+    "/{account_or_zone}/{account_or_zone_id}/pay-per-use/usage-stats": {
+      "get": {
+        "operationId": "generated:get:/account_or_zone/account_or_zone_id/pay-per-use/usage-stats",
+        "summary": "Get pay-per-use usage statistics",
+        "description": "Returns reported usage and the full gross value across all Pay Per Use zones and the publisher of a publisher account or zone over an explicit UTC range of at most 31 days. Usage from every domain and snapshotted price is summed by buyer. Ranges up to and including 7 days use hourly data points; longer ranges use daily data points. Because source data is aggregated hourly, both requested bounds are rounded down to the selected UTC interval and the resolved bounds are returned in the response. The resolved range must contain at least one complete interval. Empty periods are omitted. Buyers and their data points are paginated, while totals cover every buyer in the range. Values are raw usage counts and USD microcents; total_price_usd_microcents is the full value before the publisher revenue share.",
+        "parameters": [
+          {
+            "name": "account_or_zone",
+            "in": "path",
+            "description": "Whether ${account_or_zone} is an account ID (`accounts`) or a zone ID (`zones`).",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "accounts",
+                "zones"
+              ]
+            }
+          },
+          {
+            "name": "account_or_zone_id",
+            "in": "path",
+            "description": "The account ID or zone ID, as selected by ${account_or_zone}.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-auditable": true
+          },
+          {
+            "name": "since",
+            "in": "query",
+            "description": "Requested inclusive beginning of the statistics range as an RFC3339 timestamp. Rounded down to the selected UTC interval.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "until",
+            "in": "query",
+            "description": "Requested exclusive end of the statistics range as an RFC3339 timestamp. Rounded down to the selected UTC interval. The requested duration from since cannot exceed 31 days.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/pay-per-crawl_PPUPage"
+          },
+          {
+            "$ref": "#/components/parameters/pay-per-crawl_PPUPerPage"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Usage statistics returned successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/pay-per-crawl_PPUUsageStatsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/pay-per-crawl_PPUBadRequest"
+          },
+          "403": {
+            "$ref": "#/components/responses/pay-per-crawl_PPUForbidden"
+          },
+          "500": {
+            "description": "Usage statistics could not be retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/pay-per-crawl_apiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "ppu_usage_stats"
+        ],
+        "x-cfOwnership": "pay-per-crawl",
+        "x-fern-sdk-group-name": "pay-per-use.usage-stats",
+        "x-fern-sdk-method-name": "get-account",
         "x-stability": "beta",
         "x-stainless-skip": true
       }
@@ -687757,12 +688085,6 @@
               "expired"
             ]
           },
-          "non_billable_since": {
-            "description": "When the publisher zone was classified for local-only, non-billable settlement. Null for billable zones.",
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
           "price_usd_microcents": {
             "description": "Price of the selected accepted agreement in microcents. For an active license this is the price currently in effect; for an expired license it is the last accepted price.",
             "type": "integer",
@@ -687773,8 +688095,7 @@
           "domain",
           "license_status",
           "license_expires_at",
-          "price_usd_microcents",
-          "non_billable_since"
+          "price_usd_microcents"
         ]
       },
       "pay-per-crawl_EnabledDomainsResponse": {
@@ -687813,6 +688134,92 @@
         "required": [
           "cursor",
           "domains"
+        ]
+      },
+      "pay-per-crawl_EnabledPublisher": {
+        "type": "object",
+        "properties": {
+          "domains": {
+            "description": "Domains the publisher covers, sorted. Empty when the publisher covers no domains.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "license_expires_at": {
+            "description": "Earlier non-null exclusive expiration from the accepted offer and the publisher lifecycle, or null when neither expires",
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "license_status": {
+            "description": "Whether the selected accepted offer is currently active or retained after expiration",
+            "type": "string",
+            "enum": [
+              "active",
+              "expired"
+            ]
+          },
+          "price_usd_microcents": {
+            "description": "Price of the selected accepted offer in microcents. For an active license this is the price currently in effect; for an expired license it is the last accepted price.",
+            "type": "integer",
+            "format": "int64"
+          },
+          "publisher_id": {
+            "description": "Identifier of the publisher whose accepted offer this is. Report usage for this publisher with this publisher_id.",
+            "type": "string",
+            "pattern": "^[0-9a-f]{32}$"
+          },
+          "publisher_name": {
+            "description": "Display name of the publisher.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "publisher_id",
+          "publisher_name",
+          "domains",
+          "license_status",
+          "license_expires_at",
+          "price_usd_microcents"
+        ]
+      },
+      "pay-per-crawl_EnabledPublishersResponse": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "$ref": "#/components/schemas/pay-per-crawl_EnabledPublishersResult"
+          },
+          "result_info": {
+            "$ref": "#/components/schemas/pay-per-crawl_ResultInfo"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "success",
+          "result"
+        ]
+      },
+      "pay-per-crawl_EnabledPublishersResult": {
+        "type": "object",
+        "properties": {
+          "cursor": {
+            "description": "Opaque, account-bound cursor for the next page. It expires after one hour and is null on the final page.",
+            "type": "string",
+            "nullable": true
+          },
+          "publishers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/pay-per-crawl_EnabledPublisher"
+            }
+          }
+        },
+        "required": [
+          "cursor",
+          "publishers"
         ]
       },
       "pay-per-crawl_ErrorSource": {
@@ -687859,6 +688266,135 @@
           },
           "source": {
             "$ref": "#/components/schemas/pay-per-crawl_Source"
+          }
+        }
+      },
+      "pay-per-crawl_PPUAgreement": {
+        "type": "object",
+        "properties": {
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "price_usd_microcents": {
+            "description": "Offered price per use in USD microcents, or null when no price is agreed yet.",
+            "type": "integer",
+            "format": "int64",
+            "maximum": 999999900000,
+            "minimum": 100000,
+            "multipleOf": 100000,
+            "nullable": true
+          },
+          "publisher_id": {
+            "description": "Identifier of the publisher the offer is made to.",
+            "type": "string",
+            "pattern": "^[0-9a-f]{32}$"
+          },
+          "publisher_name": {
+            "description": "Display name of the publisher.",
+            "type": "string"
+          },
+          "status": {
+            "description": "Open offers are proposed.",
+            "type": "string",
+            "enum": [
+              "proposed"
+            ]
+          }
+        },
+        "required": [
+          "publisher_id",
+          "publisher_name",
+          "status",
+          "price_usd_microcents",
+          "created_at"
+        ]
+      },
+      "pay-per-crawl_PPUAgreementRequest": {
+        "type": "object",
+        "properties": {
+          "price_usd_microcents": {
+            "description": "Offered price per use in USD microcents. Omit it or send null when no price is agreed yet.",
+            "type": "integer",
+            "format": "int64",
+            "maximum": 999999900000,
+            "minimum": 100000,
+            "multipleOf": 100000,
+            "nullable": true
+          },
+          "publisher_id": {
+            "description": "Identifier of the publisher the offer is made to.",
+            "type": "string",
+            "pattern": "^[0-9a-f]{32}$"
+          }
+        },
+        "required": [
+          "publisher_id"
+        ]
+      },
+      "pay-per-crawl_PPUAgreementResponse": {
+        "type": "object",
+        "properties": {
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/pay-per-crawl_Msg"
+            }
+          },
+          "messages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/pay-per-crawl_Msg"
+            }
+          },
+          "result": {
+            "$ref": "#/components/schemas/pay-per-crawl_PPUAgreement"
+          },
+          "result_info": {
+            "$ref": "#/components/schemas/pay-per-crawl_ResultInfo"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        }
+      },
+      "pay-per-crawl_PPUAgreements": {
+        "type": "object",
+        "properties": {
+          "agreements": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/pay-per-crawl_PPUAgreement"
+            }
+          }
+        },
+        "required": [
+          "agreements"
+        ]
+      },
+      "pay-per-crawl_PPUAgreementsResponse": {
+        "type": "object",
+        "properties": {
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/pay-per-crawl_Msg"
+            }
+          },
+          "messages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/pay-per-crawl_Msg"
+            }
+          },
+          "result": {
+            "$ref": "#/components/schemas/pay-per-crawl_PPUAgreements"
+          },
+          "result_info": {
+            "$ref": "#/components/schemas/pay-per-crawl_ResultInfo"
+          },
+          "success": {
+            "type": "boolean"
           }
         }
       },
@@ -688004,13 +688540,6 @@
           "name": {
             "type": "string"
           },
-          "non_billable_since": {
-            "description": "When this operator was classified for local-only, non-billable settlement. Null for billable operators. Always matches the requesting zone's classification.",
-            "type": "string",
-            "format": "date-time",
-            "nullable": true,
-            "readOnly": true
-          },
           "operator_id": {
             "description": "Stable pay-per-use operator identifier.",
             "type": "string",
@@ -688038,8 +688567,7 @@
         "required": [
           "operator_id",
           "name",
-          "default_price_usd_microcents",
-          "non_billable_since"
+          "default_price_usd_microcents"
         ]
       },
       "pay-per-crawl_PPUOperatorPrices": {
@@ -688180,13 +688708,6 @@
             "type": "string",
             "format": "date-time"
           },
-          "non_billable_since": {
-            "description": "When the proposing publisher zone was classified for local-only, non-billable settlement. Null for billable zones.",
-            "type": "string",
-            "format": "date-time",
-            "nullable": true,
-            "readOnly": true
-          },
           "price_id": {
             "description": "Use this value to accept or reject this specific pending proposal.",
             "type": "integer",
@@ -688203,7 +688724,6 @@
         "required": [
           "price_id",
           "price_usd_microcents",
-          "non_billable_since",
           "created_at"
         ]
       },
@@ -762965,6 +763485,18 @@
           }
         },
         "description": "Data for fully replacing a pay-per-crawl zone configuration",
+        "required": true,
+        "x-auditable": true
+      },
+      "pay-per-crawl_PPUAgreementRequest": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/pay-per-crawl_PPUAgreementRequest"
+            }
+          }
+        },
+        "description": "Pay-per-use agreement",
         "required": true,
         "x-auditable": true
       },
