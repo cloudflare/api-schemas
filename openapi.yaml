@@ -233169,15 +233169,27 @@ paths:
         '200':
           description: Get script content.
           content:
-            string:
+            application/javascript:
               schema:
+                description: The script of a Worker in service worker syntax.
                 type: string
-                example: |
-                  export default {
-                    async fetch(request, env, ctx) {
-                      return new Response("Hello, world!");
-                    }
-                  };
+                example: addEventListener('fetch', (event) => event.respondWith(new Response('Hello, world!')))
+            multipart/form-data:
+              schema:
+                description: The modules of a Worker in ES module syntax, one part per module, and any source maps. The `cf-entrypoint` response header names the main module.
+                type: object
+                example:
+                  worker.js: |
+                    export default {
+                      async fetch(request, env, ctx) {
+                        return new Response("Hello, world!");
+                      }
+                    };
+                additionalProperties:
+                  format: binary
+                  type: string
+        '204':
+          description: The Worker has no script content, such as a Worker that only serves static assets.
         4XX:
           description: Get script content failure.
           content:
@@ -246658,13 +246670,9 @@ paths:
           content:
             application/javascript:
               schema:
+                description: The script of a Worker in service worker syntax.
                 type: string
-                example: |
-                  export default {
-                    async fetch(request, env, ctx) {
-                      return new Response("Hello, world!");
-                    }
-                  };
+                example: addEventListener('fetch', (event) => event.respondWith(new Response('Hello, world!')))
             multipart/form-data:
               schema:
                 type: object
@@ -246672,6 +246680,8 @@ paths:
                   description: Modules used by the Worker, including JavaScript files and source maps.
                   format: binary
                   type: string
+        '204':
+          description: The Worker has no script content, such as a Worker that only serves static assets.
         4XX:
           description: Download Worker response failure.
           content:
@@ -246972,15 +246982,27 @@ paths:
         '200':
           description: Fetch script content.
           content:
-            string:
+            application/javascript:
               schema:
+                description: The script of a Worker in service worker syntax.
                 type: string
-                example: |
-                  export default {
-                    async fetch(request, env, ctx) {
-                      return new Response("Hello, world!");
-                    }
-                  };
+                example: addEventListener('fetch', (event) => event.respondWith(new Response('Hello, world!')))
+            multipart/form-data:
+              schema:
+                description: The modules of a Worker in ES module syntax, one part per module, and any source maps. The `cf-entrypoint` response header names the main module.
+                type: object
+                example:
+                  worker.js: |
+                    export default {
+                      async fetch(request, env, ctx) {
+                        return new Response("Hello, world!");
+                      }
+                    };
+                additionalProperties:
+                  format: binary
+                  type: string
+        '204':
+          description: The Worker has no script content, such as a Worker that only serves static assets.
         4XX:
           description: Fetch script content failure.
           content:
@@ -248800,15 +248822,27 @@ paths:
         '200':
           description: Get script content.
           content:
-            string:
+            application/javascript:
               schema:
+                description: The script of a Worker in service worker syntax.
                 type: string
-                example: |
-                  export default {
-                    async fetch(request, env, ctx) {
-                      return new Response("Hello, world!");
-                    }
-                  };
+                example: addEventListener('fetch', (event) => event.respondWith(new Response('Hello, world!')))
+            multipart/form-data:
+              schema:
+                description: The modules of a Worker in ES module syntax, one part per module, and any source maps. The `cf-entrypoint` response header names the main module.
+                type: object
+                example:
+                  worker.js: |
+                    export default {
+                      async fetch(request, env, ctx) {
+                        return new Response("Hello, world!");
+                      }
+                    };
+                additionalProperties:
+                  format: binary
+                  type: string
+        '204':
+          description: The Worker has no script content, such as a Worker that only serves static assets.
         4XX:
           description: Get script content failure.
           content:
@@ -520803,6 +520837,11 @@ components:
                           description: The amount of CPU time this Worker can use in milliseconds.
                           type: integer
                           example: 50
+                          readOnly: true
+                        subrequests:
+                          description: The number of subrequests this Worker can make per request.
+                          type: integer
+                          example: 1000
                           readOnly: true
                       readOnly: true
                     migration_tag:
