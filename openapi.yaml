@@ -40663,6 +40663,17 @@ paths:
                           additionalProperties: true
                           nullable: true
                           properties:
+                            d1:
+                              description: D1 source configuration of a d1 instance.
+                              type: object
+                              additionalProperties: true
+                              properties:
+                                query:
+                                  description: Read-only SELECT query run against the D1 database. It must return an `id` column that uniquely identifies each row. Columns named `title` and `content` set the document title and body, and up to 5 `meta_*` columns become filterable custom metadata; any other column is indexed as a labelled field. Every sync reads the full result, up to 100,000 rows, with the instance's token, and those reads count against your D1 usage. Leading and trailing whitespace is trimmed before the query is stored.
+                                  type: string
+                                template:
+                                  description: 'How each row is rendered into the indexed document: labelled renders the title, the labelled fields, then the content; content_only renders the title and content (labelled fields only when there is no content); key_value renders every column as name: value; json renders every column as a JSON object.'
+                                  type: string
                             exclude_items:
                               type: array
                               items:
@@ -40799,6 +40810,7 @@ paths:
                           enum:
                             - r2
                             - web-crawler
+                            - d1
                             - null
                           nullable: true
                       required:
@@ -41270,6 +41282,7 @@ paths:
                   x-auditable: true
                   x-stainless-terraform-configurability: computed_optional
                 source:
+                  description: The R2 bucket name for r2, the website URL for web-crawler, or the D1 database ID (UUID) for d1. A d1 instance also requires token_id, and the token needs D1 Read permission. The d1 database cannot be changed after creation.
                   type: string
                   nullable: true
                   x-auditable: true
@@ -41277,6 +41290,26 @@ paths:
                   type: object
                   nullable: true
                   properties:
+                    d1:
+                      description: D1 source configuration. Required when type is d1 and ignored for other types.
+                      type: object
+                      properties:
+                        query:
+                          description: Read-only SELECT query run against the D1 database. It must return an `id` column that uniquely identifies each row. Columns named `title` and `content` set the document title and body, and up to 5 `meta_*` columns become filterable custom metadata; any other column is indexed as a labelled field. Every sync reads the full result, up to 100,000 rows, with the instance's token, and those reads count against your D1 usage. Leading and trailing whitespace is trimmed before the query is stored.
+                          maxLength: 10000
+                          minLength: 1
+                          type: string
+                        template:
+                          description: 'How each row is rendered into the indexed document: labelled renders the title, the labelled fields, then the content; content_only renders the title and content (labelled fields only when there is no content); key_value renders every column as name: value; json renders every column as a JSON object.'
+                          type: string
+                          default: labelled
+                          enum:
+                            - labelled
+                            - content_only
+                            - key_value
+                            - json
+                      required:
+                        - query
                     exclude_items:
                       description: 'List of path patterns to exclude. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /admin/** matches /admin/users and /admin/settings/advanced). Most accounts have a limit of 10 rules; contact support to raise it.'
                       type: array
@@ -41456,11 +41489,12 @@ paths:
                   x-auditable: true
                   x-stainless-terraform-configurability: computed_optional
                 type:
-                  description: Source type. When omitted or null with a non-blank source, HTTP(S) URLs infer web-crawler and existing R2 bucket names infer r2. A missing or blank source without a type uses managed upload-only storage.
+                  description: Source type. When omitted or null with a non-blank source, HTTP(S) URLs infer web-crawler and existing R2 bucket names infer r2. A missing or blank source without a type uses managed upload-only storage. d1 is never inferred; it indexes the rows returned by source_params.d1.query.
                   type: string
                   enum:
                     - r2
                     - web-crawler
+                    - d1
                     - null
                   nullable: true
                   x-auditable: true
@@ -41835,6 +41869,7 @@ paths:
                         x-auditable: true
                         x-stainless-terraform-configurability: computed_optional
                       source:
+                        description: The R2 bucket name for r2, the website URL for web-crawler, or the D1 database ID (UUID) for d1. A d1 instance also requires token_id, and the token needs D1 Read permission. The d1 database cannot be changed after creation.
                         type: string
                         nullable: true
                         x-auditable: true
@@ -41842,6 +41877,26 @@ paths:
                         type: object
                         nullable: true
                         properties:
+                          d1:
+                            description: D1 source configuration. Required when type is d1 and ignored for other types.
+                            type: object
+                            properties:
+                              query:
+                                description: Read-only SELECT query run against the D1 database. It must return an `id` column that uniquely identifies each row. Columns named `title` and `content` set the document title and body, and up to 5 `meta_*` columns become filterable custom metadata; any other column is indexed as a labelled field. Every sync reads the full result, up to 100,000 rows, with the instance's token, and those reads count against your D1 usage. Leading and trailing whitespace is trimmed before the query is stored.
+                                maxLength: 10000
+                                minLength: 1
+                                type: string
+                              template:
+                                description: 'How each row is rendered into the indexed document: labelled renders the title, the labelled fields, then the content; content_only renders the title and content (labelled fields only when there is no content); key_value renders every column as name: value; json renders every column as a JSON object.'
+                                type: string
+                                default: labelled
+                                enum:
+                                  - labelled
+                                  - content_only
+                                  - key_value
+                                  - json
+                            required:
+                              - query
                           exclude_items:
                             description: 'List of path patterns to exclude. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /admin/** matches /admin/users and /admin/settings/advanced). Most accounts have a limit of 10 rules; contact support to raise it.'
                             type: array
@@ -42024,11 +42079,12 @@ paths:
                         x-auditable: true
                         x-stainless-terraform-configurability: computed_optional
                       type:
-                        description: Source type. When omitted or null with a non-blank source, HTTP(S) URLs infer web-crawler and existing R2 bucket names infer r2. A missing or blank source without a type uses managed upload-only storage.
+                        description: Source type. When omitted or null with a non-blank source, HTTP(S) URLs infer web-crawler and existing R2 bucket names infer r2. A missing or blank source without a type uses managed upload-only storage. d1 is never inferred; it indexes the rows returned by source_params.d1.query.
                         type: string
                         enum:
                           - r2
                           - web-crawler
+                          - d1
                           - null
                         nullable: true
                         x-auditable: true
@@ -42153,15 +42209,14 @@ paths:
                   - success
                   - errors
         '503':
-          description: Ai search temporarily unavailable.
+          description: Unable to connect to ai search; Ai search temporarily unavailable.
           headers:
             Retry-After:
               description: Seconds to wait before retrying.
-              required: true
               schema:
                 description: Seconds to wait before retrying.
                 type: string
-                example: '1'
+                example: '10'
           content:
             application/json:
               schema:
@@ -42170,15 +42225,29 @@ paths:
                   errors:
                     type: array
                     items:
-                      properties:
-                        code:
-                          type: number
-                        message:
-                          type: string
-                      required:
-                        - code
-                        - message
-                      type: object
+                      anyOf:
+                        - properties:
+                            code:
+                              type: number
+                              enum:
+                                - 7017
+                            message:
+                              type: string
+                          required:
+                            - code
+                            - message
+                          type: object
+                        - properties:
+                            code:
+                              type: number
+                              enum:
+                                - 7125
+                            message:
+                              type: string
+                          required:
+                            - code
+                            - message
+                          type: object
                   success:
                     type: boolean
                     enum:
@@ -42598,6 +42667,7 @@ paths:
                         x-auditable: true
                         x-stainless-terraform-configurability: computed_optional
                       source:
+                        description: The R2 bucket name for r2, the website URL for web-crawler, or the D1 database ID (UUID) for d1. A d1 instance also requires token_id, and the token needs D1 Read permission. The d1 database cannot be changed after creation.
                         type: string
                         nullable: true
                         x-auditable: true
@@ -42605,6 +42675,26 @@ paths:
                         type: object
                         nullable: true
                         properties:
+                          d1:
+                            description: D1 source configuration. Required when type is d1 and ignored for other types.
+                            type: object
+                            properties:
+                              query:
+                                description: Read-only SELECT query run against the D1 database. It must return an `id` column that uniquely identifies each row. Columns named `title` and `content` set the document title and body, and up to 5 `meta_*` columns become filterable custom metadata; any other column is indexed as a labelled field. Every sync reads the full result, up to 100,000 rows, with the instance's token, and those reads count against your D1 usage. Leading and trailing whitespace is trimmed before the query is stored.
+                                maxLength: 10000
+                                minLength: 1
+                                type: string
+                              template:
+                                description: 'How each row is rendered into the indexed document: labelled renders the title, the labelled fields, then the content; content_only renders the title and content (labelled fields only when there is no content); key_value renders every column as name: value; json renders every column as a JSON object.'
+                                type: string
+                                default: labelled
+                                enum:
+                                  - labelled
+                                  - content_only
+                                  - key_value
+                                  - json
+                            required:
+                              - query
                           exclude_items:
                             description: 'List of path patterns to exclude. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /admin/** matches /admin/users and /admin/settings/advanced). Most accounts have a limit of 10 rules; contact support to raise it.'
                             type: array
@@ -42787,11 +42877,12 @@ paths:
                         x-auditable: true
                         x-stainless-terraform-configurability: computed_optional
                       type:
-                        description: Source type. When omitted or null with a non-blank source, HTTP(S) URLs infer web-crawler and existing R2 bucket names infer r2. A missing or blank source without a type uses managed upload-only storage.
+                        description: Source type. When omitted or null with a non-blank source, HTTP(S) URLs infer web-crawler and existing R2 bucket names infer r2. A missing or blank source without a type uses managed upload-only storage. d1 is never inferred; it indexes the rows returned by source_params.d1.query.
                         type: string
                         enum:
                           - r2
                           - web-crawler
+                          - d1
                           - null
                         nullable: true
                         x-auditable: true
@@ -43269,6 +43360,7 @@ paths:
                         x-auditable: true
                         x-stainless-terraform-configurability: computed_optional
                       source:
+                        description: The R2 bucket name for r2, the website URL for web-crawler, or the D1 database ID (UUID) for d1. A d1 instance also requires token_id, and the token needs D1 Read permission. The d1 database cannot be changed after creation.
                         type: string
                         nullable: true
                         x-auditable: true
@@ -43276,6 +43368,26 @@ paths:
                         type: object
                         nullable: true
                         properties:
+                          d1:
+                            description: D1 source configuration. Required when type is d1 and ignored for other types.
+                            type: object
+                            properties:
+                              query:
+                                description: Read-only SELECT query run against the D1 database. It must return an `id` column that uniquely identifies each row. Columns named `title` and `content` set the document title and body, and up to 5 `meta_*` columns become filterable custom metadata; any other column is indexed as a labelled field. Every sync reads the full result, up to 100,000 rows, with the instance's token, and those reads count against your D1 usage. Leading and trailing whitespace is trimmed before the query is stored.
+                                maxLength: 10000
+                                minLength: 1
+                                type: string
+                              template:
+                                description: 'How each row is rendered into the indexed document: labelled renders the title, the labelled fields, then the content; content_only renders the title and content (labelled fields only when there is no content); key_value renders every column as name: value; json renders every column as a JSON object.'
+                                type: string
+                                default: labelled
+                                enum:
+                                  - labelled
+                                  - content_only
+                                  - key_value
+                                  - json
+                            required:
+                              - query
                           exclude_items:
                             description: 'List of path patterns to exclude. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /admin/** matches /admin/users and /admin/settings/advanced). Most accounts have a limit of 10 rules; contact support to raise it.'
                             type: array
@@ -43458,11 +43570,12 @@ paths:
                         x-auditable: true
                         x-stainless-terraform-configurability: computed_optional
                       type:
-                        description: Source type. When omitted or null with a non-blank source, HTTP(S) URLs infer web-crawler and existing R2 bucket names infer r2. A missing or blank source without a type uses managed upload-only storage.
+                        description: Source type. When omitted or null with a non-blank source, HTTP(S) URLs infer web-crawler and existing R2 bucket names infer r2. A missing or blank source without a type uses managed upload-only storage. d1 is never inferred; it indexes the rows returned by source_params.d1.query.
                         type: string
                         enum:
                           - r2
                           - web-crawler
+                          - d1
                           - null
                         nullable: true
                         x-auditable: true
@@ -43865,6 +43978,7 @@ paths:
                   x-auditable: true
                   x-stainless-terraform-configurability: computed_optional
                 source:
+                  description: The R2 bucket name for r2, the website URL for web-crawler, or the D1 database ID (UUID) for d1. A d1 instance also requires token_id, and the token needs D1 Read permission. The d1 database cannot be changed after creation.
                   type: string
                   nullable: true
                   x-auditable: true
@@ -43872,6 +43986,26 @@ paths:
                   type: object
                   nullable: true
                   properties:
+                    d1:
+                      description: D1 source configuration. Required when type is d1 and ignored for other types.
+                      type: object
+                      properties:
+                        query:
+                          description: Read-only SELECT query run against the D1 database. It must return an `id` column that uniquely identifies each row. Columns named `title` and `content` set the document title and body, and up to 5 `meta_*` columns become filterable custom metadata; any other column is indexed as a labelled field. Every sync reads the full result, up to 100,000 rows, with the instance's token, and those reads count against your D1 usage. Leading and trailing whitespace is trimmed before the query is stored.
+                          maxLength: 10000
+                          minLength: 1
+                          type: string
+                        template:
+                          description: 'How each row is rendered into the indexed document: labelled renders the title, the labelled fields, then the content; content_only renders the title and content (labelled fields only when there is no content); key_value renders every column as name: value; json renders every column as a JSON object.'
+                          type: string
+                          default: labelled
+                          enum:
+                            - labelled
+                            - content_only
+                            - key_value
+                            - json
+                      required:
+                        - query
                     exclude_items:
                       description: 'List of path patterns to exclude. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /admin/** matches /admin/users and /admin/settings/advanced). Most accounts have a limit of 10 rules; contact support to raise it.'
                       type: array
@@ -44438,6 +44572,7 @@ paths:
                         x-auditable: true
                         x-stainless-terraform-configurability: computed_optional
                       source:
+                        description: The R2 bucket name for r2, the website URL for web-crawler, or the D1 database ID (UUID) for d1. A d1 instance also requires token_id, and the token needs D1 Read permission. The d1 database cannot be changed after creation.
                         type: string
                         nullable: true
                         x-auditable: true
@@ -44445,6 +44580,26 @@ paths:
                         type: object
                         nullable: true
                         properties:
+                          d1:
+                            description: D1 source configuration. Required when type is d1 and ignored for other types.
+                            type: object
+                            properties:
+                              query:
+                                description: Read-only SELECT query run against the D1 database. It must return an `id` column that uniquely identifies each row. Columns named `title` and `content` set the document title and body, and up to 5 `meta_*` columns become filterable custom metadata; any other column is indexed as a labelled field. Every sync reads the full result, up to 100,000 rows, with the instance's token, and those reads count against your D1 usage. Leading and trailing whitespace is trimmed before the query is stored.
+                                maxLength: 10000
+                                minLength: 1
+                                type: string
+                              template:
+                                description: 'How each row is rendered into the indexed document: labelled renders the title, the labelled fields, then the content; content_only renders the title and content (labelled fields only when there is no content); key_value renders every column as name: value; json renders every column as a JSON object.'
+                                type: string
+                                default: labelled
+                                enum:
+                                  - labelled
+                                  - content_only
+                                  - key_value
+                                  - json
+                            required:
+                              - query
                           exclude_items:
                             description: 'List of path patterns to exclude. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /admin/** matches /admin/users and /admin/settings/advanced). Most accounts have a limit of 10 rules; contact support to raise it.'
                             type: array
@@ -44627,11 +44782,12 @@ paths:
                         x-auditable: true
                         x-stainless-terraform-configurability: computed_optional
                       type:
-                        description: Source type. When omitted or null with a non-blank source, HTTP(S) URLs infer web-crawler and existing R2 bucket names infer r2. A missing or blank source without a type uses managed upload-only storage.
+                        description: Source type. When omitted or null with a non-blank source, HTTP(S) URLs infer web-crawler and existing R2 bucket names infer r2. A missing or blank source without a type uses managed upload-only storage. d1 is never inferred; it indexes the rows returned by source_params.d1.query.
                         type: string
                         enum:
                           - r2
                           - web-crawler
+                          - d1
                           - null
                         nullable: true
                         x-auditable: true
@@ -44724,15 +44880,14 @@ paths:
                   - success
                   - errors
         '503':
-          description: Ai search temporarily unavailable.
+          description: Unable to connect to ai search; Ai search temporarily unavailable.
           headers:
             Retry-After:
               description: Seconds to wait before retrying.
-              required: true
               schema:
                 description: Seconds to wait before retrying.
                 type: string
-                example: '1'
+                example: '10'
           content:
             application/json:
               schema:
@@ -44741,15 +44896,29 @@ paths:
                   errors:
                     type: array
                     items:
-                      properties:
-                        code:
-                          type: number
-                        message:
-                          type: string
-                      required:
-                        - code
-                        - message
-                      type: object
+                      anyOf:
+                        - properties:
+                            code:
+                              type: number
+                              enum:
+                                - 7017
+                            message:
+                              type: string
+                          required:
+                            - code
+                            - message
+                          type: object
+                        - properties:
+                            code:
+                              type: number
+                              enum:
+                                - 7125
+                            message:
+                              type: string
+                          required:
+                            - code
+                            - message
+                          type: object
                   success:
                     type: boolean
                     enum:
@@ -49767,6 +49936,17 @@ paths:
                           additionalProperties: true
                           nullable: true
                           properties:
+                            d1:
+                              description: D1 source configuration of a d1 instance.
+                              type: object
+                              additionalProperties: true
+                              properties:
+                                query:
+                                  description: Read-only SELECT query run against the D1 database. It must return an `id` column that uniquely identifies each row. Columns named `title` and `content` set the document title and body, and up to 5 `meta_*` columns become filterable custom metadata; any other column is indexed as a labelled field. Every sync reads the full result, up to 100,000 rows, with the instance's token, and those reads count against your D1 usage. Leading and trailing whitespace is trimmed before the query is stored.
+                                  type: string
+                                template:
+                                  description: 'How each row is rendered into the indexed document: labelled renders the title, the labelled fields, then the content; content_only renders the title and content (labelled fields only when there is no content); key_value renders every column as name: value; json renders every column as a JSON object.'
+                                  type: string
                             exclude_items:
                               type: array
                               items:
@@ -49903,6 +50083,7 @@ paths:
                           enum:
                             - r2
                             - web-crawler
+                            - d1
                             - null
                           nullable: true
                       required:
@@ -50382,6 +50563,7 @@ paths:
                   x-auditable: true
                   x-stainless-terraform-configurability: computed_optional
                 source:
+                  description: The R2 bucket name for r2, the website URL for web-crawler, or the D1 database ID (UUID) for d1. A d1 instance also requires token_id, and the token needs D1 Read permission. The d1 database cannot be changed after creation.
                   type: string
                   nullable: true
                   x-auditable: true
@@ -50389,6 +50571,26 @@ paths:
                   type: object
                   nullable: true
                   properties:
+                    d1:
+                      description: D1 source configuration. Required when type is d1 and ignored for other types.
+                      type: object
+                      properties:
+                        query:
+                          description: Read-only SELECT query run against the D1 database. It must return an `id` column that uniquely identifies each row. Columns named `title` and `content` set the document title and body, and up to 5 `meta_*` columns become filterable custom metadata; any other column is indexed as a labelled field. Every sync reads the full result, up to 100,000 rows, with the instance's token, and those reads count against your D1 usage. Leading and trailing whitespace is trimmed before the query is stored.
+                          maxLength: 10000
+                          minLength: 1
+                          type: string
+                        template:
+                          description: 'How each row is rendered into the indexed document: labelled renders the title, the labelled fields, then the content; content_only renders the title and content (labelled fields only when there is no content); key_value renders every column as name: value; json renders every column as a JSON object.'
+                          type: string
+                          default: labelled
+                          enum:
+                            - labelled
+                            - content_only
+                            - key_value
+                            - json
+                      required:
+                        - query
                     exclude_items:
                       description: 'List of path patterns to exclude. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /admin/** matches /admin/users and /admin/settings/advanced). Most accounts have a limit of 10 rules; contact support to raise it.'
                       type: array
@@ -50568,11 +50770,12 @@ paths:
                   x-auditable: true
                   x-stainless-terraform-configurability: computed_optional
                 type:
-                  description: Source type. When omitted or null with a non-blank source, HTTP(S) URLs infer web-crawler and existing R2 bucket names infer r2. A missing or blank source without a type uses managed upload-only storage.
+                  description: Source type. When omitted or null with a non-blank source, HTTP(S) URLs infer web-crawler and existing R2 bucket names infer r2. A missing or blank source without a type uses managed upload-only storage. d1 is never inferred; it indexes the rows returned by source_params.d1.query.
                   type: string
                   enum:
                     - r2
                     - web-crawler
+                    - d1
                     - null
                   nullable: true
                   x-auditable: true
@@ -50947,6 +51150,7 @@ paths:
                         x-auditable: true
                         x-stainless-terraform-configurability: computed_optional
                       source:
+                        description: The R2 bucket name for r2, the website URL for web-crawler, or the D1 database ID (UUID) for d1. A d1 instance also requires token_id, and the token needs D1 Read permission. The d1 database cannot be changed after creation.
                         type: string
                         nullable: true
                         x-auditable: true
@@ -50954,6 +51158,26 @@ paths:
                         type: object
                         nullable: true
                         properties:
+                          d1:
+                            description: D1 source configuration. Required when type is d1 and ignored for other types.
+                            type: object
+                            properties:
+                              query:
+                                description: Read-only SELECT query run against the D1 database. It must return an `id` column that uniquely identifies each row. Columns named `title` and `content` set the document title and body, and up to 5 `meta_*` columns become filterable custom metadata; any other column is indexed as a labelled field. Every sync reads the full result, up to 100,000 rows, with the instance's token, and those reads count against your D1 usage. Leading and trailing whitespace is trimmed before the query is stored.
+                                maxLength: 10000
+                                minLength: 1
+                                type: string
+                              template:
+                                description: 'How each row is rendered into the indexed document: labelled renders the title, the labelled fields, then the content; content_only renders the title and content (labelled fields only when there is no content); key_value renders every column as name: value; json renders every column as a JSON object.'
+                                type: string
+                                default: labelled
+                                enum:
+                                  - labelled
+                                  - content_only
+                                  - key_value
+                                  - json
+                            required:
+                              - query
                           exclude_items:
                             description: 'List of path patterns to exclude. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /admin/** matches /admin/users and /admin/settings/advanced). Most accounts have a limit of 10 rules; contact support to raise it.'
                             type: array
@@ -51136,11 +51360,12 @@ paths:
                         x-auditable: true
                         x-stainless-terraform-configurability: computed_optional
                       type:
-                        description: Source type. When omitted or null with a non-blank source, HTTP(S) URLs infer web-crawler and existing R2 bucket names infer r2. A missing or blank source without a type uses managed upload-only storage.
+                        description: Source type. When omitted or null with a non-blank source, HTTP(S) URLs infer web-crawler and existing R2 bucket names infer r2. A missing or blank source without a type uses managed upload-only storage. d1 is never inferred; it indexes the rows returned by source_params.d1.query.
                         type: string
                         enum:
                           - r2
                           - web-crawler
+                          - d1
                           - null
                         nullable: true
                         x-auditable: true
@@ -51265,15 +51490,14 @@ paths:
                   - success
                   - errors
         '503':
-          description: Ai search temporarily unavailable.
+          description: Unable to connect to ai search; Ai search temporarily unavailable.
           headers:
             Retry-After:
               description: Seconds to wait before retrying.
-              required: true
               schema:
                 description: Seconds to wait before retrying.
                 type: string
-                example: '1'
+                example: '10'
           content:
             application/json:
               schema:
@@ -51282,15 +51506,29 @@ paths:
                   errors:
                     type: array
                     items:
-                      properties:
-                        code:
-                          type: number
-                        message:
-                          type: string
-                      required:
-                        - code
-                        - message
-                      type: object
+                      anyOf:
+                        - properties:
+                            code:
+                              type: number
+                              enum:
+                                - 7017
+                            message:
+                              type: string
+                          required:
+                            - code
+                            - message
+                          type: object
+                        - properties:
+                            code:
+                              type: number
+                              enum:
+                                - 7125
+                            message:
+                              type: string
+                          required:
+                            - code
+                            - message
+                          type: object
                   success:
                     type: boolean
                     enum:
@@ -51728,6 +51966,7 @@ paths:
                         x-auditable: true
                         x-stainless-terraform-configurability: computed_optional
                       source:
+                        description: The R2 bucket name for r2, the website URL for web-crawler, or the D1 database ID (UUID) for d1. A d1 instance also requires token_id, and the token needs D1 Read permission. The d1 database cannot be changed after creation.
                         type: string
                         nullable: true
                         x-auditable: true
@@ -51735,6 +51974,26 @@ paths:
                         type: object
                         nullable: true
                         properties:
+                          d1:
+                            description: D1 source configuration. Required when type is d1 and ignored for other types.
+                            type: object
+                            properties:
+                              query:
+                                description: Read-only SELECT query run against the D1 database. It must return an `id` column that uniquely identifies each row. Columns named `title` and `content` set the document title and body, and up to 5 `meta_*` columns become filterable custom metadata; any other column is indexed as a labelled field. Every sync reads the full result, up to 100,000 rows, with the instance's token, and those reads count against your D1 usage. Leading and trailing whitespace is trimmed before the query is stored.
+                                maxLength: 10000
+                                minLength: 1
+                                type: string
+                              template:
+                                description: 'How each row is rendered into the indexed document: labelled renders the title, the labelled fields, then the content; content_only renders the title and content (labelled fields only when there is no content); key_value renders every column as name: value; json renders every column as a JSON object.'
+                                type: string
+                                default: labelled
+                                enum:
+                                  - labelled
+                                  - content_only
+                                  - key_value
+                                  - json
+                            required:
+                              - query
                           exclude_items:
                             description: 'List of path patterns to exclude. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /admin/** matches /admin/users and /admin/settings/advanced). Most accounts have a limit of 10 rules; contact support to raise it.'
                             type: array
@@ -51917,11 +52176,12 @@ paths:
                         x-auditable: true
                         x-stainless-terraform-configurability: computed_optional
                       type:
-                        description: Source type. When omitted or null with a non-blank source, HTTP(S) URLs infer web-crawler and existing R2 bucket names infer r2. A missing or blank source without a type uses managed upload-only storage.
+                        description: Source type. When omitted or null with a non-blank source, HTTP(S) URLs infer web-crawler and existing R2 bucket names infer r2. A missing or blank source without a type uses managed upload-only storage. d1 is never inferred; it indexes the rows returned by source_params.d1.query.
                         type: string
                         enum:
                           - r2
                           - web-crawler
+                          - d1
                           - null
                         nullable: true
                         x-auditable: true
@@ -52410,6 +52670,7 @@ paths:
                         x-auditable: true
                         x-stainless-terraform-configurability: computed_optional
                       source:
+                        description: The R2 bucket name for r2, the website URL for web-crawler, or the D1 database ID (UUID) for d1. A d1 instance also requires token_id, and the token needs D1 Read permission. The d1 database cannot be changed after creation.
                         type: string
                         nullable: true
                         x-auditable: true
@@ -52417,6 +52678,26 @@ paths:
                         type: object
                         nullable: true
                         properties:
+                          d1:
+                            description: D1 source configuration. Required when type is d1 and ignored for other types.
+                            type: object
+                            properties:
+                              query:
+                                description: Read-only SELECT query run against the D1 database. It must return an `id` column that uniquely identifies each row. Columns named `title` and `content` set the document title and body, and up to 5 `meta_*` columns become filterable custom metadata; any other column is indexed as a labelled field. Every sync reads the full result, up to 100,000 rows, with the instance's token, and those reads count against your D1 usage. Leading and trailing whitespace is trimmed before the query is stored.
+                                maxLength: 10000
+                                minLength: 1
+                                type: string
+                              template:
+                                description: 'How each row is rendered into the indexed document: labelled renders the title, the labelled fields, then the content; content_only renders the title and content (labelled fields only when there is no content); key_value renders every column as name: value; json renders every column as a JSON object.'
+                                type: string
+                                default: labelled
+                                enum:
+                                  - labelled
+                                  - content_only
+                                  - key_value
+                                  - json
+                            required:
+                              - query
                           exclude_items:
                             description: 'List of path patterns to exclude. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /admin/** matches /admin/users and /admin/settings/advanced). Most accounts have a limit of 10 rules; contact support to raise it.'
                             type: array
@@ -52599,11 +52880,12 @@ paths:
                         x-auditable: true
                         x-stainless-terraform-configurability: computed_optional
                       type:
-                        description: Source type. When omitted or null with a non-blank source, HTTP(S) URLs infer web-crawler and existing R2 bucket names infer r2. A missing or blank source without a type uses managed upload-only storage.
+                        description: Source type. When omitted or null with a non-blank source, HTTP(S) URLs infer web-crawler and existing R2 bucket names infer r2. A missing or blank source without a type uses managed upload-only storage. d1 is never inferred; it indexes the rows returned by source_params.d1.query.
                         type: string
                         enum:
                           - r2
                           - web-crawler
+                          - d1
                           - null
                         nullable: true
                         x-auditable: true
@@ -53206,6 +53488,7 @@ paths:
                   x-auditable: true
                   x-stainless-terraform-configurability: computed_optional
                 source:
+                  description: The R2 bucket name for r2, the website URL for web-crawler, or the D1 database ID (UUID) for d1. A d1 instance also requires token_id, and the token needs D1 Read permission. The d1 database cannot be changed after creation.
                   type: string
                   nullable: true
                   x-auditable: true
@@ -53213,6 +53496,26 @@ paths:
                   type: object
                   nullable: true
                   properties:
+                    d1:
+                      description: D1 source configuration. Required when type is d1 and ignored for other types.
+                      type: object
+                      properties:
+                        query:
+                          description: Read-only SELECT query run against the D1 database. It must return an `id` column that uniquely identifies each row. Columns named `title` and `content` set the document title and body, and up to 5 `meta_*` columns become filterable custom metadata; any other column is indexed as a labelled field. Every sync reads the full result, up to 100,000 rows, with the instance's token, and those reads count against your D1 usage. Leading and trailing whitespace is trimmed before the query is stored.
+                          maxLength: 10000
+                          minLength: 1
+                          type: string
+                        template:
+                          description: 'How each row is rendered into the indexed document: labelled renders the title, the labelled fields, then the content; content_only renders the title and content (labelled fields only when there is no content); key_value renders every column as name: value; json renders every column as a JSON object.'
+                          type: string
+                          default: labelled
+                          enum:
+                            - labelled
+                            - content_only
+                            - key_value
+                            - json
+                      required:
+                        - query
                     exclude_items:
                       description: 'List of path patterns to exclude. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /admin/** matches /admin/users and /admin/settings/advanced). Most accounts have a limit of 10 rules; contact support to raise it.'
                       type: array
@@ -53779,6 +54082,7 @@ paths:
                         x-auditable: true
                         x-stainless-terraform-configurability: computed_optional
                       source:
+                        description: The R2 bucket name for r2, the website URL for web-crawler, or the D1 database ID (UUID) for d1. A d1 instance also requires token_id, and the token needs D1 Read permission. The d1 database cannot be changed after creation.
                         type: string
                         nullable: true
                         x-auditable: true
@@ -53786,6 +54090,26 @@ paths:
                         type: object
                         nullable: true
                         properties:
+                          d1:
+                            description: D1 source configuration. Required when type is d1 and ignored for other types.
+                            type: object
+                            properties:
+                              query:
+                                description: Read-only SELECT query run against the D1 database. It must return an `id` column that uniquely identifies each row. Columns named `title` and `content` set the document title and body, and up to 5 `meta_*` columns become filterable custom metadata; any other column is indexed as a labelled field. Every sync reads the full result, up to 100,000 rows, with the instance's token, and those reads count against your D1 usage. Leading and trailing whitespace is trimmed before the query is stored.
+                                maxLength: 10000
+                                minLength: 1
+                                type: string
+                              template:
+                                description: 'How each row is rendered into the indexed document: labelled renders the title, the labelled fields, then the content; content_only renders the title and content (labelled fields only when there is no content); key_value renders every column as name: value; json renders every column as a JSON object.'
+                                type: string
+                                default: labelled
+                                enum:
+                                  - labelled
+                                  - content_only
+                                  - key_value
+                                  - json
+                            required:
+                              - query
                           exclude_items:
                             description: 'List of path patterns to exclude. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /admin/** matches /admin/users and /admin/settings/advanced). Most accounts have a limit of 10 rules; contact support to raise it.'
                             type: array
@@ -53968,11 +54292,12 @@ paths:
                         x-auditable: true
                         x-stainless-terraform-configurability: computed_optional
                       type:
-                        description: Source type. When omitted or null with a non-blank source, HTTP(S) URLs infer web-crawler and existing R2 bucket names infer r2. A missing or blank source without a type uses managed upload-only storage.
+                        description: Source type. When omitted or null with a non-blank source, HTTP(S) URLs infer web-crawler and existing R2 bucket names infer r2. A missing or blank source without a type uses managed upload-only storage. d1 is never inferred; it indexes the rows returned by source_params.d1.query.
                         type: string
                         enum:
                           - r2
                           - web-crawler
+                          - d1
                           - null
                         nullable: true
                         x-auditable: true
@@ -54065,15 +54390,14 @@ paths:
                   - success
                   - errors
         '503':
-          description: Ai search temporarily unavailable.
+          description: Unable to connect to ai search; Ai search temporarily unavailable.
           headers:
             Retry-After:
               description: Seconds to wait before retrying.
-              required: true
               schema:
                 description: Seconds to wait before retrying.
                 type: string
-                example: '1'
+                example: '10'
           content:
             application/json:
               schema:
@@ -54082,15 +54406,29 @@ paths:
                   errors:
                     type: array
                     items:
-                      properties:
-                        code:
-                          type: number
-                        message:
-                          type: string
-                      required:
-                        - code
-                        - message
-                      type: object
+                      anyOf:
+                        - properties:
+                            code:
+                              type: number
+                              enum:
+                                - 7017
+                            message:
+                              type: string
+                          required:
+                            - code
+                            - message
+                          type: object
+                        - properties:
+                            code:
+                              type: number
+                              enum:
+                                - 7125
+                            message:
+                              type: string
+                          required:
+                            - code
+                            - message
+                          type: object
                   success:
                     type: boolean
                     enum:
