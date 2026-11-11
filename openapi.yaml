@@ -472000,9 +472000,15 @@ components:
         account:
           $ref: '#/components/schemas/nsc_AccountTag'
         bgp:
-          $ref: '#/components/schemas/nsc_BgpControl'
+          description: BGP Control settings. For non-GCP CNIs, null disables BGP Control. GCP CNIs require BGP configuration, so explicit null is rejected; omission preserves stored settings or repairs missing settings with the Google defaults.
+          allOf:
+            - $ref: '#/components/schemas/nsc_BgpControl'
+          nullable: true
         bgp_mode:
-          $ref: '#/components/schemas/nsc_BgpMode'
+          description: Controls the customer-facing route exchange behavior. Omitting this field during an update preserves the current mode. When enabling BGP on a BGP-disabled CNI, an omitted or null mode defaults to AdvertiseOnly. Otherwise, null clears the explicitly selected mode.
+          allOf:
+            - $ref: '#/components/schemas/nsc_BgpMode'
+          nullable: true
         cust_ip:
           description: |-
             Customer end of the point-to-point link
@@ -472037,7 +472043,10 @@ components:
         account:
           $ref: '#/components/schemas/nsc_AccountTag'
         bgp:
-          $ref: '#/components/schemas/nsc_BgpControl'
+          description: BGP Control settings. For GCP CNIs, omitting this field or setting it to null enables BGP with the Google ASN and AdvertiseOnly mode by default. For other CNI types, omission or null leaves BGP disabled.
+          allOf:
+            - $ref: '#/components/schemas/nsc_BgpControl'
+          nullable: true
         interconnect:
           type: string
         magic:
@@ -472113,7 +472122,7 @@ components:
             - virtual_port_reservation_id
             - region
           type: object
-      title: GcpPartner
+      title: Interconnect_GcpPartner_Body
     nsc_Interconnect_Physical_Body:
       type: object
       allOf:
@@ -472149,7 +472158,7 @@ components:
             - speed
             - facility
           type: object
-      title: Physical
+      title: Interconnect_Physical_Body
     nsc_InterconnectCreate:
       type: object
       discriminator:
@@ -472182,7 +472191,7 @@ components:
             - pairing_key
             - bandwidth
           type: object
-      title: GcpPartner
+      title: InterconnectCreate_GcpPartner_Body
     nsc_InterconnectCreate_Physical_Body:
       type: object
       allOf:
@@ -472205,7 +472214,7 @@ components:
           required:
             - slot_id
           type: object
-      title: Physical
+      title: InterconnectCreate_Physical_Body
     nsc_InterconnectList:
       type: object
       properties:
