@@ -127153,6 +127153,98 @@
       }
     },
     "/accounts/{account_id}/cfd_tunnel/{tunnel_id}/configurations": {
+      "delete": {
+        "operationId": "cloudflare-tunnel-configuration-delete-configuration",
+        "summary": "Reset Tunnel configuration",
+        "description": "Resets a remotely managed Cloudflare Tunnel to an empty configuration, removing ingress rules and origin request settings. The tunnel remains remotely managed, and private network routes continue to determine WARP routing. Publishes a new configuration version when the configuration changes. Repeated requests succeed without creating additional versions. If the tunnel or configuration is absent, returns a null result. Locally managed tunnels cannot be reset with this endpoint.",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/tunnel_identifier"
+            }
+          },
+          {
+            "name": "tunnel_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/tunnel_tunnel_id-2"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Reset configuration response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/tunnel_api-response-single-2"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "oneOf": [
+                            {
+                              "$ref": "#/components/schemas/tunnel_configuration"
+                            },
+                            {
+                              "enum": [
+                                null
+                              ],
+                              "nullable": true,
+                              "type": "object"
+                            }
+                          ]
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Reset configuration response failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/tunnel_api-response-common-failure-2"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": []
+          },
+          {
+            "api_token": []
+          },
+          {
+            "user_service_key": []
+          }
+        ],
+        "tags": [
+          "Cloudflare Tunnel Configuration"
+        ],
+        "x-api-token-group": [
+          "Cloudflare One Connectors Write",
+          "Cloudflare One Connector: cloudflared Write",
+          "Cloudflare Tunnel Write"
+        ],
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "tunnels.config",
+        "x-fern-sdk-method-name": "delete",
+        "x-forge-require-confirmation": "This operation resets the tunnel configuration, removing ingress rules and origin request settings."
+      },
       "get": {
         "operationId": "cloudflare-tunnel-configuration-get-configuration",
         "summary": "Get Tunnel configuration",
@@ -383273,6 +383365,257 @@
         "x-fern-sdk-group-name": "zero-trust.connectivity-settings",
         "x-fern-sdk-method-name": "edit"
       }
+    },
+    "/accounts/{account_id}/zerotrust/region": {
+      "delete": {
+        "operationId": "zero-trust-accounts-delete-region",
+        "summary": "Clear active region",
+        "description": "Clears the account's active region. This operation is idempotent. Clearing an account without an active region returns success with a `null` `region_key`.",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/tunnel_account_id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Clear active region response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/tunnel_active_account_region_response_single"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Clear active region response failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/tunnel_api-response-common-failure"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": []
+          },
+          {
+            "api_token": []
+          },
+          {
+            "user_service_key": []
+          }
+        ],
+        "tags": [
+          "Zero Trust Account Region"
+        ],
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "zero-trust.region",
+        "x-fern-sdk-method-name": "delete",
+        "x-forge-require-confirmation": "This operation removes the account's active region for Cloudflare One."
+      },
+      "get": {
+        "operationId": "zero-trust-accounts-get-region",
+        "summary": "Get active region",
+        "description": "Gets the region that the account is using for Cloudflare One. `region_key` is `null` if the account has not selected a region.",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/tunnel_account_id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get active region response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/tunnel_active_account_region_response_single"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Get active region response failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/tunnel_api-response-common-failure"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": []
+          },
+          {
+            "api_token": []
+          },
+          {
+            "user_service_key": []
+          }
+        ],
+        "tags": [
+          "Zero Trust Account Region"
+        ],
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "zero-trust.region",
+        "x-fern-sdk-method-name": "get"
+      },
+      "put": {
+        "operationId": "zero-trust-accounts-update-region",
+        "summary": "Select region",
+        "description": "Selects the region that the account uses for Cloudflare One. The region must be one of the account's available regions. Selecting the active region again has no effect.",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/tunnel_account_id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/tunnel_put_account_region_body"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Select region response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/tunnel_active_account_region_response_single"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Select region response failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/tunnel_api-response-common-failure"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": []
+          },
+          {
+            "api_token": []
+          },
+          {
+            "user_service_key": []
+          }
+        ],
+        "tags": [
+          "Zero Trust Account Region"
+        ],
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "zero-trust.region",
+        "x-fern-sdk-method-name": "update"
+      },
+      "servers": [
+        {
+          "url": "https://api.cloudflare.com/client/v4"
+        },
+        {
+          "url": "https://api.staging.cloudflare.com/client/v4"
+        }
+      ]
+    },
+    "/accounts/{account_id}/zerotrust/regions": {
+      "get": {
+        "operationId": "zero-trust-accounts-list-regions",
+        "summary": "List available regions",
+        "description": "Lists the regions that the account can select for Cloudflare One. Returns an empty list if no regions are available to the account.",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/tunnel_account_id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List available regions response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/tunnel_account_region_response_collection"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "List available regions response failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/tunnel_api-response-common-failure"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": []
+          },
+          {
+            "api_token": []
+          },
+          {
+            "user_service_key": []
+          }
+        ],
+        "tags": [
+          "Zero Trust Account Region"
+        ],
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "zero-trust.regions",
+        "x-fern-sdk-method-name": "list"
+      },
+      "servers": [
+        {
+          "url": "https://api.cloudflare.com/client/v4"
+        },
+        {
+          "url": "https://api.staging.cloudflare.com/client/v4"
+        }
+      ]
     },
     "/accounts/{account_id}/zerotrust/routes/hostname": {
       "get": {
@@ -744758,6 +745101,73 @@
         "readOnly": true,
         "x-auditable": true
       },
+      "tunnel_account_region": {
+        "type": "object",
+        "properties": {
+          "region_key": {
+            "$ref": "#/components/schemas/tunnel_region_key"
+          }
+        },
+        "required": [
+          "region_key"
+        ]
+      },
+      "tunnel_account_region_response_collection": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/tunnel_api-response-common"
+          },
+          {
+            "properties": {
+              "result": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/tunnel_account_region"
+                }
+              }
+            },
+            "required": [
+              "result"
+            ],
+            "type": "object"
+          }
+        ]
+      },
+      "tunnel_active_account_region": {
+        "type": "object",
+        "properties": {
+          "region_key": {
+            "description": "The key of the account's active Data Localization Suite region, or `null` if the account has not selected a region.",
+            "type": "string",
+            "example": "eu",
+            "minLength": 1,
+            "nullable": true,
+            "pattern": "\\S",
+            "x-auditable": true
+          }
+        },
+        "required": [
+          "region_key"
+        ]
+      },
+      "tunnel_active_account_region_response_single": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/tunnel_api-response-common"
+          },
+          {
+            "properties": {
+              "result": {
+                "$ref": "#/components/schemas/tunnel_active_account_region"
+              }
+            },
+            "required": [
+              "result"
+            ],
+            "type": "object"
+          }
+        ]
+      },
       "tunnel_address_family": {
         "description": "IP address family, either `v4` (IPv4) or `v6` (IPv6)",
         "type": "string",
@@ -745773,6 +746183,26 @@
         "type": "number",
         "maximum": 1000,
         "minimum": 1
+      },
+      "tunnel_put_account_region_body": {
+        "type": "object",
+        "properties": {
+          "region_key": {
+            "$ref": "#/components/schemas/tunnel_region_key"
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "region_key"
+        ]
+      },
+      "tunnel_region_key": {
+        "description": "The key of a Data Localization Suite region.",
+        "type": "string",
+        "example": "eu",
+        "minLength": 1,
+        "pattern": "\\S",
+        "x-auditable": true
       },
       "tunnel_remote_config": {
         "description": "If `true`, the tunnel can be configured remotely from the Zero Trust dashboard. If `false`, the tunnel must be configured locally on the origin machine.",
