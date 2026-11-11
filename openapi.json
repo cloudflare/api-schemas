@@ -239846,6 +239846,2720 @@
         ]
       }
     },
+    "/accounts/{account_id}/images/v1": {
+      "get": {
+        "operationId": "cloudflare-images-list-images",
+        "summary": "List images",
+        "description": "List up to 100 images with one request. Use the optional parameters below to get a specific range of images.",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/images_account_identifier"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "description": "Page number of paginated results.",
+              "type": "number",
+              "default": 1,
+              "minimum": 1
+            }
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "schema": {
+              "description": "Number of items per page.",
+              "type": "number",
+              "default": 1000,
+              "maximum": 10000,
+              "minimum": 10
+            }
+          },
+          {
+            "name": "creator",
+            "in": "query",
+            "schema": {
+              "description": "Internal user ID set within the creator field. Setting to empty string \"\" will return images where creator field is not set",
+              "type": "string",
+              "nullable": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List images response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/images_images_list_response"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "List images response failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/images_images_list_response"
+                    },
+                    {
+                      "$ref": "#/components/schemas/images_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "deprecated": true,
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Cloudflare Images"
+        ],
+        "x-cfOwnership": "images",
+        "x-fern-availability": "deprecated",
+        "x-fern-ignore": true,
+        "x-fern-sdk-group-name": "images.v1",
+        "x-fern-sdk-method-name": "list",
+        "x-forge-oauth-scopes": [
+          "images.metadata_read",
+          "images.read",
+          "images.write"
+        ]
+      },
+      "post": {
+        "operationId": "cloudflare-images-upload-an-image-via-url",
+        "summary": "Upload an image",
+        "description": "Upload an image to CF Images. Images up to 10 Megabytes can be uploaded using a\nsingle HTTP POST (multipart/form-data) request by sending an image file or\npassing a URL accessible to the API.\n",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/images_account_identifier"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/images_image_basic_upload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Upload an image response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/images_image_response_single"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Upload an image response failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/images_image_response_single"
+                    },
+                    {
+                      "$ref": "#/components/schemas/images_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Cloudflare Images"
+        ],
+        "x-cfOwnership": "images",
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "images",
+        "x-fern-sdk-method-name": "create",
+        "x-forge-oauth-scopes": [
+          "images.write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/images/v1/direct_upload": {
+      "post": {
+        "operationId": "cloudflare-images-create-authenticated-direct-upload-url-v-1",
+        "summary": "Create authenticated direct upload URL V1",
+        "description": "Direct uploads allow users to upload images without API keys. A common use\ncase are web apps, client-side applications, or mobile devices where users\nupload content directly to Cloudflare Images. This method creates a one-time\nupload URL. Use the V2 endpoint for additional features such as custom IDs and\nmetadata.\n",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/images_account_identifier"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/images_image_direct_upload_request_v1"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Create authenticated direct upload URL V1 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/images_image_direct_upload_response_v1"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Create authenticated direct upload URL V1 response failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/images_image_direct_upload_response_v1"
+                    },
+                    {
+                      "$ref": "#/components/schemas/images_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "deprecated": true,
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Cloudflare Images"
+        ],
+        "x-cfOwnership": "images",
+        "x-fern-availability": "deprecated",
+        "x-fern-ignore": true,
+        "x-fern-sdk-group-name": "images.v1.direct-uploads",
+        "x-fern-sdk-method-name": "create",
+        "x-forge-oauth-scopes": [
+          "images.write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/images/v1/keys": {
+      "get": {
+        "operationId": "cloudflare-images-keys-list-signing-keys",
+        "summary": "List Signing Keys",
+        "description": "List your CF Images signing keys.",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/images_account_identifier"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List Signing Keys response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/images_image_key_response_collection"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "List Signing Keys response failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/images_image_key_response_collection"
+                    },
+                    {
+                      "$ref": "#/components/schemas/images_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Cloudflare Images Keys"
+        ],
+        "x-cfOwnership": "images",
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "images.keys",
+        "x-fern-sdk-method-name": "list",
+        "x-forge-oauth-scopes": [
+          "images.metadata_read",
+          "images.read",
+          "images.write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/images/v1/keys/{signing_key_name}": {
+      "delete": {
+        "operationId": "cloudflare-images-keys-delete-signing-key",
+        "summary": "Delete Signing Key",
+        "description": "Delete a CF Images signing key with specified name. Returns all keys available.\nWhen the last key is removed, a new default signing key will be generated.\n",
+        "parameters": [
+          {
+            "name": "signing_key_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/images_signing_key_identifier"
+            }
+          },
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/images_account_identifier"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Delete Signing Key response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/images_image_key_response_collection"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Delete Signing Key response failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/images_image_key_response_collection"
+                    },
+                    {
+                      "$ref": "#/components/schemas/images_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Cloudflare Images Keys"
+        ],
+        "x-cfOwnership": "images",
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "images.keys",
+        "x-fern-sdk-method-name": "delete",
+        "x-forge-require-confirmation": "This operation will delete this signing key. This will invalidate any URLs that are signed with this key."
+      },
+      "put": {
+        "operationId": "cloudflare-images-keys-add-signing-key",
+        "summary": "Create a new Signing Key",
+        "description": "Create a new CF Images signing key with specified name. Returns all keys available.",
+        "parameters": [
+          {
+            "name": "signing_key_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/images_signing_key_identifier"
+            }
+          },
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/images_account_identifier"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Add Signing Key response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/images_image_key_response_collection"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Add Signing Key response failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/images_image_key_response_collection"
+                    },
+                    {
+                      "$ref": "#/components/schemas/images_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Cloudflare Images Keys"
+        ],
+        "x-cfOwnership": "images",
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "images.keys",
+        "x-fern-sdk-method-name": "create"
+      }
+    },
+    "/accounts/{account_id}/images/v1/stats": {
+      "get": {
+        "operationId": "cloudflare-images-images-usage-statistics",
+        "summary": "Images usage statistics",
+        "description": "Fetch image statistics details for Cloudflare Images. The returned statistics detail storage usage, including the current image count vs this account's allowance.",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/images_account_identifier"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Images usage statistics response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/images_images_stats_response"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Images usage statistics response failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/images_images_stats_response"
+                    },
+                    {
+                      "$ref": "#/components/schemas/images_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Cloudflare Images"
+        ],
+        "x-cfOwnership": "images",
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "images",
+        "x-fern-sdk-method-name": "stats",
+        "x-forge-oauth-scopes": [
+          "images.metadata_read",
+          "images.read",
+          "images.write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/images/v1/variants": {
+      "get": {
+        "operationId": "cloudflare-images-variants-list-variants",
+        "summary": "List variants",
+        "description": "List existing CF Images variants.",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/images_account_identifier"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List variants response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/images_image_variant_list_response"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "List variants response failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/images_image_variant_list_response"
+                    },
+                    {
+                      "$ref": "#/components/schemas/images_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Cloudflare Images Variants"
+        ],
+        "x-cfOwnership": "images",
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "images.variants",
+        "x-fern-sdk-method-name": "list",
+        "x-forge-oauth-scopes": [
+          "images.metadata_read",
+          "images.read",
+          "images.write"
+        ]
+      },
+      "post": {
+        "operationId": "cloudflare-images-variants-create-a-variant",
+        "summary": "Create a variant",
+        "description": "Create a CF Images variant that allows you to resize images for different use cases.",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/images_account_identifier"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/images_image_variant_definition"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Create a variant response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/images_image_variant_simple_response"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Create a variant response failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/images_image_variant_simple_response"
+                    },
+                    {
+                      "$ref": "#/components/schemas/images_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Cloudflare Images Variants"
+        ],
+        "x-cfOwnership": "images",
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "images.variants",
+        "x-fern-sdk-method-name": "create",
+        "x-forge-oauth-scopes": [
+          "images.write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/images/v1/variants/{variant_id}": {
+      "delete": {
+        "operationId": "cloudflare-images-variants-delete-a-variant",
+        "summary": "Delete a variant",
+        "description": "Delete a CF Images variant. This will purge the cache for all images associated with the variant.",
+        "parameters": [
+          {
+            "name": "variant_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/images_image_variant_identifier"
+            }
+          },
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/images_account_identifier"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Delete a variant response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/images_deleted_response"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Delete a variant response failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/images_deleted_response"
+                    },
+                    {
+                      "$ref": "#/components/schemas/images_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Cloudflare Images Variants"
+        ],
+        "x-cfOwnership": "images",
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "images.variants",
+        "x-fern-sdk-method-name": "delete",
+        "x-forge-oauth-scopes": [
+          "images.write"
+        ],
+        "x-forge-require-confirmation": "This operation will delete this variant."
+      },
+      "get": {
+        "operationId": "cloudflare-images-variants-variant-details",
+        "summary": "Variant details",
+        "description": "Fetch details for a CF Images variant.",
+        "parameters": [
+          {
+            "name": "variant_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/images_image_variant_identifier"
+            }
+          },
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/images_account_identifier"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Variant details response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/images_image_variant_simple_response"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Variant details response failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/images_image_variant_simple_response"
+                    },
+                    {
+                      "$ref": "#/components/schemas/images_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Cloudflare Images Variants"
+        ],
+        "x-cfOwnership": "images",
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "images.variants",
+        "x-fern-sdk-method-name": "get",
+        "x-forge-oauth-scopes": [
+          "images.metadata_read",
+          "images.read",
+          "images.write"
+        ]
+      },
+      "patch": {
+        "operationId": "cloudflare-images-variants-update-a-variant",
+        "summary": "Update a variant",
+        "description": "Update a CF Images variant. This will purge the cache for all images associated with the variant.",
+        "parameters": [
+          {
+            "name": "variant_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/images_image_variant_identifier"
+            }
+          },
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/images_account_identifier"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/images_image_variant_patch_request"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Update a variant response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/images_image_variant_simple_response"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Update a variant response failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/images_image_variant_simple_response"
+                    },
+                    {
+                      "$ref": "#/components/schemas/images_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Cloudflare Images Variants"
+        ],
+        "x-cfOwnership": "images",
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "images.variants",
+        "x-fern-sdk-method-name": "edit",
+        "x-forge-oauth-scopes": [
+          "images.write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/images/v1/variants/{variant_id}/flat": {
+      "get": {
+        "operationId": "cloudflare-images-variants-variant-details-flat",
+        "summary": "Variant details (flat)",
+        "description": "Fetch details for a single variant with properties at the top level of the result.",
+        "parameters": [
+          {
+            "name": "variant_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/images_image_variant_identifier"
+            }
+          },
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/images_account_identifier"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Variant details flat response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/images_image_variant_flat_response"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Variant details flat response failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/images_image_variant_flat_response"
+                    },
+                    {
+                      "$ref": "#/components/schemas/images_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "deprecated": true,
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Cloudflare Images Variants"
+        ],
+        "x-cfOwnership": "images",
+        "x-fern-availability": "deprecated",
+        "x-fern-ignore": true,
+        "x-fern-sdk-group-name": "images.v1.variants-flat",
+        "x-fern-sdk-method-name": "get",
+        "x-forge-oauth-scopes": [
+          "images.metadata_read",
+          "images.read",
+          "images.write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/images/v1/{image_id}": {
+      "delete": {
+        "operationId": "cloudflare-images-delete-image",
+        "summary": "Delete image",
+        "description": "Delete an image on Cloudflare Images. On success, all copies of the image are deleted and purged from cache.",
+        "parameters": [
+          {
+            "name": "image_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/images_image_identifier"
+            }
+          },
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/images_account_identifier"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Delete image response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/images_deleted_response"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Delete image response failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/images_deleted_response"
+                    },
+                    {
+                      "$ref": "#/components/schemas/images_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Cloudflare Images"
+        ],
+        "x-cfOwnership": "images",
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "images",
+        "x-fern-sdk-method-name": "delete",
+        "x-forge-oauth-scopes": [
+          "images.write"
+        ],
+        "x-forge-require-confirmation": "This operation will delete this image."
+      },
+      "get": {
+        "operationId": "cloudflare-images-image-details",
+        "summary": "Image details",
+        "description": "Fetch details for a CF Images image.",
+        "parameters": [
+          {
+            "name": "image_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/images_image_identifier"
+            }
+          },
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/images_account_identifier"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Image details response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/images_image_response_single"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Image details response failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/images_image_response_single"
+                    },
+                    {
+                      "$ref": "#/components/schemas/images_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Cloudflare Images"
+        ],
+        "x-cfOwnership": "images",
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "images",
+        "x-fern-sdk-method-name": "get",
+        "x-forge-oauth-scopes": [
+          "images.metadata_read",
+          "images.read",
+          "images.write"
+        ]
+      },
+      "patch": {
+        "operationId": "cloudflare-images-update-image",
+        "summary": "Update image",
+        "description": "Update a CF Images image's metadata, creator, or access control. On access control change, all copies of the image are purged from cache.",
+        "parameters": [
+          {
+            "name": "image_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/images_image_identifier"
+            }
+          },
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/images_account_identifier"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/images_image_patch_request"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Update image response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/images_image_response_single"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Update image response failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/images_image_response_single"
+                    },
+                    {
+                      "$ref": "#/components/schemas/images_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Cloudflare Images"
+        ],
+        "x-cfOwnership": "images",
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "images",
+        "x-fern-sdk-method-name": "edit",
+        "x-forge-oauth-scopes": [
+          "images.write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/images/v1/{image_id}/blob": {
+      "get": {
+        "operationId": "cloudflare-images-base-image",
+        "summary": "Download image",
+        "description": "Download an image from CF Images. For most images this will be the originally uploaded file. For larger images it can be a near-lossless version of the original.",
+        "parameters": [
+          {
+            "name": "image_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/images_image_identifier"
+            }
+          },
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/images_account_identifier"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Base image response. Returns uploaded image data.",
+            "content": {
+              "image/*": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Base image response failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/images_image_response_blob"
+                    },
+                    {
+                      "$ref": "#/components/schemas/images_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Cloudflare Images"
+        ],
+        "x-cfOwnership": "images",
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "images",
+        "x-fern-sdk-method-name": "get-blob",
+        "x-forge-oauth-scopes": [
+          "images.metadata_read",
+          "images.read",
+          "images.write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/images/v2": {
+      "get": {
+        "operationId": "cloudflare-images-list-images-v2",
+        "summary": "List images V2",
+        "description": "List up to 10000 images from CF Images, with up to 1000 results per page. Use the optional parameters below to get a specific range of images.\nPagination is supported via continuation_token.\n\n**Metadata Filtering (Optional):**\n\nYou can optionally filter images by custom metadata fields using the `meta.<field>[<operator>]=<value>` syntax.\n\n**Supported Operators:**\n- `eq` / `eq:string` / `eq:number` / `eq:boolean` - Exact match\n- `gt` / `gt:number` - Greater than (number only)\n- `gte` / `gte:number` - Greater than or equal (number only)\n- `lt` / `lt:number` - Less than (number only)\n- `lte` / `lte:number` - Less than or equal (number only)\n- `in` / `in:string` / `in:number` - Match any value in list (pipe-separated)\n\n**Metadata Filter Constraints:**\n- Maximum 5 metadata filters per request\n- Maximum 5 levels of nesting (e.g., `meta.first.second.third.fourth.fifth`)\n- Maximum 10 elements for list operators (`in`)\n- Supports string, number, and boolean value types\n- Range operators (`gt`, `gte`, `lt`, `lte`) only accept numeric values\n\n**Filter Consistency:**\nFilters are combined with AND logic. The system does not validate whether filter combinations are logically consistent. For example, `meta.priority[eq:number]=5&meta.priority[lte:number]=3` will return zero results because no value can satisfy both conditions simultaneously. It is the caller's responsibility to ensure filter combinations make sense.\n\n**Examples:**\n```\n# List all images\n/images/v2\n\n# Filter by metadata [eq]\n/images/v2?meta.status[eq:string]=active\n\n# Filter by metadata [in]\n/images/v2?meta.status[in]=pending|deleted|flagged\n\n# Filter by metadata [in:number]\n/images/v2?meta.ratings[in:number]=4|5\n\n# Filter by metadata range [gte:number]\n/images/v2?meta.priority[gte:number]=1\n\n# Filter by bounded range\n/images/v2?meta.priority[gte:number]=1&meta.priority[lte:number]=5\n\n# Filter by nested metadata\n/images/v2?meta.region.name[eq]=eu-west\n\n# Combine metadata filters with creator\n/images/v2?meta.status[eq]=active&creator=user123\n\n# Multiple metadata filters (AND logic)\n/images/v2?meta.status[eq]=active&meta.priority[eq:number]=5\n```\n",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/images_account_identifier"
+            }
+          },
+          {
+            "name": "continuation_token",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/images_images_list_continuation_token"
+            }
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "schema": {
+              "description": "Number of items per page",
+              "type": "number",
+              "default": 1000,
+              "maximum": 10000,
+              "minimum": 10
+            }
+          },
+          {
+            "name": "sort_order",
+            "in": "query",
+            "schema": {
+              "description": "Sorting order by upload time",
+              "type": "string",
+              "default": "desc",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          },
+          {
+            "name": "creator",
+            "in": "query",
+            "schema": {
+              "description": "Internal user ID set within the creator field. Setting to empty string \"\" will return images where creator field is not set",
+              "type": "string",
+              "nullable": true
+            }
+          },
+          {
+            "name": "meta.<field>[<operator>]",
+            "in": "query",
+            "description": "Optional metadata filter(s). Multiple filters can be combined with AND logic.\n\n**Operators:**\n- `eq`, `eq:string`, `eq:number`, `eq:boolean` - Exact match\n- `gt`, `gt:number` - Greater than (number only)\n- `gte`, `gte:number` - Greater than or equal (number only)\n- `lt`, `lt:number` - Less than (number only)\n- `lte`, `lte:number` - Less than or equal (number only)\n- `in`, `in:string`, `in:number` - Match any value in pipe-separated list\n\n**Examples:**\n- `meta.status[eq]=active`\n- `meta.priority[eq:number]=5`\n- `meta.enabled[eq:boolean]=true`\n- `meta.priority[gte:number]=1`\n- `meta.score[lt:number]=100`\n- `meta.region[in]=us-east|us-west|eu-west`\n\n**Note:** Filter consistency is not validated. Contradictory filters (e.g., `meta.priority[eq:number]=5&meta.priority[lte:number]=3`) will return zero results.\n",
+            "schema": {
+              "type": "string"
+            },
+            "explode": true,
+            "style": "form"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List images response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/images_images_list_response_v2"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "invalid_operator": {
+                    "summary": "Invalid metadata operator",
+                    "value": {
+                      "errors": [
+                        {
+                          "code": 5400,
+                          "message": "Unsupported metadata filter operator: 'not-eq'"
+                        }
+                      ],
+                      "messages": [],
+                      "result": null,
+                      "success": false
+                    }
+                  },
+                  "too_many_filters": {
+                    "summary": "Too many metadata filters",
+                    "value": {
+                      "errors": [
+                        {
+                          "code": 5400,
+                          "message": "Too many metadata filters: 6 provided, maximum 5 allowed"
+                        }
+                      ],
+                      "messages": [],
+                      "result": null,
+                      "success": false
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/images_api-response-common-failure"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "List images response failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/images_api-response-common-failure"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Cloudflare Images"
+        ],
+        "x-cfOwnership": "images",
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "images",
+        "x-fern-sdk-method-name": "list",
+        "x-forge-oauth-scopes": [
+          "images.metadata_read",
+          "images.read",
+          "images.write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/images/v2/direct_upload": {
+      "post": {
+        "operationId": "cloudflare-images-create-authenticated-direct-upload-url-v-2",
+        "summary": "Create authenticated direct upload URL V2",
+        "description": "Direct uploads allow users to upload images without API keys. A common use case are web apps, client-side applications, or mobile devices where users upload content directly to Cloudflare Images. This method creates a draft record for a future image. It returns an upload URL and an image identifier. To verify if the image itself has been uploaded, send an image details request (accounts/:account_identifier/images/v1/:identifier), and check that the `draft: true` property is not present.",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/images_account_identifier"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/images_image_direct_upload_request_v2"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Create authenticated direct upload URL V2 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/images_image_direct_upload_response_v2"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Create authenticated direct upload URL V2 response failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/images_image_direct_upload_response_v2"
+                    },
+                    {
+                      "$ref": "#/components/schemas/images_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Cloudflare Images"
+        ],
+        "x-cfOwnership": "images",
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "images",
+        "x-fern-sdk-method-name": "direct-upload",
+        "x-forge-oauth-scopes": [
+          "images.write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/images/v2/metadata/keys": {
+      "get": {
+        "operationId": "cloudflare-images-list-metadata-keys",
+        "summary": "List image metadata keys",
+        "description": "Lists filterable metadata keys used by images for an account.",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/images_account_identifier"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Metadata key list response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/images_metadata_keys_response"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Metadata key list response failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/images_api-response-common-failure"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Cloudflare Images"
+        ],
+        "x-cfOwnership": "images",
+        "x-fern-availability": "generally-available",
+        "x-fern-ignore": true,
+        "x-fern-sdk-group-name": "images.metadata.keys",
+        "x-fern-sdk-method-name": "list",
+        "x-forge-oauth-scopes": [
+          "images.metadata_read",
+          "images.read",
+          "images.write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/images/v2/sourcingkit/migrations": {
+      "get": {
+        "operationId": "cloudflare-images-sourcingkit-list-migrations",
+        "summary": "List sourcing kit migrations",
+        "description": "List CF Images imports.",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/images_account_identifier"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "schema": {
+              "description": "Number of items to skip before returning results.",
+              "type": "integer",
+              "default": 0,
+              "minimum": 0
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "description": "Maximum number of items to return.",
+              "type": "integer",
+              "default": 25,
+              "maximum": 100,
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List sourcing kit migrations response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/images_sourcingkit_migration_list_response"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "List sourcing kit migrations response failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/images_sourcingkit_migration_list_response"
+                    },
+                    {
+                      "$ref": "#/components/schemas/images_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Cloudflare Images Sourcing Kit"
+        ],
+        "x-cfOwnership": "images",
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "images.import",
+        "x-fern-sdk-method-name": "list",
+        "x-forge-oauth-scopes": [
+          "images.metadata_read",
+          "images.read",
+          "images.write"
+        ]
+      },
+      "post": {
+        "operationId": "cloudflare-images-sourcingkit-create-migration",
+        "summary": "Create a sourcing kit migration",
+        "description": "Create a pending CF Images import from a configured source.",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/images_account_identifier"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/images_sourcingkit_migration_create_request"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Create sourcing kit migration response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/images_sourcingkit_migration_create_response"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Create sourcing kit migration response failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/images_sourcingkit_migration_create_response"
+                    },
+                    {
+                      "$ref": "#/components/schemas/images_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Cloudflare Images Sourcing Kit"
+        ],
+        "x-cfOwnership": "images",
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "images.import",
+        "x-fern-sdk-method-name": "create",
+        "x-forge-oauth-scopes": [
+          "images.write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/images/v2/sourcingkit/migrations/{migration_id}": {
+      "delete": {
+        "operationId": "cloudflare-images-sourcingkit-delete-migration",
+        "summary": "Delete a sourcing kit migration",
+        "description": "Delete a completed, failed, or aborted CF Images import.",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/images_account_identifier"
+            }
+          },
+          {
+            "name": "migration_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/images_sourcingkit_identifier"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Delete sourcing kit migration response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/images_deleted_response"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Delete sourcing kit migration response failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/images_deleted_response"
+                    },
+                    {
+                      "$ref": "#/components/schemas/images_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Cloudflare Images Sourcing Kit"
+        ],
+        "x-cfOwnership": "images",
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "images.import",
+        "x-fern-sdk-method-name": "delete",
+        "x-forge-oauth-scopes": [
+          "images.write"
+        ],
+        "x-forge-require-confirmation": "This operation will delete this import migration."
+      },
+      "get": {
+        "operationId": "cloudflare-images-sourcingkit-get-migration",
+        "summary": "Get sourcing kit migration",
+        "description": "Get the configuration and status of a CF Images import.",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/images_account_identifier"
+            }
+          },
+          {
+            "name": "migration_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/images_sourcingkit_identifier"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get sourcing kit migration response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/images_sourcingkit_migration_single_response"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Get sourcing kit migration response failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/images_sourcingkit_migration_single_response"
+                    },
+                    {
+                      "$ref": "#/components/schemas/images_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Cloudflare Images Sourcing Kit"
+        ],
+        "x-cfOwnership": "images",
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "images.import",
+        "x-fern-sdk-method-name": "get",
+        "x-forge-oauth-scopes": [
+          "images.metadata_read",
+          "images.read",
+          "images.write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/images/v2/sourcingkit/migrations/{migration_id}/lifecycle": {
+      "get": {
+        "operationId": "cloudflare-images-sourcingkit-get-migration-progress",
+        "summary": "Get migration progress",
+        "description": "Get progress and object counts for a CF Images import.",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/images_account_identifier"
+            }
+          },
+          {
+            "name": "migration_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/images_sourcingkit_identifier"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Migration progress response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/images_sourcingkit_migration_progress_response"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Migration progress response failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/images_sourcingkit_migration_progress_response"
+                    },
+                    {
+                      "$ref": "#/components/schemas/images_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Cloudflare Images Sourcing Kit"
+        ],
+        "x-cfOwnership": "images",
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "images.import",
+        "x-fern-sdk-method-name": "progress",
+        "x-forge-oauth-scopes": [
+          "images.metadata_read",
+          "images.read",
+          "images.write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/images/v2/sourcingkit/migrations/{migration_id}/lifecycle/abort": {
+      "patch": {
+        "operationId": "cloudflare-images-sourcingkit-abort-migration",
+        "summary": "Abort a migration",
+        "description": "Abort a running CF Images import. Already imported images will remain.",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/images_account_identifier"
+            }
+          },
+          {
+            "name": "migration_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/images_sourcingkit_identifier"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Abort migration response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/images_sourcingkit_migration_single_response"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Abort migration response failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/images_api-response-common-failure"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Cloudflare Images Sourcing Kit"
+        ],
+        "x-cfOwnership": "images",
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "images.import",
+        "x-fern-sdk-method-name": "abort",
+        "x-forge-oauth-scopes": [
+          "images.write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/images/v2/sourcingkit/migrations/{migration_id}/lifecycle/start": {
+      "patch": {
+        "operationId": "cloudflare-images-sourcingkit-start-migration",
+        "summary": "Start a migration",
+        "description": "Start a pending CF Images import.",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/images_account_identifier"
+            }
+          },
+          {
+            "name": "migration_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/images_sourcingkit_identifier"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Start migration response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/images_sourcingkit_migration_single_response"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Start migration response failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/images_api-response-common-failure"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Cloudflare Images Sourcing Kit"
+        ],
+        "x-cfOwnership": "images",
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "images.import",
+        "x-fern-sdk-method-name": "start",
+        "x-forge-oauth-scopes": [
+          "images.write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/images/v2/sourcingkit/migrations/{migration_id}/logs": {
+      "get": {
+        "operationId": "cloudflare-images-sourcingkit-list-migration-logs",
+        "summary": "List migration logs",
+        "description": "List log entries for a CF Images import.",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/images_account_identifier"
+            }
+          },
+          {
+            "name": "migration_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/images_sourcingkit_identifier"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "schema": {
+              "description": "Number of items to skip before returning results.",
+              "type": "integer",
+              "default": 0,
+              "minimum": 0
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "description": "Maximum number of items to return.",
+              "type": "integer",
+              "default": 25,
+              "maximum": 100,
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List migration logs response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/images_sourcingkit_migration_log_list_response"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "List migration logs response failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/images_sourcingkit_migration_log_list_response"
+                    },
+                    {
+                      "$ref": "#/components/schemas/images_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Cloudflare Images Sourcing Kit"
+        ],
+        "x-cfOwnership": "images",
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "images.import",
+        "x-fern-sdk-method-name": "logs",
+        "x-forge-oauth-scopes": [
+          "images.metadata_read",
+          "images.read",
+          "images.write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/images/v2/sourcingkit/sources": {
+      "get": {
+        "operationId": "cloudflare-images-sourcingkit-list-sources",
+        "summary": "List sourcing kit sources",
+        "description": "List sources configured for CF Images imports.",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/images_account_identifier"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "schema": {
+              "description": "Number of items to skip before returning results.",
+              "type": "integer",
+              "default": 0,
+              "minimum": 0
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "description": "Maximum number of items to return.",
+              "type": "integer",
+              "default": 25,
+              "maximum": 100,
+              "minimum": 1
+            }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "schema": {
+              "description": "Filter sources by name (partial match).",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List sourcing kit sources response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/images_sourcingkit_source_list_response"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "List sourcing kit sources response failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/images_sourcingkit_source_list_response"
+                    },
+                    {
+                      "$ref": "#/components/schemas/images_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Cloudflare Images Sourcing Kit"
+        ],
+        "x-cfOwnership": "images",
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "images.import.sources",
+        "x-fern-sdk-method-name": "list",
+        "x-forge-oauth-scopes": [
+          "images.metadata_read",
+          "images.read",
+          "images.write"
+        ]
+      },
+      "post": {
+        "operationId": "cloudflare-images-sourcingkit-create-source",
+        "summary": "Create a sourcing kit source",
+        "description": "Configure an S3 source for CF Images imports.",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/images_account_identifier"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/images_sourcingkit_source_create_request"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Create sourcing kit source response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/images_sourcingkit_source_create_response"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Create sourcing kit source response failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/images_sourcingkit_source_create_response"
+                    },
+                    {
+                      "$ref": "#/components/schemas/images_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Cloudflare Images Sourcing Kit"
+        ],
+        "x-cfOwnership": "images",
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "images.import.sources",
+        "x-fern-sdk-method-name": "create",
+        "x-forge-oauth-scopes": [
+          "images.write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/images/v2/sourcingkit/sources/connectivity-precheck": {
+      "post": {
+        "operationId": "cloudflare-images-sourcingkit-precheck-source-connectivity",
+        "summary": "Precheck source connectivity",
+        "description": "Check S3 credentials without saving a source.",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/images_account_identifier"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/images_sourcingkit_connectivity_precheck_request"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Connectivity precheck response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/images_sourcingkit_connectivity_check_response"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Connectivity precheck response failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/images_sourcingkit_connectivity_check_response"
+                    },
+                    {
+                      "$ref": "#/components/schemas/images_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Cloudflare Images Sourcing Kit"
+        ],
+        "x-cfOwnership": "images",
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "images.import.sources",
+        "x-fern-sdk-method-name": "pre-check",
+        "x-forge-oauth-scopes": [
+          "images.write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/images/v2/sourcingkit/sources/{source_id}": {
+      "delete": {
+        "operationId": "cloudflare-images-sourcingkit-delete-source",
+        "summary": "Delete a sourcing kit source",
+        "description": "Delete a source configured for CF Images imports. Sources used by active imports cannot be deleted.",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/images_account_identifier"
+            }
+          },
+          {
+            "name": "source_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/images_sourcingkit_identifier"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Delete sourcing kit source response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/images_deleted_response"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Delete sourcing kit source response failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/images_deleted_response"
+                    },
+                    {
+                      "$ref": "#/components/schemas/images_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Cloudflare Images Sourcing Kit"
+        ],
+        "x-cfOwnership": "images",
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "images.import.sources",
+        "x-fern-sdk-method-name": "delete",
+        "x-forge-oauth-scopes": [
+          "images.write"
+        ],
+        "x-forge-require-confirmation": "This operation will delete this import source."
+      },
+      "get": {
+        "operationId": "cloudflare-images-sourcingkit-get-source",
+        "summary": "Get sourcing kit source",
+        "description": "Get details of a source configured for CF Images imports.",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/images_account_identifier"
+            }
+          },
+          {
+            "name": "source_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/images_sourcingkit_identifier"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get sourcing kit source response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/images_sourcingkit_source_single_response"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Get sourcing kit source response failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/images_sourcingkit_source_single_response"
+                    },
+                    {
+                      "$ref": "#/components/schemas/images_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Cloudflare Images Sourcing Kit"
+        ],
+        "x-cfOwnership": "images",
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "images.import.sources",
+        "x-fern-sdk-method-name": "get",
+        "x-forge-oauth-scopes": [
+          "images.metadata_read",
+          "images.read",
+          "images.write"
+        ]
+      },
+      "patch": {
+        "operationId": "cloudflare-images-sourcingkit-update-source",
+        "summary": "Update a sourcing kit source",
+        "description": "Rename a source configured for CF Images imports.",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/images_account_identifier"
+            }
+          },
+          {
+            "name": "source_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/images_sourcingkit_identifier"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/images_sourcingkit_source_update_request"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Update sourcing kit source response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/images_sourcingkit_source_update_response"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Update sourcing kit source response failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/images_sourcingkit_source_update_response"
+                    },
+                    {
+                      "$ref": "#/components/schemas/images_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Cloudflare Images Sourcing Kit"
+        ],
+        "x-cfOwnership": "images",
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "images.import.sources",
+        "x-fern-sdk-method-name": "update",
+        "x-forge-oauth-scopes": [
+          "images.write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/images/v2/sourcingkit/sources/{source_id}/connectivity": {
+      "get": {
+        "operationId": "cloudflare-images-sourcingkit-get-source-connectivity",
+        "summary": "Get source connectivity status",
+        "description": "Check whether a source can still access its S3 bucket.",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/images_account_identifier"
+            }
+          },
+          {
+            "name": "source_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/images_sourcingkit_identifier"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Source connectivity status response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/images_sourcingkit_connectivity_check_response"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Source connectivity status response failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/images_sourcingkit_connectivity_check_response"
+                    },
+                    {
+                      "$ref": "#/components/schemas/images_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Cloudflare Images Sourcing Kit"
+        ],
+        "x-cfOwnership": "images",
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "images.import.sources",
+        "x-fern-sdk-method-name": "check",
+        "x-forge-oauth-scopes": [
+          "images.metadata_read",
+          "images.read",
+          "images.write"
+        ]
+      }
+    },
     "/accounts/{account_id}/infrastructure/targets": {
       "get": {
         "operationId": "infra-targets-list",
@@ -665531,6 +668245,1448 @@
         ],
         "title": "Database reachable through a Workers VPC"
       },
+      "images_account_identifier": {
+        "description": "Account identifier tag.",
+        "type": "string",
+        "example": "023e105f4ecef8ad9ca31a8372d0c353",
+        "maxLength": 32,
+        "readOnly": true,
+        "x-auditable": true
+      },
+      "images_api-response-collection-v2": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/images_api-response-common"
+          },
+          {
+            "properties": {
+              "result": {
+                "type": "object",
+                "properties": {
+                  "continuation_token": {
+                    "$ref": "#/components/schemas/images_images_list_continuation_token"
+                  }
+                }
+              }
+            },
+            "type": "object"
+          }
+        ]
+      },
+      "images_api-response-common": {
+        "type": "object",
+        "properties": {
+          "errors": {
+            "$ref": "#/components/schemas/images_messages"
+          },
+          "messages": {
+            "$ref": "#/components/schemas/images_messages"
+          },
+          "result": {
+            "anyOf": [
+              {
+                "type": "object"
+              },
+              {
+                "items": {
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "success": {
+            "description": "Whether the API call was successful",
+            "type": "boolean",
+            "example": true,
+            "enum": [
+              true
+            ],
+            "x-auditable": true
+          }
+        },
+        "required": [
+          "success",
+          "errors",
+          "messages",
+          "result"
+        ]
+      },
+      "images_api-response-common-failure": {
+        "type": "object",
+        "properties": {
+          "errors": {
+            "example": [
+              {
+                "code": 7003,
+                "message": "No route for the URI"
+              }
+            ],
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/images_messages"
+              }
+            ],
+            "minItems": 1
+          },
+          "messages": {
+            "example": [],
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/images_messages"
+              }
+            ]
+          },
+          "result": {
+            "type": "object",
+            "enum": [
+              null
+            ],
+            "nullable": true
+          },
+          "success": {
+            "description": "Whether the API call was successful",
+            "type": "boolean",
+            "example": false,
+            "enum": [
+              false
+            ],
+            "x-auditable": true
+          }
+        },
+        "required": [
+          "success",
+          "errors",
+          "messages",
+          "result"
+        ]
+      },
+      "images_api-response-single": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/images_api-response-common"
+          },
+          {
+            "properties": {
+              "result": {
+                "anyOf": [
+                  {
+                    "type": "object"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              }
+            },
+            "type": "object"
+          }
+        ]
+      },
+      "images_deleted_response": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/images_api-response-single"
+          },
+          {
+            "properties": {
+              "result": {
+                "type": "object",
+                "example": {}
+              }
+            },
+            "type": "object"
+          }
+        ]
+      },
+      "images_image": {
+        "type": "object",
+        "properties": {
+          "creator": {
+            "$ref": "#/components/schemas/images_image_creator"
+          },
+          "filename": {
+            "$ref": "#/components/schemas/images_image_filename"
+          },
+          "id": {
+            "$ref": "#/components/schemas/images_image_identifier"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/images_image_metadata"
+          },
+          "requireSignedURLs": {
+            "$ref": "#/components/schemas/images_image_requireSignedURLs"
+          },
+          "uploaded": {
+            "$ref": "#/components/schemas/images_image_uploaded"
+          },
+          "variants": {
+            "$ref": "#/components/schemas/images_image_variants"
+          }
+        }
+      },
+      "images_image_basic_upload": {
+        "type": "object",
+        "properties": {
+          "creator": {
+            "description": "Can set the creator field with an internal user ID.",
+            "type": "string",
+            "maxLength": 1024
+          },
+          "file": {
+            "description": "An image binary data. Only needed when type is uploading a file.",
+            "type": "string",
+            "format": "binary",
+            "x-auditable": true
+          },
+          "id": {
+            "description": "An optional custom unique identifier for your image.",
+            "type": "string",
+            "x-auditable": true
+          },
+          "metadata": {
+            "description": "User modifiable key-value store. Can use used for keeping references to another system of record for managing images.",
+            "type": "object"
+          },
+          "requireSignedURLs": {
+            "description": "Indicates whether the image requires a signature token for the access.",
+            "type": "boolean",
+            "example": true,
+            "default": false,
+            "x-auditable": true
+          },
+          "url": {
+            "description": "A URL to fetch an image from origin. Only needed when type is uploading from a URL.",
+            "type": "string",
+            "example": "https://example.com/path/to/logo.png",
+            "x-auditable": true
+          }
+        }
+      },
+      "images_image_creator": {
+        "description": "Can set the creator field with an internal user ID.",
+        "type": "string",
+        "example": "107b9558-dd06-4bbd-5fef-9c2c16bb7900",
+        "maxLength": 1024,
+        "nullable": true,
+        "x-auditable": true
+      },
+      "images_image_direct_upload_request_v1": {
+        "type": "object",
+        "properties": {
+          "expiry": {
+            "description": "The date after which the upload will not be accepted. Minimum: Now + 2 minutes. Maximum: Now + 6 hours.",
+            "type": "string",
+            "format": "date-time",
+            "example": "2021-01-02T02:20:00Z"
+          }
+        }
+      },
+      "images_image_direct_upload_request_v2": {
+        "type": "object",
+        "properties": {
+          "creator": {
+            "description": "Can set the creator field with an internal user ID.",
+            "type": "string"
+          },
+          "expiry": {
+            "description": "The date after which the upload will not be accepted. Minimum: Now + 2 minutes. Maximum: Now + 6 hours.",
+            "type": "string",
+            "format": "date-time",
+            "example": "2021-01-02T02:20:00Z",
+            "default": "Now + 30 minutes",
+            "x-auditable": true
+          },
+          "id": {
+            "description": "Optional Image Custom ID. Up to 1024 chars. Can include any number of subpaths, and utf8 characters. Cannot start nor end with a / (forward slash). Cannot be a UUID.",
+            "type": "string",
+            "example": "this/is/my-customid",
+            "maxLength": 1024,
+            "x-auditable": true
+          },
+          "metadata": {
+            "description": "User modifiable key-value store. Can be used for keeping references to another system of record, for managing images.",
+            "type": "object"
+          },
+          "requireSignedURLs": {
+            "description": "Indicates whether the image requires a signature token to be accessed.",
+            "type": "boolean",
+            "example": true,
+            "default": false,
+            "x-auditable": true
+          }
+        }
+      },
+      "images_image_direct_upload_response_v1": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/images_api-response-single"
+          },
+          {
+            "properties": {
+              "result": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "description": "Image unique identifier.",
+                    "type": "string",
+                    "example": "e22e9e6b-c02b-42fd-c405-6c32af5fe600",
+                    "readOnly": true
+                  },
+                  "uploadURL": {
+                    "description": "The URL the unauthenticated upload can be performed to using a single HTTP POST (multipart/form-data) request.",
+                    "type": "string",
+                    "example": "https://upload.imagedelivery.net/FxUufywByo0m2v3xhKSiU8/e22e9e6b-c02b-42fd-c405-6c32af5fe600"
+                  }
+                }
+              }
+            },
+            "type": "object"
+          }
+        ]
+      },
+      "images_image_direct_upload_response_v2": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/images_api-response-single"
+          },
+          {
+            "properties": {
+              "result": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "description": "Image unique identifier.",
+                    "type": "string",
+                    "example": "e22e9e6b-c02b-42fd-c405-6c32af5fe600",
+                    "maxLength": 32,
+                    "readOnly": true,
+                    "x-auditable": true
+                  },
+                  "uploadURL": {
+                    "description": "The URL the unauthenticated upload can be performed to using a single HTTP POST (multipart/form-data) request.",
+                    "type": "string",
+                    "example": "https://upload.imagedelivery.net/FxUufywByo0m2v3xhKSiU8/e22e9e6b-c02b-42fd-c405-6c32af5fe600",
+                    "x-auditable": true
+                  }
+                }
+              }
+            },
+            "type": "object"
+          }
+        ]
+      },
+      "images_image_filename": {
+        "description": "Image file name.",
+        "type": "string",
+        "example": "logo.png",
+        "maxLength": 255,
+        "readOnly": true,
+        "x-auditable": true
+      },
+      "images_image_hero_url": {
+        "description": "URI to hero variant for an image.",
+        "type": "string",
+        "format": "uri",
+        "example": "https://imagedelivery.net/MTt4OTd0b0w5aj/107b9558-dd06-4bbd-5fef-9c2c16bb7900/hero",
+        "readOnly": true,
+        "x-auditable": true
+      },
+      "images_image_identifier": {
+        "description": "Image unique identifier.",
+        "type": "string",
+        "example": "107b9558-dd06-4bbd-5fef-9c2c16bb7900",
+        "maxLength": 32,
+        "readOnly": true,
+        "x-auditable": true
+      },
+      "images_image_key_name": {
+        "description": "Key name.",
+        "type": "string",
+        "example": "default",
+        "readOnly": true,
+        "x-auditable": true
+      },
+      "images_image_key_response_collection": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/images_api-response-common"
+          },
+          {
+            "properties": {
+              "result": {
+                "$ref": "#/components/schemas/images_image_keys_response"
+              }
+            },
+            "type": "object"
+          }
+        ]
+      },
+      "images_image_key_value": {
+        "description": "Key value.",
+        "type": "string",
+        "example": "Oix0bbNaT8Rge9PuyxUBrjI6zrgnsyJ5=",
+        "readOnly": true,
+        "x-auditable": true
+      },
+      "images_image_keys": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "$ref": "#/components/schemas/images_image_key_name"
+          },
+          "value": {
+            "$ref": "#/components/schemas/images_image_key_value"
+          }
+        }
+      },
+      "images_image_keys_response": {
+        "type": "object",
+        "properties": {
+          "keys": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/images_image_keys"
+            }
+          }
+        }
+      },
+      "images_image_metadata": {
+        "description": "User modifiable key-value store. Can be used for keeping references to another system of record for managing images. Metadata must not exceed 1024 bytes.",
+        "type": "object",
+        "example": {
+          "key": "value"
+        }
+      },
+      "images_image_original_url": {
+        "description": "URI to original variant for an image.",
+        "type": "string",
+        "format": "uri",
+        "example": "https://imagedelivery.net/MTt4OTd0b0w5aj/107b9558-dd06-4bbd-5fef-9c2c16bb7900/original",
+        "readOnly": true,
+        "x-auditable": true
+      },
+      "images_image_patch_request": {
+        "type": "object",
+        "properties": {
+          "creator": {
+            "description": "Can set the creator field with an internal user ID.",
+            "type": "string"
+          },
+          "metadata": {
+            "description": "User modifiable key-value store. Can be used for keeping references to another system of record for managing images. No change if not specified.",
+            "type": "object"
+          },
+          "requireSignedURLs": {
+            "description": "Indicates whether the image can be accessed using only its UID. If set to `true`, a signed token needs to be generated with a signing key to view the image. Returns a new UID on a change. No change if not specified.",
+            "type": "boolean",
+            "example": true,
+            "x-auditable": true
+          }
+        }
+      },
+      "images_image_requireSignedURLs": {
+        "description": "Indicates whether the image can be a accessed only using it's UID. If set to true, a signed token needs to be generated with a signing key to view the image.",
+        "type": "boolean",
+        "example": true,
+        "default": false,
+        "x-auditable": true
+      },
+      "images_image_response_blob": {
+        "example": "<image blob data>",
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "object"
+          }
+        ]
+      },
+      "images_image_response_single": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/images_api-response-single"
+          },
+          {
+            "properties": {
+              "result": {
+                "$ref": "#/components/schemas/images_image"
+              }
+            },
+            "type": "object"
+          }
+        ]
+      },
+      "images_image_thumbnail_url": {
+        "description": "URI to thumbnail variant for an image.",
+        "type": "string",
+        "format": "uri",
+        "example": "https://imagedelivery.net/MTt4OTd0b0w5aj/107b9558-dd06-4bbd-5fef-9c2c16bb7900/thumbnail",
+        "readOnly": true,
+        "x-auditable": true
+      },
+      "images_image_uploaded": {
+        "description": "When the media item was uploaded.",
+        "type": "string",
+        "format": "date-time",
+        "example": "2014-01-02T02:20:00.123Z",
+        "readOnly": true,
+        "x-auditable": true
+      },
+      "images_image_variant_definition": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/images_image_variant_identifier"
+          },
+          "neverRequireSignedURLs": {
+            "$ref": "#/components/schemas/images_image_variant_neverRequireSignedURLs"
+          },
+          "options": {
+            "$ref": "#/components/schemas/images_image_variant_options"
+          }
+        },
+        "required": [
+          "id",
+          "options"
+        ]
+      },
+      "images_image_variant_fit": {
+        "description": "The fit property describes how the width and height dimensions should be interpreted.",
+        "type": "string",
+        "example": "scale-down",
+        "enum": [
+          "scale-down",
+          "contain",
+          "cover",
+          "crop",
+          "pad"
+        ],
+        "x-auditable": true
+      },
+      "images_image_variant_flat_response": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/images_api-response-single"
+          },
+          {
+            "properties": {
+              "result": {
+                "$ref": "#/components/schemas/images_image_variant_definition"
+              }
+            },
+            "type": "object"
+          }
+        ]
+      },
+      "images_image_variant_height": {
+        "description": "Maximum height in image pixels.",
+        "type": "number",
+        "example": 768,
+        "minimum": 1,
+        "x-auditable": true
+      },
+      "images_image_variant_identifier": {
+        "type": "string",
+        "example": "hero",
+        "maxLength": 99,
+        "pattern": "^[a-zA-Z0-9]+$",
+        "x-auditable": true
+      },
+      "images_image_variant_list_response": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/images_api-response-common"
+          },
+          {
+            "properties": {
+              "result": {
+                "$ref": "#/components/schemas/images_image_variants_response"
+              }
+            },
+            "type": "object"
+          }
+        ]
+      },
+      "images_image_variant_neverRequireSignedURLs": {
+        "description": "Indicates whether the variant can access an image without a signature, regardless of image access control.",
+        "type": "boolean",
+        "example": true,
+        "default": false,
+        "x-auditable": true
+      },
+      "images_image_variant_options": {
+        "description": "Allows you to define image resizing sizes for different use cases.",
+        "type": "object",
+        "properties": {
+          "fit": {
+            "$ref": "#/components/schemas/images_image_variant_fit"
+          },
+          "height": {
+            "$ref": "#/components/schemas/images_image_variant_height"
+          },
+          "metadata": {
+            "$ref": "#/components/schemas/images_image_variant_schemas_metadata"
+          },
+          "width": {
+            "$ref": "#/components/schemas/images_image_variant_width"
+          }
+        },
+        "required": [
+          "fit",
+          "metadata",
+          "width",
+          "height"
+        ]
+      },
+      "images_image_variant_patch_request": {
+        "type": "object",
+        "properties": {
+          "neverRequireSignedURLs": {
+            "$ref": "#/components/schemas/images_image_variant_neverRequireSignedURLs"
+          },
+          "options": {
+            "$ref": "#/components/schemas/images_image_variant_options"
+          }
+        },
+        "required": [
+          "options"
+        ]
+      },
+      "images_image_variant_public_request": {
+        "type": "object",
+        "properties": {
+          "hero": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "$ref": "#/components/schemas/images_image_variant_identifier"
+              },
+              "neverRequireSignedURLs": {
+                "$ref": "#/components/schemas/images_image_variant_neverRequireSignedURLs"
+              },
+              "options": {
+                "$ref": "#/components/schemas/images_image_variant_options"
+              }
+            },
+            "required": [
+              "id",
+              "options"
+            ]
+          }
+        }
+      },
+      "images_image_variant_response": {
+        "type": "object",
+        "properties": {
+          "variant": {
+            "$ref": "#/components/schemas/images_image_variant_definition"
+          }
+        }
+      },
+      "images_image_variant_schemas_metadata": {
+        "description": "What EXIF data should be preserved in the output image.",
+        "type": "string",
+        "example": "none",
+        "enum": [
+          "keep",
+          "copyright",
+          "none"
+        ],
+        "x-auditable": true
+      },
+      "images_image_variant_simple_response": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/images_api-response-single"
+          },
+          {
+            "properties": {
+              "result": {
+                "$ref": "#/components/schemas/images_image_variant_response"
+              }
+            },
+            "type": "object"
+          }
+        ]
+      },
+      "images_image_variant_width": {
+        "description": "Maximum width in image pixels.",
+        "type": "number",
+        "example": 1366,
+        "minimum": 1,
+        "x-auditable": true
+      },
+      "images_image_variants": {
+        "description": "Object specifying available variants for an image.",
+        "type": "array",
+        "items": {
+          "anyOf": [
+            {
+              "$ref": "#/components/schemas/images_image_thumbnail_url"
+            },
+            {
+              "$ref": "#/components/schemas/images_image_hero_url"
+            },
+            {
+              "$ref": "#/components/schemas/images_image_original_url"
+            }
+          ]
+        },
+        "example": [
+          "https://imagedelivery.net/MTt4OTd0b0w5aj/107b9558-dd06-4bbd-5fef-9c2c16bb7900/thumbnail",
+          "https://imagedelivery.net/MTt4OTd0b0w5aj/107b9558-dd06-4bbd-5fef-9c2c16bb7900/hero",
+          "https://imagedelivery.net/MTt4OTd0b0w5aj/107b9558-dd06-4bbd-5fef-9c2c16bb7900/original"
+        ],
+        "readOnly": true
+      },
+      "images_image_variants_response": {
+        "type": "object",
+        "properties": {
+          "variants": {
+            "$ref": "#/components/schemas/images_image_variant_public_request"
+          }
+        }
+      },
+      "images_images_list_continuation_token": {
+        "description": "Continuation token to fetch next page. Passed as a query param when requesting List V2 api endpoint.",
+        "type": "string",
+        "example": "iD0bxlWFSVUWsDHbzIqvDkgBW4otifAAuGXLz1n8BQA",
+        "maxLength": 32,
+        "nullable": true,
+        "readOnly": true,
+        "x-auditable": true
+      },
+      "images_images_list_response": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/images_api-response-common"
+          },
+          {
+            "properties": {
+              "result": {
+                "type": "object",
+                "properties": {
+                  "images": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/images_image"
+                    }
+                  }
+                }
+              }
+            },
+            "type": "object"
+          }
+        ]
+      },
+      "images_images_list_response_v2": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/images_api-response-collection-v2"
+          },
+          {
+            "properties": {
+              "result": {
+                "type": "object",
+                "properties": {
+                  "images": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/images_image"
+                    }
+                  }
+                }
+              }
+            },
+            "type": "object"
+          }
+        ]
+      },
+      "images_images_stats": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "$ref": "#/components/schemas/images_images_stats_count"
+          }
+        }
+      },
+      "images_images_stats_allowed": {
+        "description": "Cloudflare Images allowed usage.",
+        "type": "number",
+        "example": 100000,
+        "readOnly": true,
+        "x-auditable": true
+      },
+      "images_images_stats_count": {
+        "type": "object",
+        "properties": {
+          "allowed": {
+            "$ref": "#/components/schemas/images_images_stats_allowed"
+          },
+          "current": {
+            "$ref": "#/components/schemas/images_images_stats_current"
+          }
+        }
+      },
+      "images_images_stats_current": {
+        "description": "Cloudflare Images current usage.",
+        "type": "number",
+        "example": 1000,
+        "readOnly": true,
+        "x-auditable": true
+      },
+      "images_images_stats_response": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/images_api-response-single"
+          },
+          {
+            "properties": {
+              "result": {
+                "$ref": "#/components/schemas/images_images_stats"
+              }
+            },
+            "type": "object"
+          }
+        ]
+      },
+      "images_messages": {
+        "type": "array",
+        "items": {
+          "properties": {
+            "code": {
+              "type": "integer",
+              "minimum": 1000,
+              "x-auditable": true
+            },
+            "message": {
+              "type": "string",
+              "x-auditable": true
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ],
+          "type": "object",
+          "uniqueItems": true
+        },
+        "example": []
+      },
+      "images_metadata_keys_response": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/images_api-response-common"
+          },
+          {
+            "properties": {
+              "result": {
+                "type": "object",
+                "properties": {
+                  "keys": {
+                    "type": "array",
+                    "items": {
+                      "maxLength": 100,
+                      "type": "string"
+                    },
+                    "maxItems": 1000
+                  },
+                  "truncated": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "keys",
+                  "truncated"
+                ]
+              }
+            },
+            "type": "object"
+          }
+        ]
+      },
+      "images_signing_key_identifier": {
+        "type": "string",
+        "example": "someKey",
+        "maxLength": 20,
+        "pattern": "^[a-zA-Z0-9]+$",
+        "x-auditable": true
+      },
+      "images_sourcingkit_acceptable_content_type": {
+        "description": "A MIME type that can be excluded from migration.",
+        "type": "string",
+        "enum": [
+          "image/jpeg",
+          "image/png",
+          "image/webp",
+          "image/gif",
+          "image/avif",
+          "image/heic",
+          "image/svg+xml"
+        ]
+      },
+      "images_sourcingkit_conflict_behaviour": {
+        "description": "How to handle objects that already exist at the destination.",
+        "type": "string",
+        "default": "skip",
+        "enum": [
+          "skip",
+          "overwrite"
+        ]
+      },
+      "images_sourcingkit_connectivity_check_response": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/images_api-response-single"
+          },
+          {
+            "properties": {
+              "result": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "description": "Machine-readable error code if connectivity failed.",
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "connectivityStatus": {
+                    "description": "Whether the connectivity check succeeded.",
+                    "type": "string",
+                    "enum": [
+                      "ok",
+                      "error"
+                    ]
+                  },
+                  "reason": {
+                    "description": "Human-readable error description if connectivity failed.",
+                    "type": "string",
+                    "nullable": true
+                  }
+                }
+              }
+            },
+            "type": "object"
+          }
+        ]
+      },
+      "images_sourcingkit_connectivity_precheck_request": {
+        "type": "object",
+        "properties": {
+          "account": {
+            "description": "Account identifier for the bucket (required for R2 vendor).",
+            "type": "string"
+          },
+          "bucket": {
+            "description": "The name of the storage bucket.",
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1
+          },
+          "region": {
+            "description": "The region hint for the bucket (S3 only).",
+            "type": "string",
+            "nullable": true
+          },
+          "secret": {
+            "description": "Storage credentials for accessing the bucket.",
+            "type": "object",
+            "writeOnly": true
+          },
+          "vendor": {
+            "$ref": "#/components/schemas/images_sourcingkit_vendor"
+          }
+        },
+        "required": [
+          "bucket",
+          "vendor",
+          "secret"
+        ]
+      },
+      "images_sourcingkit_identifier": {
+        "description": "Sourcing kit resource identifier.",
+        "type": "string",
+        "format": "uuid",
+        "example": "5ca167e6-4e40-4ced-a209-ca1b9dd6a265"
+      },
+      "images_sourcingkit_migration": {
+        "type": "object",
+        "properties": {
+          "conflictBehaviour": {
+            "$ref": "#/components/schemas/images_sourcingkit_conflict_behaviour"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "endedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "readOnly": true
+          },
+          "excludedContentTypes": {
+            "description": "Content types to skip during migration.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/images_sourcingkit_acceptable_content_type"
+            },
+            "nullable": true
+          },
+          "id": {
+            "description": "Migration unique identifier.",
+            "type": "string",
+            "format": "uuid",
+            "readOnly": true
+          },
+          "imagesPathPrefix": {
+            "description": "Alias for pathPrefix (deprecated).",
+            "type": "string",
+            "nullable": true
+          },
+          "logStopped": {
+            "description": "Whether logging was stopped due to excessive log volume.",
+            "type": "boolean",
+            "readOnly": true
+          },
+          "pathPrefix": {
+            "description": "Prefix to prepend to image custom IDs.",
+            "type": "string",
+            "nullable": true
+          },
+          "rootDirectory": {
+            "description": "Only import objects under this prefix in the source bucket.",
+            "type": "string",
+            "nullable": true
+          },
+          "sourceId": {
+            "description": "The source this migration imports from.",
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "startedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "readOnly": true
+          },
+          "status": {
+            "$ref": "#/components/schemas/images_sourcingkit_migration_status"
+          }
+        }
+      },
+      "images_sourcingkit_migration_create_request": {
+        "type": "object",
+        "properties": {
+          "conflictBehaviour": {
+            "$ref": "#/components/schemas/images_sourcingkit_conflict_behaviour"
+          },
+          "excludedContentTypes": {
+            "description": "Content types to skip during migration.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/images_sourcingkit_acceptable_content_type"
+            }
+          },
+          "pathPrefix": {
+            "description": "Prefix to prepend to image custom IDs.",
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1
+          },
+          "rootDirectory": {
+            "description": "Only import objects under this prefix in the source bucket.",
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1
+          },
+          "sourceId": {
+            "description": "The identifier of the source to migrate from.",
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "sourceId"
+        ]
+      },
+      "images_sourcingkit_migration_create_response": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/images_api-response-single"
+          },
+          {
+            "properties": {
+              "result": {
+                "$ref": "#/components/schemas/images_sourcingkit_migration"
+              }
+            },
+            "type": "object"
+          }
+        ]
+      },
+      "images_sourcingkit_migration_list_response": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/images_api-response-common"
+          },
+          {
+            "properties": {
+              "result": {
+                "type": "object",
+                "properties": {
+                  "migrations": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/images_sourcingkit_migration"
+                    }
+                  }
+                }
+              }
+            },
+            "type": "object"
+          }
+        ]
+      },
+      "images_sourcingkit_migration_log": {
+        "type": "object",
+        "properties": {
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "logType": {
+            "$ref": "#/components/schemas/images_sourcingkit_migration_log_type"
+          },
+          "msg": {
+            "description": "Log message detail.",
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "images_sourcingkit_migration_log_list_response": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/images_api-response-common"
+          },
+          {
+            "properties": {
+              "result": {
+                "type": "object",
+                "properties": {
+                  "logs": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/images_sourcingkit_migration_log"
+                    }
+                  }
+                }
+              }
+            },
+            "type": "object"
+          }
+        ]
+      },
+      "images_sourcingkit_migration_log_type": {
+        "description": "The type of log entry.",
+        "type": "string",
+        "enum": [
+          "default",
+          "importSkippedUnsupportedContentType",
+          "importSkippedExcludedContentType",
+          "importSkippedInvalidMedia",
+          "importErrorRetryExhaustion",
+          "importSkippedOversized",
+          "migrationErrorFailedContinuation",
+          "migrationStart",
+          "migrationAbort",
+          "migrationError",
+          "migrationComplete",
+          "importSkippedStorageClass"
+        ]
+      },
+      "images_sourcingkit_migration_progress_response": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/images_api-response-single"
+          },
+          {
+            "properties": {
+              "result": {
+                "type": "object",
+                "properties": {
+                  "endedAt": {
+                    "type": "string",
+                    "format": "date-time",
+                    "nullable": true
+                  },
+                  "importErrorsCount": {
+                    "description": "Objects that failed to import.",
+                    "type": "integer"
+                  },
+                  "importSuccessCount": {
+                    "description": "Objects successfully imported.",
+                    "type": "integer"
+                  },
+                  "isAccurate": {
+                    "description": "Whether the counts are accurate or estimated.",
+                    "type": "boolean"
+                  },
+                  "scannedCount": {
+                    "description": "Total number of objects scanned in the source.",
+                    "type": "integer"
+                  },
+                  "skippedConflictCount": {
+                    "description": "Objects skipped due to existing images at destination.",
+                    "type": "integer"
+                  },
+                  "skippedExcludedContentTypeCount": {
+                    "description": "Objects skipped because their content type was excluded.",
+                    "type": "integer"
+                  },
+                  "skippedInvalidMediaCount": {
+                    "description": "Objects skipped because the media could not be decoded.",
+                    "type": "integer"
+                  },
+                  "skippedInvalidNameCount": {
+                    "description": "Objects skipped because their name is not valid.",
+                    "type": "integer"
+                  },
+                  "skippedOversizeCount": {
+                    "description": "Objects skipped because they exceed the size limit.",
+                    "type": "integer"
+                  },
+                  "skippedStorageClassCount": {
+                    "description": "Objects skipped due to unsupported storage class.",
+                    "type": "integer"
+                  },
+                  "skippedUnsupportedContentTypeCount": {
+                    "description": "Objects skipped because their content type is not supported.",
+                    "type": "integer"
+                  },
+                  "startedAt": {
+                    "type": "string",
+                    "format": "date-time",
+                    "nullable": true
+                  },
+                  "status": {
+                    "$ref": "#/components/schemas/images_sourcingkit_migration_status"
+                  }
+                }
+              }
+            },
+            "type": "object"
+          }
+        ]
+      },
+      "images_sourcingkit_migration_single_response": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/images_api-response-single"
+          },
+          {
+            "properties": {
+              "result": {
+                "$ref": "#/components/schemas/images_sourcingkit_migration"
+              }
+            },
+            "type": "object"
+          }
+        ]
+      },
+      "images_sourcingkit_migration_status": {
+        "description": "Current status of the migration.",
+        "type": "string",
+        "enum": [
+          "pending",
+          "processing",
+          "success",
+          "error",
+          "aborted"
+        ]
+      },
+      "images_sourcingkit_source": {
+        "type": "object",
+        "properties": {
+          "bucket": {
+            "description": "The name of the storage bucket.",
+            "type": "string",
+            "example": "my-images-bucket"
+          },
+          "createdAt": {
+            "description": "When the source was created.",
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "id": {
+            "description": "Source unique identifier.",
+            "type": "string",
+            "format": "uuid",
+            "example": "5ca167e6-4e40-4ced-a209-ca1b9dd6a265",
+            "readOnly": true
+          },
+          "name": {
+            "description": "A human-readable name for the source.",
+            "type": "string",
+            "example": "my-s3-bucket"
+          },
+          "region": {
+            "description": "The region of the storage bucket (S3 sources only).",
+            "type": "string",
+            "example": "us-east-1",
+            "nullable": true
+          },
+          "updatedAt": {
+            "description": "When the source was last updated.",
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "vendor": {
+            "$ref": "#/components/schemas/images_sourcingkit_vendor"
+          }
+        }
+      },
+      "images_sourcingkit_source_create_request": {
+        "type": "object",
+        "properties": {
+          "account": {
+            "description": "Account identifier for the bucket (required for R2 vendor).",
+            "type": "string"
+          },
+          "bucket": {
+            "description": "The name of the storage bucket.",
+            "type": "string",
+            "example": "my-images-bucket",
+            "maxLength": 128,
+            "minLength": 1
+          },
+          "name": {
+            "description": "A human-readable name for the source.",
+            "type": "string",
+            "example": "my-s3-bucket",
+            "maxLength": 128,
+            "minLength": 1
+          },
+          "secret": {
+            "description": "Storage credentials for accessing the bucket. Shape depends on vendor.",
+            "type": "object",
+            "writeOnly": true
+          },
+          "vendor": {
+            "$ref": "#/components/schemas/images_sourcingkit_vendor"
+          }
+        },
+        "required": [
+          "name",
+          "bucket",
+          "vendor",
+          "secret"
+        ]
+      },
+      "images_sourcingkit_source_create_response": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/images_api-response-single"
+          },
+          {
+            "properties": {
+              "result": {
+                "$ref": "#/components/schemas/images_sourcingkit_source"
+              }
+            },
+            "type": "object"
+          }
+        ]
+      },
+      "images_sourcingkit_source_list_response": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/images_api-response-common"
+          },
+          {
+            "properties": {
+              "result": {
+                "type": "object",
+                "properties": {
+                  "sources": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/images_sourcingkit_source"
+                    }
+                  }
+                }
+              }
+            },
+            "type": "object"
+          }
+        ]
+      },
+      "images_sourcingkit_source_single_response": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/images_api-response-single"
+          },
+          {
+            "properties": {
+              "result": {
+                "$ref": "#/components/schemas/images_sourcingkit_source"
+              }
+            },
+            "type": "object"
+          }
+        ]
+      },
+      "images_sourcingkit_source_update_request": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "description": "Updated name for the source.",
+            "type": "string",
+            "example": "my-renamed-bucket",
+            "maxLength": 128,
+            "minLength": 1
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "images_sourcingkit_source_update_response": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/images_api-response-single"
+          },
+          {
+            "properties": {
+              "result": {
+                "$ref": "#/components/schemas/images_sourcingkit_source"
+              }
+            },
+            "type": "object"
+          }
+        ]
+      },
+      "images_sourcingkit_vendor": {
+        "description": "The cloud storage vendor of the source bucket.",
+        "type": "string",
+        "example": "s3",
+        "enum": [
+          "s3",
+          "r2"
+        ]
+      },
       "infra_AccountTag": {
         "description": "Account identifier",
         "type": "string",
@@ -771265,6 +775421,15 @@
       "groups": {
         "flows": {
           "description": "Zone-level transformation flows that control how images are resized and optimized on delivery"
+        },
+        "import": {
+          "description": "Import images from S3"
+        },
+        "keys": {
+          "description": "Manage signing keys for generating private image URLs"
+        },
+        "variants": {
+          "description": "Manage named resize variants for transforming images on delivery"
         }
       }
     },
