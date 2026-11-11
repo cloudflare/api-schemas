@@ -129219,6 +129219,99 @@
       }
     },
     "/accounts/{account_id}/cfd_tunnel/{tunnel_id}/configurations": {
+      "delete": {
+        "operationId": "cloudflare-tunnel-configuration-delete-configuration",
+        "summary": "Reset Tunnel configuration",
+        "description": "Resets a remotely managed Cloudflare Tunnel to an empty configuration, removing ingress rules and origin request settings. The tunnel remains remotely managed, and private network routes continue to determine WARP routing. Publishes a new configuration version when the configuration changes. Repeated requests succeed without creating additional versions. If the tunnel or configuration is absent, returns a null result. Locally managed tunnels cannot be reset with this endpoint.",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/tunnel_identifier"
+            }
+          },
+          {
+            "name": "tunnel_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/tunnel_tunnel_id-2"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Reset configuration response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/tunnel_api-response-single-2"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "oneOf": [
+                            {
+                              "$ref": "#/components/schemas/tunnel_configuration"
+                            },
+                            {
+                              "enum": [
+                                null
+                              ],
+                              "nullable": true,
+                              "type": "object"
+                            }
+                          ]
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Reset configuration response failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/tunnel_api-response-common-failure-2"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": []
+          },
+          {
+            "api_token": []
+          },
+          {
+            "user_service_key": []
+          }
+        ],
+        "tags": [
+          "Cloudflare Tunnel Configuration"
+        ],
+        "x-cfOwnership": "tunnel-teams-routing",
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "tunnels.config",
+        "x-fern-sdk-method-name": "delete",
+        "x-forge-oauth-scopes": [
+          "teams-connector-cloudflared.write",
+          "teams-connectors.write",
+          "argotunnel.write"
+        ],
+        "x-forge-require-confirmation": "This operation resets the tunnel configuration, removing ingress rules and origin request settings."
+      },
       "get": {
         "operationId": "cloudflare-tunnel-configuration-get-configuration",
         "summary": "Get Tunnel configuration",
@@ -303204,8 +303297,7 @@
         ],
         "x-cfOwnership": "security-center",
         "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "security-insights",
-        "x-fern-sdk-method-name": "list"
+        "x-fern-ignore": true
       }
     },
     "/accounts/{account_id}/security-center/insights/audit-log": {
@@ -303280,8 +303372,7 @@
         ],
         "x-cfOwnership": "security-center",
         "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "security-insights.audit-logs",
-        "x-fern-sdk-method-name": "list"
+        "x-fern-ignore": true
       }
     },
     "/accounts/{account_id}/security-center/insights/class": {
@@ -303419,8 +303510,7 @@
         ],
         "x-cfOwnership": "security-center",
         "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "security-insights.count",
-        "x-fern-sdk-method-name": "by-class"
+        "x-fern-ignore": true
       }
     },
     "/accounts/{account_id}/security-center/insights/partner-count": {
@@ -303485,8 +303575,7 @@
         ],
         "x-cfOwnership": "security-center",
         "x-fern-availability": "beta",
-        "x-fern-sdk-group-name": "security-insights.count",
-        "x-fern-sdk-method-name": "by-partner"
+        "x-fern-ignore": true
       }
     },
     "/accounts/{account_id}/security-center/insights/scans": {
@@ -303552,8 +303641,7 @@
         ],
         "x-cfOwnership": "security-center",
         "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "security-insights.scans",
-        "x-fern-sdk-method-name": "list"
+        "x-fern-ignore": true
       },
       "post": {
         "operationId": "start-security-center-account-scan",
@@ -303627,8 +303715,7 @@
         ],
         "x-cfOwnership": "security-center",
         "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "security-insights.scans",
-        "x-fern-sdk-method-name": "start"
+        "x-fern-ignore": true
       }
     },
     "/accounts/{account_id}/security-center/insights/severity": {
@@ -303766,8 +303853,7 @@
         ],
         "x-cfOwnership": "security-center",
         "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "security-insights.count",
-        "x-fern-sdk-method-name": "by-severity"
+        "x-fern-ignore": true
       }
     },
     "/accounts/{account_id}/security-center/insights/type": {
@@ -303905,8 +303991,7 @@
         ],
         "x-cfOwnership": "security-center",
         "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "security-insights.count",
-        "x-fern-sdk-method-name": "by-type"
+        "x-fern-ignore": true
       }
     },
     "/accounts/{account_id}/security-center/insights/{issue_id}/audit-log": {
@@ -303989,8 +304074,7 @@
         ],
         "x-cfOwnership": "security-center",
         "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "security-insights.audit-logs",
-        "x-fern-sdk-method-name": "get"
+        "x-fern-ignore": true
       }
     },
     "/accounts/{account_id}/security-center/insights/{issue_id}/classification": {
@@ -304066,8 +304150,7 @@
         ],
         "x-cfOwnership": "security-center",
         "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "security-insights",
-        "x-fern-sdk-method-name": "classify"
+        "x-fern-ignore": true
       }
     },
     "/accounts/{account_id}/security-center/insights/{issue_id}/context": {
@@ -304226,8 +304309,7 @@
         ],
         "x-cfOwnership": "security-center",
         "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "security-insights",
-        "x-fern-sdk-method-name": "dismiss",
+        "x-fern-ignore": true,
         "x-forge-params": {
           "dismiss": {
             "default": null
@@ -371710,6 +371792,261 @@
           "teams.write"
         ]
       }
+    },
+    "/accounts/{account_id}/zerotrust/region": {
+      "delete": {
+        "operationId": "zero-trust-accounts-delete-region",
+        "summary": "Clear active region",
+        "description": "Clears the account's active region. This operation is idempotent. Clearing an account without an active region returns success with a `null` `region_key`.",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/tunnel_account_id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Clear active region response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/tunnel_active_account_region_response_single"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Clear active region response failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/tunnel_api-response-common-failure"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": []
+          },
+          {
+            "api_token": []
+          },
+          {
+            "user_service_key": []
+          }
+        ],
+        "tags": [
+          "Zero Trust Account Region"
+        ],
+        "x-cfOwnership": "tunnel-teams-routing",
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "zero-trust.region",
+        "x-fern-sdk-method-name": "delete",
+        "x-forge-require-confirmation": "This operation removes the account's active region for Cloudflare One."
+      },
+      "get": {
+        "operationId": "zero-trust-accounts-get-region",
+        "summary": "Get active region",
+        "description": "Gets the region that the account is using for Cloudflare One. `region_key` is `null` if the account has not selected a region.",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/tunnel_account_id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get active region response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/tunnel_active_account_region_response_single"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Get active region response failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/tunnel_api-response-common-failure"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": []
+          },
+          {
+            "api_token": []
+          },
+          {
+            "user_service_key": []
+          }
+        ],
+        "tags": [
+          "Zero Trust Account Region"
+        ],
+        "x-cfOwnership": "tunnel-teams-routing",
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "zero-trust.region",
+        "x-fern-sdk-method-name": "get"
+      },
+      "put": {
+        "operationId": "zero-trust-accounts-update-region",
+        "summary": "Select region",
+        "description": "Selects the region that the account uses for Cloudflare One. The region must be one of the account's available regions. Selecting the active region again has no effect.",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/tunnel_account_id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/tunnel_put_account_region_body"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Select region response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/tunnel_active_account_region_response_single"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Select region response failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/tunnel_api-response-common-failure"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": []
+          },
+          {
+            "api_token": []
+          },
+          {
+            "user_service_key": []
+          }
+        ],
+        "tags": [
+          "Zero Trust Account Region"
+        ],
+        "x-cfOwnership": "tunnel-teams-routing",
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "zero-trust.region",
+        "x-fern-sdk-method-name": "update"
+      },
+      "servers": [
+        {
+          "url": "https://api.cloudflare.com/client/v4"
+        },
+        {
+          "url": "https://api.staging.cloudflare.com/client/v4"
+        }
+      ]
+    },
+    "/accounts/{account_id}/zerotrust/regions": {
+      "get": {
+        "operationId": "zero-trust-accounts-list-regions",
+        "summary": "List available regions",
+        "description": "Lists the regions that the account can select for Cloudflare One. Returns an empty list if no regions are available to the account.",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/tunnel_account_id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List available regions response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/tunnel_account_region_response_collection"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "List available regions response failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/tunnel_api-response-common-failure"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": []
+          },
+          {
+            "api_token": []
+          },
+          {
+            "user_service_key": []
+          }
+        ],
+        "tags": [
+          "Zero Trust Account Region"
+        ],
+        "x-cfOwnership": "tunnel-teams-routing",
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "zero-trust.regions",
+        "x-fern-sdk-method-name": "list"
+      },
+      "servers": [
+        {
+          "url": "https://api.cloudflare.com/client/v4"
+        },
+        {
+          "url": "https://api.staging.cloudflare.com/client/v4"
+        }
+      ]
     },
     "/accounts/{account_id}/zerotrust/routes/hostname": {
       "get": {
@@ -563704,8 +564041,7 @@
         ],
         "x-cfOwnership": "security-center",
         "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "security-insights.zone",
-        "x-fern-sdk-method-name": "list",
+        "x-fern-ignore": true,
         "x-forge-oauth-scopes": [
           "zone-settings.read",
           "zone-settings.write"
@@ -563784,8 +564120,7 @@
         ],
         "x-cfOwnership": "security-center",
         "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "security-insights.zone.audit-logs",
-        "x-fern-sdk-method-name": "list",
+        "x-fern-ignore": true,
         "x-forge-oauth-scopes": [
           "zone-settings.read",
           "zone-settings.write"
@@ -563927,8 +564262,7 @@
         ],
         "x-cfOwnership": "security-center",
         "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "security-insights.zone.count",
-        "x-fern-sdk-method-name": "by-class",
+        "x-fern-ignore": true,
         "x-forge-oauth-scopes": [
           "zone-settings.read",
           "zone-settings.write"
@@ -563997,8 +564331,7 @@
         ],
         "x-cfOwnership": "security-center",
         "x-fern-availability": "beta",
-        "x-fern-sdk-group-name": "security-insights.zone.count",
-        "x-fern-sdk-method-name": "by-partner",
+        "x-fern-ignore": true,
         "x-forge-oauth-scopes": [
           "zone-settings.read",
           "zone-settings.write"
@@ -564068,8 +564401,7 @@
         ],
         "x-cfOwnership": "security-center",
         "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "security-insights.zone.scans",
-        "x-fern-sdk-method-name": "list",
+        "x-fern-ignore": true,
         "x-forge-oauth-scopes": [
           "zone-settings.read",
           "zone-settings.write"
@@ -564147,8 +564479,7 @@
         ],
         "x-cfOwnership": "security-center",
         "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "security-insights.zone.scans",
-        "x-fern-sdk-method-name": "start",
+        "x-fern-ignore": true,
         "x-forge-oauth-scopes": [
           "zone-settings.write"
         ]
@@ -564289,8 +564620,7 @@
         ],
         "x-cfOwnership": "security-center",
         "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "security-insights.zone.count",
-        "x-fern-sdk-method-name": "by-severity",
+        "x-fern-ignore": true,
         "x-forge-oauth-scopes": [
           "zone-settings.read",
           "zone-settings.write"
@@ -564432,8 +564762,7 @@
         ],
         "x-cfOwnership": "security-center",
         "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "security-insights.zone.count",
-        "x-fern-sdk-method-name": "by-type",
+        "x-fern-ignore": true,
         "x-forge-oauth-scopes": [
           "zone-settings.read",
           "zone-settings.write"
@@ -564520,8 +564849,7 @@
         ],
         "x-cfOwnership": "security-center",
         "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "security-insights.zone.audit-logs",
-        "x-fern-sdk-method-name": "get",
+        "x-fern-ignore": true,
         "x-forge-oauth-scopes": [
           "zone-settings.read",
           "zone-settings.write"
@@ -564601,8 +564929,7 @@
         ],
         "x-cfOwnership": "security-center",
         "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "security-insights.zone",
-        "x-fern-sdk-method-name": "classify"
+        "x-fern-ignore": true
       }
     },
     "/zones/{zone_id}/security-center/insights/{issue_id}/dismiss": {
@@ -564685,8 +565012,7 @@
         ],
         "x-cfOwnership": "security-center",
         "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "security-insights.zone",
-        "x-fern-sdk-method-name": "dismiss",
+        "x-fern-ignore": true,
         "x-forge-oauth-scopes": [
           "zone-settings.write"
         ],
@@ -588988,6 +589314,1314 @@
         "x-fern-ignore": true,
         "x-fern-sdk-group-name": "rulesets.versions.by-tag",
         "x-fern-sdk-method-name": "get",
+        "x-stainless-skip": true
+      }
+    },
+    "/{account_or_zone}/{account_or_zone_id}/security-center/insights": {
+      "get": {
+        "operationId": "generated:get:/account_or_zone/account_or_zone_id/security-center/insights",
+        "summary": "Retrieves Security Center Insights",
+        "description": "Lists all Security Center insights for the account or zone, showing security findings and recommendations.",
+        "parameters": [
+          {
+            "name": "account_or_zone",
+            "in": "path",
+            "description": "Whether ${account_or_zone} is an account ID (`accounts`) or a zone ID (`zones`).",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "accounts",
+                "zones"
+              ]
+            }
+          },
+          {
+            "name": "account_or_zone_id",
+            "in": "path",
+            "description": "The account ID or zone ID, as selected by ${account_or_zone}.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/security-center_identifier"
+            }
+          },
+          {
+            "name": "dismissed",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/security-center_dismissed"
+            }
+          },
+          {
+            "name": "issue_class",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/security-center_issueClasses"
+            }
+          },
+          {
+            "name": "issue_type",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/security-center_issueTypes"
+            }
+          },
+          {
+            "name": "product",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/security-center_products"
+            }
+          },
+          {
+            "name": "source",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/security-center_sources"
+            }
+          },
+          {
+            "name": "severity",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/security-center_severityQueryParam"
+            }
+          },
+          {
+            "name": "subject",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/security-center_subjects"
+            }
+          },
+          {
+            "name": "issue_class~neq",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/security-center_issueClasses"
+            }
+          },
+          {
+            "name": "issue_type~neq",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/security-center_issueTypes"
+            }
+          },
+          {
+            "name": "product~neq",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/security-center_products"
+            }
+          },
+          {
+            "name": "severity~neq",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/security-center_severityQueryParam"
+            }
+          },
+          {
+            "name": "subject~neq",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/security-center_subjects"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "default": 1,
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/security-center_page"
+                }
+              ]
+            }
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "schema": {
+              "default": 25,
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/security-center_perPage"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request was successful.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/security-center_api-response-common"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "type": "object",
+                          "properties": {
+                            "count": {
+                              "$ref": "#/components/schemas/security-center_count"
+                            },
+                            "issues": {
+                              "type": "array",
+                              "items": {
+                                "$ref": "#/components/schemas/security-center_issue"
+                              }
+                            },
+                            "page": {
+                              "$ref": "#/components/schemas/security-center_page"
+                            },
+                            "per_page": {
+                              "$ref": "#/components/schemas/security-center_perPage"
+                            }
+                          }
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "A client error occurred.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/security-center_api-response-common-failure"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": []
+          },
+          {
+            "api_token": []
+          }
+        ],
+        "tags": [
+          "Security Center Insights"
+        ],
+        "x-cfOwnership": "security-center",
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "security-insights",
+        "x-fern-sdk-method-name": "list",
+        "x-stainless-skip": true
+      }
+    },
+    "/{account_or_zone}/{account_or_zone_id}/security-center/insights/audit-log": {
+      "get": {
+        "operationId": "generated:get:/account_or_zone/account_or_zone_id/security-center/insights/audit-log",
+        "summary": "Retrieves account or zone Audit Log",
+        "description": "Lists audit log entries for all Security Center insights in the account or zone, showing changes to insight status and classification.",
+        "parameters": [
+          {
+            "name": "account_or_zone",
+            "in": "path",
+            "description": "Whether ${account_or_zone} is an account ID (`accounts`) or a zone ID (`zones`).",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "accounts",
+                "zones"
+              ]
+            }
+          },
+          {
+            "name": "account_or_zone_id",
+            "in": "path",
+            "description": "The account ID or zone ID, as selected by ${account_or_zone}.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/security-center_identifier"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/security-center_auditLogPerPage"
+          },
+          {
+            "$ref": "#/components/parameters/security-center_auditLogCursor"
+          },
+          {
+            "$ref": "#/components/parameters/security-center_auditLogFieldChanged"
+          },
+          {
+            "$ref": "#/components/parameters/security-center_auditLogChangedBy"
+          },
+          {
+            "$ref": "#/components/parameters/security-center_auditLogSince"
+          },
+          {
+            "$ref": "#/components/parameters/security-center_auditLogBefore"
+          },
+          {
+            "$ref": "#/components/parameters/security-center_auditLogOrder"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request was successful.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/security-center_auditLogResponse"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "A client error occurred.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/security-center_api-response-common-failure"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": []
+          },
+          {
+            "api_token": []
+          }
+        ],
+        "tags": [
+          "Security Center Audit Log"
+        ],
+        "x-cfOwnership": "security-center",
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "security-insights.audit-logs",
+        "x-fern-sdk-method-name": "list",
+        "x-stainless-skip": true
+      }
+    },
+    "/{account_or_zone}/{account_or_zone_id}/security-center/insights/class": {
+      "get": {
+        "operationId": "generated:get:/account_or_zone/account_or_zone_id/security-center/insights/class",
+        "summary": "Retrieves Security Center Insight Counts by Class",
+        "description": "Retrieves Security Center insight counts aggregated by classification class.",
+        "parameters": [
+          {
+            "name": "account_or_zone",
+            "in": "path",
+            "description": "Whether ${account_or_zone} is an account ID (`accounts`) or a zone ID (`zones`).",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "accounts",
+                "zones"
+              ]
+            }
+          },
+          {
+            "name": "account_or_zone_id",
+            "in": "path",
+            "description": "The account ID or zone ID, as selected by ${account_or_zone}.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/security-center_identifier"
+            }
+          },
+          {
+            "name": "dismissed",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/security-center_dismissed"
+            }
+          },
+          {
+            "name": "issue_class",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/security-center_issueClasses"
+            }
+          },
+          {
+            "name": "issue_type",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/security-center_issueTypes"
+            }
+          },
+          {
+            "name": "product",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/security-center_products"
+            }
+          },
+          {
+            "name": "source",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/security-center_sources"
+            }
+          },
+          {
+            "name": "severity",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/security-center_severityQueryParam"
+            }
+          },
+          {
+            "name": "subject",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/security-center_subjects"
+            }
+          },
+          {
+            "name": "issue_class~neq",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/security-center_issueClasses"
+            }
+          },
+          {
+            "name": "issue_type~neq",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/security-center_issueTypes"
+            }
+          },
+          {
+            "name": "product~neq",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/security-center_products"
+            }
+          },
+          {
+            "name": "severity~neq",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/security-center_severityQueryParam"
+            }
+          },
+          {
+            "name": "subject~neq",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/security-center_subjects"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request was successful.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/security-center_valueCountsResponse"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "A client error occurred.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/security-center_api-response-common-failure"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": []
+          },
+          {
+            "api_token": []
+          }
+        ],
+        "tags": [
+          "Security Center Insights"
+        ],
+        "x-cfOwnership": "security-center",
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "security-insights.count",
+        "x-fern-sdk-method-name": "by-class",
+        "x-stainless-skip": true
+      }
+    },
+    "/{account_or_zone}/{account_or_zone_id}/security-center/insights/partner-count": {
+      "get": {
+        "operationId": "generated:get:/account_or_zone/account_or_zone_id/security-center/insights/partner-count",
+        "summary": "Retrieves a Partner Security Center Insight Count",
+        "description": "Retrieves the uncapped count of active, non-dismissed, unclassified RiskRecon insights for the account or zone.",
+        "parameters": [
+          {
+            "name": "account_or_zone",
+            "in": "path",
+            "description": "Whether ${account_or_zone} is an account ID (`accounts`) or a zone ID (`zones`).",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "accounts",
+                "zones"
+              ]
+            }
+          },
+          {
+            "name": "account_or_zone_id",
+            "in": "path",
+            "description": "The account ID or zone ID, as selected by ${account_or_zone}.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/security-center_identifier"
+            }
+          },
+          {
+            "name": "source",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "riskrecon"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request was successful.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/security-center_partnerInsightCountResponse"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "A client error occurred.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/security-center_api-response-common-failure"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": []
+          },
+          {
+            "api_token": []
+          }
+        ],
+        "tags": [
+          "Security Center Insights"
+        ],
+        "x-cfOwnership": "security-center",
+        "x-fern-availability": "beta",
+        "x-fern-sdk-group-name": "security-insights.count",
+        "x-fern-sdk-method-name": "by-partner",
+        "x-stainless-skip": true
+      }
+    },
+    "/{account_or_zone}/{account_or_zone_id}/security-center/insights/scans": {
+      "get": {
+        "operationId": "generated:get:/account_or_zone/account_or_zone_id/security-center/insights/scans",
+        "summary": "Get Recent account or zone Scans",
+        "description": "Returns the most recent on-demand scans for the account or zone, up to a maximum of 5. Each scan includes its ID, start time, and current status. This includes both account or zone-wide and zone-scoped scans. Also returns quota information showing how many scans have been used and how many remain in the current 24-hour window.",
+        "parameters": [
+          {
+            "name": "account_or_zone",
+            "in": "path",
+            "description": "Whether ${account_or_zone} is an account ID (`accounts`) or a zone ID (`zones`).",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "accounts",
+                "zones"
+              ]
+            }
+          },
+          {
+            "name": "account_or_zone_id",
+            "in": "path",
+            "description": "The account ID or zone ID, as selected by ${account_or_zone}.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/security-center_identifier"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request was successful.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/security-center_api-response-common"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/security-center_scansListResponse"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "A client error occurred.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/security-center_api-response-common-failure"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": []
+          },
+          {
+            "api_token": []
+          }
+        ],
+        "tags": [
+          "Security Center Scans"
+        ],
+        "x-cfOwnership": "security-center",
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "security-insights.scans",
+        "x-fern-sdk-method-name": "list",
+        "x-stainless-skip": true
+      },
+      "post": {
+        "operationId": "generated:post:/account_or_zone/account_or_zone_id/security-center/insights/scans",
+        "summary": "Start On-Demand account or zone Scan",
+        "description": "Initiates an on-demand security scan for the entire account or zone, scanning all zones associated with the account or zone. Rate limited to 5 scans per account or zone per 24-hour window.",
+        "parameters": [
+          {
+            "name": "account_or_zone",
+            "in": "path",
+            "description": "Whether ${account_or_zone} is an account ID (`accounts`) or a zone ID (`zones`).",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "accounts",
+                "zones"
+              ]
+            }
+          },
+          {
+            "name": "account_or_zone_id",
+            "in": "path",
+            "description": "The account ID or zone ID, as selected by ${account_or_zone}.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/security-center_identifier"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/security-center_newScanRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The request was successful.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/security-center_api-response-common"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/security-center_newScanResponse"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "A client error occurred.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/security-center_api-response-common-failure"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": []
+          },
+          {
+            "api_token": []
+          }
+        ],
+        "tags": [
+          "Security Center Scans"
+        ],
+        "x-cfOwnership": "security-center",
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "security-insights.scans",
+        "x-fern-sdk-method-name": "start",
+        "x-stainless-skip": true
+      }
+    },
+    "/{account_or_zone}/{account_or_zone_id}/security-center/insights/severity": {
+      "get": {
+        "operationId": "generated:get:/account_or_zone/account_or_zone_id/security-center/insights/severity",
+        "summary": "Retrieves Security Center Insight Counts by Severity",
+        "description": "Retrieves Security Center insight counts aggregated by severity level (critical, high, medium, low).",
+        "parameters": [
+          {
+            "name": "account_or_zone",
+            "in": "path",
+            "description": "Whether ${account_or_zone} is an account ID (`accounts`) or a zone ID (`zones`).",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "accounts",
+                "zones"
+              ]
+            }
+          },
+          {
+            "name": "account_or_zone_id",
+            "in": "path",
+            "description": "The account ID or zone ID, as selected by ${account_or_zone}.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/security-center_identifier"
+            }
+          },
+          {
+            "name": "dismissed",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/security-center_dismissed"
+            }
+          },
+          {
+            "name": "issue_class",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/security-center_issueClasses"
+            }
+          },
+          {
+            "name": "issue_type",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/security-center_issueTypes"
+            }
+          },
+          {
+            "name": "product",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/security-center_products"
+            }
+          },
+          {
+            "name": "source",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/security-center_sources"
+            }
+          },
+          {
+            "name": "severity",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/security-center_severityQueryParam"
+            }
+          },
+          {
+            "name": "subject",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/security-center_subjects"
+            }
+          },
+          {
+            "name": "issue_class~neq",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/security-center_issueClasses"
+            }
+          },
+          {
+            "name": "issue_type~neq",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/security-center_issueTypes"
+            }
+          },
+          {
+            "name": "product~neq",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/security-center_products"
+            }
+          },
+          {
+            "name": "severity~neq",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/security-center_severityQueryParam"
+            }
+          },
+          {
+            "name": "subject~neq",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/security-center_subjects"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request was successful.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/security-center_valueCountsResponse"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "A client error occurred.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/security-center_api-response-common-failure"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": []
+          },
+          {
+            "api_token": []
+          }
+        ],
+        "tags": [
+          "Security Center Insights"
+        ],
+        "x-cfOwnership": "security-center",
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "security-insights.count",
+        "x-fern-sdk-method-name": "by-severity",
+        "x-stainless-skip": true
+      }
+    },
+    "/{account_or_zone}/{account_or_zone_id}/security-center/insights/type": {
+      "get": {
+        "operationId": "generated:get:/account_or_zone/account_or_zone_id/security-center/insights/type",
+        "summary": "Retrieves Security Center Insight Counts by Type",
+        "description": "Retrieves Security Center insight counts aggregated by insight type.",
+        "parameters": [
+          {
+            "name": "account_or_zone",
+            "in": "path",
+            "description": "Whether ${account_or_zone} is an account ID (`accounts`) or a zone ID (`zones`).",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "accounts",
+                "zones"
+              ]
+            }
+          },
+          {
+            "name": "account_or_zone_id",
+            "in": "path",
+            "description": "The account ID or zone ID, as selected by ${account_or_zone}.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/security-center_identifier"
+            }
+          },
+          {
+            "name": "dismissed",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/security-center_dismissed"
+            }
+          },
+          {
+            "name": "issue_class",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/security-center_issueClasses"
+            }
+          },
+          {
+            "name": "issue_type",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/security-center_issueTypes"
+            }
+          },
+          {
+            "name": "product",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/security-center_products"
+            }
+          },
+          {
+            "name": "source",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/security-center_sources"
+            }
+          },
+          {
+            "name": "severity",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/security-center_severityQueryParam"
+            }
+          },
+          {
+            "name": "subject",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/security-center_subjects"
+            }
+          },
+          {
+            "name": "issue_class~neq",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/security-center_issueClasses"
+            }
+          },
+          {
+            "name": "issue_type~neq",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/security-center_issueTypes"
+            }
+          },
+          {
+            "name": "product~neq",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/security-center_products"
+            }
+          },
+          {
+            "name": "severity~neq",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/security-center_severityQueryParam"
+            }
+          },
+          {
+            "name": "subject~neq",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/security-center_subjects"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request was successful.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/security-center_valueCountsResponse"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "A client error occurred.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/security-center_api-response-common-failure"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": []
+          },
+          {
+            "api_token": []
+          }
+        ],
+        "tags": [
+          "Security Center Insights"
+        ],
+        "x-cfOwnership": "security-center",
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "security-insights.count",
+        "x-fern-sdk-method-name": "by-type",
+        "x-stainless-skip": true
+      }
+    },
+    "/{account_or_zone}/{account_or_zone_id}/security-center/insights/{issue_id}/audit-log": {
+      "get": {
+        "operationId": "generated:get:/account_or_zone/account_or_zone_id/security-center/insights/issue_id/audit-log",
+        "summary": "Retrieves Issue Audit Log",
+        "description": "Lists audit log entries for a specific Security Center insight, showing changes to its status and classification over time.",
+        "parameters": [
+          {
+            "name": "account_or_zone",
+            "in": "path",
+            "description": "Whether ${account_or_zone} is an account ID (`accounts`) or a zone ID (`zones`).",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "accounts",
+                "zones"
+              ]
+            }
+          },
+          {
+            "name": "account_or_zone_id",
+            "in": "path",
+            "description": "The account ID or zone ID, as selected by ${account_or_zone}.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/security-center_identifier"
+            }
+          },
+          {
+            "name": "issue_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/security-center_auditLogPerPage"
+          },
+          {
+            "$ref": "#/components/parameters/security-center_auditLogCursor"
+          },
+          {
+            "$ref": "#/components/parameters/security-center_auditLogFieldChanged"
+          },
+          {
+            "$ref": "#/components/parameters/security-center_auditLogChangedBy"
+          },
+          {
+            "$ref": "#/components/parameters/security-center_auditLogSince"
+          },
+          {
+            "$ref": "#/components/parameters/security-center_auditLogBefore"
+          },
+          {
+            "$ref": "#/components/parameters/security-center_auditLogOrder"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request was successful.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/security-center_auditLogResponse"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "A client error occurred.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/security-center_api-response-common-failure"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": []
+          },
+          {
+            "api_token": []
+          }
+        ],
+        "tags": [
+          "Security Center Audit Log"
+        ],
+        "x-cfOwnership": "security-center",
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "security-insights.audit-logs",
+        "x-fern-sdk-method-name": "get",
+        "x-stainless-skip": true
+      }
+    },
+    "/{account_or_zone}/{account_or_zone_id}/security-center/insights/{issue_id}/classification": {
+      "patch": {
+        "operationId": "generated:patch:/account_or_zone/account_or_zone_id/security-center/insights/issue_id/classification",
+        "summary": "Updates Security Center Insight Classification",
+        "description": "Updates the user classification for a Security Center insight. Valid values are 'false_positive' or 'accept_risk'. To reset, set classification to null. Cannot change directly between classification values - must reset to null first.",
+        "parameters": [
+          {
+            "name": "account_or_zone",
+            "in": "path",
+            "description": "Whether ${account_or_zone} is an account ID (`accounts`) or a zone ID (`zones`).",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "accounts",
+                "zones"
+              ]
+            }
+          },
+          {
+            "name": "account_or_zone_id",
+            "in": "path",
+            "description": "The account ID or zone ID, as selected by ${account_or_zone}.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/security-center_identifier"
+            }
+          },
+          {
+            "name": "issue_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/security-center_userClassificationUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The request was successful.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/security-center_api-response-single"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "A client error occurred.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/security-center_api-response-common-failure"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": []
+          },
+          {
+            "api_token": []
+          }
+        ],
+        "tags": [
+          "Security Center Insights"
+        ],
+        "x-cfOwnership": "security-center",
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "security-insights",
+        "x-fern-sdk-method-name": "classify",
+        "x-stainless-skip": true
+      }
+    },
+    "/{account_or_zone}/{account_or_zone_id}/security-center/insights/{issue_id}/dismiss": {
+      "put": {
+        "operationId": "generated:put:/account_or_zone/account_or_zone_id/security-center/insights/issue_id/dismiss",
+        "summary": "Archives Security Center Insight",
+        "description": "Archives a Security Center insight for an account or zone, removing it from the active insights list while preserving historical data.",
+        "parameters": [
+          {
+            "name": "account_or_zone",
+            "in": "path",
+            "description": "Whether ${account_or_zone} is an account ID (`accounts`) or a zone ID (`zones`).",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "accounts",
+                "zones"
+              ]
+            }
+          },
+          {
+            "name": "account_or_zone_id",
+            "in": "path",
+            "description": "The account ID or zone ID, as selected by ${account_or_zone}.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/security-center_identifier"
+            }
+          },
+          {
+            "name": "issue_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "dismiss": {
+                    "type": "boolean",
+                    "default": true,
+                    "x-auditable": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The request was successful.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/security-center_api-response-single"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "A client error occurred.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/security-center_api-response-common-failure"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": []
+          },
+          {
+            "api_token": []
+          }
+        ],
+        "tags": [
+          "Security Center Insights"
+        ],
+        "x-cfOwnership": "security-center",
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "security-insights",
+        "x-fern-sdk-method-name": "dismiss",
+        "x-forge-params": {
+          "dismiss": {
+            "default": null
+          }
+        },
         "x-stainless-skip": true
       }
     },
@@ -731908,6 +733542,73 @@
         "readOnly": true,
         "x-auditable": true
       },
+      "tunnel_account_region": {
+        "type": "object",
+        "properties": {
+          "region_key": {
+            "$ref": "#/components/schemas/tunnel_region_key"
+          }
+        },
+        "required": [
+          "region_key"
+        ]
+      },
+      "tunnel_account_region_response_collection": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/tunnel_api-response-common"
+          },
+          {
+            "properties": {
+              "result": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/tunnel_account_region"
+                }
+              }
+            },
+            "required": [
+              "result"
+            ],
+            "type": "object"
+          }
+        ]
+      },
+      "tunnel_active_account_region": {
+        "type": "object",
+        "properties": {
+          "region_key": {
+            "description": "The key of the account's active Data Localization Suite region, or `null` if the account has not selected a region.",
+            "type": "string",
+            "example": "eu",
+            "minLength": 1,
+            "nullable": true,
+            "pattern": "\\S",
+            "x-auditable": true
+          }
+        },
+        "required": [
+          "region_key"
+        ]
+      },
+      "tunnel_active_account_region_response_single": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/tunnel_api-response-common"
+          },
+          {
+            "properties": {
+              "result": {
+                "$ref": "#/components/schemas/tunnel_active_account_region"
+              }
+            },
+            "required": [
+              "result"
+            ],
+            "type": "object"
+          }
+        ]
+      },
       "tunnel_address_family": {
         "description": "IP address family, either `v4` (IPv4) or `v6` (IPv6)",
         "type": "string",
@@ -732923,6 +734624,26 @@
         "type": "number",
         "maximum": 1000,
         "minimum": 1
+      },
+      "tunnel_put_account_region_body": {
+        "type": "object",
+        "properties": {
+          "region_key": {
+            "$ref": "#/components/schemas/tunnel_region_key"
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "region_key"
+        ]
+      },
+      "tunnel_region_key": {
+        "description": "The key of a Data Localization Suite region.",
+        "type": "string",
+        "example": "eu",
+        "minLength": 1,
+        "pattern": "\\S",
+        "x-auditable": true
       },
       "tunnel_remote_config": {
         "description": "If `true`, the tunnel can be configured remotely from the Zero Trust dashboard. If `false`, the tunnel must be configured locally on the origin machine.",
