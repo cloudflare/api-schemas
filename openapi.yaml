@@ -42079,7 +42079,7 @@ paths:
                   nullable: true
                   properties:
                     d1:
-                      description: D1 source configuration. Required when type is d1 and ignored for other types.
+                      description: D1 source configuration. Required when creating a d1 instance and ignored for other types. For d1, include_items and exclude_items match each row's item key, `<id>.md`; a submitted source_params replaces both lists (an omitted list is cleared), so omit source_params to keep them.
                       type: object
                       properties:
                         query:
@@ -42666,7 +42666,7 @@ paths:
                         nullable: true
                         properties:
                           d1:
-                            description: D1 source configuration. Required when type is d1 and ignored for other types.
+                            description: D1 source configuration. Required when creating a d1 instance and ignored for other types. For d1, include_items and exclude_items match each row's item key, `<id>.md`; a submitted source_params replaces both lists (an omitted list is cleared), so omit source_params to keep them.
                             type: object
                             properties:
                               query:
@@ -43464,7 +43464,7 @@ paths:
                         nullable: true
                         properties:
                           d1:
-                            description: D1 source configuration. Required when type is d1 and ignored for other types.
+                            description: D1 source configuration. Required when creating a d1 instance and ignored for other types. For d1, include_items and exclude_items match each row's item key, `<id>.md`; a submitted source_params replaces both lists (an omitted list is cleared), so omit source_params to keep them.
                             type: object
                             properties:
                               query:
@@ -44157,7 +44157,7 @@ paths:
                         nullable: true
                         properties:
                           d1:
-                            description: D1 source configuration. Required when type is d1 and ignored for other types.
+                            description: D1 source configuration. Required when creating a d1 instance and ignored for other types. For d1, include_items and exclude_items match each row's item key, `<id>.md`; a submitted source_params replaces both lists (an omitted list is cleared), so omit source_params to keep them.
                             type: object
                             properties:
                               query:
@@ -44775,25 +44775,22 @@ paths:
                   nullable: true
                   properties:
                     d1:
-                      description: D1 source configuration. Required when type is d1 and ignored for other types.
+                      description: D1 source configuration of a d1 instance; ignored for other types. An omitted d1, query, or template keeps its stored value. For d1, include_items and exclude_items match each row's item key, `<id>.md`; a submitted source_params replaces both lists (an omitted list is cleared), so omit source_params to keep them.
                       type: object
                       properties:
                         query:
-                          description: Read-only SELECT query run against the D1 database. It must return an `id` column that uniquely identifies each row. Columns named `title` and `content` set the document title and body, and up to 5 `meta_*` columns become filterable custom metadata; any other column is indexed as a labelled field. Every sync reads the full result, up to 100,000 rows, with the instance's token, and those reads count against your D1 usage. Leading and trailing whitespace is trimmed before the query is stored.
+                          description: Read-only SELECT query run against the D1 database. It must return an `id` column that uniquely identifies each row. Columns named `title` and `content` set the document title and body, and up to 5 `meta_*` columns become filterable custom metadata; any other column is indexed as a labelled field. Every sync reads the full result, up to 100,000 rows, with the instance's token, and those reads count against your D1 usage. Leading and trailing whitespace is trimmed before the query is stored. Omit to keep the stored query.
                           maxLength: 10000
                           minLength: 1
                           type: string
                         template:
-                          description: 'How each row is rendered into the indexed document: labelled renders the title, the labelled fields, then the content; content_only renders the title and content (labelled fields only when there is no content); key_value renders every column as name: value; json renders every column as a JSON object.'
+                          description: 'How each row is rendered into the indexed document: labelled renders the title, the labelled fields, then the content; content_only renders the title and content (labelled fields only when there is no content); key_value renders every column as name: value; json renders every column as a JSON object. Omit to keep the stored template.'
                           type: string
-                          default: labelled
                           enum:
                             - labelled
                             - content_only
                             - key_value
                             - json
-                      required:
-                        - query
                     exclude_items:
                       description: 'List of path patterns to exclude. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /admin/** matches /admin/users and /admin/settings/advanced). Most accounts have a limit of 10 rules; contact support to raise it.'
                       type: array
@@ -45369,7 +45366,7 @@ paths:
                         nullable: true
                         properties:
                           d1:
-                            description: D1 source configuration. Required when type is d1 and ignored for other types.
+                            description: D1 source configuration. Required when creating a d1 instance and ignored for other types. For d1, include_items and exclude_items match each row's item key, `<id>.md`; a submitted source_params replaces both lists (an omitted list is cleared), so omit source_params to keep them.
                             type: object
                             properties:
                               query:
@@ -51360,7 +51357,7 @@ paths:
                   nullable: true
                   properties:
                     d1:
-                      description: D1 source configuration. Required when type is d1 and ignored for other types.
+                      description: D1 source configuration. Required when creating a d1 instance and ignored for other types. For d1, include_items and exclude_items match each row's item key, `<id>.md`; a submitted source_params replaces both lists (an omitted list is cleared), so omit source_params to keep them.
                       type: object
                       properties:
                         query:
@@ -51947,7 +51944,7 @@ paths:
                         nullable: true
                         properties:
                           d1:
-                            description: D1 source configuration. Required when type is d1 and ignored for other types.
+                            description: D1 source configuration. Required when creating a d1 instance and ignored for other types. For d1, include_items and exclude_items match each row's item key, `<id>.md`; a submitted source_params replaces both lists (an omitted list is cleared), so omit source_params to keep them.
                             type: object
                             properties:
                               query:
@@ -52763,7 +52760,7 @@ paths:
                         nullable: true
                         properties:
                           d1:
-                            description: D1 source configuration. Required when type is d1 and ignored for other types.
+                            description: D1 source configuration. Required when creating a d1 instance and ignored for other types. For d1, include_items and exclude_items match each row's item key, `<id>.md`; a submitted source_params replaces both lists (an omitted list is cleared), so omit source_params to keep them.
                             type: object
                             properties:
                               query:
@@ -53467,7 +53464,7 @@ paths:
                         nullable: true
                         properties:
                           d1:
-                            description: D1 source configuration. Required when type is d1 and ignored for other types.
+                            description: D1 source configuration. Required when creating a d1 instance and ignored for other types. For d1, include_items and exclude_items match each row's item key, `<id>.md`; a submitted source_params replaces both lists (an omitted list is cleared), so omit source_params to keep them.
                             type: object
                             properties:
                               query:
@@ -54285,25 +54282,22 @@ paths:
                   nullable: true
                   properties:
                     d1:
-                      description: D1 source configuration. Required when type is d1 and ignored for other types.
+                      description: D1 source configuration of a d1 instance; ignored for other types. An omitted d1, query, or template keeps its stored value. For d1, include_items and exclude_items match each row's item key, `<id>.md`; a submitted source_params replaces both lists (an omitted list is cleared), so omit source_params to keep them.
                       type: object
                       properties:
                         query:
-                          description: Read-only SELECT query run against the D1 database. It must return an `id` column that uniquely identifies each row. Columns named `title` and `content` set the document title and body, and up to 5 `meta_*` columns become filterable custom metadata; any other column is indexed as a labelled field. Every sync reads the full result, up to 100,000 rows, with the instance's token, and those reads count against your D1 usage. Leading and trailing whitespace is trimmed before the query is stored.
+                          description: Read-only SELECT query run against the D1 database. It must return an `id` column that uniquely identifies each row. Columns named `title` and `content` set the document title and body, and up to 5 `meta_*` columns become filterable custom metadata; any other column is indexed as a labelled field. Every sync reads the full result, up to 100,000 rows, with the instance's token, and those reads count against your D1 usage. Leading and trailing whitespace is trimmed before the query is stored. Omit to keep the stored query.
                           maxLength: 10000
                           minLength: 1
                           type: string
                         template:
-                          description: 'How each row is rendered into the indexed document: labelled renders the title, the labelled fields, then the content; content_only renders the title and content (labelled fields only when there is no content); key_value renders every column as name: value; json renders every column as a JSON object.'
+                          description: 'How each row is rendered into the indexed document: labelled renders the title, the labelled fields, then the content; content_only renders the title and content (labelled fields only when there is no content); key_value renders every column as name: value; json renders every column as a JSON object. Omit to keep the stored template.'
                           type: string
-                          default: labelled
                           enum:
                             - labelled
                             - content_only
                             - key_value
                             - json
-                      required:
-                        - query
                     exclude_items:
                       description: 'List of path patterns to exclude. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /admin/** matches /admin/users and /admin/settings/advanced). Most accounts have a limit of 10 rules; contact support to raise it.'
                       type: array
@@ -54879,7 +54873,7 @@ paths:
                         nullable: true
                         properties:
                           d1:
-                            description: D1 source configuration. Required when type is d1 and ignored for other types.
+                            description: D1 source configuration. Required when creating a d1 instance and ignored for other types. For d1, include_items and exclude_items match each row's item key, `<id>.md`; a submitted source_params replaces both lists (an omitted list is cleared), so omit source_params to keep them.
                             type: object
                             properties:
                               query:
