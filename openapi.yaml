@@ -136994,9 +136994,9 @@ paths:
                 include:
                   $ref: '#/components/schemas/teams-devices_include_request'
                 lan_allow_minutes:
-                  $ref: '#/components/schemas/teams-devices_lan_allow_minutes'
+                  $ref: '#/components/schemas/teams-devices_lan_allow_minutes_request'
                 lan_allow_subnet_size:
-                  $ref: '#/components/schemas/teams-devices_lan_allow_subnet_size'
+                  $ref: '#/components/schemas/teams-devices_lan_allow_subnet_size_request'
                 register_interface_ip_with_dns:
                   $ref: '#/components/schemas/teams-devices_register_interface_ip_with_dns'
                 sccm_vpn_boundary_support:
@@ -137094,14 +137094,16 @@ paths:
                   $ref: '#/components/schemas/teams-devices_exclude_request'
                 exclude_office_ips:
                   $ref: '#/components/schemas/teams-devices_exclude_office_ips'
+                fallback_domains:
+                  $ref: '#/components/schemas/teams-devices_fallback_domains'
                 global_acceleration:
                   $ref: '#/components/schemas/teams-devices_global_acceleration'
                 include:
                   $ref: '#/components/schemas/teams-devices_include_request'
                 lan_allow_minutes:
-                  $ref: '#/components/schemas/teams-devices_lan_allow_minutes'
+                  $ref: '#/components/schemas/teams-devices_lan_allow_minutes_request'
                 lan_allow_subnet_size:
-                  $ref: '#/components/schemas/teams-devices_lan_allow_subnet_size'
+                  $ref: '#/components/schemas/teams-devices_lan_allow_subnet_size_request'
                 match:
                   $ref: '#/components/schemas/teams-devices_schemas-match'
                 name:
@@ -137296,9 +137298,9 @@ paths:
                 include:
                   $ref: '#/components/schemas/teams-devices_include_request'
                 lan_allow_minutes:
-                  $ref: '#/components/schemas/teams-devices_lan_allow_minutes'
+                  $ref: '#/components/schemas/teams-devices_lan_allow_minutes_request'
                 lan_allow_subnet_size:
-                  $ref: '#/components/schemas/teams-devices_lan_allow_subnet_size'
+                  $ref: '#/components/schemas/teams-devices_lan_allow_subnet_size_request'
                 match:
                   $ref: '#/components/schemas/teams-devices_schemas-match'
                 name:
@@ -137459,7 +137461,7 @@ paths:
             schema:
               type: array
               items:
-                $ref: '#/components/schemas/teams-devices_split_tunnel'
+                $ref: '#/components/schemas/teams-devices_split_tunnel_request'
       responses:
         '200':
           description: Set the Split Tunnel exclude list for a device settings profile response.
@@ -137681,7 +137683,7 @@ paths:
             schema:
               type: array
               items:
-                $ref: '#/components/schemas/teams-devices_split_tunnel_include'
+                $ref: '#/components/schemas/teams-devices_split_tunnel_include_request'
       responses:
         '200':
           description: Set the Split Tunnel include list for a device settings profile response.
@@ -137801,7 +137803,7 @@ paths:
             schema:
               type: array
               items:
-                $ref: '#/components/schemas/teams-devices_split_tunnel'
+                $ref: '#/components/schemas/teams-devices_split_tunnel_request'
       responses:
         '200':
           description: Set the Split Tunnel exclude list response.
@@ -137998,7 +138000,7 @@ paths:
             schema:
               type: array
               items:
-                $ref: '#/components/schemas/teams-devices_split_tunnel_include'
+                $ref: '#/components/schemas/teams-devices_split_tunnel_include_request'
       responses:
         '200':
           description: Set the Split Tunnel include list response.
@@ -505709,7 +505711,7 @@ components:
       description: List of routes excluded in the WARP client's tunnel. Both 'exclude' and 'include' cannot be set in the same request.
       type: array
       items:
-        $ref: '#/components/schemas/teams-devices_split_tunnel'
+        $ref: '#/components/schemas/teams-devices_split_tunnel_request'
       x-stainless-terraform-configurability: computed_optional
     teams-devices_exclude_split_tunnel_with_address:
       type: object
@@ -505721,11 +505723,31 @@ components:
       additionalProperties: false
       required:
         - address
+    teams-devices_exclude_split_tunnel_with_address_request:
+      type: object
+      properties:
+        address:
+          $ref: '#/components/schemas/teams-devices_split_tunnel_address'
+        description:
+          $ref: '#/components/schemas/teams-devices_split_tunnel_description_request'
+      additionalProperties: false
+      required:
+        - address
     teams-devices_exclude_split_tunnel_with_host:
       type: object
       properties:
         description:
           $ref: '#/components/schemas/teams-devices_split_tunnel_description'
+        host:
+          $ref: '#/components/schemas/teams-devices_split_tunnel_host'
+      additionalProperties: false
+      required:
+        - host
+    teams-devices_exclude_split_tunnel_with_host_request:
+      type: object
+      properties:
+        description:
+          $ref: '#/components/schemas/teams-devices_split_tunnel_description_request'
         host:
           $ref: '#/components/schemas/teams-devices_split_tunnel_host'
       additionalProperties: false
@@ -505953,7 +505975,7 @@ components:
       description: List of routes included in the WARP client's tunnel. Both 'exclude' and 'include' cannot be set in the same request.
       type: array
       items:
-        $ref: '#/components/schemas/teams-devices_split_tunnel_include'
+        $ref: '#/components/schemas/teams-devices_split_tunnel_include_request'
       x-stainless-terraform-configurability: computed_optional
     teams-devices_include_split_tunnel_address:
       description: The address in CIDR format to include in the tunnel. If `address` is present, `host` must not be present.
@@ -505966,6 +505988,14 @@ components:
       type: string
       example: Include testing domains in the tunnel
       maxLength: 100
+      x-auditable: true
+      x-stainless-terraform-configurability: computed_optional
+    teams-devices_include_split_tunnel_description_request:
+      description: A description of the Split Tunnel item, displayed in the client UI. Null is treated as an empty description.
+      type: string
+      example: Include testing domains in the tunnel
+      maxLength: 100
+      nullable: true
       x-auditable: true
       x-stainless-terraform-configurability: computed_optional
     teams-devices_include_split_tunnel_host:
@@ -505984,11 +506014,31 @@ components:
       additionalProperties: false
       required:
         - address
+    teams-devices_include_split_tunnel_with_address_request:
+      type: object
+      properties:
+        address:
+          $ref: '#/components/schemas/teams-devices_include_split_tunnel_address'
+        description:
+          $ref: '#/components/schemas/teams-devices_include_split_tunnel_description_request'
+      additionalProperties: false
+      required:
+        - address
     teams-devices_include_split_tunnel_with_host:
       type: object
       properties:
         description:
           $ref: '#/components/schemas/teams-devices_include_split_tunnel_description'
+        host:
+          $ref: '#/components/schemas/teams-devices_include_split_tunnel_host'
+      additionalProperties: false
+      required:
+        - host
+    teams-devices_include_split_tunnel_with_host_request:
+      type: object
+      properties:
+        description:
+          $ref: '#/components/schemas/teams-devices_include_split_tunnel_description_request'
         host:
           $ref: '#/components/schemas/teams-devices_include_split_tunnel_host'
       additionalProperties: false
@@ -506062,6 +506112,8 @@ components:
             - notapplicable
             - ingraceperiod
             - error
+            - conflict
+            - configmanager
           x-auditable: true
         connection_id:
           description: Posture Integration ID.
@@ -506277,10 +506329,22 @@ components:
       type: number
       example: 30
       x-auditable: true
+    teams-devices_lan_allow_minutes_request:
+      description: The amount of time in minutes a user is allowed access to their LAN. A value of 0 will allow LAN access until the next WARP reconnection, such as a reboot or a laptop waking from sleep. Set to null to unset.
+      type: number
+      example: 30
+      nullable: true
+      x-auditable: true
     teams-devices_lan_allow_subnet_size:
       description: The size of the subnet for the local access network. Note that this field is omitted from the response if null or unset.
       type: number
       example: 24
+      x-auditable: true
+    teams-devices_lan_allow_subnet_size_request:
+      description: The size of the subnet for the local access network. Set to null to unset.
+      type: number
+      example: 24
+      nullable: true
       x-auditable: true
     teams-devices_last_seen:
       description: When the device last connected to Cloudflare services.
@@ -506912,7 +506976,7 @@ components:
       description: 'The wirefilter expression to match devices. Available values: "identity.email", "identity.groups.id", "identity.groups.name", "identity.groups.email", "identity.service_token_uuid", "identity.saml_attributes", "network", "os.name", "os.version", "device.tags".'
       type: string
       example: identity.email == "test@cloudflare.com"
-      maxLength: 500
+      maxLength: 10000
       x-auditable: true
     teams-devices_schemas-name:
       description: The device name.
@@ -507097,6 +507161,14 @@ components:
       maxLength: 100
       x-auditable: true
       x-stainless-terraform-configurability: computed_optional
+    teams-devices_split_tunnel_description_request:
+      description: A description of the Split Tunnel item, displayed in the client UI. Null is treated as an empty description.
+      type: string
+      example: Exclude testing domains from the tunnel
+      maxLength: 100
+      nullable: true
+      x-auditable: true
+      x-stainless-terraform-configurability: computed_optional
     teams-devices_split_tunnel_host:
       description: The domain name to exclude from the tunnel. If `host` is present, `address` must not be present.
       type: string
@@ -507108,6 +507180,11 @@ components:
       oneOf:
         - $ref: '#/components/schemas/teams-devices_include_split_tunnel_with_address'
         - $ref: '#/components/schemas/teams-devices_include_split_tunnel_with_host'
+    teams-devices_split_tunnel_include_request:
+      type: object
+      oneOf:
+        - $ref: '#/components/schemas/teams-devices_include_split_tunnel_with_address_request'
+        - $ref: '#/components/schemas/teams-devices_include_split_tunnel_with_host_request'
     teams-devices_split_tunnel_include_response_collection:
       allOf:
         - $ref: '#/components/schemas/teams-devices_api-response-collection'
@@ -507117,6 +507194,11 @@ components:
               items:
                 $ref: '#/components/schemas/teams-devices_split_tunnel_include'
           type: object
+    teams-devices_split_tunnel_request:
+      type: object
+      oneOf:
+        - $ref: '#/components/schemas/teams-devices_exclude_split_tunnel_with_address_request'
+        - $ref: '#/components/schemas/teams-devices_exclude_split_tunnel_with_host_request'
     teams-devices_split_tunnel_response_collection:
       allOf:
         - $ref: '#/components/schemas/teams-devices_api-response-collection'
