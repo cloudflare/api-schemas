@@ -8104,13 +8104,24 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/resource-tagging_account_id'
+        - name: resource_id
+          in: query
+          description: The ID of the resource to remove tags from.
+          required: true
+          schema:
+            $ref: '#/components/schemas/resource-tagging_resource_id'
+        - name: resource_type
+          in: query
+          description: The type of the resource.
+          required: true
+          schema:
+            $ref: '#/components/schemas/resource-tagging_account_resource_type'
+        - name: worker_id
+          in: query
+          description: Worker identifier. Required for worker_version resources.
+          schema:
+            $ref: '#/components/schemas/resource-tagging_worker_id'
         - $ref: '#/components/parameters/resource-tagging_if_match'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/resource-tagging_delete_tags_request_account_level'
       responses:
         '204':
           description: Tags successfully deleted (no content).
@@ -219427,13 +219438,24 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/resource-tagging_account_id'
+        - name: resource_id
+          in: query
+          description: The ID of the resource to remove tags from.
+          required: true
+          schema:
+            $ref: '#/components/schemas/resource-tagging_resource_id'
+        - name: resource_type
+          in: query
+          description: The type of the resource.
+          required: true
+          schema:
+            $ref: '#/components/schemas/resource-tagging_account_resource_type'
+        - name: worker_id
+          in: query
+          description: Worker identifier. Required for worker_version resources.
+          schema:
+            $ref: '#/components/schemas/resource-tagging_worker_id'
         - $ref: '#/components/parameters/resource-tagging_if_match'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/resource-tagging_delete_tags_request_account_level'
       responses:
         '204':
           description: Tags successfully deleted (no content).
@@ -402370,13 +402392,24 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/resource-tagging_zone_id'
+        - name: resource_id
+          in: query
+          description: The ID of the resource to remove tags from.
+          required: true
+          schema:
+            $ref: '#/components/schemas/resource-tagging_resource_id'
+        - name: resource_type
+          in: query
+          description: The type of the resource.
+          required: true
+          schema:
+            $ref: '#/components/schemas/resource-tagging_zone_resource_type'
+        - name: access_application_id
+          in: query
+          description: Access application ID identifier. Required for access_application_policy resources.
+          schema:
+            $ref: '#/components/schemas/resource-tagging_access_application_id'
         - $ref: '#/components/parameters/resource-tagging_if_match'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/resource-tagging_delete_tags_request_zone_level'
       responses:
         '204':
           description: Tags successfully deleted (no content).
@@ -491981,49 +492014,6 @@ components:
           type: string
           example: eyJhY2NvdW50X2lkIjoxMjM0NTY3ODkwfQ
           nullable: true
-    resource-tagging_delete_tags_request_account_level:
-      description: Request body schema for deleting tags from account-level resources. Use /zones/{zone_id}/tags for zone-level resources.
-      discriminator:
-        mapping:
-          access_application: '#/components/schemas/resource-tagging_delete_tags_request_account_level_base'
-          access_group: '#/components/schemas/resource-tagging_delete_tags_request_account_level_base'
-          access_service_token: '#/components/schemas/resource-tagging_delete_tags_request_account_level_base'
-          account: '#/components/schemas/resource-tagging_delete_tags_request_account_level_base'
-          account_ruleset: '#/components/schemas/resource-tagging_delete_tags_request_account_level_base'
-          ai_gateway: '#/components/schemas/resource-tagging_delete_tags_request_account_level_base'
-          ai_search_instance: '#/components/schemas/resource-tagging_delete_tags_request_account_level_base'
-          ai_search_namespace: '#/components/schemas/resource-tagging_delete_tags_request_account_level_base'
-          alerting_policy: '#/components/schemas/resource-tagging_delete_tags_request_account_level_base'
-          alerting_webhook: '#/components/schemas/resource-tagging_delete_tags_request_account_level_base'
-          cloudflared_tunnel: '#/components/schemas/resource-tagging_delete_tags_request_account_level_base'
-          cws_deployment: '#/components/schemas/resource-tagging_delete_tags_request_account_level_base'
-          cws_policy: '#/components/schemas/resource-tagging_delete_tags_request_account_level_base'
-          cws_policy_set: '#/components/schemas/resource-tagging_delete_tags_request_account_level_base'
-          cws_workload: '#/components/schemas/resource-tagging_delete_tags_request_account_level_base'
-          d1_database: '#/components/schemas/resource-tagging_delete_tags_request_account_level_base'
-          device: '#/components/schemas/resource-tagging_delete_tags_request_account_level_base'
-          durable_object_namespace: '#/components/schemas/resource-tagging_delete_tags_request_account_level_base'
-          gateway_list: '#/components/schemas/resource-tagging_delete_tags_request_account_level_base'
-          gateway_rule: '#/components/schemas/resource-tagging_delete_tags_request_account_level_base'
-          image: '#/components/schemas/resource-tagging_delete_tags_request_account_level_base'
-          infrastructure_target: '#/components/schemas/resource-tagging_delete_tags_request_account_level_base'
-          kv_namespace: '#/components/schemas/resource-tagging_delete_tags_request_account_level_base'
-          load_balancer_monitor: '#/components/schemas/resource-tagging_delete_tags_request_account_level_base'
-          load_balancer_pool: '#/components/schemas/resource-tagging_delete_tags_request_account_level_base'
-          namespace_worker: '#/components/schemas/resource-tagging_delete_tags_request_account_level_base'
-          pages_project: '#/components/schemas/resource-tagging_delete_tags_request_account_level_base'
-          queue: '#/components/schemas/resource-tagging_delete_tags_request_account_level_base'
-          r2_bucket: '#/components/schemas/resource-tagging_delete_tags_request_account_level_base'
-          resource_share: '#/components/schemas/resource-tagging_delete_tags_request_account_level_base'
-          stream_live_input: '#/components/schemas/resource-tagging_delete_tags_request_account_level_base'
-          stream_video: '#/components/schemas/resource-tagging_delete_tags_request_account_level_base'
-          vectorize_index: '#/components/schemas/resource-tagging_delete_tags_request_account_level_base'
-          worker: '#/components/schemas/resource-tagging_delete_tags_request_account_level_base'
-          worker_version: '#/components/schemas/resource-tagging_delete_tags_request_account_level_worker_version'
-        propertyName: resource_type
-      oneOf:
-        - $ref: '#/components/schemas/resource-tagging_delete_tags_request_account_level_worker_version'
-        - $ref: '#/components/schemas/resource-tagging_delete_tags_request_account_level_base'
     resource-tagging_delete_tags_request_account_level_base:
       description: Request body schema for deleting tags from account-level resources.
       type: object
@@ -492049,25 +492039,6 @@ components:
         - resource_type
         - resource_id
         - worker_id
-    resource-tagging_delete_tags_request_zone_level:
-      description: Request body schema for deleting tags from zone-level resources.
-      discriminator:
-        mapping:
-          access_application_policy: '#/components/schemas/resource-tagging_delete_tags_request_zone_level_access_application_policy'
-          api_gateway_operation: '#/components/schemas/resource-tagging_delete_tags_request_zone_level_base'
-          custom_certificate: '#/components/schemas/resource-tagging_delete_tags_request_zone_level_base'
-          custom_hostname: '#/components/schemas/resource-tagging_delete_tags_request_zone_level_base'
-          dns_record: '#/components/schemas/resource-tagging_delete_tags_request_zone_level_base'
-          healthcheck: '#/components/schemas/resource-tagging_delete_tags_request_zone_level_base'
-          load_balancer: '#/components/schemas/resource-tagging_delete_tags_request_zone_level_base'
-          managed_client_certificate: '#/components/schemas/resource-tagging_delete_tags_request_zone_level_base'
-          worker_route: '#/components/schemas/resource-tagging_delete_tags_request_zone_level_base'
-          zone: '#/components/schemas/resource-tagging_delete_tags_request_zone_level_base'
-          zone_ruleset: '#/components/schemas/resource-tagging_delete_tags_request_zone_level_base'
-        propertyName: resource_type
-      oneOf:
-        - $ref: '#/components/schemas/resource-tagging_delete_tags_request_zone_level_base'
-        - $ref: '#/components/schemas/resource-tagging_delete_tags_request_zone_level_access_application_policy'
     resource-tagging_delete_tags_request_zone_level_access_application_policy:
       description: Request body schema for deleting tags from access_application_policy resources.
       type: object
