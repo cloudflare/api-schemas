@@ -274455,6 +274455,18 @@
             }
           },
           {
+            "$ref": "#/components/parameters/tls-certificates-and-hostnames_page"
+          },
+          {
+            "$ref": "#/components/parameters/tls-certificates-and-hostnames_per_page"
+          },
+          {
+            "$ref": "#/components/parameters/tls-certificates-and-hostnames_limit"
+          },
+          {
+            "$ref": "#/components/parameters/tls-certificates-and-hostnames_offset"
+          },
+          {
             "name": "type",
             "in": "query",
             "description": "Filters results by certificate type. Multiple types can be comma-separated.",
@@ -555404,6 +555416,18 @@
             "schema": {
               "$ref": "#/components/schemas/tls-certificates-and-hostnames_setting_id"
             }
+          },
+          {
+            "$ref": "#/components/parameters/tls-certificates-and-hostnames_page"
+          },
+          {
+            "$ref": "#/components/parameters/tls-certificates-and-hostnames_per_page"
+          },
+          {
+            "$ref": "#/components/parameters/tls-certificates-and-hostnames_limit"
+          },
+          {
+            "$ref": "#/components/parameters/tls-certificates-and-hostnames_offset"
           }
         ],
         "responses": {
@@ -557026,6 +557050,27 @@
             "required": true,
             "schema": {
               "$ref": "#/components/schemas/tls-certificates-and-hostnames_identifier"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number of Keyless SSL configurations, starting at 1.",
+            "schema": {
+              "type": "integer",
+              "default": 1,
+              "minimum": 1
+            }
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "description": "Number of Keyless SSL configurations per page.",
+            "schema": {
+              "type": "integer",
+              "default": 20,
+              "maximum": 1000,
+              "minimum": 1
             }
           }
         ],
@@ -564900,6 +564945,18 @@
             "schema": {
               "$ref": "#/components/schemas/tls-certificates-and-hostnames_identifier"
             }
+          },
+          {
+            "$ref": "#/components/parameters/tls-certificates-and-hostnames_page"
+          },
+          {
+            "$ref": "#/components/parameters/tls-certificates-and-hostnames_per_page"
+          },
+          {
+            "$ref": "#/components/parameters/tls-certificates-and-hostnames_limit"
+          },
+          {
+            "$ref": "#/components/parameters/tls-certificates-and-hostnames_offset"
           }
         ],
         "responses": {
@@ -565272,6 +565329,18 @@
             "schema": {
               "$ref": "#/components/schemas/tls-certificates-and-hostnames_identifier"
             }
+          },
+          {
+            "$ref": "#/components/parameters/tls-certificates-and-hostnames_page"
+          },
+          {
+            "$ref": "#/components/parameters/tls-certificates-and-hostnames_per_page"
+          },
+          {
+            "$ref": "#/components/parameters/tls-certificates-and-hostnames_limit"
+          },
+          {
+            "$ref": "#/components/parameters/tls-certificates-and-hostnames_offset"
           }
         ],
         "responses": {
@@ -591904,6 +591973,44 @@
           "items": {
             "type": "string"
           }
+        }
+      },
+      "tls-certificates-and-hostnames_limit": {
+        "description": "Alias for per_page. Defaults to 50 when neither per_page nor limit is provided. Takes precedence over per_page. Values above 1000 are capped at 1000.",
+        "in": "query",
+        "name": "limit",
+        "schema": {
+          "type": "integer",
+          "maximum": 1000,
+          "minimum": 0
+        }
+      },
+      "tls-certificates-and-hostnames_offset": {
+        "description": "Number of results to skip. Defaults to 0. Takes precedence over page, including when offset is 0.",
+        "in": "query",
+        "name": "offset",
+        "schema": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "tls-certificates-and-hostnames_page": {
+        "description": "Page number, starting at 1. Defaults to 1. Ignored when offset is provided.",
+        "in": "query",
+        "name": "page",
+        "schema": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "tls-certificates-and-hostnames_per_page": {
+        "description": "Number of results per page. Defaults to 50 when neither per_page nor limit is provided. Ignored when limit is provided. Values above 1000 are capped at 1000.",
+        "in": "query",
+        "name": "per_page",
+        "schema": {
+          "type": "integer",
+          "maximum": 1000,
+          "minimum": 0
         }
       },
       "usage-analytics_account_id": {
