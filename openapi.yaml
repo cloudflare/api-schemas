@@ -213234,7 +213234,10 @@ paths:
     post:
       operationId: update-security-center-partner-settings
       summary: Updates Partner Integration Settings
-      description: Enables or disables the selected partner integration for the account. Enabling the integration for the first time also schedules an account scan for that partner.
+      description: |-
+        Enables or disables the selected partner integration for the account.
+        Enabling the integration for the first time also schedules an account scan for that partner.
+        Disabling the integration will purge all partner integration-related data, including partner insights, shadow zones, and shadow hosts.
       parameters:
         - $ref: '#/components/parameters/security-center_accountId'
         - $ref: '#/components/parameters/security-center_partner'
@@ -395645,7 +395648,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/security-center_api-response-single'
+                  - $ref: '#/components/schemas/security-center_ExternalApiResponseSingleNoTerraform'
         4XX:
           description: A client error occurred.
           content:
@@ -405978,11 +405981,11 @@ components:
         type: string
         format: date-time
     security-center_partner:
-      description: The partner integration identifier.
       in: path
       name: partner
       required: true
       schema:
+        description: The partner integration identifier.
         type: string
         enum:
           - riskrecon
@@ -495766,8 +495769,35 @@ components:
       $ref: '#/components/schemas/security-center_api-response-common'
     security-center_ExternalApiResponseCommonFailure:
       $ref: '#/components/schemas/security-center_api-response-common-failure'
+    security-center_ExternalApiResponseMessages:
+      $ref: '#/components/schemas/security-center_messages'
     security-center_ExternalApiResponseSingle:
       $ref: '#/components/schemas/security-center_api-response-single'
+    security-center_ExternalApiResponseSingleNoTerraform:
+      type: object
+      properties:
+        errors:
+          allOf:
+            - $ref: '#/components/schemas/security-center_messages'
+          x-stainless-skip:
+            - terraform
+        messages:
+          allOf:
+            - $ref: '#/components/schemas/security-center_messages'
+          x-stainless-skip:
+            - terraform
+        success:
+          description: Whether the API call was successful.
+          type: boolean
+          example: true
+          enum:
+            - true
+          x-stainless-skip:
+            - terraform
+      required:
+        - success
+        - errors
+        - messages
     security-center_accountId:
       $ref: '#/components/schemas/security-center_identifier'
     security-center_accountStateResponse:
@@ -495777,6 +495807,8 @@ components:
           description: Whether the account was recently reactivated from a dormant state (used to show the reactivation banner).
           type: boolean
           example: false
+          x-stainless-skip:
+            - terraform
         scans_enabled:
           description: Whether on-demand and scheduled scans are enabled for the account.
           type: boolean
@@ -496117,7 +496149,10 @@ components:
       type: object
       properties:
         enabled:
-          description: Whether the partner integration is enabled for the account.
+          description: |-
+            Whether the partner integration is enabled for the account.
+            Enabling the integration for the first time also schedules an account scan for that partner.
+            Disabling the integration will purge all partner integration-related data, including partner insights, shadow zones, and shadow hosts.
           type: boolean
           example: true
           x-auditable: true
@@ -496222,9 +496257,11 @@ components:
         - scans
         - quota
     security-center_securityTxt:
+      description: Configuration of the zone security.txt file
       type: object
       properties:
         acknowledgments:
+          description: Link(s) to a page where security researchers are recognised for their reports.
           type: array
           items:
             format: uri
@@ -496233,6 +496270,7 @@ components:
           example:
             - https://example.com/hall-of-fame.html
         canonical:
+          description: Canonical URI where the security.txt file is located.
           type: array
           items:
             format: uri
@@ -496241,6 +496279,7 @@ components:
           example:
             - https://www.example.com/.well-known/security.txt
         contact:
+          description: Methods that researchers should use for reporting vulnerabilities. Can be a URI for an email address, phone number, or URL.
           type: array
           items:
             format: uri
@@ -496251,10 +496290,13 @@ components:
             - tel:+1-201-555-0123
             - https://example.com/security-contact.html
         enabled:
+          description: Whether or not to serve the security.txt file in this zone. If false, security.txt requests will pass through to the origin server.
           type: boolean
           example: true
+          default: false
           x-auditable: true
         encryption:
+          description: URI(s) pointing to a location where an encryption key that researchers should use for encrypted communications can be retrieved. The key itself must not appear in this field.
           type: array
           items:
             format: uri
@@ -496264,10 +496306,13 @@ components:
             - dns:5d2d37ab76d47d36._openpgpkey.example.com?type=OPENPGPKEY
             - openpgp4fpr:5f2de5521c63a801ab59ccb603d49de44b29100f
         expires:
+          description: RFC3339-formatted date and time string indicating the time that, after which, the contents of the security.txt file should be considered stale. It is recommended that this value is less than a year into the future.
           type: string
           format: date-time
+          example: 2027-12-31T23:59:59Z
           x-auditable: true
         hiring:
+          description: Link(s) to any security-related job positions.
           type: array
           items:
             format: uri
@@ -496276,6 +496321,7 @@ components:
           example:
             - https://example.com/jobs.html
         policy:
+          description: Link(s) to where a vulnerability disclosure policy is located.
           type: array
           items:
             format: uri
@@ -496284,9 +496330,14 @@ components:
           example:
             - https://example.com/disclosure-policy.html
         preferred_languages:
+          description: Comma-separated list of natural languages that are preferred when submitting security reports. Language codes should be as defined in RFC5646.
           type: string
           example: en, es, fr
+          default: ''
           x-auditable: true
+      required:
+        - contact
+        - expires
     security-center_severityQueryParam:
       type: array
       items:
