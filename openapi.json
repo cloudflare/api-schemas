@@ -39160,7 +39160,9 @@
             "schema": {
               "description": "Page number",
               "type": "integer",
-              "example": 1
+              "example": 1,
+              "default": 1,
+              "minimum": 1
             }
           },
           {
@@ -39170,7 +39172,10 @@
             "schema": {
               "description": "Number of routes per page",
               "type": "integer",
-              "example": 20
+              "example": 20,
+              "default": 20,
+              "maximum": 100,
+              "minimum": 1
             }
           }
         ],
@@ -42506,7 +42511,9 @@
             "schema": {
               "description": "Page number",
               "type": "integer",
-              "example": 1
+              "example": 1,
+              "default": 1,
+              "minimum": 1
             }
           },
           {
@@ -42516,7 +42523,10 @@
             "schema": {
               "description": "Number of deployments per page",
               "type": "integer",
-              "example": 20
+              "example": 20,
+              "default": 20,
+              "maximum": 100,
+              "minimum": 1
             }
           }
         ],
@@ -43197,7 +43207,9 @@
             "schema": {
               "description": "Page number",
               "type": "integer",
-              "example": 1
+              "example": 1,
+              "default": 1,
+              "minimum": 1
             }
           },
           {
@@ -43207,7 +43219,10 @@
             "schema": {
               "description": "Number of versions per page",
               "type": "integer",
-              "example": 20
+              "example": 20,
+              "default": 20,
+              "maximum": 100,
+              "minimum": 1
             }
           }
         ],
@@ -81712,7 +81727,7 @@
       "put": {
         "operationId": "notification-webhooks-update-a-webhook",
         "summary": "Update a webhook",
-        "description": "Update a webhook destination.",
+        "description": "Update a webhook destination. Only `name` can be updated. `url` and `secret` are immutable; to change them, delete the webhook and create a new one.",
         "parameters": [
           {
             "name": "webhook_id",
@@ -81740,17 +81755,10 @@
                 "properties": {
                   "name": {
                     "$ref": "#/components/schemas/aaa_components-schemas-name"
-                  },
-                  "secret": {
-                    "$ref": "#/components/schemas/aaa_secret"
-                  },
-                  "url": {
-                    "$ref": "#/components/schemas/aaa_url"
                   }
                 },
                 "required": [
-                  "name",
-                  "url"
+                  "name"
                 ]
               }
             }
@@ -222469,7 +222477,7 @@
         "x-cfOwnership": "area-1-ui",
         "x-fern-availability": "beta",
         "x-fern-sdk-group-name": "email-security.allow-policies",
-        "x-fern-sdk-method-name": "batch",
+        "x-fern-sdk-method-name": "bulk-apply",
         "x-forge-oauth-scopes": [
           "cloud-email-security.write"
         ],
@@ -223060,7 +223068,7 @@
         "x-cfOwnership": "area-1-ui",
         "x-fern-availability": "beta",
         "x-fern-sdk-group-name": "email-security.block-senders",
-        "x-fern-sdk-method-name": "batch",
+        "x-fern-sdk-method-name": "bulk-apply",
         "x-forge-oauth-scopes": [
           "cloud-email-security.write"
         ],
@@ -223647,7 +223655,7 @@
         "x-cfOwnership": "area-1-ui",
         "x-fern-availability": "beta",
         "x-fern-sdk-group-name": "email-security.content-policies",
-        "x-fern-sdk-method-name": "batch",
+        "x-fern-sdk-method-name": "bulk-apply",
         "x-forge-oauth-scopes": [
           "cloud-email-security.write"
         ],
@@ -224273,7 +224281,7 @@
         "x-cfOwnership": "area-1-ui",
         "x-fern-availability": "beta",
         "x-fern-sdk-group-name": "email-security.domains",
-        "x-fern-sdk-method-name": "batch",
+        "x-fern-sdk-method-name": "bulk-apply",
         "x-forge-oauth-scopes": [
           "cloud-email-security.write"
         ],
@@ -225181,7 +225189,7 @@
         "x-fern-availability": "beta",
         "x-fern-ignore": true,
         "x-fern-sdk-group-name": "email-security.sending-domain-restrictions",
-        "x-fern-sdk-method-name": "batch",
+        "x-fern-sdk-method-name": "bulk-delete",
         "x-forge-oauth-scopes": [
           "cloud-email-security.write"
         ],
@@ -225708,7 +225716,7 @@
         "x-cfOwnership": "area-1-ui",
         "x-fern-availability": "beta",
         "x-fern-sdk-group-name": "email-security.trusted-domains",
-        "x-fern-sdk-method-name": "batch",
+        "x-fern-sdk-method-name": "bulk-apply",
         "x-forge-oauth-scopes": [
           "cloud-email-security.write"
         ],
@@ -226274,7 +226282,7 @@
         "x-cfOwnership": "area-1-ui",
         "x-fern-availability": "beta",
         "x-fern-sdk-group-name": "email-security.url-ignore-patterns",
-        "x-fern-sdk-method-name": "batch",
+        "x-fern-sdk-method-name": "bulk-apply",
         "x-forge-oauth-scopes": [
           "cloud-email-security.write"
         ],
@@ -252573,7 +252581,8 @@
             "schema": {
               "type": "string",
               "maxLength": 4096
-            }
+            },
+            "x-auditable": false
           }
         ],
         "responses": {
@@ -252609,7 +252618,6 @@
         "tags": [
           "Log Explorer Queries"
         ],
-        "x-auditable": false,
         "x-cfOwnership": "log-explorer",
         "x-fern-ignore": true,
         "x-forge-oauth-scopes": [
@@ -252633,7 +252641,8 @@
               "schema": {
                 "description": "SQL query to execute.",
                 "type": "string",
-                "format": "binary"
+                "format": "binary",
+                "x-auditable": false
               }
             }
           }
@@ -252670,7 +252679,6 @@
         "tags": [
           "Log Explorer Queries"
         ],
-        "x-auditable": false,
         "x-cfOwnership": "log-explorer",
         "x-fern-availability": "generally-available",
         "x-fern-ignore": true,
@@ -542603,253 +542611,91 @@
             }
           },
           {
-            "name": "name",
-            "in": "query",
-            "schema": {
-              "description": "Exact value of the DNS record name. This is a convenience alias for `name.exact`.\n",
-              "type": "string",
-              "example": "www.example.com"
-            }
+            "$ref": "#/components/parameters/dns-records_name"
           },
           {
-            "name": "name.exact",
-            "in": "query",
-            "schema": {
-              "description": "Exact value of the DNS record name. Name filters are case-insensitive.\n",
-              "type": "string",
-              "example": "www.example.com"
-            }
+            "$ref": "#/components/parameters/dns-records_name_exact"
           },
           {
-            "name": "name.contains",
-            "in": "query",
-            "schema": {
-              "description": "Substring of the DNS record name. Name filters are case-insensitive.\n",
-              "type": "string",
-              "example": "w.example."
-            }
+            "$ref": "#/components/parameters/dns-records_name_contains"
           },
           {
-            "name": "name.startswith",
-            "in": "query",
-            "schema": {
-              "description": "Prefix of the DNS record name. Name filters are case-insensitive.\n",
-              "type": "string",
-              "example": "www.example"
-            }
+            "$ref": "#/components/parameters/dns-records_name_startswith"
           },
           {
-            "name": "name.endswith",
-            "in": "query",
-            "schema": {
-              "description": "Suffix of the DNS record name. Name filters are case-insensitive.\n",
-              "type": "string",
-              "example": ".example.com"
-            }
+            "$ref": "#/components/parameters/dns-records_name_endswith"
           },
           {
-            "name": "type",
-            "in": "query",
-            "schema": {
-              "$ref": "#/components/schemas/dns-records_type"
-            }
+            "$ref": "#/components/parameters/dns-records_type"
           },
           {
-            "name": "content",
-            "in": "query",
-            "schema": {
-              "description": "Exact value of the DNS record content. This is a convenience alias for `content.exact`.\n",
-              "type": "string",
-              "example": "127.0.0.1"
-            }
+            "$ref": "#/components/parameters/dns-records_content"
           },
           {
-            "name": "content.exact",
-            "in": "query",
-            "schema": {
-              "description": "Exact value of the DNS record content. Content filters are case-insensitive.\n",
-              "type": "string",
-              "example": "127.0.0.1"
-            }
+            "$ref": "#/components/parameters/dns-records_content_exact"
           },
           {
-            "name": "content.contains",
-            "in": "query",
-            "schema": {
-              "description": "Substring of the DNS record content. Content filters are case-insensitive.\n",
-              "type": "string",
-              "example": "7.0.0."
-            }
+            "$ref": "#/components/parameters/dns-records_content_contains"
           },
           {
-            "name": "content.startswith",
-            "in": "query",
-            "schema": {
-              "description": "Prefix of the DNS record content. Content filters are case-insensitive.\n",
-              "type": "string",
-              "example": "127.0."
-            }
+            "$ref": "#/components/parameters/dns-records_content_startswith"
           },
           {
-            "name": "content.endswith",
-            "in": "query",
-            "schema": {
-              "description": "Suffix of the DNS record content. Content filters are case-insensitive.\n",
-              "type": "string",
-              "example": ".0.1"
-            }
+            "$ref": "#/components/parameters/dns-records_content_endswith"
           },
           {
-            "name": "proxied",
-            "in": "query",
-            "schema": {
-              "$ref": "#/components/schemas/dns-records_proxied"
-            }
+            "$ref": "#/components/parameters/dns-records_proxied"
           },
           {
-            "name": "match",
-            "in": "query",
-            "schema": {
-              "$ref": "#/components/schemas/dns-records_match"
-            }
+            "$ref": "#/components/parameters/dns-records_match"
           },
           {
-            "name": "comment",
-            "in": "query",
-            "schema": {
-              "description": "Exact value of the DNS record comment. This is a convenience alias for `comment.exact`.\n",
-              "type": "string",
-              "example": "Hello, world"
-            }
+            "$ref": "#/components/parameters/dns-records_comment"
           },
           {
-            "name": "comment.present",
-            "in": "query",
-            "schema": {
-              "description": "If this parameter is present, only records *with* a comment are returned.\n",
-              "type": "string"
-            }
+            "$ref": "#/components/parameters/dns-records_comment_present"
           },
           {
-            "name": "comment.absent",
-            "in": "query",
-            "schema": {
-              "description": "If this parameter is present, only records *without* a comment are returned.\n",
-              "type": "string"
-            }
+            "$ref": "#/components/parameters/dns-records_comment_absent"
           },
           {
-            "name": "comment.exact",
-            "in": "query",
-            "schema": {
-              "description": "Exact value of the DNS record comment. Comment filters are case-insensitive.\n",
-              "type": "string",
-              "example": "Hello, world"
-            }
+            "$ref": "#/components/parameters/dns-records_comment_exact"
           },
           {
-            "name": "comment.contains",
-            "in": "query",
-            "schema": {
-              "description": "Substring of the DNS record comment. Comment filters are case-insensitive.\n",
-              "type": "string",
-              "example": "ello, worl"
-            }
+            "$ref": "#/components/parameters/dns-records_comment_contains"
           },
           {
-            "name": "comment.startswith",
-            "in": "query",
-            "schema": {
-              "description": "Prefix of the DNS record comment. Comment filters are case-insensitive.\n",
-              "type": "string",
-              "example": "Hello, w"
-            }
+            "$ref": "#/components/parameters/dns-records_comment_startswith"
           },
           {
-            "name": "comment.endswith",
-            "in": "query",
-            "schema": {
-              "description": "Suffix of the DNS record comment. Comment filters are case-insensitive.\n",
-              "type": "string",
-              "example": "o, world"
-            }
+            "$ref": "#/components/parameters/dns-records_comment_endswith"
           },
           {
-            "name": "tag",
-            "in": "query",
-            "schema": {
-              "description": "Condition on the DNS record tag.\n\nParameter values can be of the form `<tag-name>:<tag-value>` to search for an exact `name:value` pair, or just `<tag-name>` to search for records with a specific tag name regardless of its value.\n\nThis is a convenience shorthand for the more powerful `tag.<predicate>` parameters.\nExamples:\n- `tag=important` is equivalent to `tag.present=important`\n- `tag=team:DNS` is equivalent to `tag.exact=team:DNS`\n",
-              "type": "string",
-              "example": "team:DNS"
-            }
+            "$ref": "#/components/parameters/dns-records_tag"
           },
           {
-            "name": "tag.present",
-            "in": "query",
-            "schema": {
-              "description": "Name of a tag which must be present on the DNS record. Tag filters are case-insensitive.\n",
-              "type": "string",
-              "example": "important"
-            }
+            "$ref": "#/components/parameters/dns-records_tag_present"
           },
           {
-            "name": "tag.absent",
-            "in": "query",
-            "schema": {
-              "description": "Name of a tag which must *not* be present on the DNS record. Tag filters are case-insensitive.\n",
-              "type": "string",
-              "example": "important"
-            }
+            "$ref": "#/components/parameters/dns-records_tag_absent"
           },
           {
-            "name": "tag.exact",
-            "in": "query",
-            "schema": {
-              "description": "A tag and value, of the form `<tag-name>:<tag-value>`. The API will only return DNS records that have a tag named `<tag-name>` whose value is `<tag-value>`. Tag filters are case-insensitive.\n",
-              "type": "string",
-              "example": "greeting:Hello, world"
-            }
+            "$ref": "#/components/parameters/dns-records_tag_exact"
           },
           {
-            "name": "tag.contains",
-            "in": "query",
-            "schema": {
-              "description": "A tag and value, of the form `<tag-name>:<tag-value>`. The API will only return DNS records that have a tag named `<tag-name>` whose value contains `<tag-value>`. Tag filters are case-insensitive.\n",
-              "type": "string",
-              "example": "greeting:ello, worl"
-            }
+            "$ref": "#/components/parameters/dns-records_tag_contains"
           },
           {
-            "name": "tag.startswith",
-            "in": "query",
-            "schema": {
-              "description": "A tag and value, of the form `<tag-name>:<tag-value>`. The API will only return DNS records that have a tag named `<tag-name>` whose value starts with `<tag-value>`. Tag filters are case-insensitive.\n",
-              "type": "string",
-              "example": "greeting:Hello, w"
-            }
+            "$ref": "#/components/parameters/dns-records_tag_startswith"
           },
           {
-            "name": "tag.endswith",
-            "in": "query",
-            "schema": {
-              "description": "A tag and value, of the form `<tag-name>:<tag-value>`. The API will only return DNS records that have a tag named `<tag-name>` whose value ends with `<tag-value>`. Tag filters are case-insensitive.\n",
-              "type": "string",
-              "example": "greeting:o, world"
-            }
+            "$ref": "#/components/parameters/dns-records_tag_endswith"
           },
           {
-            "name": "search",
-            "in": "query",
-            "schema": {
-              "$ref": "#/components/schemas/dns-records_search"
-            }
+            "$ref": "#/components/parameters/dns-records_search"
           },
           {
-            "name": "tag_match",
-            "in": "query",
-            "schema": {
-              "$ref": "#/components/schemas/dns-records_tag_match"
-            }
+            "$ref": "#/components/parameters/dns-records_tag_match"
           },
           {
             "name": "page",
@@ -542883,22 +542729,10 @@
             "$ref": "#/components/parameters/dns-records_include_shadow_metadata"
           },
           {
-            "name": "shadowed_by_name",
-            "in": "query",
-            "schema": {
-              "description": "Filters the response to records at or below the specified NS delegation name. NS, DS, and NSEC records at the delegation name are excluded because they are not shadowed by that delegation. Those record types are included only when they exist below the delegation. The value must be a non-apex subdomain of the zone. Requires `include_shadow_metadata=true`. See [Shadowed records](https://developers.cloudflare.com/dns/manage-dns-records/reference/shadowed-records).\n",
-              "type": "string",
-              "example": "sub.example.com"
-            }
+            "$ref": "#/components/parameters/dns-records_shadowed_by_name"
           },
           {
-            "name": "shadowing_name",
-            "in": "query",
-            "schema": {
-              "description": "Returns NS records that shadow the given name, searching at the name itself and each of its ancestor names within the zone, excluding the zone apex. The value must be a subdomain of the zone; the zone apex is not accepted. See [Shadowed records](https://developers.cloudflare.com/dns/manage-dns-records/reference/shadowed-records).\n",
-              "type": "string",
-              "example": "www.sub.example.com"
-            }
+            "$ref": "#/components/parameters/dns-records_shadowing_name"
           }
         ],
         "responses": {
@@ -543132,7 +542966,7 @@
       "get": {
         "operationId": "dns-records-for-a-zone-export-dns-records",
         "summary": "Export DNS Records",
-        "description": "You can export your [BIND config](https://en.wikipedia.org/wiki/Zone_file \"Zone file\") through this endpoint.\n\nSee [the documentation](https://developers.cloudflare.com/dns/manage-dns-records/how-to/import-and-export/ \"Import and export records\") for more information.",
+        "description": "Export your [BIND config](https://en.wikipedia.org/wiki/Zone_file \"Zone file\") through this endpoint. Use the same record filters as the List DNS Records endpoint to export only matching stored records.\n\nBy default, the SOA record (stored or generated) and assigned apex NS records, where applicable, are included regardless of filters. Secondary zones must have a stored SOA record to export in this mode. Set `include_generated_records=false` to export only matching stored records, without adding the SOA/nameserver section or requiring secondary zones to have an SOA record. Matching stored SOA and NS records are still exported. This may produce a partial zone rather than a complete zone. Workers-managed records are never exported.\n\nThe export returns at most 5,000,000 matching stored records, in addition to any automatically included SOA and assigned apex NS records. It is not paginated and does not support `page`, `per_page`, `order`, `direction`, `cursor`, or `prev_cursor`.\n\n`include_shadow_metadata=true` is required when using `shadowed_by_name`; it does not add shadow metadata to the BIND output.\n\nSee [the documentation](https://developers.cloudflare.com/dns/manage-dns-records/how-to/import-and-export/ \"Import and export records\") for more information.\n",
         "parameters": [
           {
             "name": "zone_id",
@@ -543141,6 +542975,119 @@
             "schema": {
               "$ref": "#/components/schemas/dns-records_identifier"
             }
+          },
+          {
+            "name": "include_generated_records",
+            "in": "query",
+            "schema": {
+              "description": "Whether to add the SOA and assigned apex NS records independently of the record filters. Set to `false` to export only matching stored records. Matching stored SOA and NS records are still exported.\n",
+              "type": "boolean",
+              "example": false,
+              "default": true
+            }
+          },
+          {
+            "$ref": "#/components/parameters/dns-records_name"
+          },
+          {
+            "$ref": "#/components/parameters/dns-records_name_exact"
+          },
+          {
+            "$ref": "#/components/parameters/dns-records_name_contains"
+          },
+          {
+            "$ref": "#/components/parameters/dns-records_name_startswith"
+          },
+          {
+            "$ref": "#/components/parameters/dns-records_name_endswith"
+          },
+          {
+            "$ref": "#/components/parameters/dns-records_type"
+          },
+          {
+            "$ref": "#/components/parameters/dns-records_content"
+          },
+          {
+            "$ref": "#/components/parameters/dns-records_content_exact"
+          },
+          {
+            "$ref": "#/components/parameters/dns-records_content_contains"
+          },
+          {
+            "$ref": "#/components/parameters/dns-records_content_startswith"
+          },
+          {
+            "$ref": "#/components/parameters/dns-records_content_endswith"
+          },
+          {
+            "$ref": "#/components/parameters/dns-records_proxied"
+          },
+          {
+            "$ref": "#/components/parameters/dns-records_match"
+          },
+          {
+            "$ref": "#/components/parameters/dns-records_comment"
+          },
+          {
+            "$ref": "#/components/parameters/dns-records_comment_present"
+          },
+          {
+            "$ref": "#/components/parameters/dns-records_comment_absent"
+          },
+          {
+            "$ref": "#/components/parameters/dns-records_comment_exact"
+          },
+          {
+            "$ref": "#/components/parameters/dns-records_comment_contains"
+          },
+          {
+            "$ref": "#/components/parameters/dns-records_comment_startswith"
+          },
+          {
+            "$ref": "#/components/parameters/dns-records_comment_endswith"
+          },
+          {
+            "$ref": "#/components/parameters/dns-records_tag"
+          },
+          {
+            "$ref": "#/components/parameters/dns-records_tag_present"
+          },
+          {
+            "$ref": "#/components/parameters/dns-records_tag_absent"
+          },
+          {
+            "$ref": "#/components/parameters/dns-records_tag_exact"
+          },
+          {
+            "$ref": "#/components/parameters/dns-records_tag_contains"
+          },
+          {
+            "$ref": "#/components/parameters/dns-records_tag_startswith"
+          },
+          {
+            "$ref": "#/components/parameters/dns-records_tag_endswith"
+          },
+          {
+            "$ref": "#/components/parameters/dns-records_search"
+          },
+          {
+            "$ref": "#/components/parameters/dns-records_tag_match"
+          },
+          {
+            "name": "include_shadow_metadata",
+            "in": "query",
+            "schema": {
+              "description": "Set to `true` to enable the `shadowed_by_name` filter. This does not add shadow metadata to the BIND output.\n",
+              "type": "boolean",
+              "example": true,
+              "default": false
+            }
+          },
+          {
+            "$ref": "#/components/parameters/dns-records_shadowed_by_name"
+          },
+          {
+            "$ref": "#/components/parameters/dns-records_shadowing_name"
           }
         ],
         "responses": {
@@ -558703,7 +558650,8 @@
             "schema": {
               "type": "string",
               "maxLength": 4096
-            }
+            },
+            "x-auditable": false
           }
         ],
         "responses": {
@@ -558739,7 +558687,6 @@
         "tags": [
           "Log Explorer Queries"
         ],
-        "x-auditable": false,
         "x-cfOwnership": "log-explorer",
         "x-fern-ignore": true,
         "x-forge-oauth-scopes": [
@@ -558763,7 +558710,8 @@
               "schema": {
                 "description": "SQL query to execute.",
                 "type": "string",
-                "format": "binary"
+                "format": "binary",
+                "x-auditable": false
               }
             }
           }
@@ -558800,7 +558748,6 @@
         "tags": [
           "Log Explorer Queries"
         ],
-        "x-auditable": false,
         "x-cfOwnership": "log-explorer",
         "x-fern-availability": "generally-available",
         "x-fern-ignore": true,
@@ -595240,7 +595187,8 @@
             "schema": {
               "type": "string",
               "maxLength": 4096
-            }
+            },
+            "x-auditable": false
           }
         ],
         "responses": {
@@ -595276,7 +595224,6 @@
         "tags": [
           "Log Explorer Queries"
         ],
-        "x-auditable": false,
         "x-cfOwnership": "log-explorer",
         "x-fern-ignore": true,
         "x-fern-sdk-group-name": "logs",
@@ -595319,7 +595266,8 @@
               "schema": {
                 "description": "SQL query to execute.",
                 "type": "string",
-                "format": "binary"
+                "format": "binary",
+                "x-auditable": false
               }
             }
           }
@@ -595356,7 +595304,6 @@
         "tags": [
           "Log Explorer Queries"
         ],
-        "x-auditable": false,
         "x-cfOwnership": "log-explorer",
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "logs",
@@ -599230,6 +599177,112 @@
           "$ref": "#/components/schemas/dls_identifier"
         }
       },
+      "dns-records_comment": {
+        "in": "query",
+        "name": "comment",
+        "schema": {
+          "description": "Exact value of the DNS record comment. This is a convenience alias for `comment.exact`.\n",
+          "type": "string",
+          "example": "Hello, world"
+        }
+      },
+      "dns-records_comment_absent": {
+        "in": "query",
+        "name": "comment.absent",
+        "schema": {
+          "description": "If this parameter is present, only records *without* a comment are returned.\n",
+          "type": "string"
+        }
+      },
+      "dns-records_comment_contains": {
+        "in": "query",
+        "name": "comment.contains",
+        "schema": {
+          "description": "Substring of the DNS record comment. Comment filters are case-insensitive.\n",
+          "type": "string",
+          "example": "ello, worl"
+        }
+      },
+      "dns-records_comment_endswith": {
+        "in": "query",
+        "name": "comment.endswith",
+        "schema": {
+          "description": "Suffix of the DNS record comment. Comment filters are case-insensitive.\n",
+          "type": "string",
+          "example": "o, world"
+        }
+      },
+      "dns-records_comment_exact": {
+        "in": "query",
+        "name": "comment.exact",
+        "schema": {
+          "description": "Exact value of the DNS record comment. Comment filters are case-insensitive.\n",
+          "type": "string",
+          "example": "Hello, world"
+        }
+      },
+      "dns-records_comment_present": {
+        "in": "query",
+        "name": "comment.present",
+        "schema": {
+          "description": "If this parameter is present, only records *with* a comment are returned.\n",
+          "type": "string"
+        }
+      },
+      "dns-records_comment_startswith": {
+        "in": "query",
+        "name": "comment.startswith",
+        "schema": {
+          "description": "Prefix of the DNS record comment. Comment filters are case-insensitive.\n",
+          "type": "string",
+          "example": "Hello, w"
+        }
+      },
+      "dns-records_content": {
+        "in": "query",
+        "name": "content",
+        "schema": {
+          "description": "Exact value of the DNS record content. This is a convenience alias for `content.exact`.\n",
+          "type": "string",
+          "example": "127.0.0.1"
+        }
+      },
+      "dns-records_content_contains": {
+        "in": "query",
+        "name": "content.contains",
+        "schema": {
+          "description": "Substring of the DNS record content. Content filters are case-insensitive.\n",
+          "type": "string",
+          "example": "7.0.0."
+        }
+      },
+      "dns-records_content_endswith": {
+        "in": "query",
+        "name": "content.endswith",
+        "schema": {
+          "description": "Suffix of the DNS record content. Content filters are case-insensitive.\n",
+          "type": "string",
+          "example": ".0.1"
+        }
+      },
+      "dns-records_content_exact": {
+        "in": "query",
+        "name": "content.exact",
+        "schema": {
+          "description": "Exact value of the DNS record content. Content filters are case-insensitive.\n",
+          "type": "string",
+          "example": "127.0.0.1"
+        }
+      },
+      "dns-records_content_startswith": {
+        "in": "query",
+        "name": "content.startswith",
+        "schema": {
+          "description": "Prefix of the DNS record content. Content filters are case-insensitive.\n",
+          "type": "string",
+          "example": "127.0."
+        }
+      },
       "dns-records_include_shadow_metadata": {
         "in": "query",
         "name": "include_shadow_metadata",
@@ -599238,6 +599291,167 @@
           "type": "boolean",
           "example": true,
           "default": false
+        }
+      },
+      "dns-records_match": {
+        "in": "query",
+        "name": "match",
+        "schema": {
+          "$ref": "#/components/schemas/dns-records_match"
+        }
+      },
+      "dns-records_name": {
+        "in": "query",
+        "name": "name",
+        "schema": {
+          "description": "Exact value of the DNS record name. This is a convenience alias for `name.exact`.\n",
+          "type": "string",
+          "example": "www.example.com"
+        }
+      },
+      "dns-records_name_contains": {
+        "in": "query",
+        "name": "name.contains",
+        "schema": {
+          "description": "Substring of the DNS record name. Name filters are case-insensitive.\n",
+          "type": "string",
+          "example": "w.example."
+        }
+      },
+      "dns-records_name_endswith": {
+        "in": "query",
+        "name": "name.endswith",
+        "schema": {
+          "description": "Suffix of the DNS record name. Name filters are case-insensitive.\n",
+          "type": "string",
+          "example": ".example.com"
+        }
+      },
+      "dns-records_name_exact": {
+        "in": "query",
+        "name": "name.exact",
+        "schema": {
+          "description": "Exact value of the DNS record name. Name filters are case-insensitive.\n",
+          "type": "string",
+          "example": "www.example.com"
+        }
+      },
+      "dns-records_name_startswith": {
+        "in": "query",
+        "name": "name.startswith",
+        "schema": {
+          "description": "Prefix of the DNS record name. Name filters are case-insensitive.\n",
+          "type": "string",
+          "example": "www.example"
+        }
+      },
+      "dns-records_proxied": {
+        "in": "query",
+        "name": "proxied",
+        "schema": {
+          "$ref": "#/components/schemas/dns-records_proxied"
+        }
+      },
+      "dns-records_search": {
+        "in": "query",
+        "name": "search",
+        "schema": {
+          "$ref": "#/components/schemas/dns-records_search"
+        }
+      },
+      "dns-records_shadowed_by_name": {
+        "in": "query",
+        "name": "shadowed_by_name",
+        "schema": {
+          "description": "Filters the response to records at or below the specified NS delegation name. NS, DS, and NSEC records at the delegation name are excluded because they are not shadowed by that delegation. Those record types are included only when they exist below the delegation. The value must be a non-apex subdomain of the zone. Requires `include_shadow_metadata=true`. See [Shadowed records](https://developers.cloudflare.com/dns/manage-dns-records/reference/shadowed-records).\n",
+          "type": "string",
+          "example": "sub.example.com"
+        }
+      },
+      "dns-records_shadowing_name": {
+        "in": "query",
+        "name": "shadowing_name",
+        "schema": {
+          "description": "Returns NS records that shadow the given name, searching at the name itself and each of its ancestor names within the zone, excluding the zone apex. The value must be a subdomain of the zone; the zone apex is not accepted. See [Shadowed records](https://developers.cloudflare.com/dns/manage-dns-records/reference/shadowed-records).\n",
+          "type": "string",
+          "example": "www.sub.example.com"
+        }
+      },
+      "dns-records_tag": {
+        "in": "query",
+        "name": "tag",
+        "schema": {
+          "description": "Condition on the DNS record tag.\n\nParameter values can be of the form `<tag-name>:<tag-value>` to search for an exact `name:value` pair, or just `<tag-name>` to search for records with a specific tag name regardless of its value.\n\nThis is a convenience shorthand for the more powerful `tag.<predicate>` parameters.\nExamples:\n- `tag=important` is equivalent to `tag.present=important`\n- `tag=team:DNS` is equivalent to `tag.exact=team:DNS`\n",
+          "type": "string",
+          "example": "team:DNS"
+        }
+      },
+      "dns-records_tag_absent": {
+        "in": "query",
+        "name": "tag.absent",
+        "schema": {
+          "description": "Name of a tag which must *not* be present on the DNS record. Tag filters are case-insensitive.\n",
+          "type": "string",
+          "example": "important"
+        }
+      },
+      "dns-records_tag_contains": {
+        "in": "query",
+        "name": "tag.contains",
+        "schema": {
+          "description": "A tag and value, of the form `<tag-name>:<tag-value>`. The API will only return DNS records that have a tag named `<tag-name>` whose value contains `<tag-value>`. Tag filters are case-insensitive.\n",
+          "type": "string",
+          "example": "greeting:ello, worl"
+        }
+      },
+      "dns-records_tag_endswith": {
+        "in": "query",
+        "name": "tag.endswith",
+        "schema": {
+          "description": "A tag and value, of the form `<tag-name>:<tag-value>`. The API will only return DNS records that have a tag named `<tag-name>` whose value ends with `<tag-value>`. Tag filters are case-insensitive.\n",
+          "type": "string",
+          "example": "greeting:o, world"
+        }
+      },
+      "dns-records_tag_exact": {
+        "in": "query",
+        "name": "tag.exact",
+        "schema": {
+          "description": "A tag and value, of the form `<tag-name>:<tag-value>`. The API will only return DNS records that have a tag named `<tag-name>` whose value is `<tag-value>`. Tag filters are case-insensitive.\n",
+          "type": "string",
+          "example": "greeting:Hello, world"
+        }
+      },
+      "dns-records_tag_match": {
+        "in": "query",
+        "name": "tag_match",
+        "schema": {
+          "$ref": "#/components/schemas/dns-records_tag_match"
+        }
+      },
+      "dns-records_tag_present": {
+        "in": "query",
+        "name": "tag.present",
+        "schema": {
+          "description": "Name of a tag which must be present on the DNS record. Tag filters are case-insensitive.\n",
+          "type": "string",
+          "example": "important"
+        }
+      },
+      "dns-records_tag_startswith": {
+        "in": "query",
+        "name": "tag.startswith",
+        "schema": {
+          "description": "A tag and value, of the form `<tag-name>:<tag-value>`. The API will only return DNS records that have a tag named `<tag-name>` whose value starts with `<tag-value>`. Tag filters are case-insensitive.\n",
+          "type": "string",
+          "example": "greeting:Hello, w"
+        }
+      },
+      "dns-records_type": {
+        "in": "query",
+        "name": "type",
+        "schema": {
+          "$ref": "#/components/schemas/dns-records_type"
         }
       },
       "email-auth_record_id": {
@@ -614833,7 +615047,7 @@
                     }
                   },
                   "idp_public_certs": {
-                    "description": "X509 certificate to verify the signature in the SAML authentication response",
+                    "description": "X509 certificate to verify the signature in the SAML authentication response. Mutually exclusive with `metadata_url`.",
                     "type": "array",
                     "items": {
                       "type": "string"
@@ -614851,6 +615065,13 @@
                     "example": 8192,
                     "maximum": 100000,
                     "minimum": 512,
+                    "x-auditable": true
+                  },
+                  "metadata_url": {
+                    "description": "HTTPS URL of the IdP's SAML metadata document from which Access reads the signing certificates used to verify SAML authentication responses. Mutually exclusive with `idp_public_certs`.",
+                    "type": "string",
+                    "format": "uri",
+                    "example": "https://idp.example.com/FederationMetadata/2007-06/FederationMetadata.xml",
                     "x-auditable": true
                   },
                   "sign_request": {
@@ -614929,7 +615150,7 @@
                     }
                   },
                   "idp_public_certs": {
-                    "description": "X509 certificate to verify the signature in the SAML authentication response",
+                    "description": "X509 certificate to verify the signature in the SAML authentication response. Mutually exclusive with `metadata_url`.",
                     "type": "array",
                     "items": {
                       "type": "string"
@@ -614947,6 +615168,13 @@
                     "example": 8192,
                     "maximum": 100000,
                     "minimum": 512,
+                    "x-auditable": true
+                  },
+                  "metadata_url": {
+                    "description": "HTTPS URL of the IdP's SAML metadata document from which Access reads the signing certificates used to verify SAML authentication responses. Mutually exclusive with `idp_public_certs`.",
+                    "type": "string",
+                    "format": "uri",
+                    "example": "https://idp.example.com/FederationMetadata/2007-06/FederationMetadata.xml",
                     "x-auditable": true
                   },
                   "sign_request": {
@@ -630104,10 +630332,15 @@
         "type": "object",
         "properties": {
           "DimensionKeys": {
+            "description": "Dimension keys defined for this billable metric. Use them as\n`Key` in a `DIMENSION` `GroupBy` on the account usage endpoint.\nThey do not depend on the requested period, and a key can\nbe listed even when no usage in the period carries it. Empty when\nthe metric defines no dimensions.\n",
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "example": [
+              "ZONE_ID",
+              "REGION"
+            ]
           },
           "Id": {
             "description": "Public catalog identifier of the billable metric.",
@@ -630128,6 +630361,17 @@
             "items": {
               "$ref": "#/components/schemas/billable-usage-api_v2_product_family"
             }
+          },
+          "TagKeys": {
+            "description": "Resource-tag keys observed on this metric's usage within the\nrequested period, sorted and deduplicated. Use them as `Key` in a\n`TAG` `GroupBy` or in `FilterBy.Tags` on the account usage\nendpoint. Because the list reflects recorded usage, it changes with\n`from` and `to`, and is empty when no tagged usage exists in the\nperiod or tag-key discovery is not available.\n",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "environment",
+              "team"
+            ]
           }
         },
         "required": [
@@ -630135,7 +630379,8 @@
           "Name",
           "ProductFamily",
           "ProductCategory",
-          "DimensionKeys"
+          "DimensionKeys",
+          "TagKeys"
         ]
       },
       "billable-usage-api_v2_account_billable_metrics_response": {
@@ -659739,7 +659984,7 @@
         }
       },
       "dns-records_tag_match": {
-        "description": "Whether to match all tag search requirements or at least one (any). If set to `all`, acts like a logical AND between tag filters. If set to `any`, acts like a logical OR instead. Note that the regular `match` parameter is still used to combine the resulting condition with other filters that aren't related to tags.\n",
+        "description": "Whether to match all tag search requirements or at least one (any). If set to `all`, acts like a logical AND between tag filters. If set to `any`, acts like a logical OR instead. Note that the regular `match` parameter is still used to combine the resulting condition with other filters that aren't related to tags. The legacy `tag-match` parameter is an alias for this parameter.\n",
         "type": "string",
         "example": "any",
         "default": "all",
@@ -679586,11 +679831,15 @@
             "additionalProperties": true,
             "nullable": true
           },
+          "result_info": {
+            "$ref": "#/components/schemas/lex_QueryResultInfo"
+          },
           "success": {
             "type": "boolean",
             "enum": [
               false
-            ]
+            ],
+            "x-auditable": true
           }
         },
         "required": [
@@ -679678,14 +679927,33 @@
             },
             "nullable": true
           },
+          "result_info": {
+            "$ref": "#/components/schemas/lex_QueryResultInfo"
+          },
           "success": {
-            "type": "boolean"
+            "type": "boolean",
+            "x-auditable": true
           }
         },
         "required": [
+          "result_info",
           "success",
           "errors",
           "messages"
+        ]
+      },
+      "lex_QueryResultInfo": {
+        "description": "Metadata about the query execution.",
+        "type": "object",
+        "properties": {
+          "dataset": {
+            "description": "Dataset type name queried (e.g. `http_requests`).",
+            "type": "string",
+            "x-auditable": true
+          }
+        },
+        "required": [
+          "dataset"
         ]
       },
       "lex_QueryRow": {
@@ -679738,10 +680006,12 @@
         "properties": {
           "code": {
             "type": "integer",
-            "format": "int32"
+            "format": "int32",
+            "x-auditable": true
           },
           "message": {
-            "type": "string"
+            "type": "string",
+            "x-auditable": false
           }
         },
         "required": [
@@ -734981,6 +735251,12 @@
               },
               "origin_worker_id": {
                 "$ref": "#/components/schemas/spectrum-config_origin_worker_id"
+              },
+              "origin_worker_name": {
+                "$ref": "#/components/schemas/spectrum-config_origin_worker_name"
+              },
+              "origin_worker_status": {
+                "$ref": "#/components/schemas/spectrum-config_origin_worker_status"
               },
               "protocol": {
                 "$ref": "#/components/schemas/spectrum-config_protocol"
