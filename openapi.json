@@ -621104,10 +621104,15 @@
         "type": "object",
         "properties": {
           "DimensionKeys": {
+            "description": "Dimension keys defined for this billable metric. Use them as\n`Key` in a `DIMENSION` `GroupBy` on the account usage endpoint.\nThey do not depend on the requested period, and a key can\nbe listed even when no usage in the period carries it. Empty when\nthe metric defines no dimensions.\n",
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "example": [
+              "ZONE_ID",
+              "REGION"
+            ]
           },
           "Id": {
             "description": "Public catalog identifier of the billable metric.",
@@ -621128,6 +621133,17 @@
             "items": {
               "$ref": "#/components/schemas/billable-usage-api_v2_product_family"
             }
+          },
+          "TagKeys": {
+            "description": "Resource-tag keys observed on this metric's usage within the\nrequested period, sorted and deduplicated. Use them as `Key` in a\n`TAG` `GroupBy` or in `FilterBy.Tags` on the account usage\nendpoint. Because the list reflects recorded usage, it changes with\n`from` and `to`, and is empty when no tagged usage exists in the\nperiod or tag-key discovery is not available.\n",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "environment",
+              "team"
+            ]
           }
         },
         "required": [
@@ -621135,7 +621151,8 @@
           "Name",
           "ProductFamily",
           "ProductCategory",
-          "DimensionKeys"
+          "DimensionKeys",
+          "TagKeys"
         ]
       },
       "billable-usage-api_v2_account_billable_metrics_response": {

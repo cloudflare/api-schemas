@@ -422500,9 +422500,18 @@ components:
       type: object
       properties:
         DimensionKeys:
+          description: |
+            Dimension keys defined for this billable metric. Use them as
+            `Key` in a `DIMENSION` `GroupBy` on the account usage endpoint.
+            They do not depend on the requested period, and a key can
+            be listed even when no usage in the period carries it. Empty when
+            the metric defines no dimensions.
           type: array
           items:
             type: string
+          example:
+            - ZONE_ID
+            - REGION
         Id:
           description: Public catalog identifier of the billable metric.
           type: string
@@ -422517,12 +422526,27 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/billable-usage-api_v2_product_family'
+        TagKeys:
+          description: |
+            Resource-tag keys observed on this metric's usage within the
+            requested period, sorted and deduplicated. Use them as `Key` in a
+            `TAG` `GroupBy` or in `FilterBy.Tags` on the account usage
+            endpoint. Because the list reflects recorded usage, it changes with
+            `from` and `to`, and is empty when no tagged usage exists in the
+            period or tag-key discovery is not available.
+          type: array
+          items:
+            type: string
+          example:
+            - environment
+            - team
       required:
         - Id
         - Name
         - ProductFamily
         - ProductCategory
         - DimensionKeys
+        - TagKeys
     billable-usage-api_v2_account_billable_metrics_response:
       description: Successful response containing account-visible billable metrics.
       type: object
