@@ -80546,16 +80546,16 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/dos_identifier'
+            $ref: '#/components/schemas/botnet-feed_identifier'
         - name: asn_id
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/dos_asn'
+            $ref: '#/components/schemas/botnet-feed_asn'
         - name: date
           in: query
           schema:
-            $ref: '#/components/schemas/dos_timestamp'
+            $ref: '#/components/schemas/botnet-feed_timestamp'
       responses:
         '200':
           description: Get botnet feed report for day
@@ -80564,7 +80564,7 @@ paths:
               schema:
                 type: object
                 allOf:
-                  - $ref: '#/components/schemas/dos_api-response-common'
+                  - $ref: '#/components/schemas/botnet-feed_api-response-common'
                   - properties:
                       result:
                         type: object
@@ -80585,7 +80585,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/dos_api-response-common-failure'
+                $ref: '#/components/schemas/botnet-feed_api-response-common-failure'
       security:
         - api_email: []
           api_key: []
@@ -80609,12 +80609,12 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/dos_identifier'
+            $ref: '#/components/schemas/botnet-feed_identifier'
         - name: asn_id
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/dos_asn'
+            $ref: '#/components/schemas/botnet-feed_asn'
       responses:
         '200':
           description: Get full botnet feed report
@@ -80623,7 +80623,7 @@ paths:
               schema:
                 type: object
                 allOf:
-                  - $ref: '#/components/schemas/dos_api-response-common'
+                  - $ref: '#/components/schemas/botnet-feed_api-response-common'
                   - properties:
                       result:
                         type: object
@@ -80644,7 +80644,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/dos_api-response-common-failure'
+                $ref: '#/components/schemas/botnet-feed_api-response-common-failure'
       security:
         - api_email: []
           api_key: []
@@ -80668,7 +80668,7 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/dos_identifier'
+            $ref: '#/components/schemas/botnet-feed_identifier'
       responses:
         '200':
           description: Get list of ASNs response
@@ -80677,7 +80677,7 @@ paths:
               schema:
                 type: object
                 allOf:
-                  - $ref: '#/components/schemas/dos_api-response-common'
+                  - $ref: '#/components/schemas/botnet-feed_api-response-common'
                   - properties:
                       result:
                         type: object
@@ -80691,7 +80691,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/dos_api-response-common-failure'
+                $ref: '#/components/schemas/botnet-feed_api-response-common-failure'
       security:
         - api_email: []
           api_key: []
@@ -80715,12 +80715,12 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/dos_identifier'
+            $ref: '#/components/schemas/botnet-feed_identifier'
         - name: asn_id
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/dos_asn'
+            $ref: '#/components/schemas/botnet-feed_asn'
       responses:
         '200':
           description: Delete ASN response
@@ -80729,7 +80729,7 @@ paths:
               schema:
                 type: object
                 allOf:
-                  - $ref: '#/components/schemas/dos_api-response-common'
+                  - $ref: '#/components/schemas/botnet-feed_api-response-common'
                   - properties:
                       result:
                         type: object
@@ -80743,7 +80743,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/dos_api-response-common-failure'
+                $ref: '#/components/schemas/botnet-feed_api-response-common-failure'
       security:
         - api_email: []
           api_key: []
@@ -431961,6 +431961,88 @@ components:
       readOnly: true
       x-auditable: true
       x-stainless-terraform-configurability: computed_optional
+    botnet-feed_api-response-common:
+      type: object
+      properties:
+        errors:
+          $ref: '#/components/schemas/botnet-feed_messages'
+        messages:
+          $ref: '#/components/schemas/botnet-feed_messages'
+        success:
+          description: Whether the API call was successful.
+          type: boolean
+          example: true
+          enum:
+            - true
+      required:
+        - success
+        - errors
+        - messages
+    botnet-feed_api-response-common-failure:
+      type: object
+      properties:
+        errors:
+          example:
+            - code: 7003
+              message: No route for the URI
+          allOf:
+            - $ref: '#/components/schemas/botnet-feed_messages'
+          minLength: 1
+        messages:
+          example: []
+          allOf:
+            - $ref: '#/components/schemas/botnet-feed_messages'
+        result:
+          type: object
+          enum:
+            - null
+          nullable: true
+        success:
+          description: Whether the API call was successful.
+          type: boolean
+          example: false
+          enum:
+            - false
+      required:
+        - success
+        - errors
+        - messages
+        - result
+    botnet-feed_asn:
+      type: integer
+    botnet-feed_identifier:
+      description: Identifier.
+      type: string
+      example: 023e105f4ecef8ad9ca31a8372d0c353
+      maxLength: 32
+      x-auditable: true
+    botnet-feed_messages:
+      type: array
+      items:
+        properties:
+          code:
+            type: integer
+            minimum: 1000
+          documentation_url:
+            type: string
+          message:
+            type: string
+          source:
+            type: object
+            properties:
+              pointer:
+                type: string
+        required:
+          - code
+          - message
+        type: object
+        uniqueItems: true
+      example: []
+    botnet-feed_timestamp:
+      type: string
+      format: date-time
+      example: 2014-01-01T05:20:00.12345Z
+      x-auditable: true
     brand-protection-api_Error:
       type: object
       properties:
@@ -453251,88 +453333,6 @@ components:
           type: boolean
         status:
           type: integer
-    dos_api-response-common:
-      type: object
-      properties:
-        errors:
-          $ref: '#/components/schemas/dos_messages'
-        messages:
-          $ref: '#/components/schemas/dos_messages'
-        success:
-          description: Whether the API call was successful.
-          type: boolean
-          example: true
-          enum:
-            - true
-      required:
-        - success
-        - errors
-        - messages
-    dos_api-response-common-failure:
-      type: object
-      properties:
-        errors:
-          example:
-            - code: 7003
-              message: No route for the URI
-          allOf:
-            - $ref: '#/components/schemas/dos_messages'
-          minLength: 1
-        messages:
-          example: []
-          allOf:
-            - $ref: '#/components/schemas/dos_messages'
-        result:
-          type: object
-          enum:
-            - null
-          nullable: true
-        success:
-          description: Whether the API call was successful.
-          type: boolean
-          example: false
-          enum:
-            - false
-      required:
-        - success
-        - errors
-        - messages
-        - result
-    dos_asn:
-      type: integer
-    dos_identifier:
-      description: Identifier.
-      type: string
-      example: 023e105f4ecef8ad9ca31a8372d0c353
-      maxLength: 32
-      x-auditable: true
-    dos_messages:
-      type: array
-      items:
-        properties:
-          code:
-            type: integer
-            minimum: 1000
-          documentation_url:
-            type: string
-          message:
-            type: string
-          source:
-            type: object
-            properties:
-              pointer:
-                type: string
-        required:
-          - code
-          - message
-        type: object
-        uniqueItems: true
-      example: []
-    dos_timestamp:
-      type: string
-      format: date-time
-      example: 2014-01-01T05:20:00.12345Z
-      x-auditable: true
     email-auth_ApprovedSourceResponse:
       description: A single approved sending source
       type: object
