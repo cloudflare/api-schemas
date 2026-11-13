@@ -188568,6 +188568,10 @@ paths:
                       - auth_config:
                           authorization_url: https://login.microsoftonline.com/common/adminconsent
                           client_id: abc123-def456
+                          feature_overrides:
+                            - authorization_url: https://login.microsoftonline.com/common/adminconsent?client_id=ghi789-jkl012
+                              client_id: ghi789-jkl012
+                              feature: auto_remediation
                           requires_pkce: false
                           scopes:
                             - https://graph.microsoft.com/.default
@@ -188709,6 +188713,7 @@ paths:
                         auth_method:
                           display_name: Google Domain-Wide Delegation Service Account
                           id: google_domain_wide_delegation_service_account
+                        config: {}
                         created: 2025-01-15T10:00:00Z
                         id: 019d2e6a-d995-7185-afbd-4feead9e42ec
                         is_paused: false
@@ -188745,7 +188750,7 @@ paths:
     post:
       operationId: create_integration_v2
       summary: Create integration
-      description: Creates a new integration for the specified application. Integration creation with OAuth is not supported by API at the moment. For other auth methods, use `GET /v2/applications/{application_id}/credential-guide` to see the required credential structure and example payloads for each vendor.
+      description: Creates a new integration for the specified application. For other auth methods, use `GET /v2/applications/{application_id}/credential-guide` to see the required credential structure and example payloads for each vendor.
       parameters:
         - name: account_id
           in: path
@@ -188803,6 +188808,7 @@ paths:
                           client_id: abc
                           instance_name: example
                         link: https://example.cloudflare.com/authorize
+                      config: {}
                       created: 2025-01-01T00:00:00Z
                       credentials_expiry: 2026-01-01T00:00:00Z
                       dlp_profiles:
@@ -188938,6 +188944,7 @@ paths:
                           client_id: abc
                           instance_name: example
                         link: https://example.cloudflare.com/authorize
+                      config: {}
                       created: 2025-01-01T00:00:00Z
                       credentials_expiry: 2026-01-01T00:00:00Z
                       dlp_profiles:
@@ -188997,7 +189004,7 @@ paths:
     patch:
       operationId: update_integration_v2
       summary: Update integration
-      description: Updates an integration's name, permissions, DLP profiles, use cases, or credentials.
+      description: Updates an integration's name, permissions, DLP profiles, use cases, credentials, or GitLab resources.
       parameters:
         - name: account_id
           in: path
@@ -189025,6 +189032,12 @@ paths:
               UpdateFields:
                 summary: Example update integration request
                 value:
+                  config:
+                    gitlab:
+                      group_ids:
+                        - '11'
+                      project_ids:
+                        - '22'
                   credentials:
                     admin_email: admin@corp.com
                   dlp_profiles:
@@ -189064,6 +189077,7 @@ paths:
                           client_id: abc
                           instance_name: example
                         link: https://example.cloudflare.com/authorize
+                      config: {}
                       created: 2025-01-01T00:00:00Z
                       credentials_expiry: 2026-01-01T00:00:00Z
                       dlp_profiles:
@@ -189163,6 +189177,7 @@ paths:
                           client_id: abc
                           instance_name: example
                         link: https://example.cloudflare.com/authorize
+                      config: {}
                       created: 2025-01-01T00:00:00Z
                       credentials_expiry: 2026-01-01T00:00:00Z
                       dlp_profiles:
@@ -189262,6 +189277,7 @@ paths:
                           client_id: abc
                           instance_name: example
                         link: https://example.cloudflare.com/authorize
+                      config: {}
                       created: 2025-01-01T00:00:00Z
                       credentials_expiry: 2026-01-01T00:00:00Z
                       dlp_profiles:
@@ -480339,6 +480355,11 @@ components:
           description: OAuth client ID.
           type: string
           nullable: true
+        feature_overrides:
+          description: Per-feature authorization overrides. When a listed feature is selected, authorize with the override's client ID and URL instead of the defaults above.
+          type: array
+          items:
+            $ref: '#/components/schemas/one_FeatureAuthOverride'
         requires_pkce:
           description: Whether PKCE is required.
           type: boolean
@@ -480355,6 +480376,7 @@ components:
       required:
         - authorization_url
         - client_id
+        - feature_overrides
         - requires_pkce
         - scopes
         - url_placeholders
@@ -480461,6 +480483,25 @@ components:
       required:
         - label
         - type
+    one_FeatureAuthOverride:
+      description: Authorization settings to use instead of the defaults when a feature is selected.
+      type: object
+      properties:
+        authorization_url:
+          description: Full OAuth authorization URL with query parameters.
+          type: string
+          nullable: true
+        client_id:
+          description: OAuth client ID to authorize with.
+          type: string
+          nullable: true
+        feature:
+          description: Feature identifier that triggers this override.
+          type: string
+      required:
+        - authorization_url
+        - client_id
+        - feature
     one_FeatureScope:
       description: A feature with its additional scopes.
       type: object
@@ -480547,6 +480588,28 @@ components:
         - required
         - supported_file_types
         - type
+    one_GitLabIntegrationConfigurationRequest:
+      description: Selected GitLab groups and projects.
+      type: object
+      properties:
+        group_ids:
+          description: Selected top-level GitLab group IDs as string-encoded positive integers.
+          type: array
+          items:
+            maxLength: 255
+            minLength: 1
+            pattern: ^[1-9][0-9]*$
+            type: string
+          maxItems: 10000
+        project_ids:
+          description: Selected GitLab project IDs as string-encoded positive integers.
+          type: array
+          items:
+            maxLength: 255
+            minLength: 1
+            pattern: ^[1-9][0-9]*$
+            type: string
+          maxItems: 10000
     one_Instructions:
       description: Instructions for obtaining credentials.
       type: object
@@ -480556,6 +480619,14 @@ components:
           type: string
       required:
         - markdown
+    one_IntegrationConfig:
+      description: Vendor-specific integration configuration returned by the API.
+      type: object
+      properties:
+        gitlab:
+          description: GitLab-specific configuration. Present only for GitLab integrations.
+          allOf:
+            - $ref: '#/components/schemas/one_SelectedGitLabIntegrationConfiguration'
     one_IntegrationCreateResponse:
       type: object
       properties:
@@ -480806,6 +480877,11 @@ components:
           required:
             - link
             - components
+        config:
+          description: Vendor-specific integration configuration.
+          allOf:
+            - $ref: '#/components/schemas/one_IntegrationConfig'
+          readOnly: true
         created:
           description: When the integration was created.
           type: string
@@ -480867,6 +480943,7 @@ components:
         - application
         - auth_method
         - authorization_link
+        - config
         - created
         - credentials_expiry
         - dlp_profiles
@@ -480901,6 +480978,11 @@ components:
           required:
             - id
             - display_name
+        config:
+          description: Vendor-specific integration configuration.
+          allOf:
+            - $ref: '#/components/schemas/one_IntegrationConfig'
+          readOnly: true
         created:
           description: When the integration was created.
           type: string
@@ -480936,6 +481018,7 @@ components:
       required:
         - application
         - auth_method
+        - config
         - created
         - id
         - is_paused
@@ -481167,6 +481250,11 @@ components:
       description: Serializer for v2 integration PATCH requests.
       type: object
       properties:
+        config:
+          description: Vendor-specific integration configuration.
+          allOf:
+            - $ref: '#/components/schemas/one_UpdateIntegrationConfigRequest'
+          x-fern-property-name: integration_config
         credentials:
           description: Partial credential fields to merge with existing.
           type: object
@@ -481230,6 +481318,40 @@ components:
         - display_name
         - scope
         - severity
+    one_SelectedGitLabIntegrationConfiguration:
+      description: Selected GitLab groups and projects returned by the API.
+      type: object
+      properties:
+        groups:
+          description: Selected top-level GitLab groups.
+          type: array
+          items:
+            $ref: '#/components/schemas/one_SelectedGitLabResource'
+        projects:
+          description: Selected GitLab projects.
+          type: array
+          items:
+            $ref: '#/components/schemas/one_SelectedGitLabResource'
+      required:
+        - groups
+        - projects
+    one_SelectedGitLabResource:
+      type: object
+      properties:
+        display_name:
+          description: Human-readable GitLab resource name.
+          type: string
+        id:
+          description: GitLab resource ID as a string-encoded positive integer.
+          type: string
+          pattern: ^[1-9][0-9]*$
+        path:
+          description: Full GitLab resource path.
+          type: string
+      required:
+        - display_name
+        - id
+        - path
     one_SetupFlow:
       description: Setup flow for an application auth method.
       type: object
@@ -481326,6 +481448,14 @@ components:
         - is_used_in_create
         - is_used_in_update
         - type
+    one_UpdateIntegrationConfigRequest:
+      description: Vendor-specific integration configuration accepted during updates.
+      type: object
+      properties:
+        gitlab:
+          description: GitLab-specific configuration. Accepted only for GitLab integrations.
+          allOf:
+            - $ref: '#/components/schemas/one_GitLabIntegrationConfigurationRequest'
     one_UseCaseDetail:
       description: Full use case with scopes and features for detail endpoint.
       type: object
@@ -490973,6 +491103,7 @@ components:
           type: number
           default: 900
           maximum: 604800
+          minimum: 0
           x-auditable: true
       example:
         bucket: example-bucket
