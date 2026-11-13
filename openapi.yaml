@@ -172579,6 +172579,7 @@ paths:
           schema:
             type: string
             maxLength: 4096
+          x-auditable: false
       responses:
         '200':
           description: Query results.
@@ -172602,7 +172603,6 @@ paths:
       x-api-token-group:
         - Logs Write
         - Logs Read
-      x-auditable: false
       x-fern-ignore: true
       x-fern-sdk-group-name: logs
       x-fern-sdk-method-name: query-get
@@ -172632,6 +172632,7 @@ paths:
               description: SQL query to execute.
               type: string
               format: binary
+              x-auditable: false
       responses:
         '200':
           description: Query results.
@@ -172654,7 +172655,6 @@ paths:
       x-api-token-group:
         - Logs Write
         - Logs Read
-      x-auditable: false
       x-fern-availability: generally-available
       x-fern-sdk-group-name: logs
       x-fern-sdk-method-name: query
@@ -381900,6 +381900,7 @@ paths:
           schema:
             type: string
             maxLength: 4096
+          x-auditable: false
       responses:
         '200':
           description: Query results.
@@ -381923,7 +381924,6 @@ paths:
       x-api-token-group:
         - Logs Write
         - Logs Read
-      x-auditable: false
       x-fern-ignore: true
       x-fern-sdk-group-name: logs.zone
       x-fern-sdk-method-name: query-get
@@ -381952,6 +381952,7 @@ paths:
               description: SQL query to execute.
               type: string
               format: binary
+              x-auditable: false
       responses:
         '200':
           description: Query results.
@@ -381974,7 +381975,6 @@ paths:
       x-api-token-group:
         - Logs Write
         - Logs Read
-      x-auditable: false
       x-fern-availability: generally-available
       x-fern-sdk-group-name: logs.zone
       x-fern-sdk-method-name: query
@@ -462289,10 +462289,13 @@ components:
           type: object
           additionalProperties: true
           nullable: true
+        result_info:
+          $ref: '#/components/schemas/lex_QueryResultInfo'
         success:
           type: boolean
           enum:
             - false
+          x-auditable: true
       required:
         - result
         - success
@@ -462355,12 +462358,26 @@ components:
           items:
             $ref: '#/components/schemas/lex_QueryRow'
           nullable: true
+        result_info:
+          $ref: '#/components/schemas/lex_QueryResultInfo'
         success:
           type: boolean
+          x-auditable: true
       required:
+        - result_info
         - success
         - errors
         - messages
+    lex_QueryResultInfo:
+      description: Metadata about the query execution.
+      type: object
+      properties:
+        dataset:
+          description: Dataset type name queried (e.g. `http_requests`).
+          type: string
+          x-auditable: true
+      required:
+        - dataset
     lex_QueryRow:
       type: object
       additionalProperties: true
@@ -462413,8 +462430,10 @@ components:
         code:
           type: integer
           format: int32
+          x-auditable: true
         message:
           type: string
+          x-auditable: false
       required:
         - code
         - message
