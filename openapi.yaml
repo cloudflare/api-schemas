@@ -17499,7 +17499,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/aig-billing_ErrorResponse'
         '402':
-          description: Payment required — the payment method was declined.
+          description: Payment required — the payment method was declined, or it can't be used for top-ups and no payment was attempted. The error's `reason` and `action` tell the two apart.
           content:
             application/json:
               schema:
@@ -17733,7 +17733,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/aig-billing_SetTopupConfigResponse'
         '400':
-          description: Bad request.
+          description: Bad request, or the payment method can't be used for auto top-up. A refused payment method carries the error's `reason` and `action`.
           content:
             application/json:
               schema:
@@ -415947,6 +415947,7 @@ components:
                   - card_not_supported
                   - currency_not_supported
                   - prepaid_card_not_supported
+                  - payment_method_not_supported
                   - authentication_required
                   - authentication_failed
                   - card_not_3ds_capable
