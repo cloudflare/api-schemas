@@ -193986,7 +193986,7 @@ paths:
     get:
       operationId: observability.usage_limit.get
       summary: Get usage limit status
-      description: Whether Workers Observability is keeping fewer of the account's events, usually because it passed its daily limit, and what that limit is. Daily limits reset at 00:00 UTC; paid accounts are brought back in stages over the following hours.
+      description: Whether Workers Observability is keeping fewer of the account's events, because it passed its daily limit or for another reason, and what that limit is. Daily limits reset at 00:00 UTC; paid accounts are brought back in stages over the following hours.
       parameters:
         - name: account_id
           in: path
@@ -245422,7 +245422,7 @@ paths:
     get:
       operationId: agents.traces.list
       summary: List Agent Traces
-      description: Lists Traces with a named Agent invocation in the window, ordered by lastActivityMs, newest first, including work without a Conversation ID. The window defaults to the last 24 hours. Summaries include the Agent names and Conversation IDs seen, authorized Trace duration, chat input/output/total tokens, models, providers, LLM/tool call counts and span-error counts within the effective window.
+      description: "Lists Traces with Agent activity in the window, newest activity first, including work without a Conversation ID. The window defaults to the last 24 hours. Each summary covers the Trace's Agent spans (invoke_agent, chat, execute_tool): the Agents and Conversation IDs seen, duration, token usage, models, providers, and LLM call, tool call and error counts."
       parameters:
         - name: service
           in: query
@@ -245803,7 +245803,7 @@ paths:
     get:
       operationId: agents.traces.get
       summary: Get an Agent Trace
-      description: Returns the summary of one Trace containing named Agent activity, with the same fields as the Trace list. Searches the full 7-day retention unless from or to narrow it. List the Trace's events with /agents/traces/{traceId}/events.
+      description: Returns the summary of one Trace with Agent activity, with the same fields as the Trace list. Searches the full 7-day retention unless from or to narrow it. List the Trace's Agent spans with /agents/traces/{traceId}/events.
       parameters:
         - name: traceId
           in: path
@@ -246158,7 +246158,7 @@ paths:
     get:
       operationId: agents.traces.events
       summary: List Agent Trace events
-      description: Returns a page of authorized canonical otel events for a Trace containing named Agent activity, using the existing events-query flow. Searches the full 7-day retention unless from or to narrow it. Events are ordered by event timestamp and ID, newest first. Continue with result_info.cursors.after; one page is not a complete span tree.
+      description: Returns a page of a Trace's Agent spans (invoke_agent, chat, execute_tool) and their events, newest first. Trace and span IDs are the same as in the Worker's trace, and each span's parentSpanId links it into the Agent tree. Searches the full 7-day retention unless from or to narrow it. Continue with result_info.cursors.after; one page may not hold the whole tree.
       parameters:
         - name: traceId
           in: path
@@ -255768,11 +255768,6 @@ paths:
       x-fern-ignore: true
       x-fern-sdk-group-name: observability.telemetry
       x-fern-sdk-method-name: live-tail
-      x-forge-aliases:
-        - x-fern-sdk-group-name: o11y.telemetry
-          x-fern-sdk-method-name: live-tail
-          x-forge-group-name: o11y.telemetry
-          x-forge-method-name: live-tail
       x-forge-group-name: observability.telemetry
       x-forge-method-name: live-tail
       x-forge-oauth-scopes:
@@ -255919,11 +255914,6 @@ paths:
       x-fern-ignore: true
       x-fern-sdk-group-name: observability.telemetry
       x-fern-sdk-method-name: heartbeat
-      x-forge-aliases:
-        - x-fern-sdk-group-name: o11y.telemetry
-          x-fern-sdk-method-name: heartbeat
-          x-forge-group-name: o11y.telemetry
-          x-forge-method-name: heartbeat
       x-forge-group-name: observability.telemetry
       x-forge-method-name: heartbeat
       x-forge-oauth-scopes:
@@ -533910,10 +533900,42 @@ components:
               type: array
               items:
                 type: string
+            errorCount:
+              description: Agent spans that recorded an error.
+              type: integer
+              minimum: 0
+            errors:
+              description: Distinct error messages from the Trace's Agent spans.
+              type: array
+              items:
+                type: string
             lastActivityMs:
               description: Latest start of an authorized Agent invocation in the Trace within the effective window, as Unix epoch milliseconds. The Trace list is ordered by this value, newest first.
               type: integer
               minimum: 0
+            rootSpanName:
+              description: Name of the first Agent span in the Trace.
+              type: string
+            rootTransactionName:
+              description: Transaction name of the first Agent span in the Trace.
+              type: string
+            services:
+              description: Worker services with Agent activity in the Trace.
+              type: array
+              items:
+                type: string
+            spans:
+              description: Agent spans in the Trace.
+              type: number
+            traceDurationMs:
+              description: Duration of the Trace's Agent activity, in milliseconds.
+              type: number
+            traceEndMs:
+              description: End of the Trace's Agent activity, as Unix epoch milliseconds.
+              type: number
+            traceStartMs:
+              description: Start of the Trace's Agent activity, as Unix epoch milliseconds.
+              type: number
           required:
             - lastActivityMs
             - agents
@@ -535193,6 +535215,14 @@ components:
                   enum:
                     - durableObject
                     - stateless
+                gateway:
+                  type: object
+                  additionalProperties: true
+                  properties:
+                    requestId:
+                      type: string
+                  required:
+                    - requestId
                 outcome:
                   type: string
                 preview:
@@ -535274,6 +535304,14 @@ components:
                   enum:
                     - durableObject
                     - stateless
+                gateway:
+                  type: object
+                  additionalProperties: true
+                  properties:
+                    requestId:
+                      type: string
+                  required:
+                    - requestId
                 outcome:
                   type: string
                 preview:
@@ -535456,7 +535494,7 @@ components:
             - free
             - paid
         resets_at:
-          description: When a limited free account is expected to start keeping events again, at the daily limit reset. Not guaranteed if the account was limited for another reason. null otherwise, including for paid accounts, which are brought back in stages.
+          description: When a limited free account starts keeping events again, at the daily limit reset. null otherwise, including for paid accounts, which are brought back in stages.
           type: string
           format: date-time
           example: 2026-10-30T00:00:00Z
@@ -535471,8 +535509,8 @@ components:
           description: |-
             Whether telemetry is being dropped, and why. More values may be added; treat unknown values like normal.
             - normal: every event is kept.
-            - limited: the account keeps only sample_rate of its events, usually because it passed its daily limit. A free account over its limit keeps none until resets_at; a paid one keeps about 10 events a second and is brought back in stages after 00:00 UTC.
-            - restricted: events are dropped for another reason. Contact support.
+            - limited: the account passed its daily limit and keeps only sample_rate of its events. A free account keeps none until resets_at; a paid one keeps about 10 events a second and is brought back in stages after 00:00 UTC.
+            - restricted: the account keeps only sample_rate of its events for another reason. Contact support.
           type: string
           enum:
             - normal
