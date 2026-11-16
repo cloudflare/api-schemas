@@ -391467,6 +391467,7 @@ paths:
         Automatic Platform Optimization (APO) for WordPress is a performance feature that serves your
         WordPress site from Cloudflare's edge network, reducing load times for visitors.
         Refer to the APO documentation for more information.
+        When an APO configuration already exists, fields omitted from an object `value` keep their current value, except `recheck`, which is false unless the request sends it.
       parameters:
         - name: zone_id
           in: path
@@ -391481,7 +391482,7 @@ paths:
               type: object
               properties:
                 value:
-                  $ref: '#/components/schemas/speed_automatic_platform_optimization_value'
+                  $ref: '#/components/schemas/speed_automatic_platform_optimization_patch_value'
               required:
                 - value
       responses:
@@ -502295,6 +502296,50 @@ components:
         - errors
         - messages
         - result
+    speed_automatic_platform_optimization_patch_value:
+      description: |
+        Configuration for Automatic Platform Optimization (APO) for WordPress.
+        Set to "off" to disable, or provide an object to configure APO settings.
+        When an APO configuration already exists, fields omitted from the object keep their current value.
+      oneOf:
+        - description: Disable Automatic Platform Optimization.
+          enum:
+            - off
+          type: string
+        - properties:
+            cache_by_device_type:
+              description: Whether to cache by device type.
+              type: boolean
+              example: false
+            cf:
+              description: Whether the zone is proxied through Cloudflare.
+              type: boolean
+              example: true
+            enabled:
+              description: Whether APO is enabled.
+              type: boolean
+              example: true
+            hostnames:
+              description: List of hostnames where APO is active.
+              type: array
+              items:
+                type: string
+              example:
+                - www.example.com
+            recheck:
+              description: Whether to recheck WordPress and plugin detection. When an APO configuration already exists, an omitted `recheck` is false, not its stored value.
+              type: boolean
+              example: false
+            wordpress:
+              description: Whether the site is a WordPress site.
+              type: boolean
+              example: true
+            wp_plugin:
+              description: Whether the Cloudflare WordPress plugin is installed.
+              type: boolean
+              example: true
+          type: object
+      title: Automatic Platform Optimization PATCH value
     speed_automatic_platform_optimization_response:
       description: Controls Automatic Platform Optimization (APO) for WordPress.
       allOf:
@@ -502536,6 +502581,30 @@ components:
         type: object
         uniqueItems: true
       example: []
+    speed_setting_metadata:
+      description: Zone setting fields shared by settings whose value is not an on/off string.
+      type: object
+      properties:
+        editable:
+          description: Whether or not this setting can be modified for this zone (based on your Cloudflare plan level).
+          type: boolean
+          enum:
+            - true
+            - false
+          readOnly: true
+          x-auditable: true
+        id:
+          description: Identifier of the zone setting.
+          type: string
+          x-auditable: true
+        modified_on:
+          description: last time this setting was modified.
+          type: string
+          format: date-time
+          example: 2014-01-01T05:20:00.12345Z
+          nullable: true
+          readOnly: true
+          x-auditable: true
     speed_transformations_allowed_origins_response:
       description: |
         Controls which origins are allowed to request image and video transformations.
@@ -502587,7 +502656,7 @@ components:
       description: |
         Combined view of Transformations, Allowed Origins, and C2PA settings for a zone.
       allOf:
-        - $ref: '#/components/schemas/speed_base'
+        - $ref: '#/components/schemas/speed_setting_metadata'
         - properties:
             id:
               description: ID of the zone setting.
