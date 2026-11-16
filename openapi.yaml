@@ -200426,7 +200426,7 @@ paths:
           description: Cloudflare account ID. Required for all Registrar API operations.
           required: true
           schema:
-            $ref: '#/components/schemas/registrar-api_identifier'
+            $ref: '#/components/schemas/registrar_identifier'
       requestBody:
         description: List of fully qualified domain names (FQDNs) to check. Each domain must include the extension (e.g., "example.com", not "example").
         required: true
@@ -200456,7 +200456,7 @@ paths:
                   domains:
                     - example.com
             schema:
-              $ref: '#/components/schemas/registrar-api_domain_check_request'
+              $ref: '#/components/schemas/registrar_domain_check_request'
       responses:
         '200':
           description: Successfully returned availability results. Each requested domain appears in the `domains` array with its current availability status and pricing (if available).
@@ -200587,7 +200587,7 @@ paths:
                           tier: standard
                     success: true
               schema:
-                $ref: '#/components/schemas/registrar-api_domain_check_response'
+                $ref: '#/components/schemas/registrar_domain_check_response'
         '400':
           description: |
             Invalid request parameters.
@@ -200630,7 +200630,7 @@ paths:
                     result: null
                     success: false
               schema:
-                $ref: '#/components/schemas/registrar-api_api-response-common-failure'
+                $ref: '#/components/schemas/registrar_api-response-common-failure'
       security:
         - api_token: []
         - api_email: []
@@ -200677,7 +200677,7 @@ paths:
           description: Cloudflare account ID. Required for all Registrar API operations.
           required: true
           schema:
-            $ref: '#/components/schemas/registrar-api_identifier'
+            $ref: '#/components/schemas/registrar_identifier'
         - name: q
           in: query
           description: |
@@ -200861,7 +200861,7 @@ paths:
                           tier: standard
                     success: true
               schema:
-                $ref: '#/components/schemas/registrar-api_domain_search_response'
+                $ref: '#/components/schemas/registrar_domain_search_response'
         '400':
           description: |
             Invalid request parameters.
@@ -200893,7 +200893,7 @@ paths:
                     result: null
                     success: false
               schema:
-                $ref: '#/components/schemas/registrar-api_api-response-common-failure'
+                $ref: '#/components/schemas/registrar_api-response-common-failure'
       security:
         - api_token: []
         - api_email: []
@@ -200940,7 +200940,7 @@ paths:
           description: Cloudflare account ID. Required for all Registrar API operations.
           required: true
           schema:
-            $ref: '#/components/schemas/registrar-api_identifier'
+            $ref: '#/components/schemas/registrar_identifier'
       requestBody:
         description: List of transferable domain objects to check.
         required: true
@@ -200969,7 +200969,7 @@ paths:
                     - auth_code: SSdtIGEgc2VjcmV0IDozCg==
                       domain_name: example.com
             schema:
-              $ref: '#/components/schemas/registrar-api_domain_transfer_check_request'
+              $ref: '#/components/schemas/registrar_domain_transfer_check_request'
       responses:
         '200':
           description: |
@@ -201091,7 +201091,7 @@ paths:
                           transferable: false
                     success: true
               schema:
-                $ref: '#/components/schemas/registrar-api_domain_transfer_check_response'
+                $ref: '#/components/schemas/registrar_domain_transfer_check_response'
         '400':
           description: |
             Invalid request body.
@@ -201142,7 +201142,7 @@ paths:
                     result: null
                     success: false
               schema:
-                $ref: '#/components/schemas/registrar-api_api-response-common-failure'
+                $ref: '#/components/schemas/registrar_api-response-common-failure'
         '503':
           description: |
             Transfer checks failed for all requested domains due to internal
@@ -201166,7 +201166,7 @@ paths:
                     result: null
                     success: false
               schema:
-                $ref: '#/components/schemas/registrar-api_api-response-common-failure'
+                $ref: '#/components/schemas/registrar_api-response-common-failure'
       security:
         - api_token: []
         - api_email: []
@@ -201199,7 +201199,7 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/registrar-api_identifier'
+            $ref: '#/components/schemas/registrar_identifier'
         - name: name
           in: query
           description: |
@@ -201208,9 +201208,9 @@ paths:
           schema:
             type: string
           example: com
-        - $ref: '#/components/parameters/registrar-api_cursor_pagination_cursor'
-        - $ref: '#/components/parameters/registrar-api_cursor_pagination_per_page'
-        - $ref: '#/components/parameters/registrar-api_cursor_pagination_direction'
+        - $ref: '#/components/parameters/registrar_cursor_pagination_cursor'
+        - $ref: '#/components/parameters/registrar_cursor_pagination_per_page'
+        - $ref: '#/components/parameters/registrar_cursor_pagination_direction'
         - name: sort_by
           in: query
           description: |
@@ -201233,7 +201233,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/registrar-api_extension-response-collection'
+                $ref: '#/components/schemas/registrar_extension-response-collection'
         '304':
           description: Not Modified — client cache is current. Returned when the request includes an `If-None-Match` header matching the current ETag.
         4XX:
@@ -201241,7 +201241,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/registrar-api_api-response-common-failure'
+                $ref: '#/components/schemas/registrar_api-response-common-failure'
       security:
         - api_token: []
         - api_email: []
@@ -201268,7 +201268,7 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/registrar-api_identifier'
+            $ref: '#/components/schemas/registrar_identifier'
         - name: extension
           in: path
           description: The extension name (e.g., `com`, `co.uk`).
@@ -201287,7 +201287,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/registrar-api_extension-response-single'
+                $ref: '#/components/schemas/registrar_extension-response-single'
         '304':
           description: Not Modified — client cache is current. Returned when the request includes an `If-None-Match` header matching the current ETag.
         4XX:
@@ -201295,7 +201295,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/registrar-api_api-response-common-failure'
+                $ref: '#/components/schemas/registrar_api-response-common-failure'
       security:
         - api_token: []
         - api_email: []
@@ -201323,10 +201323,10 @@ paths:
           description: Cloudflare account ID.
           required: true
           schema:
-            $ref: '#/components/schemas/registrar-api_identifier'
-        - $ref: '#/components/parameters/registrar-api_cursor_pagination_cursor'
-        - $ref: '#/components/parameters/registrar-api_cursor_pagination_per_page'
-        - $ref: '#/components/parameters/registrar-api_cursor_pagination_direction'
+            $ref: '#/components/schemas/registrar_identifier'
+        - $ref: '#/components/parameters/registrar_cursor_pagination_cursor'
+        - $ref: '#/components/parameters/registrar_cursor_pagination_per_page'
+        - $ref: '#/components/parameters/registrar_cursor_pagination_direction'
         - name: sort_by
           in: query
           description: Column to sort results by. Defaults to registration date (`registry_created_at`) when omitted.
@@ -201550,7 +201550,7 @@ paths:
                       per_page: 20
                     success: true
               schema:
-                $ref: '#/components/schemas/registrar-api_registration-response-collection'
+                $ref: '#/components/schemas/registrar_registration-response-collection'
         4XX:
           description: List registrations failure.
           content:
@@ -201566,7 +201566,7 @@ paths:
                     result: null
                     success: false
               schema:
-                $ref: '#/components/schemas/registrar-api_api-response-common-failure'
+                $ref: '#/components/schemas/registrar_api-response-common-failure'
       security:
         - api_token: []
         - api_email: []
@@ -201642,7 +201642,7 @@ paths:
           description: Cloudflare account ID. Required for all Registrar API operations.
           required: true
           schema:
-            $ref: '#/components/schemas/registrar-api_identifier'
+            $ref: '#/components/schemas/registrar_identifier'
         - name: Prefer
           in: header
           description: |
@@ -201835,7 +201835,7 @@ paths:
                   domain_name: example.com
                   years: 1
             schema:
-              $ref: '#/components/schemas/registrar-api_registration_create_request'
+              $ref: '#/components/schemas/registrar_registration_create_request'
       responses:
         '201':
           description: |
@@ -201874,7 +201874,7 @@ paths:
                       updated_at: 2025-10-27T10:00:03Z
                     success: true
               schema:
-                $ref: '#/components/schemas/registrar-api_workflow-status-response-single'
+                $ref: '#/components/schemas/registrar_workflow-status-response-single'
         '202':
           description: |
             Registration is still processing. This occurs when the operation did
@@ -201909,7 +201909,7 @@ paths:
                       updated_at: 2025-10-27T10:00:10Z
                     success: true
               schema:
-                $ref: '#/components/schemas/registrar-api_workflow-status-response-single'
+                $ref: '#/components/schemas/registrar_workflow-status-response-single'
         4XX:
           description: Create registration failure.
           content:
@@ -201982,7 +201982,7 @@ paths:
                     result: null
                     success: false
               schema:
-                $ref: '#/components/schemas/registrar-api_api-response-common-failure'
+                $ref: '#/components/schemas/registrar_api-response-common-failure'
       security:
         - api_token: []
         - api_email: []
@@ -202009,13 +202009,13 @@ paths:
           description: Cloudflare account ID.
           required: true
           schema:
-            $ref: '#/components/schemas/registrar-api_identifier'
+            $ref: '#/components/schemas/registrar_identifier'
         - name: domain_name
           in: path
           description: Domain name to retrieve.
           required: true
           schema:
-            $ref: '#/components/schemas/registrar-api_domain_name'
+            $ref: '#/components/schemas/registrar_domain_name'
       responses:
         '200':
           description: Registration details.
@@ -202037,7 +202037,7 @@ paths:
                       status: active
                     success: true
               schema:
-                $ref: '#/components/schemas/registrar-api_registration-response-single'
+                $ref: '#/components/schemas/registrar_registration-response-single'
         4XX:
           description: Get registration failure.
           content:
@@ -202062,7 +202062,7 @@ paths:
                     result: null
                     success: false
               schema:
-                $ref: '#/components/schemas/registrar-api_api-response-common-failure'
+                $ref: '#/components/schemas/registrar_api-response-common-failure'
       security:
         - api_token: []
         - api_email: []
@@ -202094,13 +202094,13 @@ paths:
           description: Cloudflare account ID.
           required: true
           schema:
-            $ref: '#/components/schemas/registrar-api_identifier'
+            $ref: '#/components/schemas/registrar_identifier'
         - name: domain_name
           in: path
           description: Domain name to update.
           required: true
           schema:
-            $ref: '#/components/schemas/registrar-api_domain_name'
+            $ref: '#/components/schemas/registrar_domain_name'
         - name: Prefer
           in: header
           description: |
@@ -202124,7 +202124,7 @@ paths:
                 value:
                   auto_renew: true
             schema:
-              $ref: '#/components/schemas/registrar-api_registration_update_request'
+              $ref: '#/components/schemas/registrar_registration_update_request'
       responses:
         '200':
           description: |
@@ -202163,7 +202163,7 @@ paths:
                       updated_at: 2025-10-27T10:00:02Z
                     success: true
               schema:
-                $ref: '#/components/schemas/registrar-api_workflow-status-response-single'
+                $ref: '#/components/schemas/registrar_workflow-status-response-single'
         '202':
           description: |
             Update is still processing. This occurs when the operation did not
@@ -202198,7 +202198,7 @@ paths:
                       updated_at: 2025-10-27T10:00:10Z
                     success: true
               schema:
-                $ref: '#/components/schemas/registrar-api_workflow-status-response-single'
+                $ref: '#/components/schemas/registrar_workflow-status-response-single'
         4XX:
           description: Update registration failure.
           content:
@@ -202225,7 +202225,7 @@ paths:
                     result: null
                     success: false
               schema:
-                $ref: '#/components/schemas/registrar-api_api-response-common-failure'
+                $ref: '#/components/schemas/registrar_api-response-common-failure'
       security:
         - api_token: []
         - api_email: []
@@ -202289,12 +202289,12 @@ paths:
           description: Cloudflare account ID. Required for all Registrar API operations.
           required: true
           schema:
-            $ref: '#/components/schemas/registrar-api_identifier'
+            $ref: '#/components/schemas/registrar_identifier'
         - name: domain_name
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/registrar-api_domain_name'
+            $ref: '#/components/schemas/registrar_domain_name'
       responses:
         '200':
           description: Registration workflow status.
@@ -202422,7 +202422,7 @@ paths:
                       updated_at: 2025-10-27T10:00:03Z
                     success: true
               schema:
-                $ref: '#/components/schemas/registrar-api_workflow-status-response-single'
+                $ref: '#/components/schemas/registrar_workflow-status-response-single'
         4XX:
           description: Get status failure.
           content:
@@ -202438,7 +202438,7 @@ paths:
                     result: null
                     success: false
               schema:
-                $ref: '#/components/schemas/registrar-api_api-response-common-failure'
+                $ref: '#/components/schemas/registrar_api-response-common-failure'
       security:
         - api_token: []
         - api_email: []
@@ -202501,13 +202501,13 @@ paths:
           description: Cloudflare account ID. Required for all Registrar API operations.
           required: true
           schema:
-            $ref: '#/components/schemas/registrar-api_identifier'
+            $ref: '#/components/schemas/registrar_identifier'
         - name: domain_name
           in: path
           description: Domain name to transfer.
           required: true
           schema:
-            $ref: '#/components/schemas/registrar-api_domain_name'
+            $ref: '#/components/schemas/registrar_domain_name'
         - name: Prefer
           in: header
           description: |
@@ -202551,7 +202551,7 @@ paths:
                         organization: Example Inc
                   privacy_mode: redaction
             schema:
-              $ref: '#/components/schemas/registrar-api_transfer_in_create_request'
+              $ref: '#/components/schemas/registrar_transfer_in_create_request'
       responses:
         '202':
           description: |
@@ -202587,7 +202587,7 @@ paths:
                       updated_at: 2025-10-27T10:00:01Z
                     success: true
               schema:
-                $ref: '#/components/schemas/registrar-api_workflow-status-response-single'
+                $ref: '#/components/schemas/registrar_workflow-status-response-single'
         4XX:
           description: Transfer initiation failure.
           content:
@@ -202683,7 +202683,7 @@ paths:
                     result: null
                     success: false
               schema:
-                $ref: '#/components/schemas/registrar-api_api-response-common-failure'
+                $ref: '#/components/schemas/registrar_api-response-common-failure'
       security:
         - api_token: []
         - api_email: []
@@ -202738,12 +202738,12 @@ paths:
           description: Cloudflare account ID. Required for all Registrar API operations.
           required: true
           schema:
-            $ref: '#/components/schemas/registrar-api_identifier'
+            $ref: '#/components/schemas/registrar_identifier'
         - name: domain_name
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/registrar-api_domain_name'
+            $ref: '#/components/schemas/registrar_domain_name'
       responses:
         '200':
           description: Transfer workflow status.
@@ -202857,7 +202857,7 @@ paths:
                       updated_at: 2025-10-30T08:15:00Z
                     success: true
               schema:
-                $ref: '#/components/schemas/registrar-api_workflow-status-response-single'
+                $ref: '#/components/schemas/registrar_workflow-status-response-single'
         4XX:
           description: Get transfer status failure.
           content:
@@ -202873,7 +202873,7 @@ paths:
                     result: null
                     success: false
               schema:
-                $ref: '#/components/schemas/registrar-api_api-response-common-failure'
+                $ref: '#/components/schemas/registrar_api-response-common-failure'
       security:
         - api_token: []
         - api_email: []
@@ -202905,12 +202905,12 @@ paths:
           description: Cloudflare account ID.
           required: true
           schema:
-            $ref: '#/components/schemas/registrar-api_identifier'
+            $ref: '#/components/schemas/registrar_identifier'
         - name: domain_name
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/registrar-api_domain_name'
+            $ref: '#/components/schemas/registrar_domain_name'
       responses:
         '200':
           description: Update workflow status.
@@ -202974,7 +202974,7 @@ paths:
                       updated_at: 2025-10-27T10:00:30Z
                     success: true
               schema:
-                $ref: '#/components/schemas/registrar-api_workflow-status-response-single'
+                $ref: '#/components/schemas/registrar_workflow-status-response-single'
         4XX:
           description: Get update status failure.
           content:
@@ -202990,7 +202990,7 @@ paths:
                     result: null
                     success: false
               schema:
-                $ref: '#/components/schemas/registrar-api_api-response-common-failure'
+                $ref: '#/components/schemas/registrar_api-response-common-failure'
       security:
         - api_token: []
         - api_email: []
@@ -363849,9 +363849,7 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/argo-analytics_response_single'
-                  - $ref: '#/components/schemas/argo-analytics_api-response-common-failure'
+                $ref: '#/components/schemas/argo-analytics_api-response-common-failure'
       security:
         - api_token: []
         - api_email: []
@@ -363871,7 +363869,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: analytics.latency
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
   /zones/{zone_id}/analytics/latency/colos:
     get:
       operationId: argo-analytics-for-geolocation-argo-analytics-for-a-zone-at-different-po-ps
@@ -363895,9 +363892,7 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/argo-analytics_response_single'
-                  - $ref: '#/components/schemas/argo-analytics_api-response-common-failure'
+                $ref: '#/components/schemas/argo-analytics_api-response-common-failure'
       security:
         - api_token: []
         - api_email: []
@@ -363914,7 +363909,6 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: analytics.latency.colos
       x-fern-sdk-method-name: get
-      x-forge-hidden: true
   /zones/{zone_id}/api_gateway/configuration:
     get:
       operationId: api-shield-settings-retrieve-information-about-specific-configuration-properties
@@ -401258,7 +401252,7 @@ components:
         default: 20
         maximum: 50
         minimum: 1
-    registrar-api_cursor_pagination_cursor:
+    registrar_cursor_pagination_cursor:
       description: |
         Opaque token from a previous response's `result_info.cursor`.
         Pass this value to fetch the next page of results. Omit (or
@@ -401268,7 +401262,7 @@ components:
       schema:
         type: string
         maxLength: 256
-    registrar-api_cursor_pagination_direction:
+    registrar_cursor_pagination_direction:
       description: |
         Sort direction for results. Defaults to ascending order.
       in: query
@@ -401279,7 +401273,7 @@ components:
         enum:
           - asc
           - desc
-    registrar-api_cursor_pagination_per_page:
+    registrar_cursor_pagination_per_page:
       description: Number of items to return per page.
       in: query
       name: per_page
@@ -419586,7 +419580,8 @@ components:
         result:
           anyOf:
             - type: object
-            - items: {}
+            - items:
+                type: object
               type: array
             - type: string
         success:
@@ -419641,6 +419636,7 @@ components:
                   type: object
                 - nullable: true
                   type: string
+          type: object
     argo-analytics_identifier:
       description: Identifier
       type: string
@@ -488656,13 +488652,13 @@ components:
         - created_at
         - updated_at
         - links
-    registrar-api_api-response-common:
+    registrar_api-response-common:
       type: object
       properties:
         errors:
-          $ref: '#/components/schemas/registrar-api_messages'
+          $ref: '#/components/schemas/registrar_messages'
         messages:
-          $ref: '#/components/schemas/registrar-api_messages'
+          $ref: '#/components/schemas/registrar_messages'
         result:
           anyOf:
             - type: object
@@ -488681,7 +488677,7 @@ components:
         - errors
         - messages
         - result
-    registrar-api_api-response-common-failure:
+    registrar_api-response-common-failure:
       type: object
       properties:
         errors:
@@ -488689,12 +488685,12 @@ components:
             - code: 7003
               message: No route for the URI
           allOf:
-            - $ref: '#/components/schemas/registrar-api_messages'
+            - $ref: '#/components/schemas/registrar_messages'
           minItems: 1
         messages:
           example: []
           allOf:
-            - $ref: '#/components/schemas/registrar-api_messages'
+            - $ref: '#/components/schemas/registrar_messages'
         result:
           type: object
           enum:
@@ -488711,7 +488707,7 @@ components:
         - errors
         - messages
         - result
-    registrar-api_cursor_result_info:
+    registrar_cursor_result_info:
       description: |
         Provides cursor-based pagination metadata. List endpoints use this
         metadata for cursor pagination. Pass the `cursor` value as a query
@@ -488738,7 +488734,7 @@ components:
         - cursor
         - per_page
         - count
-    registrar-api_domain_check_request:
+    registrar_domain_check_request:
       description: Request body for checking domain availability.
       type: object
       properties:
@@ -488759,9 +488755,9 @@ components:
           minItems: 1
       required:
         - domains
-    registrar-api_domain_check_response:
+    registrar_domain_check_response:
       allOf:
-        - $ref: '#/components/schemas/registrar-api_api-response-common'
+        - $ref: '#/components/schemas/registrar_api-response-common'
         - properties:
             result:
               description: Contains the availability check results.
@@ -488774,13 +488770,13 @@ components:
                     field. The response may omit malformed domain names.
                   type: array
                   items:
-                    $ref: '#/components/schemas/registrar-api_domain_check_result'
+                    $ref: '#/components/schemas/registrar_domain_check_result'
               required:
                 - domains
           required:
             - result
           type: object
-    registrar-api_domain_check_result:
+    registrar_domain_check_result:
       description: Describes a single authoritative domain availability result from the Check endpoint. Check results reflect current registry status; use them immediately before registration.
       type: object
       properties:
@@ -488789,7 +488785,7 @@ components:
           type: string
           example: example.com
         pricing:
-          $ref: '#/components/schemas/registrar-api_pricing_registration'
+          $ref: '#/components/schemas/registrar_pricing_registration'
         reason:
           description: |-
             Appears only when `registrable` is `false` and explains the result.
@@ -488826,7 +488822,7 @@ components:
       required:
         - name
         - registrable
-    registrar-api_domain_name:
+    registrar_domain_name:
       description: |
         Provides a fully qualified domain name (FQDN), including the extension
         (e.g., `example.com`, `mybrand.app`). The domain name uniquely identifies
@@ -488835,9 +488831,9 @@ components:
       type: string
       example: example.com
       x-auditable: true
-    registrar-api_domain_search_response:
+    registrar_domain_search_response:
       allOf:
-        - $ref: '#/components/schemas/registrar-api_api-response-common'
+        - $ref: '#/components/schemas/registrar_api-response-common'
         - properties:
             result:
               description: Contains the search results.
@@ -488847,13 +488843,13 @@ components:
                   description: Lists domain suggestions in relevance order. An empty array indicates that the search criteria matched zero domains.
                   type: array
                   items:
-                    $ref: '#/components/schemas/registrar-api_domain_search_result'
+                    $ref: '#/components/schemas/registrar_domain_search_result'
               required:
                 - domains
           required:
             - result
           type: object
-    registrar-api_domain_search_result:
+    registrar_domain_search_result:
       description: Describes a single domain suggestion from the Search endpoint. Search results use non-authoritative data that may come from a cache. Use POST /domain-check to confirm real-time availability and pricing before registration.
       type: object
       properties:
@@ -488862,7 +488858,7 @@ components:
           type: string
           example: example.com
         pricing:
-          $ref: '#/components/schemas/registrar-api_pricing_registration'
+          $ref: '#/components/schemas/registrar_pricing_registration'
         reason:
           description: |-
             Appears only when `registrable` is `false` and explains the advisory search result. Use POST /domain-check for authoritative status.
@@ -488902,7 +488898,7 @@ components:
       required:
         - name
         - registrable
-    registrar-api_domain_transfer_check_reason:
+    registrar_domain_transfer_check_reason:
       description: |
         Transfer eligibility reason code.
         - `extension_not_supported_via_api`: This API excludes the extension; dashboard flows support it.
@@ -488942,7 +488938,7 @@ components:
         - zone_status_invalid
         - invalid_zone_plan
         - domain_unsupported
-    registrar-api_domain_transfer_check_request:
+    registrar_domain_transfer_check_request:
       description: Request body for checking domain transfer eligibility.
       type: object
       properties:
@@ -488972,9 +488968,9 @@ components:
       additionalProperties: false
       required:
         - domains
-    registrar-api_domain_transfer_check_response:
+    registrar_domain_transfer_check_response:
       allOf:
-        - $ref: '#/components/schemas/registrar-api_api-response-common'
+        - $ref: '#/components/schemas/registrar_api-response-common'
         - properties:
             result:
               description: Contains the transfer eligibility results.
@@ -488986,13 +488982,13 @@ components:
                     Each value contains `name`, `transferable`, and `reasons`.
                   type: object
                   additionalProperties:
-                    $ref: '#/components/schemas/registrar-api_domain_transfer_check_result'
+                    $ref: '#/components/schemas/registrar_domain_transfer_check_result'
               required:
                 - domains
           required:
             - result
           type: object
-    registrar-api_domain_transfer_check_result:
+    registrar_domain_transfer_check_result:
       description: |
         Transfer eligibility for a single domain.
         `reasons` is always present:
@@ -489005,14 +489001,14 @@ components:
           type: string
           example: example.com
         pricing:
-          $ref: '#/components/schemas/registrar-api_pricing_transfer'
+          $ref: '#/components/schemas/registrar_pricing_transfer'
         reasons:
           description: Machine-readable transfer eligibility reasons.
           type: array
           items:
             properties:
               code:
-                $ref: '#/components/schemas/registrar-api_domain_transfer_check_reason'
+                $ref: '#/components/schemas/registrar_domain_transfer_check_reason'
             required:
               - code
             type: object
@@ -489030,7 +489026,7 @@ components:
               items:
                 properties:
                   code:
-                    $ref: '#/components/schemas/registrar-api_domain_transfer_check_reason'
+                    $ref: '#/components/schemas/registrar_domain_transfer_check_reason'
                 required:
                   - code
                 type: object
@@ -489050,7 +489046,7 @@ components:
               items:
                 properties:
                   code:
-                    $ref: '#/components/schemas/registrar-api_domain_transfer_check_reason'
+                    $ref: '#/components/schemas/registrar_domain_transfer_check_reason'
                 required:
                   - code
                 type: object
@@ -489067,7 +489063,7 @@ components:
         - name
         - transferable
         - reasons
-    registrar-api_extension-item:
+    registrar_extension-item:
       description: Extension entry with metadata and JSON Schema documents for registration and transfer operations.
       type: object
       properties:
@@ -489094,14 +489090,14 @@ components:
         - metadata
         - registration_schema
         - transfer_schema
-    registrar-api_extension-response-collection:
+    registrar_extension-response-collection:
       allOf:
-        - $ref: '#/components/schemas/registrar-api_api-response-common'
+        - $ref: '#/components/schemas/registrar_api-response-common'
         - properties:
             result:
               type: array
               items:
-                $ref: '#/components/schemas/registrar-api_extension-item'
+                $ref: '#/components/schemas/registrar_extension-item'
             result_info:
               description: Cursor-based pagination metadata.
               type: object
@@ -489116,20 +489112,20 @@ components:
                   description: Number of items per page.
                   type: integer
           type: object
-    registrar-api_extension-response-single:
+    registrar_extension-response-single:
       allOf:
-        - $ref: '#/components/schemas/registrar-api_api-response-common'
+        - $ref: '#/components/schemas/registrar_api-response-common'
         - properties:
             result:
-              $ref: '#/components/schemas/registrar-api_extension-item'
+              $ref: '#/components/schemas/registrar_extension-item'
           type: object
-    registrar-api_identifier:
+    registrar_identifier:
       description: Identifier.
       type: string
       example: 023e105f4ecef8ad9ca31a8372d0c353
       maxLength: 32
       readOnly: true
-    registrar-api_messages:
+    registrar_messages:
       type: array
       items:
         properties:
@@ -489153,7 +489149,7 @@ components:
         type: object
         uniqueItems: true
       example: []
-    registrar-api_pricing_base:
+    registrar_pricing_base:
       description: |
         Provides annual pricing information for a given domain.
         The API returns all per-year prices as strings to preserve decimal precision.
@@ -489182,9 +489178,9 @@ components:
       required:
         - currency
         - renewal_cost
-    registrar-api_pricing_registration:
+    registrar_pricing_registration:
       allOf:
-        - $ref: '#/components/schemas/registrar-api_pricing_base'
+        - $ref: '#/components/schemas/registrar_pricing_base'
         - properties:
             registration_cost:
               description: The first-year cost to register this domain.
@@ -489195,9 +489191,9 @@ components:
             - renewal_cost
             - registration_cost
           type: object
-    registrar-api_pricing_transfer:
+    registrar_pricing_transfer:
       allOf:
-        - $ref: '#/components/schemas/registrar-api_pricing_base'
+        - $ref: '#/components/schemas/registrar_pricing_base'
         - properties:
             transfer_cost:
               description: The first-year cost to transfer this domain.
@@ -489208,7 +489204,7 @@ components:
             - renewal_cost
             - transfer_cost
           type: object
-    registrar-api_registration:
+    registrar_registration:
       description: A domain registration resource representing the current state of a registered domain.
       type: object
       properties:
@@ -489222,7 +489218,7 @@ components:
           format: date-time
           example: 2025-01-15T10:00:00Z
         domain_name:
-          $ref: '#/components/schemas/registrar-api_domain_name'
+          $ref: '#/components/schemas/registrar_domain_name'
         expires_at:
           description: When the domain registration expires. Ready registrations include this value; only `registration_pending` and `transfer_pending` may return null.
           type: string
@@ -489268,28 +489264,28 @@ components:
         - auto_renew
         - privacy_mode
         - locked
-    registrar-api_registration-response-collection:
+    registrar_registration-response-collection:
       allOf:
-        - $ref: '#/components/schemas/registrar-api_api-response-common'
+        - $ref: '#/components/schemas/registrar_api-response-common'
         - properties:
             result:
               type: array
               items:
-                $ref: '#/components/schemas/registrar-api_registration'
+                $ref: '#/components/schemas/registrar_registration'
             result_info:
-              $ref: '#/components/schemas/registrar-api_cursor_result_info'
+              $ref: '#/components/schemas/registrar_cursor_result_info'
           required:
             - result
             - result_info
           type: object
-    registrar-api_registration-response-single:
+    registrar_registration-response-single:
       allOf:
-        - $ref: '#/components/schemas/registrar-api_api-response-common'
+        - $ref: '#/components/schemas/registrar_api-response-common'
         - properties:
             result:
-              $ref: '#/components/schemas/registrar-api_registration'
+              $ref: '#/components/schemas/registrar_registration'
           type: object
-    registrar-api_registration_contact:
+    registrar_registration_contact:
       description: |
         Contact data for the domain registration. This information
         is submitted to the domain registry and, depending on extension and
@@ -489315,12 +489311,12 @@ components:
           type: string
           example: '+1.5555555555'
         postal_info:
-          $ref: '#/components/schemas/registrar-api_registration_contact_postal_info'
+          $ref: '#/components/schemas/registrar_registration_contact_postal_info'
       required:
         - phone
         - email
         - postal_info
-    registrar-api_registration_contact_address:
+    registrar_registration_contact_address:
       description: Physical mailing address for the registrant contact.
       type: object
       properties:
@@ -489350,7 +489346,7 @@ components:
         - state
         - postal_code
         - country_code
-    registrar-api_registration_contact_postal_info:
+    registrar_registration_contact_postal_info:
       description: |
         Postal/mailing information for the contact. The `name` field is the
         complete contact name in one string. Some registries require a complete
@@ -489360,7 +489356,7 @@ components:
       type: object
       properties:
         address:
-          $ref: '#/components/schemas/registrar-api_registration_contact_address'
+          $ref: '#/components/schemas/registrar_registration_contact_address'
         name:
           description: Full legal name of the contact, including all required name components for an individual or authorized representative. Some registries require a complete personal name that includes a family or last name where applicable. Provide the complete name in this single field, for example `Ada Lovelace`; do not send separate first-name or last-name fields.
           type: string
@@ -489372,7 +489368,7 @@ components:
       required:
         - name
         - address
-    registrar-api_registration_contacts:
+    registrar_registration_contacts:
       description: |
         Provides contact data for the registration request.
 
@@ -489402,28 +489398,28 @@ components:
             schema includes this role. When the registry requires an omitted
             contact, Cloudflare may derive it from `contacts.registrant`.
           allOf:
-            - $ref: '#/components/schemas/registrar-api_registration_contact'
+            - $ref: '#/components/schemas/registrar_registration_contact'
         billing:
           description: |
             Optional billing contact. Accepted only when the extension schema
             includes this role. When the registry requires an omitted contact,
             Cloudflare may derive it from `contacts.registrant`.
           allOf:
-            - $ref: '#/components/schemas/registrar-api_registration_contact'
+            - $ref: '#/components/schemas/registrar_registration_contact'
         registrant:
           description: |
             Optional registrant contact. If omitted, the account's default
             address book entry is used instead.
           allOf:
-            - $ref: '#/components/schemas/registrar-api_registration_contact'
+            - $ref: '#/components/schemas/registrar_registration_contact'
         technical:
           description: |
             Optional technical contact. Accepted only when the extension schema
             includes this role. When the registry requires an omitted contact,
             Cloudflare may derive it from `contacts.registrant`.
           allOf:
-            - $ref: '#/components/schemas/registrar-api_registration_contact'
-    registrar-api_registration_create_request:
+            - $ref: '#/components/schemas/registrar_registration_contact'
+    registrar_registration_create_request:
       type: object
       properties:
         acknowledgements:
@@ -489466,9 +489462,9 @@ components:
         contacts:
           type: object
           allOf:
-            - $ref: '#/components/schemas/registrar-api_registration_contacts'
+            - $ref: '#/components/schemas/registrar_registration_contacts'
         domain_name:
-          $ref: '#/components/schemas/registrar-api_domain_name'
+          $ref: '#/components/schemas/registrar_domain_name'
         privacy_mode:
           description: |
             Sets the WHOIS privacy mode for the registration. Defaults to `redaction`.
@@ -489497,7 +489493,7 @@ components:
           minimum: 1
       required:
         - domain_name
-    registrar-api_registration_update_request:
+    registrar_registration_update_request:
       description: |
         Request to update an existing domain registration.
 
@@ -489514,7 +489510,7 @@ components:
           type: boolean
           example: true
       minProperties: 1
-    registrar-api_transfer_in_create_request:
+    registrar_transfer_in_create_request:
       type: object
       properties:
         auth_code:
@@ -489549,7 +489545,7 @@ components:
         contacts:
           type: object
           allOf:
-            - $ref: '#/components/schemas/registrar-api_registration_contacts'
+            - $ref: '#/components/schemas/registrar_registration_contacts'
         privacy_mode:
           description: |
             WHOIS privacy mode to apply after transfer completes. Defaults to
@@ -489559,14 +489555,14 @@ components:
           enum:
             - off
             - redaction
-    registrar-api_workflow-status-response-single:
+    registrar_workflow-status-response-single:
       allOf:
-        - $ref: '#/components/schemas/registrar-api_api-response-common'
+        - $ref: '#/components/schemas/registrar_api-response-common'
         - properties:
             result:
-              $ref: '#/components/schemas/registrar-api_workflow_status'
+              $ref: '#/components/schemas/registrar_workflow_status'
           type: object
-    registrar-api_workflow_error:
+    registrar_workflow_error:
       description: Provides error details when a workflow reaches the `failed` state. The workflow type (registration, update, etc.) and underlying registry response determine the specific codes and messages. Workflow error codes differ from immediate HTTP error `errors[].code` values in non-2xx responses. Surface `error.message` to the user for context.
       type: object
       properties:
@@ -489581,7 +489577,7 @@ components:
       required:
         - code
         - message
-    registrar-api_workflow_links:
+    registrar_workflow_links:
       type: object
       properties:
         resource:
@@ -489594,7 +489590,7 @@ components:
           example: /accounts/{account_id}/registrar/registrations/example.com/registration-status
       required:
         - self
-    registrar-api_workflow_status:
+    registrar_workflow_status:
       description: Status of an async registration workflow.
       type: object
       properties:
@@ -489616,10 +489612,10 @@ components:
         error:
           type: object
           allOf:
-            - $ref: '#/components/schemas/registrar-api_workflow_error'
+            - $ref: '#/components/schemas/registrar_workflow_error'
           nullable: true
         links:
-          $ref: '#/components/schemas/registrar-api_workflow_links'
+          $ref: '#/components/schemas/registrar_workflow_links'
         state:
           description: |
             Describes the workflow lifecycle state.
