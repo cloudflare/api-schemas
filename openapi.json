@@ -776131,7 +776131,12 @@
             "x-auditable": true
           },
           "bindings": {
-            "$ref": "#/components/schemas/workers_bindings"
+            "description": "Bindings attached to the version, as an array of objects that\neach name themselves. A create or patch request can send\n`bindings` or `env`, and a read returns both. A request that\nsends both fails with error 10021.\n",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/workers_bindings"
+              }
+            ]
           },
           "cache_options": {
             "$ref": "#/components/schemas/workers_cache_options"
@@ -776156,6 +776161,17 @@
             "format": "date-time",
             "readOnly": true,
             "x-auditable": true
+          },
+          "env": {
+            "description": "Bindings attached to the version, as a map from binding name to\nbinding. Each value holds the same payload as the matching\n`bindings` entry, without `name`. Reads derive `env` from\n`bindings`, so the two fields always list the same bindings and\n`env` carries nothing extra. Reads omit secret values in both\nfields.\n\nA create or patch request can send `env` or `bindings`, and a\nrequest that sends both fails with error 10021. To copy a\nversion, drop `env` from the read before sending it back, and\nuse `inherit` bindings for secrets. In a patch, `env` entries\nmerge one binding at a time: set an entry to `null` to remove\nthat binding, while a `bindings` array replaces the whole set.\n",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/workers_env"
+              }
+            ],
+            "x-stainless-skip": [
+              "terraform"
+            ]
           },
           "exports": {
             "description": "Declarative exports for the version, including Durable Object\nclasses (with their `storage` backend) and named Worker\nentrypoints. On reads, tombstoned lifecycle entries are\nomitted, so only live exports (`created` and\n`expecting-transfer`) are returned. `exports` and `migrations`\nare mutually exclusive on upload.\n",
