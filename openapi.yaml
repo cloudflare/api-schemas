@@ -9059,6 +9059,7 @@ paths:
           description: How many abuse reports per page to list
           schema:
             type: integer
+            minimum: 1
         - name: sort
           in: query
           description: A property to sort by, followed by the order (id, cdate, domain, type, status)
@@ -9365,6 +9366,7 @@ paths:
           description: Number of emails per page (default 20, max 100)
           schema:
             type: integer
+            minimum: 1
       responses:
         '200':
           description: List abuse report emails successful
@@ -9518,6 +9520,7 @@ paths:
           description: How many abuse reports per page to list
           schema:
             type: integer
+            minimum: 1
         - name: sort
           in: query
           description: A property to sort by, followed by the order
@@ -10243,6 +10246,7 @@ paths:
           description: Number of emails per page (default 20, max 100).
           schema:
             type: integer
+            minimum: 1
       responses:
         '200':
           description: Submitted abuse report emails listed successfully.
@@ -119179,7 +119183,7 @@ paths:
                 scan_matches:
                   type: boolean
                 search_lookback:
-                  description: On create, also search domains observed in the last 7 days for matches. Defaults to `true`. Ignored on update.
+                  description: Search domains observed in the last 7 days for matches. On create, applies when `true`. On update, when edit-triggered lookback is enabled for the account, applies only when the patterns change and only to the lookback itself; the match list still refreshes independently. Edit-triggered lookback is being rolled out gradually. Defaults to `true`.
                   type: boolean
                   default: true
                 string_matches:
@@ -119293,7 +119297,7 @@ paths:
     patch:
       operationId: patch_UpdateDomainQuery
       summary: Update domain query
-      description: "Replaces a saved domain query's tag and patterns. `tag` and `string_matches` are required, and the patterns you send replace the existing ones, so include every pattern you want to keep. Changing the patterns starts a new set of matches for the query: matches listed before the change are no longer returned, and only newly observed domains that match the new patterns are listed. Sending the same patterns in any order (for example, to change only `tag`) keeps the existing matches. If the new patterns are identical to a set already used in this account, such as the query's earlier patterns, matches already found for that set are listed as well. Omitting both `scan_matches` and its alias `scan` resets scanning to `false`. If both are supplied, `scan_matches` takes precedence. `search_lookback`, `min_time`, and `max_time` are ignored on update, so changing patterns does not search previously observed domains. If the query does not exist in this account, the request fails with error code 404."
+      description: "Replaces a saved domain query's tag and patterns. `tag` and `string_matches` are required, and the patterns you send replace the existing ones, so include every pattern you want to keep. Changing the patterns starts a new set of matches for the query: matches listed before the change are no longer returned, and newly observed domains that match the new patterns are listed. Sending the same patterns in any order (for example, to change only `tag`) keeps the existing matches. If the new patterns are identical to a set already used in this account, such as the query's earlier patterns, matches already found for that set are listed as well. Omitting both `scan_matches` and its alias `scan` resets scanning to `false`. If both are supplied, `scan_matches` takes precedence. When edit-triggered lookback is enabled for the account and the patterns change, the match list usually refreshes within seconds (if that refresh fails, the scheduled query sync updates it later) and, unless `search_lookback` is `false`, domains observed in the last 7 days are also searched for the new patterns. New matches from that search can take several minutes or longer to appear. Edit-triggered lookback is being rolled out gradually. `min_time` and `max_time` are ignored on update. If the query does not exist in this account, the request fails with error code 404."
       parameters:
         - name: account_id
           in: path
@@ -119327,7 +119331,7 @@ paths:
                 scan_matches:
                   type: boolean
                 search_lookback:
-                  description: On create, also search domains observed in the last 7 days for matches. Defaults to `true`. Ignored on update.
+                  description: Search domains observed in the last 7 days for matches. On create, applies when `true`. On update, when edit-triggered lookback is enabled for the account, applies only when the patterns change and only to the lookback itself; the match list still refreshes independently. Edit-triggered lookback is being rolled out gradually. Defaults to `true`.
                   type: boolean
                   default: true
                 string_matches:
@@ -124104,7 +124108,7 @@ paths:
     post:
       operationId: post_PirCreate
       summary: Create a priority intelligence requirement
-      description: Creates a new PIR for the account. The cfone.priority_intelligence_requirement_limit entitlement sets how many PIRs can be active; drafts do not count, but the account can hold at most five times that many PIRs in total. An active PIR requires a query.
+      description: Creates a new PIR for the account. The cfone.priority_intelligence_requirement_limit entitlement sets how many PIRs can be active; drafts do not count, but the account can hold at most five times that many PIRs in total. A free-form PIR has a `requirement`, and an active one requires a query. A structured PIR has a `definition` instead; its requirement and event query are generated, and the response includes them in `resolved`.
       parameters:
         - name: account_id
           in: path
@@ -124118,6 +124122,21 @@ paths:
             schema:
               type: object
               properties:
+                based_on:
+                  description: '`resolved.based_on` from the resolution the user reviewed. Required with `definition`; if the organization profile or topic has changed since, the save fails with 409 and must be resolved again.'
+                  type: object
+                  additionalProperties: false
+                  properties:
+                    profile_revision:
+                      type: integer
+                      minimum: 0
+                    topic_fingerprint:
+                      type: string
+                      nullable: true
+                      pattern: ^[0-9a-f]{64}$
+                  required:
+                    - profile_revision
+                    - topic_fingerprint
                 dataset_scope:
                   description: "`default`: every event dataset the account can read: Cloudforce One intelligence, datasets shared with the account, and the account's own datasets, such as Threat Signals. `datasets`: explicit dataset IDs. Analytics datasets are not matched. An active PIR can cover at most 50 datasets. Access is rechecked whenever the PIR is matched."
                   oneOf:
@@ -124147,6 +124166,8 @@ paths:
                         - type
                         - dataset_ids
                       type: object
+                definition:
+                  $ref: '#/components/schemas/cloudforce-one-events_PirDefinition'
                 digest_interval_hours:
                   description: 'Hours between digests: 6, 12, or 24. Used only when `notification_mode` is `digest`.'
                   type: integer
@@ -124591,6 +124612,7 @@ paths:
                     - generated
                     - edited
                 requirement:
+                  description: Free-form requirement. Required unless `definition` is sent.
                   type: string
                   maxLength: 4000
                   minLength: 1
@@ -124608,13 +124630,11 @@ paths:
                 tlp:
                   type: string
                   default: amber
-              required:
-                - requirement
       responses:
         '200':
           description: PIR created successfully
         '400':
-          description: Invalid PIR, such as an active PIR without a query
+          description: Invalid PIR, such as an active free-form PIR without a query, or a definition with an unknown topic or a problem that blocks saving
         '403':
           description: Account not entitled to create PIRs
         '429':
@@ -124673,7 +124693,7 @@ paths:
     get:
       operationId: get_PirGet
       summary: Get a priority intelligence requirement by ID
-      description: Returns a single free-form Priority Intelligence Requirement for the authenticated account.
+      description: Returns a single Priority Intelligence Requirement for the authenticated account. For a structured PIR, `resolved` has its current generated requirement and event query, which follow later topic and profile changes.
       parameters:
         - name: account_id
           in: path
@@ -124710,7 +124730,7 @@ paths:
     put:
       operationId: put_PirUpdate
       summary: Update a priority intelligence requirement
-      description: Updates a Priority Intelligence Requirement for the authenticated account. Changing the query increments its version; editing the requirement without saving a query marks the query stale. Activating a draft needs a free slot in the active PIR quota; setting `active` on a PIR the matcher paused resumes it without one.
+      description: 'Updates a Priority Intelligence Requirement for the authenticated account. Changing the query increments its version; editing the requirement without saving a query marks the query stale. Activating a draft needs a free slot in the active PIR quota; setting `active` on a PIR the matcher paused resumes it without one. Updates to a structured PIR must send its `revision` and change its answers through `definition`; its requirement, title and query are generated. Sending a `definition` and `revision` for a free-form PIR converts it in place: it keeps its ID, status, labels, priority, TLP and match history, and its query, dataset scope and notifications are removed, since structured PIRs are not matched by the PIR matcher and send no notifications. A conversion must not send a `dataset_scope`.'
       parameters:
         - name: account_id
           in: path
@@ -124730,6 +124750,21 @@ paths:
             schema:
               type: object
               properties:
+                based_on:
+                  description: '`resolved.based_on` from the resolution the user reviewed. Required with `definition`; if the organization profile or topic has changed since, the save fails with 409 and must be resolved again.'
+                  type: object
+                  additionalProperties: false
+                  properties:
+                    profile_revision:
+                      type: integer
+                      minimum: 0
+                    topic_fingerprint:
+                      type: string
+                      nullable: true
+                      pattern: ^[0-9a-f]{64}$
+                  required:
+                    - profile_revision
+                    - topic_fingerprint
                 confirm_query:
                   description: Write-only. `true` confirms the query still fits the requirement, clearing `query_stale` without changing the query or its version. Requires a query.
                   type: boolean
@@ -124762,6 +124797,10 @@ paths:
                         - type
                         - dataset_ids
                       type: object
+                definition:
+                  description: Replaces a structured PIR's definition, or converts a free-form PIR to a structured one in place. Requires `revision` and `based_on`.
+                  allOf:
+                    - $ref: '#/components/schemas/cloudforce-one-events_PirDefinition'
                 digest_interval_hours:
                   description: 'Hours between digests: 6, 12, or 24. Used only when `notification_mode` is `digest`.'
                   type: integer
@@ -125209,6 +125248,10 @@ paths:
                   type: string
                   maxLength: 4000
                   minLength: 1
+                revision:
+                  description: The `revision` the change is based on. Required for structured PIRs and when sending a `definition`; a different stored revision returns 409.
+                  type: integer
+                  minimum: 1
                 status:
                   description: '`draft`: not monitored. `active`: monitored, unless `pause_reason` is set. Setting `active` on a PIR with a `pause_reason` resumes it. Moving a PIR back to `draft` and activating it again starts matching afresh with a 30-day backfill.'
                   type: string
@@ -125226,13 +125269,13 @@ paths:
         '200':
           description: PIR updated successfully
         '400':
-          description: Invalid update, such as activating a PIR without a query
+          description: Invalid update, such as activating a free-form PIR without a query, or a definition with a problem that blocks saving
         '403':
           description: Account not entitled to activate PIRs
         '404':
           description: PIR not found
         '409':
-          description: PIR was modified concurrently
+          description: PIR was modified concurrently, or `revision` is not the stored one
         '429':
           description: Active PIR quota exceeded
       security:
@@ -127257,7 +127300,7 @@ paths:
     put:
       operationId: put_PirProfilePut
       summary: Create or replace the organization profile
-      description: "Creates or replaces the account's organization profile: who the organization is, such as its name, brands, domains, sector, regions, key systems and suppliers. All of the account's Priority Intelligence Requirements share it. An account has at most one profile, and it does not count against the PIR quota."
+      description: "Creates or replaces the account's organization profile: who the organization is, such as its name, brands, domains, sector, regions, key systems and suppliers. All of the account's Priority Intelligence Requirements share it. An account has at most one profile, and it does not count against the PIR quota. Send structured `organization` facts, which structured PIRs inherit and from which the profile text is generated, or free `profile` text. `revision` must match the stored profile's, or 0 when there is none; it is required with `organization`. Free `profile` text cannot replace structured facts; delete the profile first to switch back."
       parameters:
         - name: account_id
           in: path
@@ -127269,21 +127312,40 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                profile:
-                  description: "Who the organization is: its name, brands, domains, sector, regions, key systems and suppliers. Shared by all of the account's PIRs to judge how relevant intelligence is to the organization."
-                  type: string
-                  maxLength: 4000
-                  minLength: 1
-              additionalProperties: false
-              required:
-                - profile
+              anyOf:
+                - additionalProperties: false
+                  properties:
+                    organization:
+                      $ref: '#/components/schemas/cloudforce-one-events_PirOrganizationProfile'
+                    revision:
+                      description: The `revision` the change is based on; 0 when the account has no profile yet.
+                      type: integer
+                      minimum: 0
+                  required:
+                    - organization
+                    - revision
+                  type: object
+                - additionalProperties: false
+                  properties:
+                    profile:
+                      description: "Who the organization is: its name, brands, domains, sector, regions, key systems and suppliers. Shared by all of the account's PIRs to judge how relevant intelligence is to the organization."
+                      type: string
+                      maxLength: 4000
+                      minLength: 1
+                    revision:
+                      description: The `revision` the change is based on; 0 when the account has no profile yet.
+                      type: integer
+                      minimum: 0
+                  required:
+                    - profile
+                  type: object
       responses:
         '200':
           description: Organization profile saved
         '400':
           description: Invalid profile, such as blank or longer than 4,000 characters
+        '409':
+          description: "`revision` is not the stored profile's, a concurrent write won, or free text was sent for a structured profile"
       security:
         - api_token: []
       tags:
@@ -127327,6 +127389,127 @@ paths:
       x-forge-group-name: cloudforce-one.priority-intelligence.quota
       x-forge-method-name: create
       x-forge-oauth-scopes:
+        - cloudforce-one.write
+      x-stability: beta
+  /accounts/{account_id}/cloudforce-one/v2/priority-intelligence/resolve:
+    post:
+      operationId: post_PirResolve
+      summary: Resolve structured PIR answers without saving
+      description: "Returns the requirement and event query that saving `definition` would generate, using the account's current organization profile and topic. `resolved.issues` lists problems that would block saving, and `resolved.notices` inputs that would be ignored. Search events with `resolved.event_plan.branches`: a beta value for running searches, not a stable contract, which changes whenever a topic's event rules change. Show `resolved.event_plan.rules[].explanation` to explain matches. Send `resolved.based_on` with the save so it fails with 409 if the profile or topic changes in between. Nothing is saved, and no model is called."
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: string
+            minLength: 1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                definition:
+                  $ref: '#/components/schemas/cloudforce-one-events_PirDefinition'
+              additionalProperties: false
+              required:
+                - definition
+      responses:
+        '200':
+          description: The resolved PIR and what it was based on
+        '400':
+          description: Invalid definition, or an unknown topic
+      security:
+        - api_token: []
+      tags:
+        - Priority Intelligence Requirements
+      x-cfOwnership: cloudforce-one
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: cloudforce-one.priority-intelligence
+      x-fern-sdk-method-name: resolve
+      x-forge-availability: generally-available
+      x-forge-group-name: cloudforce-one.priority-intelligence
+      x-forge-method-name: resolve
+      x-forge-oauth-scopes:
+        - cloudforce-one.write
+      x-stability: beta
+  /accounts/{account_id}/cloudforce-one/v2/priority-intelligence/topics:
+    get:
+      operationId: get_PirTopicList
+      summary: List managed PIR topics
+      description: Returns the managed topics a structured PIR can follow, with their default question, relevance criteria, suggested actors and event rules. Suggested actors the account cannot see are left out. Topics change centrally; PIRs follow a topic's defaults wherever the customer has not changed them. Also returns `organization_types` for the organization profile form.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: string
+            minLength: 1
+      responses:
+        '200':
+          description: Managed topics and organization types
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                      required:
+                        - message
+                      type: object
+                  messages:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                      required:
+                        - message
+                      type: object
+                  result:
+                    type: object
+                    properties:
+                      organization_types:
+                        description: Shortcuts for the organization profile form, each suggesting `sectors` and `suggested_protected_targets` for the customer to confirm. A type is never saved; topics are recommended by the profile's confirmed sectors, matched against each topic's `recommended_sectors`.
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/cloudforce-one-events_PirOrganizationType'
+                      topics:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/cloudforce-one-events_PirTopic'
+                    required:
+                      - topics
+                      - organization_types
+                  success:
+                    type: boolean
+                    enum:
+                      - true
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        4XX:
+          $ref: '#/components/responses/cloudforce-one-events_ApiV4ClientError'
+      security:
+        - api_token: []
+      tags:
+        - Priority Intelligence Requirements
+      x-cfOwnership: cloudforce-one
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: cloudforce-one.priority-intelligence.topics
+      x-fern-sdk-method-name: list
+      x-forge-availability: generally-available
+      x-forge-group-name: cloudforce-one.priority-intelligence.topics
+      x-forge-method-name: list
+      x-forge-oauth-scopes:
+        - cloudforce-one.read
         - cloudforce-one.write
       x-stability: beta
   /accounts/{account_id}/cloudforce-one/v2/requests/{project_type}:
@@ -130002,7 +130185,7 @@ paths:
     get:
       operationId: get_RequestQuota
       summary: Get request token quota
-      description: "Returns the account's token quota for the current anniversary quarter: total granted, used, remaining, and the quarter/anniversary boundaries."
+      description: "Returns the account's token quota for the current anniversary quarter: total granted, used, remaining, and the quarter/anniversary boundaries. Also returns the annual allocation, usage, and remaining tokens for the current anniversary year; quarterly remaining controls usage."
       parameters:
         - name: account_id
           in: path
@@ -130035,6 +130218,59 @@ paths:
       responses:
         '200':
           description: Quota information
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      anniversary_date:
+                        type: string
+                        format: date-time
+                      annual_allocation:
+                        type: integer
+                        minimum: 0
+                      annual_remaining:
+                        description: Informational annual allocation remaining; quarterly remaining controls usage
+                        type: integer
+                        minimum: 0
+                      annual_used:
+                        description: Tokens used during the current account anniversary year
+                        type: integer
+                        minimum: 0
+                      quarter_end:
+                        type: string
+                        format: date-time
+                      quarter_start:
+                        type: string
+                        format: date-time
+                      quota:
+                        description: Quarterly token allocation
+                        type: integer
+                        minimum: 0
+                      remaining:
+                        type: integer
+                        minimum: 0
+                      used:
+                        type: integer
+                        minimum: 0
+                    required:
+                      - annual_allocation
+                      - annual_used
+                      - annual_remaining
+                      - quota
+                      - used
+                      - remaining
+                      - quarter_start
+                      - quarter_end
+                      - anniversary_date
+                  success:
+                    type: boolean
+                required:
+                  - success
+                  - result
         '404':
           description: Project type does not use token billing, or account not found
         '422':
@@ -130882,14 +131118,30 @@ paths:
                                       pir_id:
                                         type: string
                                         format: uuid
+                                      requirement_basis:
+                                        description: "Beta. current: scored against the PIR's current requirement. saved: the PIR's structured definition no longer generates a valid requirement, for example because its topic was retired, so the requirement from its last save was scored instead."
+                                        type: string
+                                        enum:
+                                          - current
+                                          - saved
                                     required:
                                       - pir_id
                                       - band
+                                      - requirement_basis
                                     type: object
                               required:
                                 - band
                                 - pir_id
                                 - pirs
+                            relevance_coverage:
+                              description: "Beta. Whether relevance and severity reflect the account's current Priority Intelligence Requirements, organization profile, and the article's current content. current: they do. stale: they were scored before a change; articles fetched in the last 7 days are being rescored, older articles keep these scores. pending: not scored yet, fetched in the last 7 days. unavailable: not scored, and will not be scored automatically, because it was fetched more than 7 days ago or processing failed. Updates to managed topics can take up to a day to mark scores stale. Null when the account has no active PIRs or none of its articles has been scored yet."
+                              type: string
+                              enum:
+                                - current
+                                - stale
+                                - pending
+                                - unavailable
+                              nullable: true
                             severity:
                               description: Beta. Intrinsic article severity band, from informational to critical, independent of any organisation or Priority Intelligence Requirement. Null when the account has no active Priority Intelligence Requirements, scoring has not completed, or a historic article has not entered an automatic rescore window.
                               type: string
@@ -130948,6 +131200,7 @@ paths:
                             - event_id
                             - dataset_id
                             - relevance
+                            - relevance_coverage
                           type: object
                       has_more:
                         type: boolean
@@ -131227,14 +131480,30 @@ paths:
                                 pir_id:
                                   type: string
                                   format: uuid
+                                requirement_basis:
+                                  description: "Beta. current: scored against the PIR's current requirement. saved: the PIR's structured definition no longer generates a valid requirement, for example because its topic was retired, so the requirement from its last save was scored instead."
+                                  type: string
+                                  enum:
+                                    - current
+                                    - saved
                               required:
                                 - pir_id
                                 - band
+                                - requirement_basis
                               type: object
                         required:
                           - band
                           - pir_id
                           - pirs
+                      relevance_coverage:
+                        description: "Beta. Whether relevance and severity reflect the account's current Priority Intelligence Requirements, organization profile, and the article's current content. current: they do. stale: they were scored before a change; articles fetched in the last 7 days are being rescored, older articles keep these scores. pending: not scored yet, fetched in the last 7 days. unavailable: not scored, and will not be scored automatically, because it was fetched more than 7 days ago or processing failed. Updates to managed topics can take up to a day to mark scores stale. Null when the account has no active PIRs or none of its articles has been scored yet."
+                        type: string
+                        enum:
+                          - current
+                          - stale
+                          - pending
+                          - unavailable
+                        nullable: true
                       severity:
                         description: Beta. Intrinsic article severity band, from informational to critical, independent of any organisation or Priority Intelligence Requirement. Null when the account has no active Priority Intelligence Requirements, scoring has not completed, or a historic article has not entered an automatic rescore window.
                         type: string
@@ -131308,6 +131577,7 @@ paths:
                       - source_count
                       - indicator_extraction_status
                       - relevance
+                      - relevance_coverage
                   success:
                     type: boolean
                     enum:
@@ -133000,8 +133270,13 @@ paths:
                               - high
                               - medium
                               - low
+                          stale_articles:
+                            description: Beta. How many of the articles counted in articles have stale scores, from before a change to the account's Priority Intelligence Requirements, organization profile, or the article's content. They are counted by those scores; see the article list's relevance_coverage.
+                            type: integer
+                            minimum: 0
                         required:
                           - articles
+                          - stale_articles
                       priorities:
                         description: Beta. Each active PIR, including PIRs the matcher paused, ordered by ID. Drafts and deleted PIRs are excluded.
                         type: array
@@ -133189,8 +133464,13 @@ paths:
                             - id
                             - articles
                           type: object
+                      stale_articles:
+                        description: Beta. How many of the articles counted in articles have stale scores, from before a change to the account's Priority Intelligence Requirements, organization profile, or the article's content. They are counted by those scores; see the article list's relevance_coverage.
+                        type: integer
+                        minimum: 0
                     required:
                       - articles
+                      - stale_articles
                       - priorities
                   success:
                     type: boolean
@@ -453542,6 +453822,885 @@ components:
       description: Hydrated event, indicator, or tag entity.
       type: object
       additionalProperties: true
+    cloudforce-one-events_PirDefinition:
+      description: Structured PIR answers. `managed` follows a topic from `GET /topics`; `custom` has its own question and criteria. The requirement text and event query are generated from it.
+      oneOf:
+        - additionalProperties: false
+          properties:
+            additional_criteria:
+              type: array
+              items:
+                $ref: '#/components/schemas/cloudforce-one-events_PirRelevanceCriterion'
+              default: []
+              maxItems: 20
+            criterion_selections:
+              type: object
+              default:
+                add: []
+                remove: []
+              additionalProperties: false
+              properties:
+                add:
+                  type: array
+                  items:
+                    pattern: ^[a-z0-9][a-z0-9-]{0,63}$
+                    type: string
+                  default: []
+                  maxItems: 50
+                remove:
+                  type: array
+                  items:
+                    pattern: ^[a-z0-9][a-z0-9-]{0,63}$
+                    type: string
+                  default: []
+                  maxItems: 50
+            mode:
+              type: string
+              enum:
+                - managed
+            question:
+              default:
+                mode: inherit
+              oneOf:
+                - additionalProperties: false
+                  properties:
+                    mode:
+                      type: string
+                      enum:
+                        - inherit
+                  required:
+                    - mode
+                  type: object
+                - additionalProperties: false
+                  properties:
+                    mode:
+                      type: string
+                      enum:
+                        - replace
+                    value:
+                      type: string
+                      maxLength: 1000
+                      minLength: 1
+                  required:
+                    - mode
+                    - value
+                  type: object
+            schema_version:
+              type: number
+              enum:
+                - 1
+            selections:
+              $ref: '#/components/schemas/cloudforce-one-events_PirSelections'
+            title:
+              default:
+                mode: inherit
+              oneOf:
+                - additionalProperties: false
+                  properties:
+                    mode:
+                      type: string
+                      enum:
+                        - inherit
+                  required:
+                    - mode
+                  type: object
+                - additionalProperties: false
+                  properties:
+                    mode:
+                      type: string
+                      enum:
+                        - replace
+                    value:
+                      type: string
+                      maxLength: 200
+                      minLength: 1
+                  required:
+                    - mode
+                    - value
+                  type: object
+            topic_id:
+              type: string
+              maxLength: 100
+              minLength: 1
+          required:
+            - schema_version
+            - mode
+            - topic_id
+          type: object
+        - additionalProperties: false
+          properties:
+            mode:
+              type: string
+              enum:
+                - custom
+            question:
+              type: string
+              maxLength: 1000
+              minLength: 1
+            relevance_criteria:
+              type: array
+              items:
+                $ref: '#/components/schemas/cloudforce-one-events_PirRelevanceCriterion'
+              maxItems: 30
+              minItems: 1
+            schema_version:
+              type: number
+              enum:
+                - 1
+            selections:
+              $ref: '#/components/schemas/cloudforce-one-events_PirSelections'
+            title:
+              type: string
+              maxLength: 200
+              minLength: 1
+          required:
+            - schema_version
+            - mode
+            - title
+            - question
+            - relevance_criteria
+          type: object
+    cloudforce-one-events_PirOrganizationProfile:
+      description: Structured organization facts. Structured PIRs inherit them, and the profile text is generated from them.
+      type: object
+      properties:
+        additional_context:
+          type: string
+          maxLength: 2000
+          minLength: 1
+        facts:
+          type: object
+          additionalProperties: false
+          properties:
+            brands:
+              type: array
+              items:
+                maxLength: 100
+                minLength: 1
+                type: string
+              default: []
+              maxItems: 20
+            domains:
+              type: array
+              items:
+                maxLength: 253
+                pattern: ^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z][a-z0-9-]{0,62}$
+                type: string
+              default: []
+              maxItems: 50
+            key_suppliers:
+              type: array
+              items:
+                $ref: '#/components/schemas/cloudforce-one-events_PirOrganizationReference'
+              default: []
+              maxItems: 20
+            operating_countries:
+              type: array
+              items:
+                type: string
+              default: []
+              maxItems: 50
+            organization_name:
+              type: string
+              maxLength: 200
+              minLength: 1
+            peers:
+              type: array
+              items:
+                $ref: '#/components/schemas/cloudforce-one-events_PirOrganizationReference'
+              default: []
+              maxItems: 20
+            protected_targets:
+              type: array
+              items:
+                enum:
+                  - organization
+                  - customers
+                  - employees
+                  - executives
+                  - partners
+                  - events
+                  - products-infrastructure
+                type: string
+              default: []
+              maxItems: 7
+            sectors:
+              type: array
+              items:
+                enum:
+                  - aerospace
+                  - agriculture
+                  - automotive
+                  - chemical
+                  - commercial
+                  - communications
+                  - construction
+                  - defense
+                  - education
+                  - energy
+                  - entertainment
+                  - financial-services
+                  - government-local
+                  - government-national
+                  - government-public-services
+                  - government-regional
+                  - healthcare
+                  - hospitality-leisure
+                  - infrastructure
+                  - insurance
+                  - manufacturing
+                  - mining
+                  - non-profit
+                  - pharmaceuticals
+                  - professional-services
+                  - retail
+                  - technology
+                  - telecommunications
+                  - transportation
+                  - utilities
+                type: string
+              default: []
+              maxItems: 10
+            technologies:
+              type: array
+              items:
+                maxLength: 100
+                minLength: 1
+                type: string
+              default: []
+              maxItems: 50
+          required:
+            - organization_name
+        schema_version:
+          type: number
+          enum:
+            - 1
+      additionalProperties: false
+      required:
+        - schema_version
+        - facts
+    cloudforce-one-events_PirOrganizationReference:
+      type: object
+      properties:
+        domains:
+          type: array
+          items:
+            maxLength: 253
+            pattern: ^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z][a-z0-9-]{0,62}$
+            type: string
+          default: []
+          maxItems: 20
+        name:
+          type: string
+          maxLength: 200
+          minLength: 1
+      additionalProperties: false
+      required:
+        - name
+    cloudforce-one-events_PirOrganizationType:
+      type: object
+      properties:
+        description:
+          type: string
+        id:
+          type: string
+        label:
+          type: string
+        sectors:
+          type: array
+          items:
+            enum:
+              - aerospace
+              - agriculture
+              - automotive
+              - chemical
+              - commercial
+              - communications
+              - construction
+              - defense
+              - education
+              - energy
+              - entertainment
+              - financial-services
+              - government-local
+              - government-national
+              - government-public-services
+              - government-regional
+              - healthcare
+              - hospitality-leisure
+              - infrastructure
+              - insurance
+              - manufacturing
+              - mining
+              - non-profit
+              - pharmaceuticals
+              - professional-services
+              - retail
+              - technology
+              - telecommunications
+              - transportation
+              - utilities
+            type: string
+        suggested_protected_targets:
+          type: array
+          items:
+            enum:
+              - organization
+              - customers
+              - employees
+              - executives
+              - partners
+              - events
+              - products-infrastructure
+            type: string
+      required:
+        - id
+        - label
+        - description
+        - sectors
+        - suggested_protected_targets
+    cloudforce-one-events_PirRelevanceCriterion:
+      type: object
+      properties:
+        band:
+          type: string
+          enum:
+            - highly
+            - somewhat
+            - not
+        id:
+          type: string
+          pattern: ^[a-z0-9][a-z0-9-]{0,63}$
+        text:
+          type: string
+          maxLength: 300
+          minLength: 1
+      additionalProperties: false
+      required:
+        - id
+        - band
+        - text
+    cloudforce-one-events_PirSelections:
+      type: object
+      properties:
+        actor_notes:
+          type: string
+          maxLength: 500
+          minLength: 1
+        actor_types:
+          default:
+            mode: inherit
+          oneOf:
+            - additionalProperties: false
+              properties:
+                mode:
+                  type: string
+                  enum:
+                    - inherit
+              required:
+                - mode
+              type: object
+            - additionalProperties: false
+              properties:
+                mode:
+                  type: string
+                  enum:
+                    - replace
+                value:
+                  type: array
+                  items:
+                    enum:
+                      - nation-state
+                      - crime-syndicate
+                      - criminal
+                      - activist
+                      - hacker
+                      - insider-disgruntled
+                      - insider-accidental
+                      - spy
+                      - terrorist
+                      - competitor
+                      - sensationalist
+                    type: string
+                  maxItems: 11
+              required:
+                - mode
+                - value
+              type: object
+        actors:
+          type: object
+          default:
+            add: []
+            remove: []
+          additionalProperties: false
+          properties:
+            add:
+              type: array
+              items:
+                format: uuid
+                type: string
+              default: []
+              maxItems: 50
+            remove:
+              type: array
+              items:
+                format: uuid
+                type: string
+              default: []
+              maxItems: 50
+        attributed_countries:
+          type: array
+          items:
+            type: string
+          default: []
+          maxItems: 50
+        countries:
+          default:
+            mode: inherit
+          oneOf:
+            - additionalProperties: false
+              properties:
+                mode:
+                  type: string
+                  enum:
+                    - inherit
+              required:
+                - mode
+              type: object
+            - additionalProperties: false
+              properties:
+                mode:
+                  type: string
+                  enum:
+                    - replace
+                value:
+                  type: array
+                  items:
+                    type: string
+                  maxItems: 50
+              required:
+                - mode
+                - value
+              type: object
+        cves:
+          type: array
+          items:
+            pattern: ^CVE-\d{4}-\d{4,}$
+            type: string
+          default: []
+          maxItems: 50
+        excluded_actors:
+          type: array
+          items:
+            format: uuid
+            type: string
+          default: []
+          maxItems: 50
+        key_suppliers:
+          default:
+            mode: inherit
+          oneOf:
+            - additionalProperties: false
+              properties:
+                mode:
+                  type: string
+                  enum:
+                    - inherit
+              required:
+                - mode
+              type: object
+            - additionalProperties: false
+              properties:
+                mode:
+                  type: string
+                  enum:
+                    - replace
+                value:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/cloudforce-one-events_PirOrganizationReference'
+                  maxItems: 20
+              required:
+                - mode
+                - value
+              type: object
+        malware_tools:
+          type: array
+          items:
+            maxLength: 100
+            minLength: 1
+            type: string
+          default: []
+          maxItems: 50
+        motivations:
+          default:
+            mode: inherit
+          oneOf:
+            - additionalProperties: false
+              properties:
+                mode:
+                  type: string
+                  enum:
+                    - inherit
+              required:
+                - mode
+              type: object
+            - additionalProperties: false
+              properties:
+                mode:
+                  type: string
+                  enum:
+                    - replace
+                value:
+                  type: array
+                  items:
+                    enum:
+                      - personal-gain
+                      - organizational-gain
+                      - ideology
+                      - dominance
+                      - notoriety
+                      - coercion
+                      - revenge
+                    type: string
+                  maxItems: 7
+              required:
+                - mode
+                - value
+              type: object
+        peers:
+          default:
+            mode: inherit
+          oneOf:
+            - additionalProperties: false
+              properties:
+                mode:
+                  type: string
+                  enum:
+                    - inherit
+              required:
+                - mode
+              type: object
+            - additionalProperties: false
+              properties:
+                mode:
+                  type: string
+                  enum:
+                    - replace
+                value:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/cloudforce-one-events_PirOrganizationReference'
+                  maxItems: 20
+              required:
+                - mode
+                - value
+              type: object
+        sectors:
+          default:
+            mode: inherit
+          oneOf:
+            - additionalProperties: false
+              properties:
+                mode:
+                  type: string
+                  enum:
+                    - inherit
+              required:
+                - mode
+              type: object
+            - additionalProperties: false
+              properties:
+                mode:
+                  type: string
+                  enum:
+                    - replace
+                value:
+                  type: array
+                  items:
+                    enum:
+                      - aerospace
+                      - agriculture
+                      - automotive
+                      - chemical
+                      - commercial
+                      - communications
+                      - construction
+                      - defense
+                      - education
+                      - energy
+                      - entertainment
+                      - financial-services
+                      - government-local
+                      - government-national
+                      - government-public-services
+                      - government-regional
+                      - healthcare
+                      - hospitality-leisure
+                      - infrastructure
+                      - insurance
+                      - manufacturing
+                      - mining
+                      - non-profit
+                      - pharmaceuticals
+                      - professional-services
+                      - retail
+                      - technology
+                      - telecommunications
+                      - transportation
+                      - utilities
+                    type: string
+                  maxItems: 10
+              required:
+                - mode
+                - value
+              type: object
+        targets:
+          default:
+            mode: inherit
+          oneOf:
+            - additionalProperties: false
+              properties:
+                mode:
+                  type: string
+                  enum:
+                    - inherit
+              required:
+                - mode
+              type: object
+            - additionalProperties: false
+              properties:
+                mode:
+                  type: string
+                  enum:
+                    - replace
+                value:
+                  type: array
+                  items:
+                    enum:
+                      - organization
+                      - customers
+                      - employees
+                      - executives
+                      - partners
+                      - events
+                      - products-infrastructure
+                    type: string
+                  maxItems: 7
+              required:
+                - mode
+                - value
+              type: object
+        technique_ids:
+          type: array
+          items:
+            pattern: ^T\d{4}(?:\.\d{3})?$
+            type: string
+          default: []
+          maxItems: 50
+        technologies:
+          default:
+            mode: inherit
+          oneOf:
+            - additionalProperties: false
+              properties:
+                mode:
+                  type: string
+                  enum:
+                    - inherit
+              required:
+                - mode
+              type: object
+            - additionalProperties: false
+              properties:
+                mode:
+                  type: string
+                  enum:
+                    - replace
+                value:
+                  type: array
+                  items:
+                    maxLength: 100
+                    minLength: 1
+                    type: string
+                  maxItems: 50
+              required:
+                - mode
+                - value
+              type: object
+      default: {}
+      additionalProperties: false
+    cloudforce-one-events_PirTopic:
+      type: object
+      properties:
+        actor_types:
+          type: array
+          items:
+            enum:
+              - nation-state
+              - crime-syndicate
+              - criminal
+              - activist
+              - hacker
+              - insider-disgruntled
+              - insider-accidental
+              - spy
+              - terrorist
+              - competitor
+              - sensationalist
+            type: string
+        coverage_notes:
+          type: array
+          items:
+            properties:
+              message:
+                type: string
+              source:
+                type: string
+                enum:
+                  - articles
+                  - events
+            required:
+              - source
+              - message
+            type: object
+        event_rules:
+          type: array
+          items:
+            properties:
+              explanation:
+                type: string
+              id:
+                type: string
+            required:
+              - id
+              - explanation
+            type: object
+        filter_revision:
+          type: integer
+        intent_revision:
+          type: integer
+        motivations:
+          type: array
+          items:
+            enum:
+              - personal-gain
+              - organizational-gain
+              - ideology
+              - dominance
+              - notoriety
+              - coercion
+              - revenge
+            type: string
+        presentation_revision:
+          type: integer
+        profile_context:
+          description: 'Inherited facts this topic emphasizes: listed as Highly relevant and available to its event rules. Every PIR inherits every fact.'
+          type: array
+          items:
+            enum:
+              - technologies
+              - key_suppliers
+            type: string
+        question_template:
+          description: English question; only `{targets}` and `{regions}` are substituted.
+          type: string
+        recommended_sectors:
+          type: array
+          items:
+            enum:
+              - aerospace
+              - agriculture
+              - automotive
+              - chemical
+              - commercial
+              - communications
+              - construction
+              - defense
+              - education
+              - energy
+              - entertainment
+              - financial-services
+              - government-local
+              - government-national
+              - government-public-services
+              - government-regional
+              - healthcare
+              - hospitality-leisure
+              - infrastructure
+              - insurance
+              - manufacturing
+              - mining
+              - non-profit
+              - pharmaceuticals
+              - professional-services
+              - retail
+              - technology
+              - telecommunications
+              - transportation
+              - utilities
+            type: string
+        relevance_criteria:
+          type: array
+          items:
+            properties:
+              band:
+                type: string
+                enum:
+                  - highly
+                  - somewhat
+                  - not
+              default_selected:
+                type: boolean
+              id:
+                type: string
+              text:
+                type: string
+            required:
+              - id
+              - band
+              - text
+              - default_selected
+            type: object
+        suggested_actors:
+          description: Suggestions the account can see; others are left out.
+          type: array
+          items:
+            properties:
+              alias:
+                type: string
+                nullable: true
+              default_selected:
+                type: boolean
+              id:
+                type: string
+              name:
+                type: string
+            required:
+              - id
+              - name
+              - alias
+              - default_selected
+            type: object
+        title:
+          type: string
+        topic_id:
+          type: string
+      required:
+        - topic_id
+        - title
+        - question_template
+        - intent_revision
+        - filter_revision
+        - presentation_revision
+        - relevance_criteria
+        - suggested_actors
+        - actor_types
+        - motivations
+        - profile_context
+        - event_rules
+        - recommended_sectors
+        - coverage_notes
     cloudforce-one-events_RelationshipEdge:
       type: object
       properties:
