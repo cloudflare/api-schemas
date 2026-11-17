@@ -764155,6 +764155,9 @@
               "protocol_detection": {
                 "$ref": "#/components/schemas/zero-trust-gateway_protocol-detection"
               },
+              "regions": {
+                "$ref": "#/components/schemas/zero-trust-gateway_regions-settings"
+              },
               "sandbox": {
                 "$ref": "#/components/schemas/zero-trust-gateway_sandbox"
               },
@@ -764233,6 +764236,12 @@
       "zero-trust-gateway_generate-cert-request": {
         "type": "object",
         "properties": {
+          "region": {
+            "description": "Pin the generated certificate authority's key material to one of the account's selected Data Localization Suite regions. **Important**: This field is only settable during certificate creation. Certificates become immutable after creation - use the `/activate` and `/deactivate` endpoints to manage certificate lifecycle.",
+            "type": "string",
+            "example": "wnam",
+            "x-auditable": true
+          },
           "validity_period_days": {
             "description": "Sets the certificate validity period in days (range: 1-10,950 days / ~30 years). Defaults to 1,825 days (5 years). **Important**: This field is only settable during the certificate creation.  Certificates becomes immutable after creation - use the `/activate` and `/deactivate` endpoints to manage certificate lifecycle.",
             "type": "integer",
@@ -765015,11 +765024,45 @@
         "readOnly": true
       },
       "zero-trust-gateway_region": {
-        "description": "Indicate the read-only region the certificate authority's key material is pinned to. Omitted for certificates that were created without a region.",
+        "description": "Indicate the read-only Data Localization Suite region the certificate authority's key material is pinned to. This corresponds to one of the regions selected for the account via the account region setting (`GET`/`PUT /accounts/{account_id}/zerotrust/region`). Omitted for certificates that were created without a region.",
         "type": "string",
         "example": "wnam",
         "readOnly": true,
         "x-auditable": true
+      },
+      "zero-trust-gateway_region-setting": {
+        "description": "Specify the TLS interception and certificate settings Gateway applies to traffic routed through this region.",
+        "type": "object",
+        "properties": {
+          "certificate": {
+            "$ref": "#/components/schemas/zero-trust-gateway_certificate-settings"
+          },
+          "tls_decrypt": {
+            "$ref": "#/components/schemas/zero-trust-gateway_tls-settings"
+          }
+        },
+        "required": [
+          "tls_decrypt"
+        ]
+      },
+      "zero-trust-gateway_regions-settings": {
+        "description": "Specify per-region TLS interception and certificate settings for Gateway, keyed by Data Localization Suite region key. Relies on the Zero Trust account region setting  (`GET`/`PUT /accounts/{account_id}/zerotrust/region`) - the account must select a region before Gateway applies these settings for it.",
+        "type": "object",
+        "example": {
+          "wnam": {
+            "certificate": {
+              "id": "d1b364c5-1311-466e-a194-f0e943e0799f"
+            },
+            "tls_decrypt": {
+              "enabled": true
+            }
+          }
+        },
+        "additionalProperties": {
+          "$ref": "#/components/schemas/zero-trust-gateway_region-setting"
+        },
+        "nullable": true,
+        "x-stainless-terraform-configurability": "optional"
       },
       "zero-trust-gateway_response_collection": {
         "type": "object",
