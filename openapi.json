@@ -585556,7 +585556,7 @@
                     {
                       "properties": {
                         "result": {
-                          "$ref": "#/components/schemas/google-tag-gateway_google-tag-gateway-config"
+                          "$ref": "#/components/schemas/google-tag-gateway_google-tag-gateway-config-response"
                         }
                       },
                       "type": "object"
@@ -585655,7 +585655,7 @@
                     {
                       "properties": {
                         "result": {
-                          "$ref": "#/components/schemas/google-tag-gateway_google-tag-gateway-config"
+                          "$ref": "#/components/schemas/google-tag-gateway_google-tag-gateway-config-response"
                         }
                       },
                       "type": "object"
@@ -685432,10 +685432,17 @@
             "example": "/metrics",
             "x-auditable": true
           },
-          "hideOriginalIp": {
-            "description": "Hides the original client IP address from Google when enabled.",
+          "forwardClientIpHeaders": {
+            "description": "Forwards client IP-related headers when enabled. When disabled, client IP-related headers are stripped. If omitted, the previously stored value is kept; new configurations default to true.",
             "type": "boolean",
             "example": true,
+            "x-auditable": true
+          },
+          "hideOriginalIp": {
+            "description": "Deprecated. This value is stored but has no effect on traffic. Use `forwardClientIpHeaders` to control whether client IP-related headers are forwarded to Google. Optional in requests: if omitted, the previously stored value is kept. Responses always include it.",
+            "type": "boolean",
+            "example": true,
+            "deprecated": true,
             "x-auditable": true
           },
           "measurementId": {
@@ -685455,10 +685462,22 @@
         "required": [
           "enabled",
           "endpoint",
-          "hideOriginalIp",
           "measurementId"
         ],
         "title": "Google Tag Gateway configuration"
+      },
+      "google-tag-gateway_google-tag-gateway-config-response": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/google-tag-gateway_google-tag-gateway-config"
+          },
+          {
+            "required": [
+              "hideOriginalIp"
+            ],
+            "type": "object"
+          }
+        ]
       },
       "google-tag-gateway_identifier": {
         "description": "Identifier.",
