@@ -172523,7 +172523,7 @@
       "put": {
         "operationId": "put_PirUpdate",
         "summary": "Update a priority intelligence requirement",
-        "description": "Updates a Priority Intelligence Requirement for the authenticated account. Changing the query increments its version; editing the requirement without saving a query marks the query stale. Activating a draft needs a free slot in the active PIR quota; setting `active` on a PIR the matcher paused resumes it without one. Updates to a structured PIR must send its `revision` and change its answers through `definition`; its requirement, title and query are generated.",
+        "description": "Updates a Priority Intelligence Requirement for the authenticated account. Changing the query increments its version; editing the requirement without saving a query marks the query stale. Activating a draft needs a free slot in the active PIR quota; setting `active` on a PIR the matcher paused resumes it without one. Updates to a structured PIR must send its `revision` and change its answers through `definition`; its requirement, title and query are generated. Sending a `definition` and `revision` for a free-form PIR converts it in place: it keeps its ID, status, labels, priority, TLP and match history, and its query, dataset scope and notifications are removed, since structured PIRs are not matched by the PIR matcher and send no notifications. A conversion must not send a `dataset_scope`.",
         "parameters": [
           {
             "name": "account_id",
@@ -172620,12 +172620,10 @@
                     ]
                   },
                   "definition": {
+                    "description": "Replaces a structured PIR's definition, or converts a free-form PIR to a structured one in place. Requires `revision` and `based_on`.",
                     "allOf": [
                       {
                         "$ref": "#/components/schemas/cloudforce-one-events_PirDefinition"
-                      },
-                      {
-                        "description": "Replaces a structured PIR's definition. Free-form PIRs cannot be converted yet."
                       }
                     ]
                   },
@@ -173252,7 +173250,7 @@
                     "minLength": 1
                   },
                   "revision": {
-                    "description": "The `revision` the change is based on. Required for structured PIRs; a different stored revision returns 409.",
+                    "description": "The `revision` the change is based on. Required for structured PIRs and when sending a `definition`; a different stored revision returns 409.",
                     "type": "integer",
                     "minimum": 1
                   },
@@ -175419,7 +175417,7 @@
       "get": {
         "operationId": "get_RequestQuota",
         "summary": "Get request token quota",
-        "description": "Returns the account's token quota for the current anniversary quarter: total granted, used, remaining, and the quarter/anniversary boundaries.",
+        "description": "Returns the account's token quota for the current anniversary quarter: total granted, used, remaining, and the quarter/anniversary boundaries. Also returns the annual allocation, usage, and remaining tokens for the current anniversary year; quarterly remaining controls usage.",
         "parameters": [
           {
             "name": "account_id",
@@ -175459,7 +175457,78 @@
         ],
         "responses": {
           "200": {
-            "description": "Quota information"
+            "description": "Quota information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "result": {
+                      "type": "object",
+                      "properties": {
+                        "anniversary_date": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "annual_allocation": {
+                          "type": "integer",
+                          "minimum": 0
+                        },
+                        "annual_remaining": {
+                          "description": "Informational annual allocation remaining; quarterly remaining controls usage",
+                          "type": "integer",
+                          "minimum": 0
+                        },
+                        "annual_used": {
+                          "description": "Tokens used during the current account anniversary year",
+                          "type": "integer",
+                          "minimum": 0
+                        },
+                        "quarter_end": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "quarter_start": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "quota": {
+                          "description": "Quarterly token allocation",
+                          "type": "integer",
+                          "minimum": 0
+                        },
+                        "remaining": {
+                          "type": "integer",
+                          "minimum": 0
+                        },
+                        "used": {
+                          "type": "integer",
+                          "minimum": 0
+                        }
+                      },
+                      "required": [
+                        "annual_allocation",
+                        "annual_used",
+                        "annual_remaining",
+                        "quota",
+                        "used",
+                        "remaining",
+                        "quarter_start",
+                        "quarter_end",
+                        "anniversary_date"
+                      ]
+                    },
+                    "success": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "result"
+                  ]
+                }
+              }
+            }
           },
           "404": {
             "description": "Project type does not use token billing, or account not found"
