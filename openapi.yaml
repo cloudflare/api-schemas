@@ -518357,7 +518357,13 @@ components:
           readOnly: true
           x-auditable: true
         bindings:
-          $ref: '#/components/schemas/workers_bindings'
+          description: |
+            Bindings attached to the version, as an array of objects that
+            each name themselves. A create or patch request can send
+            `bindings` or `env`, and a read returns both. A request that
+            sends both fails with error 10021.
+          allOf:
+            - $ref: '#/components/schemas/workers_bindings'
         cache_options:
           $ref: '#/components/schemas/workers_cache_options'
         compatibility_date:
@@ -518377,6 +518383,25 @@ components:
           format: date-time
           readOnly: true
           x-auditable: true
+        env:
+          description: |
+            Bindings attached to the version, as a map from binding name to
+            binding. Each value holds the same payload as the matching
+            `bindings` entry, without `name`. Reads derive `env` from
+            `bindings`, so the two fields always list the same bindings and
+            `env` carries nothing extra. Reads omit secret values in both
+            fields.
+
+            A create or patch request can send `env` or `bindings`, and a
+            request that sends both fails with error 10021. To copy a
+            version, drop `env` from the read before sending it back, and
+            use `inherit` bindings for secrets. In a patch, `env` entries
+            merge one binding at a time: set an entry to `null` to remove
+            that binding, while a `bindings` array replaces the whole set.
+          allOf:
+            - $ref: '#/components/schemas/workers_env'
+          x-stainless-skip:
+            - terraform
         exports:
           description: |
             Declarative exports for the version, including Durable Object
