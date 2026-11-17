@@ -99308,6 +99308,77 @@ paths:
       x-fern-sdk-method-name: create-setup-intent
       x-forge-group-name: accounts.billing
       x-forge-method-name: create-setup-intent
+  /accounts/{account_id}/cloudforce-one/banner/{config_id}:
+    get:
+      operationId: get_GetBanners
+      summary: Get the Latest Banner Grab Result
+      description: Retrieves the latest banner grab results for a Cloudforce One scan configuration, including service banners from open ports.
+      parameters:
+        - name: account_id
+          in: path
+          description: Defines the Account ID.
+          required: true
+          schema:
+            description: Defines the Account ID.
+            type: string
+        - name: config_id
+          in: path
+          description: Defines the Config ID.
+          required: true
+          schema:
+            description: Defines the Config ID.
+            type: string
+      responses:
+        '200':
+          description: Returns Current Banner Grab Result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: string
+                  messages:
+                    type: array
+                    items:
+                      type: string
+                  result:
+                    type: object
+                    properties:
+                      1.1.1.1:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/cloudforce-one-port-scan-api_port'
+                    required:
+                      - 1.1.1.1
+                  success:
+                    type: boolean
+                required:
+                  - success
+                  - result
+                  - messages
+                  - errors
+        4XX:
+          description: Get the Latest Banner Grab Result failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cloudforce-one-port-scan-api_api-response-common-failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Scans
+      x-cfOwnership: cloudforce-one
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: cloudforce-one.scans.results
+      x-fern-sdk-method-name: get-banners
+      x-forge-availability: generally-available
+      x-forge-group-name: cloudforce-one.scans.results
+      x-forge-method-name: get-banners
   /accounts/{account_id}/cloudforce-one/binary:
     post:
       operationId: post_BinDBPost
@@ -118210,6 +118281,318 @@ paths:
       x-forge-group-name: cloudforce-one.threat-intel.events
       x-forge-method-name: bulk-update
       x-forge-oauth-scopes:
+        - cloudforce-one.write
+  /accounts/{account_id}/cloudforce-one/scans/config:
+    get:
+      operationId: get_ConfigFetch
+      summary: List Scan Configs
+      description: Lists scan configurations for Cloudforce One's network scanning service.
+      parameters:
+        - name: account_id
+          in: path
+          description: Defines the Account ID.
+          required: true
+          schema:
+            description: Defines the Account ID.
+            type: string
+      responses:
+        '200':
+          description: Returns all Scan Configs.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/cloudforce-one-port-scan-api_api-response-common'
+                  - properties:
+                      result:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/cloudforce-one-port-scan-api_scan-config'
+                    type: object
+        4XX:
+          description: List Scan Configs failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cloudforce-one-port-scan-api_api-response-common-failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Scans
+      x-cfOwnership: cloudforce-one
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: cloudforce-one.scans.config
+      x-fern-sdk-method-name: list
+      x-forge-availability: generally-available
+      x-forge-group-name: cloudforce-one.scans.config
+      x-forge-method-name: list
+      x-forge-oauth-scopes:
+        - cloudforce-one.read
+        - cloudforce-one.write
+    post:
+      operationId: post_ConfigCreate
+      summary: Create a new Scan Config
+      description: Creates a new scan configuration for Cloudforce One's network scanning service.
+      parameters:
+        - name: account_id
+          in: path
+          description: Defines the Account ID.
+          required: true
+          schema:
+            description: Defines the Account ID.
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                frequency:
+                  $ref: '#/components/schemas/cloudforce-one-port-scan-api_frequency'
+                ips:
+                  $ref: '#/components/schemas/cloudforce-one-port-scan-api_ips'
+                ports:
+                  $ref: '#/components/schemas/cloudforce-one-port-scan-api_ports'
+              required:
+                - ips
+      responses:
+        '200':
+          description: Returns the created config.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/cloudforce-one-port-scan-api_api-response-common'
+                  - properties:
+                      result:
+                        $ref: '#/components/schemas/cloudforce-one-port-scan-api_scan-config'
+                    type: object
+        4XX:
+          description: Create a new Scan Config failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cloudforce-one-port-scan-api_api-response-common-failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Scans
+      x-cfOwnership: cloudforce-one
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: cloudforce-one.scans.config
+      x-fern-sdk-method-name: create
+      x-forge-availability: generally-available
+      x-forge-group-name: cloudforce-one.scans.config
+      x-forge-method-name: create
+      x-forge-oauth-scopes:
+        - cloudforce-one.write
+  /accounts/{account_id}/cloudforce-one/scans/config/{config_id}:
+    delete:
+      operationId: delete_DeleteScans
+      summary: Delete a Scan Config
+      description: Deletes a scan configuration from Cloudforce One's network scanning service.
+      parameters:
+        - name: account_id
+          in: path
+          description: Defines the Account ID.
+          required: true
+          schema:
+            description: Defines the Account ID.
+            type: string
+        - name: config_id
+          in: path
+          description: Defines the Config ID.
+          required: true
+          schema:
+            description: Defines the Config ID.
+            type: string
+      responses:
+        '200':
+          description: Delete a Scan Config.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: string
+                  messages:
+                    type: array
+                    items:
+                      type: string
+                  result:
+                    type: object
+                  success:
+                    type: boolean
+                required:
+                  - success
+                  - result
+                  - messages
+                  - errors
+        4XX:
+          description: Delete a Scan Config failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cloudforce-one-port-scan-api_api-response-common-failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Scans
+      x-cfOwnership: cloudforce-one
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: cloudforce-one.scans.config
+      x-fern-sdk-method-name: delete
+      x-forge-availability: generally-available
+      x-forge-group-name: cloudforce-one.scans.config
+      x-forge-method-name: delete
+      x-forge-oauth-scopes:
+        - cloudforce-one.write
+    patch:
+      operationId: post_ConfigUpdate
+      summary: Update an existing Scan Config
+      description: Updates an existing scan configuration in Cloudforce One's network scanning service.
+      parameters:
+        - name: account_id
+          in: path
+          description: Defines the Account ID.
+          required: true
+          schema:
+            description: Defines the Account ID.
+            type: string
+        - name: config_id
+          in: path
+          description: Defines the Config ID.
+          required: true
+          schema:
+            description: Defines the Config ID.
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                frequency:
+                  $ref: '#/components/schemas/cloudforce-one-port-scan-api_frequency'
+                ips:
+                  $ref: '#/components/schemas/cloudforce-one-port-scan-api_ips'
+                ports:
+                  $ref: '#/components/schemas/cloudforce-one-port-scan-api_ports'
+      responses:
+        '200':
+          description: Returns the updated config.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/cloudforce-one-port-scan-api_api-response-common'
+                  - properties:
+                      result:
+                        $ref: '#/components/schemas/cloudforce-one-port-scan-api_scan-config'
+                    type: object
+        4XX:
+          description: Update an Existing Scan Config failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cloudforce-one-port-scan-api_api-response-common-failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Scans
+      x-cfOwnership: cloudforce-one
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: cloudforce-one.scans.config
+      x-fern-sdk-method-name: edit
+      x-forge-availability: generally-available
+      x-forge-group-name: cloudforce-one.scans.config
+      x-forge-method-name: edit
+      x-forge-oauth-scopes:
+        - cloudforce-one.write
+  /accounts/{account_id}/cloudforce-one/scans/results/{config_id}:
+    get:
+      operationId: get_GetOpenPorts
+      summary: Get the Latest Scan Result
+      description: Retrieves the latest scan results for a Cloudforce One scan configuration, including discovered open ports.
+      parameters:
+        - name: account_id
+          in: path
+          description: Defines the Account ID.
+          required: true
+          schema:
+            description: Defines the Account ID.
+            type: string
+        - name: config_id
+          in: path
+          description: Defines the Config ID.
+          required: true
+          schema:
+            description: Defines the Config ID.
+            type: string
+      responses:
+        '200':
+          description: Returns Current Open Ports.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: string
+                  messages:
+                    type: array
+                    items:
+                      type: string
+                  result:
+                    type: object
+                    properties:
+                      1.1.1.1:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/cloudforce-one-port-scan-api_port'
+                    required:
+                      - 1.1.1.1
+                  success:
+                    type: boolean
+                required:
+                  - success
+                  - result
+                  - messages
+                  - errors
+        4XX:
+          description: Get the Latest Scan Result failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cloudforce-one-port-scan-api_api-response-common-failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Scans
+      x-cfOwnership: cloudforce-one
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: cloudforce-one.scans.results
+      x-fern-sdk-method-name: get
+      x-forge-availability: generally-available
+      x-forge-group-name: cloudforce-one.scans.results
+      x-forge-method-name: get
+      x-forge-oauth-scopes:
+        - cloudforce-one.read
         - cloudforce-one.write
   /accounts/{account_id}/cloudforce-one/v2/brand-protection/domain/matches:
     get:
@@ -453209,6 +453592,130 @@ components:
         - datasetId
         - createdAt
         - updatedAt
+    cloudforce-one-port-scan-api_api-response-common:
+      type: object
+      properties:
+        errors:
+          $ref: '#/components/schemas/cloudforce-one-port-scan-api_messages'
+        messages:
+          $ref: '#/components/schemas/cloudforce-one-port-scan-api_messages'
+        success:
+          description: Whether the API call was successful.
+          type: boolean
+          example: true
+          enum:
+            - true
+      required:
+        - success
+        - errors
+        - messages
+    cloudforce-one-port-scan-api_api-response-common-failure:
+      type: object
+      properties:
+        errors:
+          example:
+            - code: 10433
+              message: request error
+          allOf:
+            - $ref: '#/components/schemas/cloudforce-one-port-scan-api_messages'
+        messages:
+          $ref: '#/components/schemas/cloudforce-one-port-scan-api_messages'
+        success:
+          description: Whether the API call was successful.
+          type: boolean
+          example: false
+          enum:
+            - false
+      required:
+        - success
+        - errors
+        - messages
+    cloudforce-one-port-scan-api_frequency:
+      description: Defines the number of days between each scan (0 = One-off scan).
+      type: number
+      example: 7
+      title: Frequency
+    cloudforce-one-port-scan-api_ips:
+      description: Defines a list of IP addresses or CIDR blocks to scan. The maximum number of total IP addresses allowed is 5000.
+      type: array
+      items:
+        description: Defines a list of IP addresses or CIDR blocks to scan. The maximum number of total IP addresses allowed is 5000.
+        type: string
+      example:
+        - 1.1.1.1
+        - 2606:4700:4700::1111
+      title: IP List
+    cloudforce-one-port-scan-api_messages:
+      type: array
+      items:
+        properties:
+          code:
+            type: integer
+            minimum: 1000
+          documentation_url:
+            type: string
+          message:
+            type: string
+          source:
+            type: object
+            properties:
+              pointer:
+                type: string
+        required:
+          - code
+          - message
+        type: object
+        uniqueItems: true
+      example: []
+    cloudforce-one-port-scan-api_port:
+      type: object
+      properties:
+        number:
+          type: number
+          example: 8080
+        proto:
+          type: string
+          example: tcp
+        status:
+          type: string
+          example: open
+      required:
+        - account_id
+        - ips
+        - frequency
+      title: Port
+    cloudforce-one-port-scan-api_ports:
+      description: Defines a list of ports to scan. Valid values are:"default", "all", or a comma-separated list of ports or range of ports (e.g. ["1-80", "443"]). "default" scans the 100 most commonly open ports.
+      type: array
+      items:
+        description: Defines a list of ports to scan. Valid values are:"default", "all", or a comma-separated list of ports or range of ports (e.g. ["1-80", "443"]). "default" scans the 100 most commonly open ports.
+        type: string
+      example:
+        - default
+      title: Port List
+    cloudforce-one-port-scan-api_scan-config:
+      type: object
+      properties:
+        account_id:
+          type: string
+          example: abcd1234abcd1234abcd1234abcd1234
+        frequency:
+          $ref: '#/components/schemas/cloudforce-one-port-scan-api_frequency'
+        id:
+          description: Defines the Config ID.
+          type: string
+          example: uuid
+        ips:
+          $ref: '#/components/schemas/cloudforce-one-port-scan-api_ips'
+        ports:
+          $ref: '#/components/schemas/cloudforce-one-port-scan-api_ports'
+      required:
+        - id
+        - account_id
+        - ips
+        - frequency
+        - ports
+      title: Config
     cloudforce-one-whois_api-response-common:
       type: object
       properties:
@@ -553500,6 +554007,8 @@ x-forge-commands:
     groups:
       binary-storage:
         description: Upload and retrieve malware samples and suspicious binaries for analysis
+      scans:
+        description: Scan URLs, IPs, and domains for threat intelligence indicators
   containers:
     description: Deploy and manage Containers applications on Cloudflare's global network
     groups:
