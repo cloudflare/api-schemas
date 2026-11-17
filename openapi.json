@@ -27832,10 +27832,125 @@
       }
     },
     "/accounts/{account_id}/ai-gateway/billing/topup/eligibility": {
+      "get": {
+        "operationId": "aig-billing-get-topup-eligibility",
+        "summary": "Get top-up eligibility (version 2)",
+        "description": "Read-only top-up eligibility, contract version 2: the account's payment methods and whether each can pay for a top-up, whether a manual top-up is available and its limits, and the auto top-up state. Advisory: every top-up checks again. Answers 409 while version 2 is unavailable for the account.",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "description": "Cloudflare account ID.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Eligibility read.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/aig-billing_GetTopupEligibilityV2Response"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/aig-billing_ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/aig-billing_ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/aig-billing_ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Version 2 is unavailable for this account, including flag fallback.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/aig-billing_ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error, including an auto top-up config that could not be read. The body carries only the generic message.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/aig-billing_ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "AI Gateway"
+        ],
+        "x-cfOwnership": "ai-gateway",
+        "x-cfPermissionsRequired": {
+          "enum": [
+            "com.cloudflare.api.account.billing.payment-method.read"
+          ]
+        },
+        "x-cfPlanAvailability": {
+          "business": true,
+          "enterprise": true,
+          "free": true,
+          "pro": true
+        },
+        "x-fern-ignore": true,
+        "x-fern-sdk-group-name": "ai-gateway.billing.topup",
+        "x-fern-sdk-method-name": "get-eligibility",
+        "x-forge-group-name": "ai-gateway.billing.topup",
+        "x-forge-method-name": "get-eligibility",
+        "x-forge-oauth-scopes": [
+          "aig.metadata_read",
+          "aig.read",
+          "aig.write",
+          "ai-search.index",
+          "rag.run"
+        ],
+        "x-forge-skip": true
+      },
       "post": {
         "operationId": "aig-billing-topup-eligibility",
         "summary": "Get top-up eligibility",
-        "description": "Determine top-up eligibility. Requests without contract_version retain the legacy forwarded-method contract. Explicit contract_version: 2 opts into the gated, read-only authoritative advisory API; forwarded method metadata is not authoritative. No response authorizes a charge.",
+        "description": "Returns legacy top-up eligibility from forwarded payment methods. Version 2 is read with GET; a body naming contract_version is rejected. No response authorizes a charge.",
         "parameters": [
           {
             "name": "account_id",
@@ -27854,14 +27969,8 @@
                 "type": "object",
                 "properties": {
                   "contract_version": {
-                    "type": "number",
-                    "enum": [
-                      2
-                    ]
-                  },
-                  "payment_method_id": {
-                    "type": "string",
-                    "maxLength": 255
+                    "description": "Not accepted: version 2 is read with GET. Any value answers 400.",
+                    "type": "integer"
                   },
                   "payment_methods": {
                     "description": "Account-level payment methods, forwarded by the dashboard for legacy eligibility only.",
@@ -27933,16 +28042,6 @@
                 }
               }
             }
-          },
-          "409": {
-            "description": "Explicit V2 is unavailable for this account, including flag fallback.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/aig-billing_ErrorResponse"
-                }
-              }
-            }
           }
         },
         "security": [
@@ -27960,7 +28059,7 @@
         "x-cfOwnership": "ai-gateway",
         "x-cfPermissionsRequired": {
           "enum": [
-            "com.cloudflare.api.account.aig"
+            "com.cloudflare.api.account.billing.payment-method.read"
           ]
         },
         "x-cfPlanAvailability": {
@@ -635208,204 +635307,6 @@
           "errors"
         ]
       },
-      "aig-billing_GetAuthoritativeTopupEligibilityResult": {
-        "type": "object",
-        "properties": {
-          "advisory": {
-            "type": "boolean",
-            "enum": [
-              true
-            ]
-          },
-          "auto_topup": {
-            "type": "object",
-            "properties": {
-              "default_payment_method_id": {
-                "type": "string",
-                "nullable": true
-              },
-              "eligible_payment_method_ids": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                }
-              },
-              "reason": {
-                "type": "string",
-                "enum": [
-                  "ELIGIBLE",
-                  "NO_ACCOUNT_PAYMENT_METHOD",
-                  "UNSUPPORTED_ACCOUNT_PAYMENT_METHOD",
-                  "ACCOUNT_PAYMENT_METHOD_NOT_DEFAULT",
-                  "ACCOUNT_PAYMENT_METHOD_NOT_LINKED_TO_AIG",
-                  "CONTRACT_BILLING_NOT_SELF_SERVE",
-                  "ELIGIBILITY_UNAVAILABLE",
-                  "INVALID_PAYMENT_METHOD_SELECTION",
-                  "PAYMENT_METHOD_EXPIRED",
-                  "FIRST_TOPUP_REQUIRED",
-                  "AUTO_TOPUP_SETUP_REQUIRED",
-                  "AUTO_TOPUP_NOT_CONFIGURED",
-                  "ACCOUNT_PAYMENT_METHOD_DEFAULT_MISSING",
-                  "ACCOUNT_POLICY_UNAVAILABLE"
-                ]
-              },
-              "recommended_action": {
-                "type": "string",
-                "enum": [
-                  "NONE",
-                  "ADD_SUPPORTED_PAYMENT_METHOD",
-                  "USE_EXISTING_CARD",
-                  "SET_CARD_AS_DEFAULT",
-                  "CONTACT_SUPPORT",
-                  "RETRY",
-                  "SELECT_SUPPORTED_PAYMENT_METHOD",
-                  "COMPLETE_MANUAL_TOPUP",
-                  "AUTHENTICATE_CARD",
-                  "CONFIGURE_AUTO_TOPUP"
-                ]
-              },
-              "status": {
-                "type": "string",
-                "enum": [
-                  "eligible",
-                  "ineligible",
-                  "unavailable"
-                ]
-              }
-            },
-            "required": [
-              "status",
-              "reason",
-              "recommended_action",
-              "eligible_payment_method_ids",
-              "default_payment_method_id"
-            ]
-          },
-          "contract_version": {
-            "type": "number",
-            "enum": [
-              2
-            ]
-          },
-          "evaluated_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "manual_topup": {
-            "type": "object",
-            "properties": {
-              "default_payment_method_id": {
-                "type": "string",
-                "nullable": true
-              },
-              "eligible_payment_method_ids": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                }
-              },
-              "reason": {
-                "type": "string",
-                "enum": [
-                  "ELIGIBLE",
-                  "NO_ACCOUNT_PAYMENT_METHOD",
-                  "UNSUPPORTED_ACCOUNT_PAYMENT_METHOD",
-                  "ACCOUNT_PAYMENT_METHOD_NOT_DEFAULT",
-                  "ACCOUNT_PAYMENT_METHOD_NOT_LINKED_TO_AIG",
-                  "CONTRACT_BILLING_NOT_SELF_SERVE",
-                  "ELIGIBILITY_UNAVAILABLE",
-                  "INVALID_PAYMENT_METHOD_SELECTION",
-                  "PAYMENT_METHOD_EXPIRED",
-                  "FIRST_TOPUP_REQUIRED",
-                  "AUTO_TOPUP_SETUP_REQUIRED",
-                  "AUTO_TOPUP_NOT_CONFIGURED",
-                  "ACCOUNT_PAYMENT_METHOD_DEFAULT_MISSING",
-                  "ACCOUNT_POLICY_UNAVAILABLE"
-                ]
-              },
-              "recommended_action": {
-                "type": "string",
-                "enum": [
-                  "NONE",
-                  "ADD_SUPPORTED_PAYMENT_METHOD",
-                  "USE_EXISTING_CARD",
-                  "SET_CARD_AS_DEFAULT",
-                  "CONTACT_SUPPORT",
-                  "RETRY",
-                  "SELECT_SUPPORTED_PAYMENT_METHOD",
-                  "COMPLETE_MANUAL_TOPUP",
-                  "AUTHENTICATE_CARD",
-                  "CONFIGURE_AUTO_TOPUP"
-                ]
-              },
-              "status": {
-                "type": "string",
-                "enum": [
-                  "eligible",
-                  "ineligible",
-                  "unavailable"
-                ]
-              }
-            },
-            "required": [
-              "status",
-              "reason",
-              "recommended_action",
-              "eligible_payment_method_ids",
-              "default_payment_method_id"
-            ]
-          },
-          "payment_methods": {
-            "type": "array",
-            "items": {
-              "properties": {
-                "account_payment_method_id": {
-                  "type": "string"
-                },
-                "brand": {
-                  "type": "string"
-                },
-                "is_default": {
-                  "type": "boolean"
-                },
-                "kind": {
-                  "type": "string",
-                  "enum": [
-                    "card",
-                    "wallet",
-                    "unsupported"
-                  ]
-                },
-                "last4": {
-                  "type": "string"
-                },
-                "stripe_payment_method_id": {
-                  "type": "string",
-                  "nullable": true
-                },
-                "wallet_type": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "account_payment_method_id",
-                "stripe_payment_method_id",
-                "kind",
-                "is_default"
-              ],
-              "type": "object"
-            }
-          }
-        },
-        "required": [
-          "contract_version",
-          "evaluated_at",
-          "advisory",
-          "payment_methods",
-          "manual_topup",
-          "auto_topup"
-        ]
-      },
       "aig-billing_GetCreditBalanceResponse": {
         "type": "object",
         "properties": {
@@ -636187,14 +636088,7 @@
             }
           },
           "result": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/aig-billing_GetTopupEligibilityResult"
-              },
-              {
-                "$ref": "#/components/schemas/aig-billing_GetAuthoritativeTopupEligibilityResult"
-              }
-            ]
+            "$ref": "#/components/schemas/aig-billing_GetTopupEligibilityResult"
           },
           "result_info": {
             "type": "object",
@@ -636333,6 +636227,305 @@
           "aig_customer_state",
           "aig_default_payment_method_state",
           "display_payment_method"
+        ]
+      },
+      "aig-billing_GetTopupEligibilityV2Response": {
+        "type": "object",
+        "properties": {
+          "errors": {
+            "type": "array",
+            "items": {
+              "properties": {
+                "code": {
+                  "type": "number"
+                },
+                "message": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "code",
+                "message"
+              ],
+              "type": "object"
+            }
+          },
+          "messages": {
+            "type": "array",
+            "items": {
+              "properties": {
+                "code": {
+                  "type": "number"
+                },
+                "message": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "code",
+                "message"
+              ],
+              "type": "object"
+            }
+          },
+          "result": {
+            "$ref": "#/components/schemas/aig-billing_GetTopupEligibilityV2Result"
+          },
+          "result_info": {
+            "type": "object",
+            "properties": {
+              "has_more": {
+                "type": "boolean"
+              },
+              "page": {
+                "type": "number"
+              },
+              "per_page": {
+                "type": "number"
+              },
+              "total_count": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "has_more",
+              "page",
+              "per_page",
+              "total_count"
+            ]
+          },
+          "success": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          }
+        },
+        "required": [
+          "success",
+          "result",
+          "errors",
+          "messages"
+        ]
+      },
+      "aig-billing_GetTopupEligibilityV2Result": {
+        "type": "object",
+        "properties": {
+          "auto_topup": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "can_configure": {
+                "type": "boolean"
+              },
+              "config": {
+                "type": "object",
+                "additionalProperties": false,
+                "nullable": true,
+                "properties": {
+                  "amount_cents": {
+                    "type": "integer"
+                  },
+                  "threshold_cents": {
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "threshold_cents",
+                  "amount_cents"
+                ]
+              },
+              "limits": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "amount_max_cents": {
+                    "type": "integer"
+                  },
+                  "amount_min_cents": {
+                    "type": "integer"
+                  },
+                  "threshold_min_cents": {
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "threshold_min_cents",
+                  "amount_min_cents",
+                  "amount_max_cents"
+                ]
+              },
+              "payment_method_id": {
+                "type": "string",
+                "nullable": true
+              },
+              "state": {
+                "type": "string",
+                "enum": [
+                  "first_topup_required",
+                  "not_configured",
+                  "active",
+                  "needs_confirmation",
+                  "stopped"
+                ]
+              },
+              "stopped_reason": {
+                "type": "string",
+                "enum": [
+                  "payment_method_removed",
+                  "payment_method_changed",
+                  "expired_card",
+                  "payment_method_not_supported",
+                  "prepaid_card_not_supported",
+                  "payment_declined",
+                  "amount_out_of_range"
+                ]
+              }
+            },
+            "required": [
+              "state",
+              "can_configure",
+              "config",
+              "payment_method_id",
+              "limits"
+            ]
+          },
+          "contract_version": {
+            "type": "number",
+            "enum": [
+              2
+            ]
+          },
+          "evaluated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "manual_topup": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "available": {
+                "type": "boolean"
+              },
+              "default_payment_method_id": {
+                "type": "string",
+                "nullable": true
+              },
+              "limits": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "currency": {
+                    "type": "string",
+                    "enum": [
+                      "USD"
+                    ]
+                  },
+                  "max_cents": {
+                    "type": "integer"
+                  },
+                  "min_cents": {
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "min_cents",
+                  "max_cents",
+                  "currency"
+                ]
+              }
+            },
+            "required": [
+              "available",
+              "default_payment_method_id",
+              "limits"
+            ]
+          },
+          "payment_methods": {
+            "type": "array",
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "brand": {
+                  "type": "string"
+                },
+                "exp_month": {
+                  "type": "integer"
+                },
+                "exp_year": {
+                  "type": "integer"
+                },
+                "id": {
+                  "type": "string"
+                },
+                "is_default": {
+                  "type": "boolean"
+                },
+                "last4": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "card",
+                    "apple_pay",
+                    "google_pay",
+                    "link",
+                    "paypal",
+                    "other"
+                  ]
+                },
+                "unusable_reason": {
+                  "type": "string",
+                  "enum": [
+                    "payment_method_not_supported",
+                    "expired_card",
+                    "prepaid_card_not_supported",
+                    "card_not_3ds_capable"
+                  ]
+                },
+                "usable": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "id",
+                "type",
+                "is_default",
+                "usable"
+              ],
+              "type": "object"
+            }
+          },
+          "reason": {
+            "type": "string",
+            "enum": [
+              "NONE",
+              "CONTRACT_BILLING",
+              "ACCOUNT_RESTRICTED",
+              "ELIGIBILITY_UNAVAILABLE",
+              "NO_ELIGIBLE_PAYMENT_METHOD",
+              "DAILY_LIMIT_REACHED"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ready",
+              "blocked",
+              "unavailable"
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "contract_version",
+          "evaluated_at",
+          "status",
+          "reason",
+          "payment_methods",
+          "manual_topup",
+          "auto_topup"
         ]
       },
       "aig-billing_GetTopupLimitsResponse": {
