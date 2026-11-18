@@ -24396,6 +24396,7 @@ paths:
         - name: page
           in: query
           schema:
+            description: 'Page number, from 1. A high page reads every page before it again. To read further back in a listing sorted by created_at, ask for page 1 again with a created_at lt filter set to the created_at of the last log returned. Logs in the same millisecond as that log can be left out: to include them, set the filter 1 ms later and drop the logs already returned.'
             type: integer
             default: 1
             maximum: 9007199254740991
@@ -24708,7 +24709,7 @@ paths:
                       total_count:
                         type: number
                       truncated:
-                        description: 'Present when the listing has a metadata filter. Such a listing searches at most the newest 10,000,000 logs in its date range, newest first, so set end_date to search older logs. True when part of that window was not searched yet, because the page filled, time ran out, or the log store failed partway: total_count then counts only the matches in the logs searched, plus one when the page is full, so the next page is requested. False when the whole window was searched.'
+                        description: 'Present when the listing has a metadata filter or a search, sorted by created_at newest first. Such a listing searches at most the newest 10,000,000 logs in its date range, newest first, so add a created_at lt filter to search older logs. True when part of that window was not searched yet, because the page filled, time ran out, or the log store failed partway: total_count then counts only the matches in the logs searched, plus one when the page is full, so the next page is requested. False when the whole window was searched.'
                         type: boolean
                   success:
                     type: boolean
@@ -86056,7 +86057,7 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/tunnel_tunnel_id-2'
+            $ref: '#/components/schemas/tunnel_tunnel_id-3'
       responses:
         '200':
           description: Reset configuration response
@@ -86109,7 +86110,7 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/tunnel_tunnel_id-2'
+            $ref: '#/components/schemas/tunnel_tunnel_id-3'
       responses:
         '200':
           description: Get configuration response
@@ -86154,7 +86155,7 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/tunnel_tunnel_id-2'
+            $ref: '#/components/schemas/tunnel_tunnel_id-3'
       requestBody:
         required: true
         content:
@@ -187417,8 +187418,9 @@ paths:
           in: query
           schema:
             description: Specifies the number of pipelines per page.
-            type: string
-            default: '25'
+            type: number
+            default: 25
+            minimum: 1
       responses:
         '200':
           description: '[DEPRECATED] Lists the pipelines. Use /pipelines/v1/pipelines instead.'
@@ -188074,6 +188076,7 @@ paths:
           in: query
           schema:
             type: number
+            minimum: 1
         - name: name
           in: query
           description: Filters pipelines by name (case-insensitive substring).
@@ -188455,6 +188458,7 @@ paths:
           in: query
           schema:
             type: number
+            minimum: 1
       responses:
         '200':
           description: Indicates successfully listed Sinks.
@@ -188878,6 +188882,7 @@ paths:
           in: query
           schema:
             type: number
+            minimum: 1
       responses:
         '200':
           description: Indicates a successfully created Stream.
@@ -217806,6 +217811,280 @@ paths:
       x-fern-availability: generally-available
       x-fern-sdk-group-name: tunnels
       x-fern-sdk-method-name: list
+  /accounts/{account_id}/tunnels/{tunnel_id}/hostnames:
+    get:
+      operationId: cloudflare-tunnel-hostname-list
+      summary: List tunnel hostnames
+      description: Lists and filters the hostnames assigned to a tunnel.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/tunnel_account_id'
+        - name: tunnel_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/tunnel_tunnel_id-2'
+        - name: hostname
+          in: query
+          description: If set, only list tunnel hostnames that contain this value. The filter is case-insensitive.
+          schema:
+            type: string
+        - name: canonical
+          in: query
+          description: If set, only list tunnel hostnames with the specified canonical status.
+          schema:
+            type: boolean
+        - name: is_deleted
+          in: query
+          description: If `true`, only return deleted tunnel hostnames. If `false` or omitted, exclude deleted tunnel hostnames.
+          schema:
+            type: boolean
+            default: false
+        - name: per_page
+          in: query
+          description: Number of results to display, up to 1000. The server caps larger values at 1000.
+          schema:
+            $ref: '#/components/schemas/tunnel_per_page'
+        - name: page
+          in: query
+          description: Page number to return.
+          schema:
+            $ref: '#/components/schemas/tunnel_page_number'
+      responses:
+        '200':
+          description: List tunnel hostnames response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/tunnel_tunnel_hostname_response_collection'
+        4XX:
+          description: List tunnel hostnames response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/tunnel_tunnel_hostname_response_collection'
+                  - $ref: '#/components/schemas/tunnel_api-response-common-failure'
+      security:
+        - api_email: []
+          api_key: []
+        - api_token: []
+        - user_service_key: []
+      tags:
+        - Cloudflare Tunnel Hostname
+      x-api-token-group:
+        - Cloudflare One Connectors Write
+        - Cloudflare One Connectors Read
+        - 'Cloudflare One Connector: cloudflared Write'
+        - 'Cloudflare One Connector: cloudflared Read'
+        - Cloudflare Tunnel Write
+        - Cloudflare Tunnel Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: tunnels.hostnames
+      x-fern-sdk-method-name: list
+    post:
+      operationId: cloudflare-tunnel-hostname-create
+      summary: Create a tunnel hostname
+      description: Assigns a hostname to a tunnel. If the tunnel has no active hostnames, the new hostname is always canonical.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/tunnel_account_id'
+        - name: tunnel_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/tunnel_tunnel_id-2'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/tunnel_post_tunnel_hostname_body'
+      responses:
+        '200':
+          description: Create tunnel hostname response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/tunnel_tunnel_hostname_response_single'
+        4XX:
+          description: Create tunnel hostname response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/tunnel_tunnel_hostname_response_single'
+                  - $ref: '#/components/schemas/tunnel_api-response-common-failure'
+      security:
+        - api_email: []
+          api_key: []
+        - api_token: []
+        - user_service_key: []
+      tags:
+        - Cloudflare Tunnel Hostname
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: tunnels.hostnames
+      x-fern-sdk-method-name: create
+  /accounts/{account_id}/tunnels/{tunnel_id}/hostnames/{hostname_id}:
+    delete:
+      operationId: cloudflare-tunnel-hostname-delete
+      summary: Delete a tunnel hostname
+      description: Deletes a hostname assigned to a tunnel.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/tunnel_account_id'
+        - name: tunnel_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/tunnel_tunnel_id-2'
+        - name: hostname_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/tunnel_tunnel_hostname_id'
+      responses:
+        '200':
+          description: Delete tunnel hostname response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/tunnel_tunnel_hostname_response_single'
+        4XX:
+          description: Delete tunnel hostname response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/tunnel_tunnel_hostname_response_single'
+                  - $ref: '#/components/schemas/tunnel_api-response-common-failure'
+      security:
+        - api_email: []
+          api_key: []
+        - api_token: []
+        - user_service_key: []
+      tags:
+        - Cloudflare Tunnel Hostname
+      x-api-token-group:
+        - Cloudflare One Connectors Write
+        - 'Cloudflare One Connector: cloudflared Write'
+        - Cloudflare Tunnel Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: tunnels.hostnames
+      x-fern-sdk-method-name: delete
+      x-forge-require-confirmation: This operation permanently deletes a tunnel hostname.
+    get:
+      operationId: cloudflare-tunnel-hostname-get
+      summary: Get a tunnel hostname
+      description: Fetches a hostname assigned to a tunnel.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/tunnel_account_id'
+        - name: tunnel_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/tunnel_tunnel_id-2'
+        - name: hostname_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/tunnel_tunnel_hostname_id'
+      responses:
+        '200':
+          description: Get tunnel hostname response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/tunnel_tunnel_hostname_response_single'
+        4XX:
+          description: Get tunnel hostname response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/tunnel_tunnel_hostname_response_single'
+                  - $ref: '#/components/schemas/tunnel_api-response-common-failure'
+      security:
+        - api_email: []
+          api_key: []
+        - api_token: []
+        - user_service_key: []
+      tags:
+        - Cloudflare Tunnel Hostname
+      x-api-token-group:
+        - Cloudflare One Connectors Write
+        - Cloudflare One Connectors Read
+        - 'Cloudflare One Connector: cloudflared Write'
+        - 'Cloudflare One Connector: cloudflared Read'
+        - Cloudflare Tunnel Write
+        - Cloudflare Tunnel Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: tunnels.hostnames
+      x-fern-sdk-method-name: get
+    patch:
+      operationId: cloudflare-tunnel-hostname-update
+      summary: Update a tunnel hostname
+      description: Updates the hostname value or makes it canonical. To unset a canonical hostname, make a different hostname canonical instead.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/tunnel_account_id'
+        - name: tunnel_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/tunnel_tunnel_id-2'
+        - name: hostname_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/tunnel_tunnel_hostname_id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/tunnel_patch_tunnel_hostname_body'
+      responses:
+        '200':
+          description: Update tunnel hostname response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/tunnel_tunnel_hostname_response_single'
+        4XX:
+          description: Update tunnel hostname response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/tunnel_tunnel_hostname_response_single'
+                  - $ref: '#/components/schemas/tunnel_api-response-common-failure'
+      security:
+        - api_email: []
+          api_key: []
+        - api_token: []
+        - user_service_key: []
+      tags:
+        - Cloudflare Tunnel Hostname
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: tunnels.hostnames
+      x-fern-sdk-method-name: edit
   /accounts/{account_id}/urlscanner/response/{response_id}:
     get:
       operationId: urlscanner-get-response-text
@@ -227912,7 +228191,7 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/tunnel_tunnel_id-2'
+            $ref: '#/components/schemas/tunnel_tunnel_id-3'
       responses:
         '200':
           description: Get Mesh node HA configuration response
@@ -227955,7 +228234,7 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/tunnel_tunnel_id-2'
+            $ref: '#/components/schemas/tunnel_tunnel_id-3'
       requestBody:
         required: true
         content:
@@ -229768,10 +230047,8 @@ paths:
             oneOf:
               - allOf:
                   - $ref: '#/components/schemas/workers_typed_tag_key'
-                x-version-after: 2026-10-01T00:00:00Z
               - allOf:
                   - $ref: '#/components/schemas/workers_tag'
-                x-version-before: 2026-10-01T00:00:00Z
         - $ref: '#/components/parameters/workers_api_version_header'
       responses:
         '200':
@@ -229788,10 +230065,8 @@ paths:
                 oneOf:
                   - allOf:
                       - $ref: '#/components/schemas/workers_tags-kv-response'
-                    x-version-after: 2026-10-01T00:00:00Z
                   - allOf:
                       - $ref: '#/components/schemas/workers_api-response-null-result'
-                    x-version-before: 2026-10-01T00:00:00Z
         4XX:
           description: Delete script tag failure.
           content:
@@ -254010,7 +254285,7 @@ paths:
           in: query
           description: If set, only list hostname routes that point to a specific tunnel.
           schema:
-            $ref: '#/components/schemas/tunnel_tunnel_id-3'
+            $ref: '#/components/schemas/tunnel_tunnel_id-2'
         - name: comment
           in: query
           schema:
@@ -254086,7 +254361,7 @@ paths:
                 hostname:
                   $ref: '#/components/schemas/tunnel_hostname'
                 tunnel_id:
-                  $ref: '#/components/schemas/tunnel_tunnel_id-3'
+                  $ref: '#/components/schemas/tunnel_tunnel_id-2'
       responses:
         '200':
           description: Create hostname route response
@@ -254232,7 +254507,7 @@ paths:
                 hostname:
                   $ref: '#/components/schemas/tunnel_hostname'
                 tunnel_id:
-                  $ref: '#/components/schemas/tunnel_tunnel_id-3'
+                  $ref: '#/components/schemas/tunnel_tunnel_id-2'
       responses:
         '200':
           description: Update hostname route response
@@ -254554,7 +254829,7 @@ paths:
         - Zero Trust Subnets
       x-fern-availability: generally-available
       x-fern-sdk-group-name: network.subnets.initial-resolved-ip
-      x-fern-sdk-method-name: edit
+      x-fern-sdk-method-name: replace
   /accounts/{account_id}/zerotrust/subnets/warp:
     post:
       operationId: zero-trust-networks-subnet-create-warp
@@ -511502,7 +511777,7 @@ components:
         source:
           $ref: '#/components/schemas/tunnel_config_src-2'
         tunnel_id:
-          $ref: '#/components/schemas/tunnel_tunnel_id-2'
+          $ref: '#/components/schemas/tunnel_tunnel_id-3'
         version:
           $ref: '#/components/schemas/tunnel_config_version-2'
     tunnel_configuration_response:
@@ -511619,7 +511894,7 @@ components:
                 - warp_connector
               type: string
         tunnel_id:
-          $ref: '#/components/schemas/tunnel_tunnel_id-3'
+          $ref: '#/components/schemas/tunnel_tunnel_id-2'
         tunnel_name:
           $ref: '#/components/schemas/tunnel_tunnel_name-2'
     tunnel_hostname_route_id:
@@ -511760,7 +512035,7 @@ components:
         ha_mode:
           $ref: '#/components/schemas/tunnel_mesh_ha_mode'
         tunnel_id:
-          $ref: '#/components/schemas/tunnel_tunnel_id-2'
+          $ref: '#/components/schemas/tunnel_tunnel_id-3'
         updated_at:
           $ref: '#/components/schemas/tunnel_updated_at'
       required:
@@ -511945,11 +512220,33 @@ components:
       type: number
       default: 1
       minimum: 1
+    tunnel_patch_tunnel_hostname_body:
+      type: object
+      properties:
+        canonical:
+          description: Makes this hostname canonical. `false` is not accepted; make a different hostname canonical to unset this one.
+          type: boolean
+          enum:
+            - true
+        hostname:
+          $ref: '#/components/schemas/tunnel_tunnel_hostname_value'
     tunnel_per_page:
       description: Number of results to display.
       type: number
       maximum: 1000
       minimum: 1
+    tunnel_post_tunnel_hostname_body:
+      type: object
+      properties:
+        canonical:
+          description: |
+            Set to `true` to make the new hostname canonical, replacing any existing canonical hostname.
+            If `false` or omitted, the new hostname is canonical only if the tunnel has no active hostnames.
+          type: boolean
+        hostname:
+          $ref: '#/components/schemas/tunnel_tunnel_hostname_value'
+      required:
+        - hostname
     tunnel_put_account_region_body:
       type: object
       properties:
@@ -512298,6 +512595,67 @@ components:
               items:
                 $ref: '#/components/schemas/tunnel_tunnel_client'
           type: object
+    tunnel_tunnel_hostname:
+      type: object
+      properties:
+        canonical:
+          $ref: '#/components/schemas/tunnel_tunnel_hostname_canonical'
+        created_at:
+          $ref: '#/components/schemas/tunnel_created_at'
+        hostname:
+          $ref: '#/components/schemas/tunnel_tunnel_hostname_value'
+        id:
+          $ref: '#/components/schemas/tunnel_tunnel_hostname_id'
+        tunnel_id:
+          $ref: '#/components/schemas/tunnel_tunnel_id-2'
+      required:
+        - id
+        - tunnel_id
+        - hostname
+        - canonical
+        - created_at
+    tunnel_tunnel_hostname_canonical:
+      description: Whether this is the canonical hostname for the tunnel.
+      type: boolean
+      example: true
+      x-auditable: true
+    tunnel_tunnel_hostname_id:
+      description: UUID of the tunnel hostname.
+      type: string
+      format: uuid
+      example: 6b9e2c54-7b1a-4d2d-91ac-53ec83f8b6c8
+      x-auditable: true
+    tunnel_tunnel_hostname_response_collection:
+      allOf:
+        - $ref: '#/components/schemas/tunnel_api-response-common'
+        - properties:
+            result:
+              description: Tunnel hostnames on the requested page.
+              type: array
+              items:
+                $ref: '#/components/schemas/tunnel_tunnel_hostname'
+            result_info:
+              description: Pagination metadata for the requested page of tunnel hostnames.
+              allOf:
+                - $ref: '#/components/schemas/tunnel_result_info'
+          type: object
+    tunnel_tunnel_hostname_response_single:
+      allOf:
+        - $ref: '#/components/schemas/tunnel_api-response-common'
+        - properties:
+            result:
+              description: The tunnel hostname created, retrieved, updated, or deleted by the operation.
+              allOf:
+                - $ref: '#/components/schemas/tunnel_tunnel_hostname'
+          type: object
+    tunnel_tunnel_hostname_value:
+      description: A single DNS label assigned to the tunnel. The value is normalized to lowercase and may contain only letters, digits, and internal hyphens.
+      type: string
+      example: branch-office-1
+      maxLength: 63
+      minLength: 1
+      pattern: ^[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?$
+      x-auditable: true
     tunnel_tunnel_id:
       description: UUID of the tunnel.
       type: string
@@ -512312,14 +512670,14 @@ components:
       format: uuid
       example: f70ff985-a4ef-4643-bbbc-4a0ed4fc8415
       maxLength: 36
-      readOnly: true
+      x-auditable: true
     tunnel_tunnel_id-3:
       description: UUID of the tunnel.
       type: string
       format: uuid
       example: f70ff985-a4ef-4643-bbbc-4a0ed4fc8415
       maxLength: 36
-      x-auditable: true
+      readOnly: true
     tunnel_tunnel_name:
       description: A user-friendly name for a tunnel.
       type: string
@@ -512339,12 +512697,14 @@ components:
       description: Sets the password required to run a locally-managed tunnel. Must be at least 32 bytes and encoded as a base64 string.
       type: string
       example: AQIDBAUGBwgBAgMEBQYHCAECAwQFBgcIAQIDBAUGBwg=
+      x-auditable: false
       x-sensitive: true
     tunnel_tunnel_token:
       description: The Tunnel Token is used as a mechanism to authenticate the operation of a tunnel.
       type: string
       example: eyJhIjoiNWFiNGU5Z...
       readOnly: true
+      x-auditable: false
       x-sensitive: true
     tunnel_tunnel_type:
       description: The type of tunnel.
@@ -523581,19 +523941,6 @@ components:
           required:
             - result
           type: object
-          x-cfLinkErrors:
-            '10001': Unsupported or unexpected Content Type
-            '10002': Unexpected internal server error
-            '10003': Missing required URL parameter
-            '10004': Malformed URL parameter
-            '10006': Unparseable script body
-            '10007': Resource not found (similar to HTTP 404)
-            '10015': The current account is not authorized to use workers
-            '10018': Attempted to update a script where the e-tag does not match
-            '10021': Script content failed validation checks, but was otherwise parseable
-            '10023': Unauthorized access attempt
-            '10027': Script body was too large
-            '10075': Requires a Workers Paid plan
     workers_script-response-upload:
       allOf:
         - $ref: '#/components/schemas/workers_script-response'
@@ -523620,19 +523967,6 @@ components:
           required:
             - result
           type: object
-          x-cfLinkErrors:
-            '10001': Unsupported or unexpected Content Type
-            '10002': Unexpected internal server error
-            '10003': Missing required URL parameter
-            '10004': Malformed URL parameter
-            '10006': Unparseable script body
-            '10007': Resource not found (similar to HTTP 404)
-            '10015': The current account is not authorized to use workers
-            '10018': Attempted to update a script where the e-tag does not match
-            '10021': Script content failed validation checks, but was otherwise parseable
-            '10023': Unauthorized access attempt
-            '10027': Script body was too large
-            '10075': Requires a Workers Paid plan
     workers_script-settings-item:
       type: object
       properties:
