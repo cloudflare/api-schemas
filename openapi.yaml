@@ -424593,6 +424593,7 @@ components:
       name: per_page
       schema:
         type: integer
+        minimum: 1
     posture-api_PolicyId:
       description: A UUID identifying the policy.
       in: path
@@ -500172,6 +500173,25 @@ components:
           description: Asset class identifier (PascalCase), e.g. AnthropicApiKey.
           type: string
           example: AnthropicApiKey
+        content_schema:
+          $ref: '#/components/schemas/posture-api_AssetTypeContentSchema'
+        display_name:
+          description: Human-readable name. Present for `cloudflare` and `custom` asset types.
+          type: string
+          example: Custom file
+        id:
+          description: Unique identifier. Present for `cloudflare` and `custom` asset types.
+          type: string
+          format: uuid
+          example: 3f1c2d6e-8b4a-4f7e-9c1d-2a5b6c7d8e9f
+        origin:
+          description: "Who defines the asset class: `system` for built-in asset classes, `cloudflare` for asset types provided by Cloudflare, and `custom` for the account's own asset types."
+          type: string
+          example: system
+          enum:
+            - system
+            - cloudflare
+            - custom
         schema:
           description: |-
             Fields and related attributes a custom finding type may reference for this asset
@@ -500179,8 +500199,14 @@ components:
             resources exist, `associated`.
           type: object
           additionalProperties: true
+        version:
+          description: Current version. Present for `cloudflare` and `custom` asset types.
+          type: integer
+          format: int64
+          example: 3
       required:
         - asset_class
+        - origin
         - schema
     posture-api_AssetSchemaListResponse:
       type: object
@@ -500190,13 +500216,19 @@ components:
         result:
           - asset_classes:
               - asset_class: AnthropicApiKey
+                origin: system
               - asset_class: AnthropicUser
+                origin: system
               - asset_class: AnthropicWorkspace
+                origin: system
             vendor: ANTHROPIC
           - asset_classes:
               - asset_class: GitHubOrganization
+                origin: system
               - asset_class: GitHubRepository
+                origin: system
               - asset_class: GitHubUser
+                origin: system
             vendor: GITHUB
         success: true
       allOf:
@@ -500215,6 +500247,7 @@ components:
         messages: []
         result:
           asset_class: AnthropicApiKey
+          origin: system
           schema:
             type: object
             properties:
@@ -500328,8 +500361,31 @@ components:
           description: Asset class identifier (PascalCase), e.g. AnthropicUser.
           type: string
           example: AnthropicUser
+        display_name:
+          description: Human-readable name. Present for `cloudflare` and `custom` asset types.
+          type: string
+          example: Custom file
+        id:
+          description: Unique identifier. Present for `cloudflare` and `custom` asset types.
+          type: string
+          format: uuid
+          example: 3f1c2d6e-8b4a-4f7e-9c1d-2a5b6c7d8e9f
+        origin:
+          description: "Who defines the asset class: `system` for built-in asset classes, `cloudflare` for asset types provided by Cloudflare, and `custom` for the account's own asset types."
+          type: string
+          example: system
+          enum:
+            - system
+            - cloudflare
+            - custom
+        version:
+          description: Current version. Present for `cloudflare` and `custom` asset types.
+          type: integer
+          format: int64
+          example: 3
       required:
         - asset_class
+        - origin
     posture-api_AssetSchemaVendorGroup:
       type: object
       properties:
@@ -500345,6 +500401,25 @@ components:
       required:
         - vendor
         - asset_classes
+    posture-api_AssetTypeContentSchema:
+      description: JSON Schema subset describing the content of each asset of this type. The top level is an `object` with `properties` and an optional `required` list. Property names must be 1 to 32 letters, digits or underscores. A property may be nullable by listing `null` alongside its type.
+      type: object
+      example:
+        properties:
+          name:
+            type: string
+          owner_email:
+            type:
+              - string
+              - 'null'
+            format: email
+          public:
+            type: boolean
+        required:
+          - name
+          - public
+        type: object
+      additionalProperties: true
     posture-api_BaseFindingType:
       description: Basic finding type information.
       type: object
