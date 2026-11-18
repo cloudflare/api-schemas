@@ -521645,7 +521645,7 @@ components:
             protocol:
               $ref: '#/components/schemas/spectrum-config_protocol'
             traffic_type:
-              description: Determines how traffic is sent to the origin. If absent or empty, defaults to "direct". Direct mode uses origin_direct. Worker mode requires origin_worker_id, TCP with a single port, and CNAME DNS; origin_worker_id and origin_direct are mutually exclusive. A PAYG zone may have at most one TCP Worker application; creating another, or converting another application to Worker while that quota is full, is rejected with error code 11034 and HTTP status 400.
+              description: Determines how traffic is sent to the origin. If absent or empty, defaults to "direct". Direct mode uses origin_direct. Worker mode requires origin_worker_id, TCP or UDP with a single port, and CNAME DNS; origin_worker_id and origin_direct are mutually exclusive. A PAYG zone may have at most one Worker application per transport (one TCP and one UDP); creating another for the same transport, or converting another application to Worker while that quota is full, is rejected with error code 11034 and HTTP status 400.
               type: string
               default: direct
               anyOf:
