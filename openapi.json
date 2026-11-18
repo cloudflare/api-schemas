@@ -732571,6 +732571,7 @@
                     "items": {
                       "$ref": "#/components/schemas/spectrum-config_paygo_app_config"
                     },
+                    "minItems": 1,
                     "type": "array"
                   }
                 ]
@@ -732885,7 +732886,7 @@
         "minimum": 1
       },
       "spectrum-config_origin_worker_id": {
-        "description": "Optional Worker script tag (worker ID) to use as the application's origin. Only supported for TCP applications with traffic_type \"worker\"; mutually exclusive with origin_direct, origin_dns, origin_port, proxy_protocol, and argo_smart_routing. tls may only be \"off\" or \"flexible\".",
+        "description": "Optional Worker script tag (worker ID) to use as the application's origin. Requires traffic_type \"worker\"; mutually exclusive with origin_direct, origin_dns, origin_port, proxy_protocol, and argo_smart_routing. For TCP applications, tls may be \"off\" or \"flexible\"; UDP applications require tls \"off\".",
         "type": "string",
         "example": "277b7815c871434b960b60729659000a",
         "pattern": "^[0-9a-f]{32}$"
@@ -732918,8 +732919,35 @@
               "origin_direct": {
                 "$ref": "#/components/schemas/spectrum-config_origin_direct"
               },
+              "origin_worker_id": {
+                "$ref": "#/components/schemas/spectrum-config_origin_worker_id"
+              },
+              "origin_worker_name": {
+                "$ref": "#/components/schemas/spectrum-config_origin_worker_name"
+              },
+              "origin_worker_status": {
+                "$ref": "#/components/schemas/spectrum-config_origin_worker_status"
+              },
               "protocol": {
                 "$ref": "#/components/schemas/spectrum-config_protocol"
+              },
+              "traffic_type": {
+                "description": "Determines how traffic is sent to the origin. If absent or empty, defaults to \"direct\". Direct mode uses origin_direct. Worker mode requires origin_worker_id, TCP or UDP with a single port, and CNAME DNS; origin_worker_id and origin_direct are mutually exclusive. A PAYG zone may have at most one Worker application per transport (one TCP and one UDP); creating another for the same transport, or converting another application to Worker while that quota is full, is rejected with error code 11034 and HTTP status 400.",
+                "type": "string",
+                "default": "direct",
+                "anyOf": [
+                  {
+                    "enum": [
+                      "direct",
+                      "worker"
+                    ],
+                    "type": "string"
+                  },
+                  {
+                    "maxLength": 0,
+                    "type": "string"
+                  }
+                ]
               }
             },
             "required": [
