@@ -217587,7 +217587,7 @@ paths:
     post:
       operationId: r2-create-temp-access-credentials
       summary: Create Temporary Access Credentials
-      description: Creates temporary access credentials on a bucket that can be optionally scoped to prefixes or objects.
+      description: Creates temporary access credentials on a bucket that can be optionally scoped to prefixes or objects. The credentials grant either a permission level or an explicit list of S3 actions.
       parameters:
         - name: account_id
           in: path
@@ -217598,6 +217598,25 @@ paths:
         required: true
         content:
           application/json:
+            examples:
+              permission:
+                summary: Read and write objects under a prefix
+                value:
+                  bucket: example-bucket
+                  parentAccessKeyId: example-access-key-id
+                  permission: object-read-write
+                  prefixes:
+                    - example-prefix/
+                  ttlSeconds: 3600
+              read-without-list:
+                summary: Read objects without listing them
+                value:
+                  actions:
+                    - GetObject
+                    - HeadObject
+                  bucket: example-bucket
+                  parentAccessKeyId: example-access-key-id
+                  ttlSeconds: 3600
             schema:
               $ref: '#/components/schemas/r2_temp_access_creds_request'
       responses:
@@ -522138,6 +522157,32 @@ components:
     r2_temp_access_creds_request:
       type: object
       properties:
+        actions:
+          description: S3 actions allowed on the credentials; requests for any other action are denied. For example, `["GetObject", "HeadObject"]` allows reading objects without listing them. Exactly one of `permission` or `actions` must be provided. The parent token must have Object Read & Write permission if any action writes, and Object Read otherwise.
+          type: array
+          items:
+            enum:
+              - HeadBucket
+              - HeadObject
+              - GetObject
+              - GetBucketLocation
+              - ListObjectsV1
+              - ListObjectsV2
+              - ListMultipartUploads
+              - ListParts
+              - PutObject
+              - DeleteObject
+              - DeleteObjects
+              - DeleteObjectsByPrefix
+              - CopyObject
+              - CreateMultipartUpload
+              - UploadPart
+              - UploadPartCopy
+              - AbortMultipartUpload
+              - CompleteMultipartUpload
+            type: string
+          minItems: 1
+          x-auditable: true
         bucket:
           description: Name of the R2 bucket.
           type: string
@@ -522152,7 +522197,7 @@ components:
           description: Access key ID of the parent R2 API token. The temporary credentials cannot exceed this token's permissions.
           type: string
         permission:
-          description: Permissions allowed on the credentials.
+          description: Permissions allowed on the credentials. Exactly one of `permission` or `actions` must be provided.
           type: string
           enum:
             - admin-read-write
@@ -522184,7 +522229,6 @@ components:
         ttlSeconds: 3600
       required:
         - bucket
-        - permission
         - ttlSeconds
         - parentAccessKeyId
     r2_temp_access_creds_response:
