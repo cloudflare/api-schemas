@@ -63175,6 +63175,7 @@ paths:
                   type: string
                   example: abc123
                   writeOnly: true
+                  x-auditable: false
                   x-fern-property-name: api-token
                   x-forge-property-name: api-token
                   x-forge-sensitive: true
@@ -63666,6 +63667,7 @@ paths:
                   type: string
                   example: abc123
                   writeOnly: true
+                  x-auditable: false
                   x-fern-property-name: api-token
                   x-forge-property-name: api-token
                   x-forge-sensitive: true
@@ -353449,6 +353451,13 @@ paths:
             description: Single Autonomous System Number (ASN) as integer.
             type: integer
             example: 174
+        - name: includeConfidenceLevel
+          in: query
+          description: Include the traffic data confidence level in the response. Set to `false` to skip it and get a faster response.
+          schema:
+            description: Include the traffic data confidence level in the response. Set to `false` to skip it and get a faster response.
+            type: boolean
+            default: true
         - name: format
           in: query
           description: Format in which results will be returned.
@@ -353489,6 +353498,7 @@ paths:
                               - null
                             nullable: true
                           confidenceLevel:
+                            description: Omitted when `includeConfidenceLevel` is `false`.
                             type: integer
                             example: 5
                           country:
@@ -353571,7 +353581,6 @@ paths:
                           - name
                           - country
                           - countryName
-                          - confidenceLevel
                           - related
                           - source
                           - asn
