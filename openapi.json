@@ -546117,7 +546117,7 @@
       "get": {
         "operationId": "dns-records-for-a-zone-list-dns-records",
         "summary": "List DNS Records",
-        "description": "List, search, sort, and filter a zones' DNS records.",
+        "description": "List, search, sort, and filter a zone's DNS records. Requests with `cursor` or `prev_cursor` use cursor pagination. Otherwise, the endpoint uses offset pagination. To start cursor pagination, set `cursor` to an empty value, then pass `result_info.cursor` from the previous response to request the next page. Cursor-paginated responses do not include `page`, `total_count`, or `total_pages`. Cursor tokens are opaque and can vary in length. Pass them back unchanged and do not assume a fixed length.\n",
         "parameters": [
           {
             "name": "zone_id",
@@ -546215,6 +546215,12 @@
             "$ref": "#/components/parameters/dns-records_tag_match"
           },
           {
+            "$ref": "#/components/parameters/dns-records_cursor"
+          },
+          {
+            "$ref": "#/components/parameters/dns-records_prev_cursor"
+          },
+          {
             "name": "page",
             "in": "query",
             "schema": {
@@ -546258,7 +546264,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/dns-records_dns_response_collection"
+                  "$ref": "#/components/schemas/dns-records_dns_response_list"
                 }
               }
             }
@@ -591166,6 +591172,16 @@
           "example": "127.0."
         }
       },
+      "dns-records_cursor": {
+        "allowEmptyValue": true,
+        "in": "query",
+        "name": "cursor",
+        "schema": {
+          "description": "Opaque token for cursor pagination, obtained from `result_info.cursor` of the previous response. An empty value starts cursor pagination. Mutually exclusive with `page` and `prev_cursor`.\n",
+          "type": "string",
+          "maxLength": 4096
+        }
+      },
       "dns-records_include_shadow_metadata": {
         "in": "query",
         "name": "include_shadow_metadata",
@@ -591226,6 +591242,16 @@
           "description": "Prefix of the DNS record name. Name filters are case-insensitive.\n",
           "type": "string",
           "example": "www.example"
+        }
+      },
+      "dns-records_prev_cursor": {
+        "in": "query",
+        "name": "prev_cursor",
+        "schema": {
+          "description": "Opaque token for requesting the previous page in cursor pagination, obtained from `result_info.prev_cursor` of the previous response. Mutually exclusive with `page` and `cursor`.\n",
+          "type": "string",
+          "maxLength": 4096,
+          "minLength": 1
         }
       },
       "dns-records_proxied": {
@@ -656466,6 +656492,38 @@
           }
         ]
       },
+      "dns-records_dns_response_list": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/dns-records_api-response-collection"
+          },
+          {
+            "properties": {
+              "result": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/dns-records_dns-record-response"
+                }
+              },
+              "result_info": {
+                "type": "object",
+                "properties": {
+                  "cursor": {
+                    "description": "Opaque token for the next page. Omitted on the last page.",
+                    "type": "string"
+                  },
+                  "prev_cursor": {
+                    "description": "Opaque token for the previous page. Omitted on the first page.",
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "type": "object"
+          }
+        ]
+      },
       "dns-records_dns_response_review_scan": {
         "type": "object",
         "allOf": [
@@ -656611,9 +656669,8 @@
         ]
       },
       "dns-records_page": {
-        "description": "Page number of paginated results.",
+        "description": "Page number for offset pagination.",
         "type": "number",
-        "default": 1,
         "minimum": 1
       },
       "dns-records_per_page": {
