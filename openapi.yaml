@@ -6397,6 +6397,125 @@ paths:
       x-forge-method-name: query
       x-stability: beta
       x-stainless-skip: true
+  /{account_or_zone}/{account_or_zone_id}/monetization:
+    get:
+      operationId: generated:get:/account_or_zone/account_or_zone_id/monetization
+      summary: Get account or zone monetization eligibility
+      description: Returns the account or zone's latest stored monetization eligibility result.
+      parameters:
+        - name: account_or_zone
+          in: path
+          description: Whether ${account_or_zone} is an account ID (`accounts`) or a zone ID (`zones`).
+          required: true
+          schema:
+            type: string
+            enum:
+              - accounts
+              - zones
+        - name: account_or_zone_id
+          in: path
+          description: The account ID or zone ID, as selected by ${account_or_zone}.
+          required: true
+          schema:
+            $ref: '#/components/schemas/monetization_account-identifier'
+      responses:
+        '200':
+          description: Stored account or zone eligibility result.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/monetization_monetization-eligibility-response'
+        '404':
+          description: No account or zone eligibility result exists.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/monetization_api-response-common-failure'
+        4XX:
+          description: Failure response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/monetization_api-response-common-failure'
+        5XX:
+          description: Payments-edge dependency failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/monetization_api-response-common-failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Monetization
+      x-fern-availability: beta
+      x-fern-sdk-group-name: monetization.account-eligibility
+      x-fern-sdk-method-name: get
+      x-forge-availability: beta
+      x-forge-group-name: monetization.account-eligibility
+      x-forge-method-name: get
+      x-stability: beta
+      x-stainless-skip: true
+    post:
+      operationId: generated:post:/account_or_zone/account_or_zone_id/monetization
+      summary: Check account or zone monetization eligibility
+      description: Checks the account or zone for Monetization Gateway eligibility and returns its pending, approved, or rejected decision.
+      parameters:
+        - name: account_or_zone
+          in: path
+          description: Whether ${account_or_zone} is an account ID (`accounts`) or a zone ID (`zones`).
+          required: true
+          schema:
+            type: string
+            enum:
+              - accounts
+              - zones
+        - name: account_or_zone_id
+          in: path
+          description: The account ID or zone ID, as selected by ${account_or_zone}.
+          required: true
+          schema:
+            $ref: '#/components/schemas/monetization_account-identifier'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/monetization_monetization-account-eligibility-check-input'
+      responses:
+        '200':
+          description: account or zone eligibility decision.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/monetization_monetization-account-eligibility-check-response'
+        4XX:
+          description: Failure response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/monetization_api-response-common-failure'
+        5XX:
+          description: Payments-edge dependency failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/monetization_api-response-common-failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Monetization
+      x-fern-availability: beta
+      x-fern-sdk-group-name: monetization.account-eligibility
+      x-fern-sdk-method-name: check
+      x-forge-availability: beta
+      x-forge-group-name: monetization.account-eligibility
+      x-forge-method-name: check
+      x-stability: beta
+      x-stainless-skip: true
   /{account_or_zone}/{account_or_zone_id}/pay-per-use/usage-stats:
     get:
       operationId: generated:get:/account_or_zone/account_or_zone_id/pay-per-use/usage-stats
@@ -202582,11 +202701,9 @@ paths:
       tags:
         - Monetization
       x-fern-availability: beta
-      x-fern-sdk-group-name: monetization.account-eligibility
-      x-fern-sdk-method-name: get
+      x-fern-ignore: true
       x-forge-availability: beta
-      x-forge-group-name: monetization.account-eligibility
-      x-forge-method-name: get
+      x-forge-skip: true
       x-stability: beta
     post:
       operationId: monetization-check-account-eligibility
@@ -202626,11 +202743,9 @@ paths:
       tags:
         - Monetization
       x-fern-availability: beta
-      x-fern-sdk-group-name: monetization.account-eligibility
-      x-fern-sdk-method-name: check
+      x-fern-ignore: true
       x-forge-availability: beta
-      x-forge-group-name: monetization.account-eligibility
-      x-forge-method-name: check
+      x-forge-skip: true
       x-stability: beta
   /accounts/{account_id}/moq/relays:
     get:
@@ -415666,11 +415781,9 @@ paths:
       tags:
         - Monetization
       x-fern-availability: beta
-      x-fern-sdk-group-name: monetization.zone-eligibility
-      x-fern-sdk-method-name: get
+      x-fern-ignore: true
       x-forge-availability: beta
-      x-forge-group-name: monetization.zone-eligibility
-      x-forge-method-name: get
+      x-forge-skip: true
       x-stability: beta
     post:
       operationId: monetization-check-zone-eligibility
@@ -415704,11 +415817,9 @@ paths:
       tags:
         - Monetization
       x-fern-availability: beta
-      x-fern-sdk-group-name: monetization.zone-eligibility
-      x-fern-sdk-method-name: check
+      x-fern-ignore: true
       x-forge-availability: beta
-      x-forge-group-name: monetization.zone-eligibility
-      x-forge-method-name: check
+      x-forge-skip: true
       x-stability: beta
   /zones/{zone_id}/monetization/rules:
     delete:
