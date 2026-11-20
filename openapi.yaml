@@ -286643,6 +286643,58 @@ paths:
       x-forge-group-name: pages.assets.hashes
       x-forge-method-name: upsert
       x-forge-skip: true
+  /pages/webhooks/deploy_hooks/{deploy_hook_id}:
+    post:
+      operationId: pages-deploy-hook-trigger
+      summary: Trigger deploy hook
+      description: |
+        Start a deployment of the deploy hook's branch at its latest commit.
+        This endpoint does not require authentication. The deploy hook ID in
+        the URL acts as a secret token.
+      parameters:
+        - name: deploy_hook_id
+          in: path
+          description: Identifier of the deploy hook, taken from its URL.
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: 5d1afd45-8f14-4ebd-b9c2-557fb46f0a27
+            x-forge-sensitive: true
+            x-sensitive: true
+      responses:
+        '200':
+          description: Deploy hook trigger response.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/pages_api-response-common'
+                  - properties:
+                      result:
+                        $ref: '#/components/schemas/pages_pages_deploy_hook_response'
+                    required:
+                      - result
+                    type: object
+        '304':
+          description: A deployment already exists for the branch's latest commit.
+        4XX:
+          description: Deploy hook trigger failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pages_api-response-common-failure'
+      security: []
+      tags:
+        - Pages Deploy Hooks
+      x-fern-audiences:
+        - sdk
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: pages.deploy-hooks
+      x-fern-sdk-method-name: trigger
+      x-forge-availability: generally-available
+      x-forge-group-name: pages.deploy-hooks
+      x-forge-method-name: trigger
   /produce:
     post:
       operationId: postK2Produce
@@ -515307,6 +515359,15 @@ components:
             - b026324c6904b2a9cb4b88d6d61c81d1
       required:
         - hashes
+    pages_pages_deploy_hook_response:
+      type: object
+      properties:
+        id:
+          description: Identifier of the deployment started by the deploy hook.
+          type: string
+          example: f64788e9-fccd-4d4a-a28a-cb84f88f6f10
+      required:
+        - id
     pages_pages_upload_token_response:
       type: object
       properties:
