@@ -218382,6 +218382,7 @@ paths:
           description: Number of results per page.
           schema:
             type: integer
+            minimum: 1
         - name: page_no
           in: query
           description: The page number from which you want your page search results to be displayed.
@@ -218518,6 +218519,7 @@ paths:
           description: Number of results per page.
           schema:
             type: integer
+            minimum: 1
         - name: livestream_id
           in: path
           required: true
@@ -218956,10 +218958,10 @@ paths:
         - Realtime
       x-fern-availability: beta
       x-fern-sdk-group-name: realtime.kit.meetings
-      x-fern-sdk-method-name: update
+      x-fern-sdk-method-name: edit
       x-forge-availability: beta
       x-forge-group-name: realtime.kit.meetings
-      x-forge-method-name: update
+      x-forge-method-name: edit
       x-forge-oauth-scopes:
         - realtime.write
         - realtime.admin
@@ -219194,7 +219196,7 @@ paths:
     post:
       operationId: KickPartcipants
       summary: Kick participants from an active session
-      description: Kicks one or more participants from an active session using user ID or custom participant ID.
+      description: Kicks one or more participants from an active session using their participant IDs. Every connection of each participant is removed from the session.
       parameters:
         - name: account_id
           in: path
@@ -219212,8 +219214,14 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/realtimekit_KickParticipants'
+        '400':
+          $ref: '#/components/responses/realtimekit_KickParticipantsBadRequest'
+        '401':
+          $ref: '#/components/responses/realtimekit_ActiveSessionActionUnauthorized'
         '404':
-          $ref: '#/components/responses/realtimekit_ParticipantNotFound'
+          $ref: '#/components/responses/realtimekit_ActiveSessionActionNotFound'
+        '500':
+          $ref: '#/components/responses/realtimekit_ActiveSessionActionInternalError'
       security:
         - api_token: []
         - api_email: []
@@ -219236,7 +219244,7 @@ paths:
     post:
       operationId: KickAllParticipants
       summary: Kick all participants
-      description: Kicks all participants from an active session for the given meeting ID.
+      description: Kicks all participants from an active session for the given meeting ID and ends the session. Participants in connected breakout rooms are kicked as well.
       parameters:
         - name: account_id
           in: path
@@ -219252,8 +219260,14 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/realtimekit_KickAllParticipants'
-        4XX:
-          $ref: '#/components/responses/realtimekit_GenericError'
+        '400':
+          $ref: '#/components/responses/realtimekit_ActiveSessionActionBadRequest'
+        '401':
+          $ref: '#/components/responses/realtimekit_ActiveSessionActionUnauthorized'
+        '404':
+          $ref: '#/components/responses/realtimekit_ActiveSessionActionNotFound'
+        '500':
+          $ref: '#/components/responses/realtimekit_ActiveSessionActionInternalError'
       security:
         - api_token: []
         - api_email: []
@@ -219277,7 +219291,7 @@ paths:
     post:
       operationId: MuteParticipants
       summary: Mute participants of an active session
-      description: Mutes one or more participants from an active session using user ID or custom participant ID.
+      description: Mutes the microphone of one or more participants of an active session using their participant IDs.
       parameters:
         - name: account_id
           in: path
@@ -219295,8 +219309,14 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/realtimekit_MuteParticipants'
-        4XX:
-          $ref: '#/components/responses/realtimekit_GenericError'
+        '400':
+          $ref: '#/components/responses/realtimekit_MuteParticipantsBadRequest'
+        '401':
+          $ref: '#/components/responses/realtimekit_ActiveSessionActionUnauthorized'
+        '404':
+          $ref: '#/components/responses/realtimekit_ActiveSessionActionNotFound'
+        '500':
+          $ref: '#/components/responses/realtimekit_ActiveSessionActionInternalError'
       security:
         - api_token: []
         - api_email: []
@@ -219319,7 +219339,7 @@ paths:
     post:
       operationId: MuteAllParticipants
       summary: Mute all participants
-      description: Mutes all participants of an active session for the given meeting ID.
+      description: Mutes the microphone of all participants of an active session for the given meeting ID.
       parameters:
         - name: account_id
           in: path
@@ -219337,8 +219357,14 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/realtimekit_MuteAllParticipants'
-        4XX:
-          $ref: '#/components/responses/realtimekit_GenericError'
+        '400':
+          $ref: '#/components/responses/realtimekit_MuteAllParticipantsBadRequest'
+        '401':
+          $ref: '#/components/responses/realtimekit_ActiveSessionActionUnauthorized'
+        '404':
+          $ref: '#/components/responses/realtimekit_ActiveSessionActionNotFound'
+        '500':
+          $ref: '#/components/responses/realtimekit_ActiveSessionActionInternalError'
       security:
         - api_token: []
         - api_email: []
@@ -219415,6 +219441,7 @@ paths:
           description: Number of results per page.
           schema:
             type: integer
+            minimum: 1
         - name: meeting_id
           in: path
           description: ID of the meeting
@@ -219902,10 +219929,10 @@ paths:
         - Realtime
       x-fern-availability: beta
       x-fern-sdk-group-name: realtime.kit.meetings.participants
-      x-fern-sdk-method-name: update
+      x-fern-sdk-method-name: edit
       x-forge-availability: beta
       x-forge-group-name: realtime.kit.meetings.participants
-      x-forge-method-name: update
+      x-forge-method-name: edit
       x-forge-oauth-scopes:
         - realtime.write
         - realtime.admin
@@ -220289,10 +220316,10 @@ paths:
         - Realtime
       x-fern-availability: beta
       x-fern-sdk-group-name: realtime.kit.presets
-      x-fern-sdk-method-name: update
+      x-fern-sdk-method-name: edit
       x-forge-availability: beta
       x-forge-group-name: realtime.kit.presets
-      x-forge-method-name: update
+      x-forge-method-name: edit
       x-forge-oauth-scopes:
         - realtime.write
         - realtime.admin
@@ -220496,7 +220523,10 @@ paths:
     put:
       operationId: pause_resume_stop_recording
       summary: Pause/Resume/Stop recording
-      description: Pause/Resume/Stop a given recording ID.
+      description: |-
+        Pause/Resume/Stop a given recording ID.
+
+        **Note:** A recording can stay paused for a maximum of 12 hours. After that, it automatically resumes and finishes.
       parameters:
         - name: account_id
           in: path
@@ -220840,6 +220870,7 @@ paths:
           description: Number of results per page.
           schema:
             type: number
+            minimum: 1
         - name: page_no
           in: query
           description: The page number from which you want your page search results to be displayed.
@@ -221168,7 +221199,7 @@ paths:
     get:
       operationId: GetSessionTranscript
       summary: Fetch the complete transcript for a session
-      description: Returns a URL to download the transcript for the session ID in CSV format.
+      description: Returns a URL to download the transcript for the session ID in the requested format.
       parameters:
         - name: account_id
           in: path
@@ -221642,10 +221673,10 @@ paths:
         - Realtime
       x-fern-availability: beta
       x-fern-sdk-group-name: realtime.kit.webhooks
-      x-fern-sdk-method-name: update
+      x-fern-sdk-method-name: edit
       x-forge-availability: beta
       x-forge-group-name: realtime.kit.webhooks
-      x-forge-method-name: update
+      x-forge-method-name: edit
       x-forge-oauth-scopes:
         - realtime.write
         - realtime.admin
@@ -222113,10 +222144,10 @@ paths:
         - Realtime
       x-fern-availability: beta
       x-fern-sdk-group-name: realtime.kit.apps
-      x-fern-sdk-method-name: update
+      x-fern-sdk-method-name: edit
       x-forge-availability: beta
       x-forge-group-name: realtime.kit.apps
-      x-forge-method-name: update
+      x-forge-method-name: edit
       x-forge-oauth-scopes:
         - realtime.write
         - realtime.admin
@@ -523098,6 +523129,15 @@ components:
         transcription:
           $ref: '#/components/schemas/realtimekit_TranscriptionConfig'
       title: AIConfig
+    realtimekit_ActionParticipant:
+      type: object
+      properties:
+        id:
+          description: ID of the participant
+          type: string
+      required:
+        - id
+      title: ActionParticipant
     realtimekit_ActiveSession:
       type: object
       properties:
@@ -523115,6 +523155,7 @@ components:
         ended_at:
           description: timestamp when session ended
           type: string
+          nullable: true
         id:
           description: ID of the session
           type: string
@@ -523786,8 +523827,8 @@ components:
       type: object
       properties:
         enabled:
+          description: Omit to keep the current value.
           type: boolean
-          default: true
         events:
           description: Events that the webhook will get triggered by
           type: array
@@ -524780,30 +524821,6 @@ components:
         video_config:
           $ref: '#/components/schemas/realtimekit_VideoConfig'
       title: RecordingConfig
-    realtimekit_SessionParticipant:
-      type: object
-      properties:
-        created_at:
-          type: string
-        email:
-          description: Email of the session participant.
-          type: string
-        id:
-          description: ID of the session participant
-          type: string
-        name:
-          description: Name of the session participant.
-          type: string
-        picture:
-          description: A URL pointing to a picture of the participant.
-          type: string
-        updated_at:
-          type: string
-      required:
-        - id
-        - created_at
-        - updated_at
-      title: SessionParticipant
     realtimekit_StorageConfig:
       type: object
       properties:
@@ -524852,7 +524869,7 @@ components:
           type: string
           example: us-east-1
         secret:
-          description: Secret key of the storage medium. Similar to `access_key`, it is only writeable by clients, not readable.
+          description: Secret key of the storage medium. Required for `aws` storage. Similar to `access_key`, it is only writeable by clients, not readable.
           type: string
           writeOnly: true
           x-forge-sensitive: true
@@ -524880,9 +524897,22 @@ components:
               minLength: 1
             region:
               minLength: 1
+            secret:
+              minLength: 1
             type:
               enum:
                 - aws
+          required:
+            - access_key
+            - secret
+            - region
+        - properties:
+            access_key:
+              minLength: 1
+            region:
+              minLength: 1
+            type:
+              enum:
                 - azure
                 - digitalocean
           required:
@@ -524969,7 +524999,7 @@ components:
     realtimekit_Transcript:
       type: object
       properties:
-        sessionId:
+        session_id:
           type: string
         transcript_download_url:
           description: URL where the transcript can be downloaded
@@ -524978,7 +525008,7 @@ components:
           description: Time when the download URL will expire
           type: string
       required:
-        - sessionId
+        - session_id
         - transcript_download_url
         - transcript_download_url_expiry
     realtimekit_TranscriptSummary:
@@ -569546,7 +569576,7 @@ components:
         data:
           associated_id: 6bf2b8be-04dd-4191-b602-1128921a306b
           created_at: 2022-01-12T14:21:34.398Z
-          ended_at: 'null'
+          ended_at: null
           id: 813432c7-3c5a-45e2-9acf-eef7061c7584
           live_participants: 1
           max_concurrent_participants: 2
@@ -569558,6 +569588,18 @@ components:
           type: meeting
           updated_at: 2022-01-12T14:26:00.784Z
         success: true
+    realtimekit_InvalidMeetingIdResponse:
+      summary: Meeting ID is not a valid UUID
+      value:
+        error:
+          code: 400
+          details:
+            - code: invalid_format
+              field: meeting_id
+              location: path
+              message: Invalid GUID
+          message: Request validation failed
+        success: false
     realtimekit_ParticipantListSuccess:
       summary: success response for session's participants list
       value:
@@ -569632,13 +569674,6 @@ components:
               updated_at: 2023-02-01T10:57:32.431Z
               user_id: 85e7f0fd-7c16-45e9-9d68-f17ef007c4eb
         success: true
-    realtimekit_ParticipantNotFoundResponse:
-      summary: Participant Not Found
-      value:
-        error:
-          code: 404
-          message: No user found with id 813432c7-3c5a-45e2-9acf-eef7061c7584
-        success: false
   headers:
     billing-spend-policies_ETag:
       description: The policy `version`, quoted, for use in `If-Match`.
@@ -570096,23 +570131,16 @@ components:
           schema:
             type: object
             properties:
-              custom_participant_ids:
-                type: array
-                items:
-                  type: string
-                minItems: 1
               participant_ids:
+                description: IDs of the participants to kick, as returned when the participants were added to the meeting.
                 type: array
                 items:
                   format: uuid
                   type: string
                 minItems: 1
-            anyOf:
-              - required:
-                  - participant_ids
-              - required:
-                  - custom_participant_ids
-      description: Request body for kicking participants from an active session. At least one of `participant_ids` or `custom_participant_ids` must contain a value.
+            required:
+              - participant_ids
+      description: Request body for kicking participants from an active session.
       required: true
     realtimekit_MuteAllParticipantsBody:
       content:
@@ -570121,33 +570149,26 @@ components:
             type: object
             properties:
               allow_unmute:
-                description: if false, participants won't be able to unmute themselves after they are muted
+                description: This field is ignored. Muted participants can unmute themselves if their preset allows them to produce audio.
                 type: boolean
                 default: false
+                deprecated: true
       description: Request body for muting all participants in an active session.
-      required: true
     realtimekit_MuteParticipantsBody:
       content:
         application/json:
           schema:
             type: object
             properties:
-              custom_participant_ids:
-                type: array
-                items:
-                  type: string
-                minItems: 1
               participant_ids:
+                description: IDs of the participants to mute, as returned when the participants were added to the meeting.
                 type: array
                 items:
                   type: string
                 minItems: 1
-            anyOf:
-              - required:
-                  - participant_ids
-              - required:
-                  - custom_participant_ids
-      description: Request body for muting participants in an active session. At least one of `participant_ids` or `custom_participant_ids` must contain a value.
+            required:
+              - participant_ids
+      description: Request body for muting participants in an active session.
       required: true
     realtimekit_RefreshParticipantTokenBody:
       content:
@@ -571986,6 +572007,64 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/posture-api_api-response-common'
+    realtimekit_ActiveSessionActionBadRequest:
+      description: The meeting ID is not a valid UUID.
+      content:
+        application/json:
+          examples:
+            invalidMeetingId:
+              $ref: '#/components/examples/realtimekit_InvalidMeetingIdResponse'
+          schema:
+            $ref: '#/components/schemas/realtimekit_GenericErrorResponse'
+    realtimekit_ActiveSessionActionInternalError:
+      description: The action could not be applied to the active session, for example because its room no longer exists.
+      content:
+        application/json:
+          examples:
+            internalError:
+              summary: Internal server error
+              value:
+                error:
+                  code: 500
+                  message: Internal Server Error
+                success: false
+          schema:
+            $ref: '#/components/schemas/realtimekit_GenericErrorResponse'
+    realtimekit_ActiveSessionActionNotFound:
+      description: The meeting does not exist in the app, or the meeting has no active session.
+      content:
+        application/json:
+          examples:
+            activeSessionNotFound:
+              summary: No active session
+              value:
+                error:
+                  code: 404
+                  message: 'No active session found for meeting id: 6bf2b8be-04dd-4191-b602-1128921a306b'
+                success: false
+            meetingNotFound:
+              summary: Meeting not found
+              value:
+                error:
+                  code: 404
+                  message: Meeting 6bf2b8be-04dd-4191-b602-1128921a306b not found for organization 4f6c1a8e-2b39-4f6b-9c2d-7a1e5b3c9d10
+                success: false
+          schema:
+            $ref: '#/components/schemas/realtimekit_GenericErrorResponse'
+    realtimekit_ActiveSessionActionUnauthorized:
+      description: The app does not exist in the account.
+      content:
+        application/json:
+          examples:
+            appNotFound:
+              summary: App not found
+              value:
+                error:
+                  code: 401
+                  message: app not found
+                success: false
+          schema:
+            $ref: '#/components/schemas/realtimekit_GenericErrorResponse'
     realtimekit_AddParticipant:
       description: Success response
       content:
@@ -572383,6 +572462,11 @@ components:
       description: Kick all participants from a meeting
       content:
         application/json:
+          example:
+            data:
+              action: kick-all
+              kicked_participants_count: 3
+            success: true
           schema:
             type: object
             properties:
@@ -572391,7 +572475,10 @@ components:
                 properties:
                   action:
                     type: string
+                    enum:
+                      - kick-all
                   kicked_participants_count:
+                    description: Number of connections (peers) that were in the session when it was ended.
                     type: number
               success:
                 type: boolean
@@ -572399,6 +572486,12 @@ components:
       description: Kick participants success response
       content:
         application/json:
+          example:
+            data:
+              action: kick
+              participants:
+                - id: 005f4e0c-4d08-4d4e-a391-a76be75cd296
+            success: true
           schema:
             type: object
             properties:
@@ -572407,16 +572500,57 @@ components:
                 properties:
                   action:
                     type: string
+                    enum:
+                      - kick
                   participants:
+                    description: Participants the kick was requested for.
                     type: array
                     items:
-                      $ref: '#/components/schemas/realtimekit_SessionParticipant'
+                      $ref: '#/components/schemas/realtimekit_ActionParticipant'
               success:
                 type: boolean
+    realtimekit_KickParticipantsBadRequest:
+      description: The meeting ID is not a valid UUID, or `participant_ids` is missing, empty or contains an invalid UUID.
+      content:
+        application/json:
+          examples:
+            invalidMeetingId:
+              $ref: '#/components/examples/realtimekit_InvalidMeetingIdResponse'
+            invalidParticipantId:
+              summary: participant_ids contains an invalid UUID
+              value:
+                error:
+                  code: 400
+                  details:
+                    - code: invalid_format
+                      field: participant_ids.0
+                      location: body
+                      message: Invalid GUID
+                  message: Request validation failed
+                success: false
+            missingParticipantIds:
+              summary: participant_ids missing or empty
+              value:
+                error:
+                  code: 400
+                  details:
+                    - code: custom
+                      field: ''
+                      location: body
+                      message: participant_ids or custom_participant_ids is required
+                  message: Request validation failed
+                success: false
+          schema:
+            $ref: '#/components/schemas/realtimekit_GenericErrorResponse'
     realtimekit_MuteAllParticipants:
       description: Mute all participants of a meeting
       content:
         application/json:
+          example:
+            data:
+              action: mute-all
+              muted_participants_count: 2
+            success: true
           schema:
             type: object
             properties:
@@ -572425,14 +572559,44 @@ components:
                 properties:
                   action:
                     type: string
+                    enum:
+                      - mute-all
                   muted_participants_count:
+                    description: Number of connections (peers) whose microphone was unmuted and has been muted by this request.
                     type: number
               success:
                 type: boolean
+    realtimekit_MuteAllParticipantsBadRequest:
+      description: The meeting ID is not a valid UUID, or `allow_unmute` is not a boolean.
+      content:
+        application/json:
+          examples:
+            invalidAllowUnmute:
+              summary: allow_unmute is not a boolean
+              value:
+                error:
+                  code: 400
+                  details:
+                    - code: invalid_type
+                      field: allow_unmute
+                      location: body
+                      message: 'Invalid input: expected boolean, received string'
+                  message: Request validation failed
+                success: false
+            invalidMeetingId:
+              $ref: '#/components/examples/realtimekit_InvalidMeetingIdResponse'
+          schema:
+            $ref: '#/components/schemas/realtimekit_GenericErrorResponse'
     realtimekit_MuteParticipants:
       description: Mute one or more participants of a meeting
       content:
         application/json:
+          example:
+            data:
+              action: mute
+              participants:
+                - id: 005f4e0c-4d08-4d4e-a391-a76be75cd296
+            success: true
           schema:
             type: object
             properties:
@@ -572441,19 +572605,41 @@ components:
                 properties:
                   action:
                     type: string
+                    enum:
+                      - mute
                   participants:
+                    description: Participants the mute was requested for.
                     type: array
                     items:
-                      $ref: '#/components/schemas/realtimekit_SessionParticipant'
+                      $ref: '#/components/schemas/realtimekit_ActionParticipant'
               success:
                 type: boolean
-    realtimekit_ParticipantNotFound:
-      description: No participant found for the given `participant_id` or `custom_participant_id`
+    realtimekit_MuteParticipantsBadRequest:
+      description: The meeting ID is not a valid UUID, or `participant_ids` is missing, empty or not an array of strings.
       content:
         application/json:
           examples:
-            participantNotFound:
-              $ref: '#/components/examples/realtimekit_ParticipantNotFoundResponse'
+            invalidMeetingId:
+              $ref: '#/components/examples/realtimekit_InvalidMeetingIdResponse'
+            invalidParticipantIds:
+              summary: participant_ids is not an array
+              value:
+                error:
+                  code: 400
+                  details:
+                    - code: invalid_type
+                      field: participant_ids
+                      location: body
+                      message: 'Invalid input: expected array, received string'
+                  message: Request validation failed
+                success: false
+            missingParticipantIds:
+              summary: participant_ids missing or empty
+              value:
+                error:
+                  code: 400
+                  message: participant_ids is required
+                success: false
           schema:
             $ref: '#/components/schemas/realtimekit_GenericErrorResponse'
     realtimekit_RegenToken:
