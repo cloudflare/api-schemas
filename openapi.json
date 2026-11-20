@@ -321432,7 +321432,7 @@
       "post": {
         "operationId": "stream-videos-upload-videos-via-direct-upload-ur-ls",
         "summary": "Upload videos via direct upload URLs",
-        "description": "Creates a direct upload endpoint that allows an end-user to upload a video without an API key.",
+        "description": "Creates a direct upload endpoint that allows an end-user to upload a video without an API key. `encodingMode` is fixed when the upload URL is created and cannot be changed when the generated URL is used.",
         "parameters": [
           {
             "name": "account_id",
@@ -736269,6 +736269,9 @@
           "creator": {
             "$ref": "#/components/schemas/stream_creator"
           },
+          "encodingMode": {
+            "$ref": "#/components/schemas/stream_encodingMode"
+          },
           "expiry": {
             "description": "The date and time after upload when videos will not be accepted.",
             "type": "string",
@@ -736446,6 +736449,16 @@
             "$ref": "#/components/schemas/stream_audio_label"
           }
         }
+      },
+      "stream_encodingMode": {
+        "description": "Specifies whether to generate a preview rendition before the standard encoding ladder. `default` generates only the standard encoding ladder. `previewFirst` generates a preview rendition first.",
+        "type": "string",
+        "default": "default",
+        "enum": [
+          "default",
+          "previewFirst"
+        ],
+        "x-auditable": true
       },
       "stream_end": {
         "description": "Lists videos created before the specified date.",
@@ -737351,6 +737364,25 @@
         "example": "https://customer-m033z5x00ks6nunl.cloudflarestream.com/ea95132c15732412d22c1476fa83f27a/watch",
         "x-auditable": true
       },
+      "stream_previewStatus": {
+        "description": "Reports the current status of preview generation. This value is `null` when `encodingMode` is `default`.",
+        "type": "string",
+        "enum": [
+          "pending",
+          "ready",
+          "error",
+          "not-eligible-container",
+          "not-eligible-video-codec",
+          "not-eligible-audio-codec",
+          "not-eligible-resolution",
+          "not-eligible-bitrate",
+          "not-eligible-gop",
+          "not-eligible-pixel-format",
+          "not-eligible-edit-list"
+        ],
+        "nullable": true,
+        "x-auditable": true
+      },
       "stream_readyToStream": {
         "description": "Indicates whether the video is playable. The field is empty if the video is not ready for viewing or the live stream is still in progress.",
         "type": "boolean",
@@ -737615,9 +737647,9 @@
         "x-auditable": true
       },
       "stream_upload_metadata": {
-        "description": "Comma-separated key-value pairs following the TUS protocol specification. Values are Base-64 encoded.\nSupported keys: `name`, `requiresignedurls`, `allowedorigins`, `thumbnailtimestamppct`, `watermark`, `scheduleddeletion`, `maxdurationseconds`.",
+        "description": "Comma-separated key-value pairs following the TUS protocol specification. Values are Base-64 encoded.\nSupported keys: `name`, `requiresignedurls`, `allowedorigins`, `thumbnailtimestamppct`, `watermark`, `scheduleddeletion`, `maxdurationseconds`, `encodingmode`.\n`encodingmode` accepts `default` or `previewFirst`.",
         "type": "string",
-        "example": "name aGVsbG8gd29ybGQ=, requiresignedurls, allowedorigins ZXhhbXBsZS5jb20sdGVzdC5jb20=",
+        "example": "name aGVsbG8gd29ybGQ=, requiresignedurls, allowedorigins ZXhhbXBsZS5jb20sdGVzdC5jb20=, encodingmode cHJldmlld0ZpcnN0",
         "x-auditable": true
       },
       "stream_uploaded": {
@@ -737693,6 +737725,9 @@
           },
           "creator": {
             "$ref": "#/components/schemas/stream_creator"
+          },
+          "encodingMode": {
+            "$ref": "#/components/schemas/stream_encodingMode"
           },
           "input": {
             "description": "A video's URL. The server must be publicly routable and support `HTTP HEAD` requests and `HTTP GET` range requests. The server should respond to `HTTP HEAD` requests with a `content-range` header that includes the size of the file. This is the preferred field over `url`.",
@@ -737872,6 +737907,9 @@
           "duration": {
             "$ref": "#/components/schemas/stream_duration"
           },
+          "encodingMode": {
+            "$ref": "#/components/schemas/stream_encodingMode"
+          },
           "input": {
             "$ref": "#/components/schemas/stream_input"
           },
@@ -737897,6 +737935,9 @@
           },
           "preview": {
             "$ref": "#/components/schemas/stream_preview"
+          },
+          "previewStatus": {
+            "$ref": "#/components/schemas/stream_previewStatus"
           },
           "publicDetails": {
             "description": "Public details for the video including title, share link, channel link, and logo.",
