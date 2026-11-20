@@ -255614,7 +255614,7 @@ paths:
               type: object
               properties:
                 name:
-                  description: The name of the dispatch namespace.
+                  description: The name of the dispatch namespace. If set, must match the namespace's current name. Dispatch namespaces cannot be renamed.
                   type: string
                   example: my-dispatch-namespace
                   x-auditable: true
@@ -255680,7 +255680,7 @@ paths:
               type: object
               properties:
                 name:
-                  description: The name of the dispatch namespace.
+                  description: The name of the dispatch namespace. Must match the namespace's current name. Dispatch namespaces cannot be renamed.
                   type: string
                   example: my-dispatch-namespace
                   x-auditable: true
@@ -270715,6 +270715,11 @@ paths:
         - workers-scripts.write
         - workers-scripts.edit
         - workers-scripts.admin
+      x-forge-params:
+        code_update_strategy.max_delay:
+          description: Maximum number of seconds, up to 86400, that an active Durable Object can keep running its current code before it resets and adopts the new code. Only valid with `deferred`. When omitted, the default maximum delay applies.
+        code_update_strategy.mode:
+          description: How to apply Durable Object code updates. `immediate` resets active objects and applies the new code right away. `deferred` lets active objects keep running their current code until they hibernate or the maximum delay passes.
   /accounts/{account_id}/workers/scripts/{script_name}/deployments/{deployment_id}:
     delete:
       operationId: worker-deployments-delete-deployment
@@ -559895,6 +559900,8 @@ components:
               type: object
           writeOnly: true
           x-auditable: true
+          x-fern-property-name: durable-objects-code-update
+          x-forge-property-name: durable-objects-code-update
         created_on:
           type: string
           format: date-time
