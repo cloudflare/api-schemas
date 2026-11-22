@@ -666551,7 +666551,7 @@
             }
           },
           "x_BillableMetricId": {
-            "description": "The unique identifier for the billable metric in the Cloudflare catalog. Cloudflare extension; replaces FOCUS SkuId.",
+            "description": "The unique identifier for the billable metric in the Cloudflare catalog. For cost billed under a since-archived billable metric this is the metric's catalog public id (a UUID) rather than its usage metric name, so it stays separate from the live metric that replaced it. Cloudflare extension; replaces FOCUS SkuId.",
             "type": "string",
             "example": "workers_standard_requests"
           },
@@ -667032,7 +667032,7 @@
         "type": "object",
         "properties": {
           "BillableMetricIds": {
-            "description": "Restrict results to rows whose `x_BillableMetricId` matches one of these billable metric ids (e.g. `workers_standard_requests`). Values must be unique.",
+            "description": "Restrict results to rows whose `x_BillableMetricId` matches one of these billable metric ids (e.g. `workers_standard_requests`). Values must be unique. Cost billed under an archived billable metric carries that metric's catalog public id as `x_BillableMetricId` and is never matched by this filter; omit the filter to include it.",
             "type": "array",
             "items": {
               "maxLength": 128,
