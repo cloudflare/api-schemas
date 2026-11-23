@@ -274919,6 +274919,91 @@ paths:
         - workers-scripts.metadata_read
         - workers-scripts.edit
         - workers-scripts.admin
+  /accounts/{account_id}/workers/workers/{worker_id}/previews/{preview_id}/deployments/{deployment_id}/profile:
+    post:
+      operationId: profileWorkerPreviewDeployment
+      summary: Profile Preview Deployment
+      description: Captures a CPU or heap profile from a recently active isolate running the specified Preview deployment. This endpoint requires the Worker Preview profiling feature to be enabled for the account. If the deployment's bundle is identical to another deployed Worker version in the account, the profile may be captured from an isolate running that version.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/workers_identifier'
+        - name: worker_id
+          in: path
+          required: true
+          schema:
+            description: Identifies the Worker by ID or name.
+            type: string
+        - name: preview_id
+          in: path
+          required: true
+          schema:
+            description: Identifier for the Preview, which can be ID, slug, or URL-encoded name.
+            type: string
+        - name: deployment_id
+          in: path
+          required: true
+          schema:
+            description: Identifier for the deployment, which can be a UUID, a UUID prefix (minimum length 8), or the literal "latest" to select the most recently created deployment.
+            type: string
+      requestBody:
+        $ref: '#/components/requestBodies/workers_WorkerProfileRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/workers_WorkerProfile'
+        '400':
+          $ref: '#/components/responses/workers_WorkerProfileBadRequest'
+        '401':
+          $ref: '#/components/responses/workers_ErrorAuth'
+        '403':
+          $ref: '#/components/responses/workers_ErrorAuth'
+        '404':
+          description: The Worker, Preview, deployment, a recent execution location, or a loaded isolate was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/workers_api-response-common-failure'
+        '429':
+          description: The profiling request rate limit was exceeded.
+          headers:
+            Retry-After:
+              schema:
+                type: integer
+                minimum: 0
+            X-RateLimit-Limit:
+              schema:
+                type: integer
+                minimum: 0
+            X-RateLimit-Remaining:
+              schema:
+                type: integer
+                minimum: 0
+            X-RateLimit-Reset:
+              schema:
+                type: integer
+                minimum: 0
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/workers_api-response-common-failure'
+        '500':
+          $ref: '#/components/responses/workers_ErrorInternalServer'
+        '503':
+          $ref: '#/components/responses/workers_WorkerProfileUnavailable'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Worker Profiling
+      x-fern-availability: alpha
+      x-fern-sdk-group-name: workers.previews.deployments
+      x-fern-sdk-method-name: profile
+      x-forge-availability: alpha
+      x-forge-group-name: workers.previews.deployments
+      x-forge-method-name: profile
   /accounts/{account_id}/workers/workers/{worker_id}/previews/{preview_id}/deployments/latest:
     patch:
       operationId: workers.previews.deployments.patchLatest
