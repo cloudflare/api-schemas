@@ -185074,6 +185074,101 @@ paths:
         - images.metadata_read
         - images.read
         - images.write
+  /accounts/{account_id}/images/v1/config:
+    get:
+      operationId: cloudflare-images-config-get
+      summary: Get Images account configuration
+      description: Get account-level Cloudflare Images settings, such as flexible variants and Content Credentials preservation. Settings that are disabled may be omitted from the response.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/images_account_identifier'
+      responses:
+        '200':
+          description: Images account configuration response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/images_images_config_response'
+        4XX:
+          description: Images account configuration response failure
+          content:
+            application/json:
+              schema:
+                anyOf:
+                  - $ref: '#/components/schemas/images_images_config_response'
+                  - $ref: '#/components/schemas/images_api-response-common-failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Cloudflare Images Config
+      x-api-token-group:
+        - Images Metadata Read
+        - Images Read
+        - Images Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: images.config
+      x-fern-sdk-method-name: get
+      x-forge-availability: generally-available
+      x-forge-group-name: images.config
+      x-forge-method-name: get
+      x-forge-oauth-scopes:
+        - images.metadata_read
+        - images.read
+        - images.write
+    patch:
+      operationId: cloudflare-images-config-edit
+      summary: Update Images account configuration
+      description: Update account-level Cloudflare Images settings. Only the settings included in the request are changed.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/images_account_identifier'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              preserve_content_credentials: true
+            schema:
+              $ref: '#/components/schemas/images_images_config_edit_request'
+      responses:
+        '200':
+          description: Update Images account configuration response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/images_images_config_response'
+        4XX:
+          description: Update Images account configuration response failure
+          content:
+            application/json:
+              schema:
+                anyOf:
+                  - $ref: '#/components/schemas/images_images_config_response'
+                  - $ref: '#/components/schemas/images_api-response-common-failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Cloudflare Images Config
+      x-api-token-group:
+        - Images Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: images.config
+      x-fern-sdk-method-name: edit
+      x-forge-availability: generally-available
+      x-forge-group-name: images.config
+      x-forge-method-name: edit
+      x-forge-oauth-scopes:
+        - images.write
   /accounts/{account_id}/images/v1/direct_upload:
     post:
       operationId: cloudflare-images-create-authenticated-direct-upload-url-v-1
@@ -498563,6 +498658,43 @@ components:
       properties:
         variants:
           $ref: '#/components/schemas/images_image_variant_public_request'
+    images_images_config:
+      description: Account-level Cloudflare Images settings. Settings that are `false` may be omitted from responses; treat an absent setting as `false`.
+      type: object
+      properties:
+        flexible_variants:
+          $ref: '#/components/schemas/images_images_config_flexible_variants'
+        preserve_content_credentials:
+          $ref: '#/components/schemas/images_images_config_preserve_content_credentials'
+    images_images_config_edit_request:
+      description: Settings to change. Settings omitted from the request are left unchanged.
+      type: object
+      properties:
+        flexible_variants:
+          $ref: '#/components/schemas/images_images_config_flexible_variants'
+        preserve_content_credentials:
+          $ref: '#/components/schemas/images_images_config_preserve_content_credentials'
+      additionalProperties: false
+    images_images_config_flexible_variants:
+      description: |
+        Whether flexible variants are enabled. When `true`, hosted images can be transformed with options in the URL (for example `https://imagedelivery.net/<ACCOUNT_HASH>/<IMAGE_ID>/w=400,sharpen=3`) instead of only through named variants. When `false` or absent, only named variants can be requested.
+      type: boolean
+      example: true
+      default: false
+      x-auditable: true
+    images_images_config_preserve_content_credentials:
+      description: Retain C2PA provenance metadata on images delivered from hosted Cloudflare Images. When enabled, Cloudflare keeps any existing Content Credentials in the source image and cryptographically signs the transformations it applies during delivery.
+      type: boolean
+      example: true
+      default: false
+      x-auditable: true
+    images_images_config_response:
+      allOf:
+        - $ref: '#/components/schemas/images_api-response-single'
+        - properties:
+            result:
+              $ref: '#/components/schemas/images_images_config'
+          type: object
     images_images_list_continuation_token:
       description: Continuation token to fetch next page. Passed as a query param when requesting List V2 api endpoint.
       type: string
@@ -540653,6 +540785,8 @@ components:
               $ref: '#/components/schemas/spectrum-config_argo_smart_routing'
             dns:
               $ref: '#/components/schemas/spectrum-config_dns'
+            edge_alpn_protocols:
+              $ref: '#/components/schemas/spectrum-config_edge_alpn_protocols'
             edge_ips:
               $ref: '#/components/schemas/spectrum-config_edge_ips'
             ip_firewall:
@@ -540792,6 +540926,18 @@ components:
       enum:
         - CNAME
         - ADDRESS
+    spectrum-config_edge_alpn_protocols:
+      description: |-
+        ALPN protocol IDs the edge offers on client TLS connections, in preference order, for example `["h2"]` for gRPC or `["postgresql"]` for PostgreSQL direct TLS. When set, clients that offer none of these protocols, or no ALPN at all, are disconnected. Empty means no ALPN.
+        Notes: Requires tls "flexible", "full" or "strict", and is not available with traffic_type "ftp". IDs are case-sensitive and unique, each 1 to 255 bytes; the list encodes to at most 65535 bytes, counting each ID plus one length byte.
+      type: array
+      items:
+        maxLength: 255
+        minLength: 1
+        type: string
+      example:
+        - h2
+      uniqueItems: true
     spectrum-config_edge_ips:
       description: The anycast edge IP configuration for the hostname of this application.
       default:
@@ -575623,6 +575769,8 @@ x-forge-commands:
   images:
     description: Store, resize, and deliver optimized images globally - variants, signing keys, and direct uploads
     groups:
+      config:
+        description: Account-level Cloudflare Images settings
       flows:
         description: Zone-level transformation flows that control how images are resized and optimized on delivery
       import:
