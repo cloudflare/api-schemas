@@ -229270,6 +229270,67 @@ paths:
       x-forge-availability: generally-available
       x-forge-group-name: accounts.applications
       x-forge-method-name: update
+  /accounts/{account_id}/resource-library/applications/{id}/references:
+    get:
+      operationId: getResourceLibraryApplicationReferences
+      summary: Get application references
+      description: List the resources in the account that reference a custom application, such as Gateway rules. This is the same list a delete of the application returns when it is rejected. A delete checks the references again, so the list can change before the delete runs.
+      parameters:
+        - name: account_id
+          in: path
+          description: Account ID.
+          required: true
+          schema:
+            type: string
+          example: 023e105f4ecef8ad9ca31a8372d0c353
+        - name: id
+          in: path
+          description: Application ID of a custom application in the account.
+          required: true
+          schema:
+            $ref: '#/components/schemas/alexandria_application_id'
+      responses:
+        '200':
+          description: The resources that reference the application. The list is empty when nothing references it.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/alexandria_application_references_response'
+        '403':
+          description: The authenticated principal does not have access to the requested account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/alexandria_api_response_common_failure'
+        '502':
+          description: The references could not be listed because a required validation was unavailable.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/alexandria_api_response_common_failure'
+        4XX:
+          description: Get application references response failure. The application ID must be a custom application in the account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/alexandria_api_response_common_failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Applications
+      x-api-token-group:
+        - Zero Trust Read
+        - Zero Trust Write
+        - Resource Library Read
+        - Resource Library Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: accounts.applications
+      x-fern-sdk-method-name: references
+      x-forge-availability: generally-available
+      x-forge-group-name: accounts.applications
+      x-forge-method-name: references
   /accounts/{account_id}/resource-library/applications/lookup:
     post:
       operationId: lookupResourceLibraryApplications
@@ -455476,6 +455537,18 @@ components:
         - id
         - name
         - type
+    alexandria_application_references_response:
+      allOf:
+        - $ref: '#/components/schemas/alexandria_api-response-common'
+        - properties:
+            result:
+              description: The complete list of resources in the account that reference the application.
+              type: array
+              items:
+                $ref: '#/components/schemas/alexandria_application_reference'
+          required:
+            - result
+          type: object
     alexandria_application_score_composition:
       description: Returns the score composition breakdown for the application.
       type: object
