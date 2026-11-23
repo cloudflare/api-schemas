@@ -159922,7 +159922,7 @@ paths:
     get:
       operationId: list-dex-notification-outcomes
       summary: List notification outcomes
-      description: Lists observed device outcomes for a notification sendout. Sampling may omit outcomes; each result includes its sampling interval.
+      description: Lists observed device outcomes for a notification sendout.
       parameters:
         - name: account_id
           in: path
@@ -477103,7 +477103,7 @@ components:
           description: Plain-text notification message.
           type: string
         outcome_counts:
-          description: Weighted delivery outcome counts derived from sampled delivery events.
+          description: Exact delivery outcome counts.
           allOf:
             - $ref: '#/components/schemas/digital-experience-monitoring_notification_outcome_counts'
         recipient_count:
@@ -478193,11 +478193,6 @@ components:
         registration_id:
           description: Registration ID of the device that produced the outcome.
           type: string
-        sample_interval:
-          description: Sampling interval for this event. Values above one indicate a sampled result.
-          type: integer
-          format: int64
-          minimum: 1
         status:
           description: Observed notification delivery status.
           type: string
@@ -478214,7 +478209,6 @@ components:
         - status
         - timestamp
         - duration_ms
-        - sample_interval
     digital-experience-monitoring_notification_outcome_counts:
       type: object
       properties:
@@ -478223,9 +478217,6 @@ components:
           type: integer
           format: int64
           minimum: 0
-        estimated:
-          description: Whether these weighted counts may be affected by equitable sampling before full-resolution storage.
-          type: boolean
         expired:
           description: Number of expired outcomes.
           type: integer
@@ -478240,7 +478231,6 @@ components:
         - delivered
         - failed
         - expired
-        - estimated
     digital-experience-monitoring_page:
       description: Page number of paginated results.
       type: number
