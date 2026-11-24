@@ -202935,7 +202935,7 @@
       "delete": {
         "operationId": "cws-delete-policy",
         "summary": "Delete a policy",
-        "description": "Deletes the policy and cascades its policy-set membership rows. The policy sets remain.",
+        "description": "Deletes the policy when no policy set references it. If referenced, the request is rejected with the policy set IDs and names; detach the policy first.",
         "parameters": [
           {
             "name": "account_id",
@@ -203442,7 +203442,7 @@
       "delete": {
         "operationId": "cws-delete-policy-set",
         "summary": "Delete a policy set",
-        "description": "Deletes the policy set and cascades its deployment attachment and policy and workload membership rows. The referenced deployments, policies, and workloads remain.",
+        "description": "Deletes the policy set if it is not attached to a deployment, then removes its policy and workload membership rows. When deployments still reference it, the error identifies each deployment by ID and name so those relationships can be removed first. Referenced policies and workloads remain.",
         "parameters": [
           {
             "name": "account_id",
@@ -205573,10 +205573,10 @@
         ],
         "x-fern-availability": "beta",
         "x-fern-sdk-group-name": "zero-trust.cws.tenant-structures.nodes",
-        "x-fern-sdk-method-name": "batch",
+        "x-fern-sdk-method-name": "bulk-apply",
         "x-forge-availability": "beta",
         "x-forge-group-name": "zero-trust.cws.tenant-structures.nodes",
-        "x-forge-method-name": "batch",
+        "x-forge-method-name": "bulk-apply",
         "x-forge-require-confirmation": "Apply this tenant node batch?",
         "x-stability": "beta"
       }
@@ -206107,7 +206107,7 @@
       "delete": {
         "operationId": "cws-delete-workload",
         "summary": "Delete a workload",
-        "description": "Deletes the workload if it is not targeted by a policy set.",
+        "description": "Deletes the workload if it is not targeted by a policy set. When policy sets still reference it, the error identifies each policy set by ID and name so those relationships can be removed first.",
         "parameters": [
           {
             "name": "account_id",
@@ -688089,6 +688089,7 @@
             "type": "string",
             "minLength": 1,
             "writeOnly": true,
+            "x-auditable": false,
             "x-forge-sensitive": true,
             "x-sensitive": true,
             "x-stainless-terraform-configurability": "optional"
@@ -688595,6 +688596,19 @@
           "domain",
           "action"
         ]
+      },
+      "cws_ErrorDetails": {
+        "type": "object",
+        "properties": {
+          "references": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/cws_ResourceReference"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
       },
       "cws_ErrorResponse": {
         "type": "object",
@@ -689676,6 +689690,33 @@
           "updated_at"
         ]
       },
+      "cws_ResourceReference": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "resource_type": {
+            "type": "string",
+            "enum": [
+              "deployment",
+              "policy_set",
+              "policy",
+              "rego_module"
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "resource_type",
+          "id",
+          "name"
+        ]
+      },
       "cws_ResponseBasicAuthCredential": {
         "type": "object",
         "properties": {
@@ -689906,6 +689947,9 @@
           "code": {
             "type": "integer",
             "format": "int64"
+          },
+          "details": {
+            "$ref": "#/components/schemas/cws_ErrorDetails"
           },
           "message": {
             "type": "string"
