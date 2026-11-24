@@ -187756,9 +187756,17 @@
             "name": "feed_id",
             "in": "query",
             "schema": {
-              "description": "Feed UUID filter. Omit to include articles from every account feed.",
-              "type": "string",
-              "format": "uuid"
+              "description": "Repeatable feed UUID filter. An article matches any selected feed. Omit to include articles from every account feed.",
+              "type": "array",
+              "items": {
+                "format": "uuid",
+                "type": "string"
+              },
+              "example": [
+                "550e8400-e29b-41d4-a716-446655440000"
+              ],
+              "maxItems": 90,
+              "minItems": 1
             }
           },
           {
@@ -187896,8 +187904,34 @@
             "name": "feed_category",
             "in": "query",
             "schema": {
-              "description": "Exact feed-category filter after trimming. Omit to include every category.",
+              "description": "Exact match on a feed's legacy free-form category after trimming. Omit to include every category; to filter by the categories shown on feeds, use feed_category_id.",
               "type": "string"
+            }
+          },
+          {
+            "name": "feed_category_id",
+            "in": "query",
+            "schema": {
+              "description": "Repeatable feed category UUID filter, using the ids from the feed categories list. An article matches when its feed has any selected category; feeds without a category never match.",
+              "type": "array",
+              "items": {
+                "enum": [
+                  "b12a0fd6-f7b9-5393-9ef3-f888d506c550",
+                  "d5b70eaa-626f-5761-b55b-6d9590df49fb",
+                  "3b572d2b-890d-5286-9433-f18c85079030",
+                  "17f90d3b-37d3-5241-8ad4-7d6abbc2006c",
+                  "c68f28e9-7e8f-5d4b-853b-f3076893a9ee",
+                  "bb0e4a94-38ab-5c14-80a7-28cee9f4b139",
+                  "b1ef66d9-a73c-58dc-b269-22d34dfd11f4",
+                  "ab02a976-0a20-5c76-a553-7f6325afacfe"
+                ],
+                "type": "string"
+              },
+              "example": [
+                "b12a0fd6-f7b9-5393-9ef3-f888d506c550"
+              ],
+              "maxItems": 8,
+              "minItems": 1
             }
           },
           {
@@ -194036,9 +194070,17 @@
             "name": "feed_id",
             "in": "query",
             "schema": {
-              "description": "Optional feed UUID that restricts results to articles from that feed.",
-              "type": "string",
-              "format": "uuid"
+              "description": "Optional repeatable feed UUID filter, up to 40 feeds. Results come only from articles in the selected feeds.",
+              "type": "array",
+              "items": {
+                "format": "uuid",
+                "type": "string"
+              },
+              "example": [
+                "550e8400-e29b-41d4-a716-446655440000"
+              ],
+              "maxItems": 40,
+              "minItems": 1
             }
           }
         ],
@@ -408686,164 +408728,6 @@
         ]
       }
     },
-    "/accounts/{account_id}/zt_risk_scoring/behaviors": {
-      "get": {
-        "operationId": "dlp-risk-score-behaviors-get",
-        "summary": "Get all behaviors and associated configuration",
-        "description": "Retrieves configured risk score behaviors that define how user actions affect their overall risk score.",
-        "parameters": [
-          {
-            "name": "account_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Risk scoring behaviors.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/dlp_api-response-single"
-                    },
-                    {
-                      "properties": {
-                        "result": {
-                          "$ref": "#/components/schemas/dlp_Behaviors"
-                        }
-                      },
-                      "type": "object"
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "4XX": {
-            "description": "Failed to get risk scoring behaviors.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/dlp_api-response-common-failure"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "api_email": [],
-            "api_key": [],
-            "api_token": []
-          }
-        ],
-        "tags": [
-          "Zero Trust Risk Scoring"
-        ],
-        "x-api-token-group": [
-          "Zero Trust Read",
-          "Zero Trust Write"
-        ],
-        "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "zero-trust.risk-scoring.behaviours",
-        "x-fern-sdk-method-name": "get",
-        "x-forge-availability": "generally-available",
-        "x-forge-group-name": "zero-trust.risk-scoring.behaviours",
-        "x-forge-method-name": "get",
-        "x-forge-oauth-scopes": [
-          "teams.read",
-          "teams.write"
-        ]
-      },
-      "put": {
-        "operationId": "dlp-risk-score-behaviors-put",
-        "summary": "Update configuration for risk behaviors",
-        "description": "Updates risk score behavior configurations, defining weights and thresholds for risk calculation.",
-        "parameters": [
-          {
-            "name": "account_id",
-            "in": "path",
-            "description": "Account ID.",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "description": "Behaviors.",
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/dlp_UpdateBehaviors"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Dataset created successfully.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/dlp_api-response-single"
-                    },
-                    {
-                      "properties": {
-                        "result": {
-                          "$ref": "#/components/schemas/dlp_UpdateBehaviors"
-                        }
-                      },
-                      "type": "object"
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "4XX": {
-            "description": "Dataset creation failed.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/dlp_api-response-common-failure"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "api_email": [],
-            "api_key": [],
-            "api_token": []
-          }
-        ],
-        "tags": [
-          "Zero Trust Risk Scoring"
-        ],
-        "x-api-token-group": [
-          "Zero Trust Write"
-        ],
-        "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "zero-trust.risk-scoring.behaviours",
-        "x-fern-sdk-method-name": "update",
-        "x-forge-availability": "generally-available",
-        "x-forge-group-name": "zero-trust.risk-scoring.behaviours",
-        "x-forge-method-name": "update",
-        "x-forge-oauth-scopes": [
-          "teams.write"
-        ]
-      }
-    },
     "/accounts/{account_id}/zt_risk_scoring/integrations": {
       "get": {
         "operationId": "dlp-zt-risk-score-integration-list",
@@ -409335,244 +409219,6 @@
         "x-forge-oauth-scopes": [
           "teams.write"
         ]
-      }
-    },
-    "/accounts/{account_id}/zt_risk_scoring/summary": {
-      "get": {
-        "operationId": "dlp-risk-score-summary-get",
-        "summary": "Get risk score info for all users in the account",
-        "description": "Gets an aggregate summary of risk scores across the account, including distribution and trends.",
-        "parameters": [
-          {
-            "name": "account_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Risk score for all users in the account.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/dlp_api-response-collection"
-                    },
-                    {
-                      "properties": {
-                        "result": {
-                          "$ref": "#/components/schemas/dlp_RiskSummary"
-                        }
-                      },
-                      "type": "object"
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "4XX": {
-            "description": "Failed to get risk scores.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/dlp_api-response-common-failure"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "api_email": [],
-            "api_key": [],
-            "api_token": []
-          }
-        ],
-        "tags": [
-          "Zero Trust Risk Scoring"
-        ],
-        "x-api-token-group": [
-          "Zero Trust: PII Read"
-        ],
-        "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "zero-trust.risk-scoring.summary",
-        "x-fern-sdk-method-name": "get",
-        "x-forge-availability": "generally-available",
-        "x-forge-group-name": "zero-trust.risk-scoring.summary",
-        "x-forge-method-name": "get",
-        "x-forge-oauth-scopes": [
-          "teams-pii.read"
-        ]
-      }
-    },
-    "/accounts/{account_id}/zt_risk_scoring/{user_id}": {
-      "get": {
-        "operationId": "dlp-risk-score-summary-get-for-user",
-        "summary": "Get risk event/score information for a specific user",
-        "description": "Retrieves the detailed risk score breakdown for a specific user, including contributing factors.",
-        "parameters": [
-          {
-            "name": "account_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "user_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Risk events.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/dlp_api-response-collection"
-                    },
-                    {
-                      "properties": {
-                        "result": {
-                          "$ref": "#/components/schemas/dlp_RiskEvents"
-                        }
-                      },
-                      "type": "object"
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "4XX": {
-            "description": "Failed to get risk events.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/dlp_api-response-common-failure"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "api_email": [],
-            "api_key": [],
-            "api_token": []
-          }
-        ],
-        "tags": [
-          "Zero Trust Risk Scoring"
-        ],
-        "x-api-token-group": [
-          "Zero Trust: PII Read"
-        ],
-        "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "zero-trust.risk-scoring",
-        "x-fern-sdk-method-name": "get",
-        "x-forge-availability": "generally-available",
-        "x-forge-group-name": "zero-trust.risk-scoring",
-        "x-forge-method-name": "get",
-        "x-forge-oauth-scopes": [
-          "teams-pii.read"
-        ]
-      }
-    },
-    "/accounts/{account_id}/zt_risk_scoring/{user_id}/reset": {
-      "post": {
-        "operationId": "dlp-risk-score-reset-post",
-        "summary": "Clear the risk score for a particular user",
-        "description": "Resets risk scores for specified users, clearing their accumulated risk history.",
-        "parameters": [
-          {
-            "name": "account_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "user_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Dataset created successfully.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/dlp_api-response-single"
-                    },
-                    {
-                      "properties": {
-                        "result": {
-                          "$ref": "#/components/schemas/dlp_Empty"
-                        }
-                      },
-                      "type": "object"
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "4XX": {
-            "description": "Dataset creation failed.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/dlp_api-response-common-failure"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "api_email": [],
-            "api_key": [],
-            "api_token": []
-          }
-        ],
-        "tags": [
-          "Zero Trust Risk Scoring"
-        ],
-        "x-api-token-group": [
-          "Zero Trust Write"
-        ],
-        "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "zero-trust.risk-scoring",
-        "x-fern-sdk-method-name": "reset",
-        "x-forge-availability": "generally-available",
-        "x-forge-group-name": "zero-trust.risk-scoring",
-        "x-forge-method-name": "reset",
-        "x-forge-oauth-scopes": [
-          "teams.write"
-        ],
-        "x-forge-require-confirmation": "This operation wipes risk-scoring history."
       }
     },
     "/analytics/sql": {
@@ -695195,43 +694841,6 @@
           "type"
         ]
       },
-      "dlp_Behavior": {
-        "type": "object",
-        "properties": {
-          "description": {
-            "type": "string"
-          },
-          "enabled": {
-            "type": "boolean"
-          },
-          "name": {
-            "type": "string"
-          },
-          "risk_level": {
-            "$ref": "#/components/schemas/dlp_RiskLevel"
-          }
-        },
-        "required": [
-          "name",
-          "description",
-          "risk_level",
-          "enabled"
-        ]
-      },
-      "dlp_Behaviors": {
-        "type": "object",
-        "properties": {
-          "behaviors": {
-            "type": "object",
-            "additionalProperties": {
-              "$ref": "#/components/schemas/dlp_Behavior"
-            }
-          }
-        },
-        "required": [
-          "behaviors"
-        ]
-      },
       "dlp_Confidence": {
         "type": "string",
         "enum": [
@@ -698341,76 +697950,6 @@
           "valid"
         ]
       },
-      "dlp_RiskEvent": {
-        "type": "object",
-        "properties": {
-          "event_details": {
-            "type": "object"
-          },
-          "id": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          },
-          "risk_level": {
-            "$ref": "#/components/schemas/dlp_RiskLevel"
-          },
-          "timestamp": {
-            "type": "string",
-            "format": "date-time"
-          }
-        },
-        "required": [
-          "id",
-          "risk_level",
-          "name",
-          "timestamp"
-        ]
-      },
-      "dlp_RiskEvents": {
-        "type": "object",
-        "properties": {
-          "email": {
-            "type": "string"
-          },
-          "events": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/dlp_RiskEvent"
-            }
-          },
-          "last_reset_time": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "name": {
-            "type": "string"
-          },
-          "risk_level": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/dlp_RiskLevel"
-              }
-            ]
-          }
-        },
-        "required": [
-          "name",
-          "email",
-          "events"
-        ]
-      },
-      "dlp_RiskLevel": {
-        "type": "string",
-        "enum": [
-          "info",
-          "low",
-          "medium",
-          "high"
-        ]
-      },
       "dlp_RiskScoreIntegration": {
         "type": "object",
         "properties": {
@@ -698469,20 +698008,6 @@
         "type": "string",
         "enum": [
           "Okta"
-        ]
-      },
-      "dlp_RiskSummary": {
-        "type": "object",
-        "properties": {
-          "users": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/dlp_UserRiskInfo"
-            }
-          }
-        },
-        "required": [
-          "users"
         ]
       },
       "dlp_SensitivityGroup": {
@@ -698746,35 +698271,6 @@
           "auth_requirements"
         ]
       },
-      "dlp_UpdateBehavior": {
-        "type": "object",
-        "properties": {
-          "enabled": {
-            "type": "boolean"
-          },
-          "risk_level": {
-            "$ref": "#/components/schemas/dlp_RiskLevel"
-          }
-        },
-        "required": [
-          "risk_level",
-          "enabled"
-        ]
-      },
-      "dlp_UpdateBehaviors": {
-        "type": "object",
-        "properties": {
-          "behaviors": {
-            "type": "object",
-            "additionalProperties": {
-              "$ref": "#/components/schemas/dlp_UpdateBehavior"
-            }
-          }
-        },
-        "required": [
-          "behaviors"
-        ]
-      },
       "dlp_UpdateDocumentFingerprint": {
         "type": "object",
         "properties": {
@@ -698831,40 +698327,6 @@
         "required": [
           "tenant_url",
           "active"
-        ]
-      },
-      "dlp_UserRiskInfo": {
-        "type": "object",
-        "properties": {
-          "email": {
-            "type": "string"
-          },
-          "event_count": {
-            "type": "integer",
-            "minimum": 0
-          },
-          "last_event": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "max_risk_level": {
-            "$ref": "#/components/schemas/dlp_RiskLevel"
-          },
-          "name": {
-            "type": "string"
-          },
-          "user_id": {
-            "type": "string",
-            "format": "uuid"
-          }
-        },
-        "required": [
-          "user_id",
-          "name",
-          "email",
-          "max_risk_level",
-          "event_count",
-          "last_event"
         ]
       },
       "dlp_Validation": {
@@ -699123,49 +698585,6 @@
         "required": [
           "name",
           "script_tag"
-        ]
-      },
-      "dlp_api-response-collection": {
-        "type": "object",
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/dlp_api-response-common"
-          },
-          {
-            "properties": {
-              "result_info": {
-                "type": "object",
-                "properties": {
-                  "count": {
-                    "description": "Total number of results for the requested service.",
-                    "type": "number",
-                    "example": 1
-                  },
-                  "page": {
-                    "description": "Current page within paginated list of results.",
-                    "type": "number",
-                    "example": 1
-                  },
-                  "per_page": {
-                    "description": "Number of results per page of results.",
-                    "type": "number",
-                    "example": 20
-                  },
-                  "total_count": {
-                    "description": "Total results available without any search parameters.",
-                    "type": "number",
-                    "example": 2000
-                  },
-                  "total_pages": {
-                    "description": "The number of total pages in the entire result set.",
-                    "type": "number",
-                    "example": 100
-                  }
-                }
-              }
-            },
-            "type": "object"
-          }
         ]
       },
       "dlp_api-response-common": {
@@ -832147,20 +831566,11 @@
         "dlp.validators.worker.status": {
           "description": "Data Loss Prevention - retrieve Worker validator status"
         },
-        "risk-scoring": {
-          "description": "User Risk Scoring - retrieve and reset user risk scores"
-        },
-        "risk-scoring.behaviours": {
-          "description": "User Risk Scoring - manage behaviors used to calculate user risk scores"
-        },
         "risk-scoring.integrations": {
           "description": "User Risk Scoring - manage integrations that provide risk score signals"
         },
         "risk-scoring.integrations.references": {
           "description": "User Risk Scoring - retrieve integrations by external reference"
-        },
-        "risk-scoring.summary": {
-          "description": "User Risk Scoring - retrieve account risk score summaries"
         }
       }
     },
