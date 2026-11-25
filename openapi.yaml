@@ -221605,6 +221605,7 @@ paths:
                       stream_key:
                         description: Unique key for accessing each livestream. Empty if the livestream is disabled.
                         type: string
+                        x-auditable: false
                         x-forge-sensitive: true
                         x-sensitive: true
                     required:
@@ -526633,6 +526634,7 @@ components:
         stream_key:
           description: Unique key for accessing each livestream. Empty if the livestream is disabled.
           type: string
+          x-auditable: false
           x-forge-sensitive: true
           x-sensitive: true
         updated_at:
@@ -526782,6 +526784,7 @@ components:
           description: Password for SIP digest authentication. Keep it secret.
           type: string
           readOnly: true
+          x-auditable: false
         sip_uri:
           description: SIP URI to dial. Configure it in your SIP provider or PBX.
           type: string
@@ -527942,8 +527945,12 @@ components:
             Note that this field is not readable by clients, only writeable.
           type: string
           writeOnly: true
+          x-auditable: false
           x-forge-sensitive: true
           x-sensitive: true
+        account_id:
+          description: Cloudflare account ID, a 32-character hexadecimal string. Required for `cloudflare` storage.
+          type: string
         auth_method:
           description: |
             Authentication method used for "sftp" type storage medium
@@ -527961,6 +527968,7 @@ components:
           description: SSH destination server password for SFTP type storage medium when auth_method is "PASSWORD". If auth_method is "KEY", this specifies the password for the ssh private key.
           type: string
           writeOnly: true
+          x-auditable: false
           x-forge-sensitive: true
           x-sensitive: true
         path:
@@ -527973,6 +527981,7 @@ components:
           description: Private key used to login to destination SSH server for SFTP type storage medium, when auth_method used is "KEY"
           type: string
           writeOnly: true
+          x-auditable: false
           x-forge-sensitive: true
           x-sensitive: true
         region:
@@ -527983,6 +527992,7 @@ components:
           description: Secret key of the storage medium. Required for `aws` storage. Similar to `access_key`, it is only writeable by clients, not readable.
           type: string
           writeOnly: true
+          x-auditable: false
           x-forge-sensitive: true
           x-sensitive: true
         type:
@@ -527994,6 +528004,7 @@ components:
             - digitalocean
             - gcs
             - sftp
+            - cloudflare
         username:
           description: SSH destination server username for SFTP type storage medium
           type: string
@@ -528057,6 +528068,15 @@ components:
             - username
             - host
             - port
+        - properties:
+            type:
+              type: string
+              enum:
+                - cloudflare
+          required:
+            - access_key
+            - account_id
+          type: object
       required:
         - type
         - bucket
@@ -573359,6 +573379,7 @@ components:
               token:
                 description: The participant authentication token to revoke.
                 type: string
+                x-auditable: false
                 x-forge-sensitive: true
                 x-sensitive: true
             required:
@@ -575246,6 +575267,7 @@ components:
                           token:
                             description: The participant's auth token that can be used for joining a meeting from the client side.
                             type: string
+                            x-auditable: false
                             x-forge-sensitive: true
                             x-sensitive: true
                         required:
@@ -575822,6 +575844,7 @@ components:
                       token:
                         description: Regenerated participant's authentication token.
                         type: string
+                        x-auditable: false
                         x-forge-sensitive: true
                         x-sensitive: true
                     required:
@@ -575845,6 +575868,7 @@ components:
                       token:
                         description: The revoked participant authentication token.
                         type: string
+                        x-auditable: false
                         x-forge-sensitive: true
                         x-sensitive: true
                     required:
