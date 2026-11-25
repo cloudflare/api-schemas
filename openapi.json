@@ -291376,6 +291376,313 @@
         ]
       }
     },
+    "/accounts/{account_id}/networkquality/settings": {
+      "get": {
+        "operationId": "network-quality-get-settings",
+        "summary": "Get account Network Quality Test settings",
+        "description": "Returns Network Quality Test settings for an account.",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "description": "Cloudflare account identifier.",
+            "required": true,
+            "schema": {
+              "description": "Cloudflare account identifier.",
+              "type": "string",
+              "example": "0123456789abcdef0123456789abcdef",
+              "pattern": "^[0-9a-f]{32}$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Current settings",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/networkquality_SettingsSuccess"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Account is not entitled to Network Quality Test",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/networkquality_ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Account access could not be verified",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/networkquality_ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Settings"
+        ],
+        "x-api-token-group": [
+          "Network Quality Read",
+          "Network Quality Write"
+        ],
+        "x-cfPermissionsRequired": {
+          "enum": [
+            "com.cloudflare.api.account.networkquality.read"
+          ]
+        },
+        "x-fern-availability": "beta",
+        "x-fern-sdk-group-name": "network-quality.settings",
+        "x-fern-sdk-method-name": "get",
+        "x-forge-availability": "beta",
+        "x-forge-group-name": "network-quality.settings",
+        "x-forge-method-name": "get",
+        "x-forge-oauth-scopes": [
+          "cfspeed.read",
+          "cfspeed.write"
+        ],
+        "x-stability": "beta"
+      },
+      "put": {
+        "operationId": "network-quality-update-settings",
+        "summary": "Update account Network Quality Test settings",
+        "description": "Updates Network Quality Test settings for an account.",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "description": "Cloudflare account identifier.",
+            "required": true,
+            "schema": {
+              "description": "Cloudflare account identifier.",
+              "type": "string",
+              "example": "0123456789abcdef0123456789abcdef",
+              "pattern": "^[0-9a-f]{32}$"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/networkquality_SettingsUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated settings",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/networkquality_SettingsSuccess"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request body",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/networkquality_ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Account is not entitled to Network Quality Test",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/networkquality_ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Account access could not be verified",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/networkquality_ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Settings"
+        ],
+        "x-api-token-group": [
+          "Network Quality Write"
+        ],
+        "x-cfPermissionsRequired": {
+          "enum": [
+            "com.cloudflare.api.account.networkquality.update"
+          ]
+        },
+        "x-fern-availability": "beta",
+        "x-fern-sdk-group-name": "network-quality.settings",
+        "x-fern-sdk-method-name": "update",
+        "x-forge-availability": "beta",
+        "x-forge-group-name": "network-quality.settings",
+        "x-forge-method-name": "update",
+        "x-forge-oauth-scopes": [
+          "cfspeed.write"
+        ],
+        "x-stability": "beta"
+      }
+    },
+    "/accounts/{account_id}/networkquality/token": {
+      "post": {
+        "operationId": "network-quality-create-authorization-token",
+        "summary": "Create a Network Quality Test authorization token",
+        "description": "Issues an authorization token for a Network Quality Test client.",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "description": "Cloudflare account identifier.",
+            "required": true,
+            "schema": {
+              "description": "Cloudflare account identifier.",
+              "type": "string",
+              "example": "0123456789abcdef0123456789abcdef",
+              "pattern": "^[0-9a-f]{32}$"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/networkquality_TokenRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Authorization token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/networkquality_TokenSuccess"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request body",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/networkquality_ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Account is not entitled to Network Quality Test, or has it disabled",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/networkquality_ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Customer not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/networkquality_ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many authorization token requests",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds remaining before another token can be issued for this eyeball",
+                "schema": {
+                  "type": "integer"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/networkquality_ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Tokens"
+        ],
+        "x-api-token-group": [
+          "Network Quality Write"
+        ],
+        "x-cfPermissionsRequired": {
+          "enum": [
+            "com.cloudflare.api.account.networkquality.create"
+          ]
+        },
+        "x-fern-availability": "beta",
+        "x-fern-sdk-group-name": "network-quality.tokens",
+        "x-fern-sdk-method-name": "create",
+        "x-forge-availability": "beta",
+        "x-forge-group-name": "network-quality.tokens",
+        "x-forge-method-name": "create",
+        "x-forge-oauth-scopes": [
+          "cfspeed.write"
+        ],
+        "x-stability": "beta"
+      }
+    },
     "/accounts/{account_id}/oauth_clients": {
       "get": {
         "operationId": "oauth-clients-list",
@@ -744078,6 +744385,231 @@
         "example": "023e105f4ecef8ad9ca31a8372d0c353",
         "maxLength": 32,
         "readOnly": true
+      },
+      "networkquality_ErrorEnvelope": {
+        "type": "object",
+        "properties": {
+          "errors": {
+            "type": "array",
+            "items": {
+              "properties": {
+                "code": {
+                  "type": "number"
+                },
+                "message": {
+                  "type": "string"
+                },
+                "path": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "required": [
+                "code",
+                "message"
+              ],
+              "type": "object"
+            }
+          },
+          "messages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": [],
+            "maxItems": 0
+          },
+          "result": {
+            "type": "object",
+            "enum": [
+              null
+            ],
+            "nullable": true
+          },
+          "success": {
+            "type": "boolean",
+            "enum": [
+              false
+            ]
+          }
+        },
+        "required": [
+          "success",
+          "errors",
+          "messages",
+          "result"
+        ]
+      },
+      "networkquality_SettingsResult": {
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "type": "boolean",
+            "example": true
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-01-01T00:00:00Z"
+          }
+        },
+        "required": [
+          "enabled"
+        ]
+      },
+      "networkquality_SettingsSuccess": {
+        "type": "object",
+        "properties": {
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": [],
+            "maxItems": 0
+          },
+          "messages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": [],
+            "maxItems": 0
+          },
+          "result": {
+            "$ref": "#/components/schemas/networkquality_SettingsResult"
+          },
+          "success": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          }
+        },
+        "required": [
+          "success",
+          "errors",
+          "messages",
+          "result"
+        ]
+      },
+      "networkquality_SettingsUpdate": {
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "type": "boolean",
+            "example": true
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "enabled"
+        ]
+      },
+      "networkquality_TokenRequest": {
+        "type": "object",
+        "properties": {
+          "bytes": {
+            "description": "Customer-defined byte budget signed into the token for downstream enforcement and billing",
+            "type": "integer",
+            "example": 1000000000,
+            "exclusiveMinimum": true,
+            "maximum": 34359738368,
+            "minimum": 0
+          },
+          "eyeball_id": {
+            "type": "string",
+            "example": "eyeball-7f3a",
+            "pattern": "^[A-Za-z0-9_.:-]{8,128}$"
+          },
+          "source_ips": {
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "format": "ipv4",
+                  "type": "string"
+                },
+                {
+                  "format": "ipv6",
+                  "type": "string"
+                },
+                {
+                  "format": "ipv4-cidr",
+                  "type": "string"
+                },
+                {
+                  "format": "ipv6-cidr",
+                  "type": "string"
+                }
+              ],
+              "description": "An IPv4 or IPv6 address or CIDR, excluding unspecified addresses and catch-all CIDRs."
+            },
+            "example": [
+              "203.0.113.42",
+              "2001:db8::/32"
+            ],
+            "default": [],
+            "maxItems": 8
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "bytes",
+          "eyeball_id"
+        ]
+      },
+      "networkquality_TokenResult": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "example": "eyJhbGciOiJFUzI1NiIsInR5cCI6ImNmc3BlZWQrand0Iiwia2lkIjoiMDAwMDAwMDAtMDAwMC00MDAwLTgwMDAtMDAwMDAwMDAwMDAwIn0.eyJzdWIiOiIwMDAwMDAwMC0wMDAwLTQwMDAtODAwMC0wMDAwMDAwMDAwMDAiLCJleWViYWxsX2lkIjoiZXllYmFsbC03ZjNhIiwic291cmNlX2lwcyI6WyIyMDMuMC4xMTMuNDIiLCIyMDAxOmRiODo6LzMyIl0sImlzcyI6InVybjpjbG91ZGZsYXJlOmNmc3BlZWQtYXBpOnN0YWdpbmciLCJhdWQiOiJ1cm46Y2xvdWRmbGFyZTpzcGVlZHRlc3Q6c3RhZ2luZyIsImp0aSI6IjAwMDAwMDAwLTAwMDAtNDAwMC04MDAwLTAwMDAwMDAwMDAwMCIsImlhdCI6MTc2NzIyNTYwMCwiZXhwIjoxNzY3MjI2MjAwLCJieXRlcyI6MTAwMDAwMDAwMH0.AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "x-forge-sensitive": true,
+            "x-sensitive": true
+          }
+        },
+        "required": [
+          "token"
+        ]
+      },
+      "networkquality_TokenSuccess": {
+        "type": "object",
+        "properties": {
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": [],
+            "maxItems": 0
+          },
+          "messages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": [],
+            "maxItems": 0
+          },
+          "result": {
+            "$ref": "#/components/schemas/networkquality_TokenResult"
+          },
+          "success": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          }
+        },
+        "required": [
+          "success",
+          "errors",
+          "messages",
+          "result"
+        ]
       },
       "nsc_AccountTag": {
         "description": "Customer account tag",
