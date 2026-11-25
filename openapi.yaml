@@ -49607,6 +49607,7 @@ paths:
                                           type: string
                                           maxLength: 20971520
                                           minLength: 1
+                                          x-auditable: false
                                       required:
                                         - url
                                     type:
@@ -49711,6 +49712,7 @@ paths:
                                                 type: string
                                                 maxLength: 20971520
                                                 minLength: 1
+                                                x-auditable: false
                                             required:
                                               - url
                                           type:
@@ -51220,6 +51222,7 @@ paths:
                                           type: string
                                           maxLength: 20971520
                                           minLength: 1
+                                          x-auditable: false
                                       required:
                                         - url
                                     type:
@@ -53173,6 +53176,7 @@ paths:
                                           type: string
                                           maxLength: 20971520
                                           minLength: 1
+                                          x-auditable: false
                                       required:
                                         - url
                                     type:
@@ -53278,6 +53282,7 @@ paths:
                                                 type: string
                                                 maxLength: 20971520
                                                 minLength: 1
+                                                x-auditable: false
                                             required:
                                               - url
                                           type:
@@ -53808,6 +53813,7 @@ paths:
                                           type: string
                                           maxLength: 20971520
                                           minLength: 1
+                                          x-auditable: false
                                       required:
                                         - url
                                     type:
@@ -59315,6 +59321,7 @@ paths:
                                           type: string
                                           maxLength: 20971520
                                           minLength: 1
+                                          x-auditable: false
                                       required:
                                         - url
                                     type:
@@ -59419,6 +59426,7 @@ paths:
                                                 type: string
                                                 maxLength: 20971520
                                                 minLength: 1
+                                                x-auditable: false
                                             required:
                                               - url
                                           type:
@@ -63820,6 +63828,7 @@ paths:
                                           type: string
                                           maxLength: 20971520
                                           minLength: 1
+                                          x-auditable: false
                                       required:
                                         - url
                                     type:
@@ -244952,14 +244961,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/tunnel_tunnel_hostname_response_collection'
+                $ref: '#/components/schemas/tunnel_hostname_record_response_collection'
         4XX:
           description: List tunnel hostnames response failure
           content:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/tunnel_tunnel_hostname_response_collection'
+                  - $ref: '#/components/schemas/tunnel_hostname_record_response_collection'
                   - $ref: '#/components/schemas/tunnel_api-response-common-failure'
       security:
         - api_email: []
@@ -245014,21 +245023,21 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/tunnel_post_tunnel_hostname_body'
+              $ref: '#/components/schemas/tunnel_post_hostname_record_body'
       responses:
         '200':
           description: Create tunnel hostname response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/tunnel_tunnel_hostname_response_single'
+                $ref: '#/components/schemas/tunnel_hostname_record_response_single'
         4XX:
           description: Create tunnel hostname response failure
           content:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/tunnel_tunnel_hostname_response_single'
+                  - $ref: '#/components/schemas/tunnel_hostname_record_response_single'
                   - $ref: '#/components/schemas/tunnel_api-response-common-failure'
       security:
         - api_email: []
@@ -245063,21 +245072,21 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/tunnel_tunnel_hostname_id'
+            $ref: '#/components/schemas/tunnel_hostname_record_id'
       responses:
         '200':
           description: Delete tunnel hostname response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/tunnel_tunnel_hostname_response_single'
+                $ref: '#/components/schemas/tunnel_hostname_record_response_single'
         4XX:
           description: Delete tunnel hostname response failure
           content:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/tunnel_tunnel_hostname_response_single'
+                  - $ref: '#/components/schemas/tunnel_hostname_record_response_single'
                   - $ref: '#/components/schemas/tunnel_api-response-common-failure'
       security:
         - api_email: []
@@ -245120,21 +245129,21 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/tunnel_tunnel_hostname_id'
+            $ref: '#/components/schemas/tunnel_hostname_record_id'
       responses:
         '200':
           description: Get tunnel hostname response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/tunnel_tunnel_hostname_response_single'
+                $ref: '#/components/schemas/tunnel_hostname_record_response_single'
         4XX:
           description: Get tunnel hostname response failure
           content:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/tunnel_tunnel_hostname_response_single'
+                  - $ref: '#/components/schemas/tunnel_hostname_record_response_single'
                   - $ref: '#/components/schemas/tunnel_api-response-common-failure'
       security:
         - api_email: []
@@ -245188,27 +245197,27 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/tunnel_tunnel_hostname_id'
+            $ref: '#/components/schemas/tunnel_hostname_record_id'
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/tunnel_patch_tunnel_hostname_body'
+              $ref: '#/components/schemas/tunnel_patch_hostname_record_body'
       responses:
         '200':
           description: Update tunnel hostname response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/tunnel_tunnel_hostname_response_single'
+                $ref: '#/components/schemas/tunnel_hostname_record_response_single'
         4XX:
           description: Update tunnel hostname response failure
           content:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/tunnel_tunnel_hostname_response_single'
+                  - $ref: '#/components/schemas/tunnel_hostname_record_response_single'
                   - $ref: '#/components/schemas/tunnel_api-response-common-failure'
       security:
         - api_email: []
@@ -551313,6 +551322,67 @@ components:
       description: If set, only list hostname routes with the given comment.
       type: string
       example: example%20comment
+    tunnel_hostname_record:
+      type: object
+      properties:
+        canonical:
+          $ref: '#/components/schemas/tunnel_hostname_record_canonical'
+        created_at:
+          $ref: '#/components/schemas/tunnel_created_at'
+        hostname:
+          $ref: '#/components/schemas/tunnel_hostname_record_value'
+        id:
+          $ref: '#/components/schemas/tunnel_hostname_record_id'
+        tunnel_id:
+          $ref: '#/components/schemas/tunnel_tunnel_id-2'
+      required:
+        - id
+        - tunnel_id
+        - hostname
+        - canonical
+        - created_at
+    tunnel_hostname_record_canonical:
+      description: Whether this is the canonical hostname for the tunnel.
+      type: boolean
+      example: true
+      x-auditable: true
+    tunnel_hostname_record_id:
+      description: UUID of the tunnel hostname.
+      type: string
+      format: uuid
+      example: 6b9e2c54-7b1a-4d2d-91ac-53ec83f8b6c8
+      x-auditable: true
+    tunnel_hostname_record_response_collection:
+      allOf:
+        - $ref: '#/components/schemas/tunnel_api-response-common'
+        - properties:
+            result:
+              description: Tunnel hostnames on the requested page.
+              type: array
+              items:
+                $ref: '#/components/schemas/tunnel_hostname_record'
+            result_info:
+              description: Pagination metadata for the requested page of tunnel hostnames.
+              allOf:
+                - $ref: '#/components/schemas/tunnel_result_info'
+          type: object
+    tunnel_hostname_record_response_single:
+      allOf:
+        - $ref: '#/components/schemas/tunnel_api-response-common'
+        - properties:
+            result:
+              description: The tunnel hostname created, retrieved, updated, or deleted by the operation.
+              allOf:
+                - $ref: '#/components/schemas/tunnel_hostname_record'
+          type: object
+    tunnel_hostname_record_value:
+      description: A single DNS label assigned to the tunnel. The value is normalized to lowercase and may contain only letters, digits, and internal hyphens.
+      type: string
+      example: branch-office-1
+      maxLength: 63
+      minLength: 1
+      pattern: ^[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?$
+      x-auditable: true
     tunnel_hostname_route:
       type: object
       properties:
@@ -551661,7 +551731,7 @@ components:
       type: number
       default: 1
       minimum: 1
-    tunnel_patch_tunnel_hostname_body:
+    tunnel_patch_hostname_record_body:
       type: object
       properties:
         canonical:
@@ -551670,13 +551740,13 @@ components:
           enum:
             - true
         hostname:
-          $ref: '#/components/schemas/tunnel_tunnel_hostname_value'
+          $ref: '#/components/schemas/tunnel_hostname_record_value'
     tunnel_per_page:
       description: Number of results to display.
       type: number
       maximum: 1000
       minimum: 1
-    tunnel_post_tunnel_hostname_body:
+    tunnel_post_hostname_record_body:
       type: object
       properties:
         canonical:
@@ -551685,7 +551755,7 @@ components:
             If `false` or omitted, the new hostname is canonical only if the tunnel has no active hostnames.
           type: boolean
         hostname:
-          $ref: '#/components/schemas/tunnel_tunnel_hostname_value'
+          $ref: '#/components/schemas/tunnel_hostname_record_value'
       required:
         - hostname
     tunnel_put_account_region_body:
@@ -552036,67 +552106,6 @@ components:
               items:
                 $ref: '#/components/schemas/tunnel_tunnel_client'
           type: object
-    tunnel_tunnel_hostname:
-      type: object
-      properties:
-        canonical:
-          $ref: '#/components/schemas/tunnel_tunnel_hostname_canonical'
-        created_at:
-          $ref: '#/components/schemas/tunnel_created_at'
-        hostname:
-          $ref: '#/components/schemas/tunnel_tunnel_hostname_value'
-        id:
-          $ref: '#/components/schemas/tunnel_tunnel_hostname_id'
-        tunnel_id:
-          $ref: '#/components/schemas/tunnel_tunnel_id-2'
-      required:
-        - id
-        - tunnel_id
-        - hostname
-        - canonical
-        - created_at
-    tunnel_tunnel_hostname_canonical:
-      description: Whether this is the canonical hostname for the tunnel.
-      type: boolean
-      example: true
-      x-auditable: true
-    tunnel_tunnel_hostname_id:
-      description: UUID of the tunnel hostname.
-      type: string
-      format: uuid
-      example: 6b9e2c54-7b1a-4d2d-91ac-53ec83f8b6c8
-      x-auditable: true
-    tunnel_tunnel_hostname_response_collection:
-      allOf:
-        - $ref: '#/components/schemas/tunnel_api-response-common'
-        - properties:
-            result:
-              description: Tunnel hostnames on the requested page.
-              type: array
-              items:
-                $ref: '#/components/schemas/tunnel_tunnel_hostname'
-            result_info:
-              description: Pagination metadata for the requested page of tunnel hostnames.
-              allOf:
-                - $ref: '#/components/schemas/tunnel_result_info'
-          type: object
-    tunnel_tunnel_hostname_response_single:
-      allOf:
-        - $ref: '#/components/schemas/tunnel_api-response-common'
-        - properties:
-            result:
-              description: The tunnel hostname created, retrieved, updated, or deleted by the operation.
-              allOf:
-                - $ref: '#/components/schemas/tunnel_tunnel_hostname'
-          type: object
-    tunnel_tunnel_hostname_value:
-      description: A single DNS label assigned to the tunnel. The value is normalized to lowercase and may contain only letters, digits, and internal hyphens.
-      type: string
-      example: branch-office-1
-      maxLength: 63
-      minLength: 1
-      pattern: ^[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?$
-      x-auditable: true
     tunnel_tunnel_id:
       description: UUID of the tunnel.
       type: string
