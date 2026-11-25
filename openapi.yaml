@@ -279802,6 +279802,7 @@ paths:
                     properties:
                       token:
                         type: string
+                        x-auditable: false
                       websocketUrl:
                         type: string
                     required:
@@ -285140,6 +285141,429 @@ paths:
       x-forge-method-name: edit
       x-forge-oauth-scopes:
         - teams-networks.write
+  /accounts/{account_id}/zt_risk_scoring/{user_id}:
+    get:
+      operationId: dlp-risk-score-summary-get-for-user
+      summary: Get risk event/score information for a specific user
+      description: |
+        Gets the risk level, the last reset time, and the risk events of one user. The server reads
+        risk events from at most 180 days before the current time, and after the last reset of the user.
+        Returns 404 when the request reaches a server outside of the configured region of the account.
+      parameters:
+        - $ref: '#/components/parameters/risk-scoring_account_id'
+        - $ref: '#/components/parameters/risk-scoring_user_id'
+        - name: timestamp.between
+          in: query
+          description: |
+            Time range as <start_seconds>:<end_seconds> in Unix epoch seconds. The start must be before
+            the end.
+          schema:
+            type: string
+            example: 1790812800:1790899200
+        - name: time_zone
+          in: query
+          description: IANA time zone name. The server validates the value. The value does not change the response.
+          schema:
+            type: string
+            example: America/Chicago
+        - $ref: '#/components/parameters/risk-scoring_page'
+        - $ref: '#/components/parameters/risk-scoring_per_page'
+        - name: order_by
+          in: query
+          description: Field to sort the events by.
+          schema:
+            type: string
+            default: timestamp
+            enum:
+              - timestamp
+              - risk_level
+        - $ref: '#/components/parameters/risk-scoring_direction'
+      responses:
+        '200':
+          description: Risk events for the user.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/risk-scoring_RiskEventsResponse'
+        4XX:
+          description: Failed to get the risk events for the user.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/risk-scoring_api-response-common-failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Zero Trust Risk Scoring
+      x-api-token-group:
+        - 'Zero Trust: PII Read'
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.risk-scoring
+      x-fern-sdk-method-name: get
+      x-forge-availability: generally-available
+      x-forge-group-name: zero-trust.risk-scoring
+      x-forge-method-name: get
+      x-forge-oauth-scopes:
+        - teams-pii.read
+  /accounts/{account_id}/zt_risk_scoring/{user_id}/event_clusters:
+    get:
+      operationId: dlp-risk-score-event-clusters-list-for-user
+      summary: List risk event clusters for a specific user
+      description: |
+        Lists the risk events of one user, grouped by calendar day in the requested time zone. Each
+        cluster contains at most 25 events, oldest first. The time range is at most 30 days. The server
+        reads risk events from at most 180 days before the current time.
+        Returns 404 when the request reaches a server outside of the configured region of the account.
+      parameters:
+        - $ref: '#/components/parameters/risk-scoring_account_id'
+        - $ref: '#/components/parameters/risk-scoring_user_id'
+        - name: timestamp.between
+          in: query
+          description: |
+            Time range as <start_seconds>:<end_seconds> in Unix epoch seconds. The default is the last
+            7 days. The server returns 400 when the range is longer than 30 days.
+          schema:
+            type: string
+            example: 1789707600:1790312400
+        - name: time_zone
+          in: query
+          description: IANA time zone name that sets the calendar day of each cluster.
+          schema:
+            type: string
+            example: America/Chicago
+            default: UTC
+        - $ref: '#/components/parameters/risk-scoring_page'
+        - name: per_page
+          in: query
+          description: Number of clusters per page. The server uses 10 for a larger value.
+          schema:
+            type: integer
+            default: 10
+            maximum: 10
+            minimum: 1
+      responses:
+        '200':
+          description: Risk event clusters for the user.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/risk-scoring_RiskEventClustersResponse'
+        4XX:
+          description: Failed to get the risk event clusters for the user.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/risk-scoring_api-response-common-failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Zero Trust Risk Scoring
+      x-api-token-group:
+        - 'Zero Trust: PII Read'
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.risk-scoring.event-clusters
+      x-fern-sdk-method-name: list
+      x-forge-availability: generally-available
+      x-forge-group-name: zero-trust.risk-scoring.event-clusters
+      x-forge-method-name: list
+      x-forge-oauth-scopes:
+        - teams-pii.read
+  /accounts/{account_id}/zt_risk_scoring/{user_id}/reset:
+    post:
+      operationId: dlp-risk-score-reset-post
+      summary: Clear the risk score for a particular user
+      description: |
+        Resets the risk score of one user. Risk events before the reset do not count toward the score
+        of the user.
+      parameters:
+        - $ref: '#/components/parameters/risk-scoring_account_id'
+        - $ref: '#/components/parameters/risk-scoring_user_id'
+      responses:
+        '200':
+          description: The risk score of the user is reset. The result is null.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/risk-scoring_EmptyResponse'
+        4XX:
+          description: Failed to reset the risk score of the user.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/risk-scoring_api-response-common-failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Zero Trust Risk Scoring
+      x-api-token-group:
+        - Zero Trust Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.risk-scoring
+      x-fern-sdk-method-name: reset
+      x-forge-availability: generally-available
+      x-forge-group-name: zero-trust.risk-scoring
+      x-forge-method-name: reset
+      x-forge-oauth-scopes:
+        - teams.write
+      x-forge-require-confirmation: This operation wipes risk-scoring history.
+  /accounts/{account_id}/zt_risk_scoring/behaviors:
+    get:
+      operationId: dlp-risk-score-behaviors-get
+      summary: Get all behaviors and associated configuration
+      description: |
+        Gets all risk behaviors for an account and their configuration. The response omits a disabled
+        behavior when the account does not have the gates or entitlements for that behavior.
+      parameters:
+        - $ref: '#/components/parameters/risk-scoring_account_id'
+      responses:
+        '200':
+          description: Risk behaviors for the account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/risk-scoring_BehaviorsResponse'
+        4XX:
+          description: Failed to get risk behaviors.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/risk-scoring_api-response-common-failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Zero Trust Risk Scoring
+      x-api-token-group:
+        - Zero Trust Read
+        - Zero Trust Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.risk-scoring.behaviours
+      x-fern-sdk-method-name: get
+      x-forge-availability: generally-available
+      x-forge-group-name: zero-trust.risk-scoring.behaviours
+      x-forge-method-name: get
+      x-forge-oauth-scopes:
+        - teams.read
+        - teams.write
+    put:
+      operationId: dlp-risk-score-behaviors-put
+      summary: Update configuration for risk behaviors
+      description: |
+        Updates the configuration of one or more risk behaviors for an account. The server skips an
+        unknown behavior, and a behavior that the account does not have the gates or entitlements for.
+        The response contains all behaviors for the account.
+      parameters:
+        - $ref: '#/components/parameters/risk-scoring_account_id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/risk-scoring_UpdateBehaviors'
+      responses:
+        '200':
+          description: Risk behaviors for the account after the update.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/risk-scoring_BehaviorsResponse'
+        4XX:
+          description: Failed to update risk behaviors.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/risk-scoring_api-response-common-failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Zero Trust Risk Scoring
+      x-api-token-group:
+        - Zero Trust Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.risk-scoring.behaviours
+      x-fern-sdk-method-name: update
+      x-forge-availability: generally-available
+      x-forge-group-name: zero-trust.risk-scoring.behaviours
+      x-forge-method-name: update
+      x-forge-oauth-scopes:
+        - teams.write
+  /accounts/{account_id}/zt_risk_scoring/behaviors/{behavior_id}:
+    get:
+      operationId: dlp-risk-score-behavior-get
+      summary: Get a risk behavior
+      description: |
+        Gets one risk behavior that has no additional configuration. Returns 404 when the behavior is
+        disabled and the account does not have the gates or entitlements for it.
+      parameters:
+        - $ref: '#/components/parameters/risk-scoring_account_id'
+        - $ref: '#/components/parameters/risk-scoring_behavior_id'
+      responses:
+        '200':
+          description: The risk behavior.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/risk-scoring_BehaviorResponse'
+        4XX:
+          description: Failed to get the risk behavior.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/risk-scoring_api-response-common-failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Zero Trust Risk Scoring
+      x-api-token-group:
+        - Zero Trust Read
+        - Zero Trust Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.risk-scoring.behaviours.single
+      x-fern-sdk-method-name: get
+      x-forge-availability: generally-available
+      x-forge-group-name: zero-trust.risk-scoring.behaviours.single
+      x-forge-method-name: get
+      x-forge-oauth-scopes:
+        - teams.read
+        - teams.write
+    put:
+      operationId: dlp-risk-score-behavior-put
+      summary: Update a risk behavior
+      description: |
+        Updates one risk behavior that has no additional configuration. Returns 404 when the account
+        does not have the gates or entitlements for the behavior.
+      parameters:
+        - $ref: '#/components/parameters/risk-scoring_account_id'
+        - $ref: '#/components/parameters/risk-scoring_behavior_id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/risk-scoring_UpdateBehavior'
+      responses:
+        '200':
+          description: The risk behavior after the update.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/risk-scoring_BehaviorResponse'
+        4XX:
+          description: Failed to update the risk behavior.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/risk-scoring_api-response-common-failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Zero Trust Risk Scoring
+      x-api-token-group:
+        - Zero Trust Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.risk-scoring.behaviours.single
+      x-fern-sdk-method-name: update
+      x-forge-availability: generally-available
+      x-forge-group-name: zero-trust.risk-scoring.behaviours.single
+      x-forge-method-name: update
+      x-forge-oauth-scopes:
+        - teams.write
+  /accounts/{account_id}/zt_risk_scoring/behaviors/high_dlp:
+    get:
+      operationId: dlp-risk-score-behaviors-high-dlp-get
+      summary: Get the high_dlp risk behavior
+      description: |
+        Gets the high_dlp risk behavior and its DLP configuration. Returns 404 when the behavior is
+        disabled and the account does not have the gates or entitlements for it.
+      parameters:
+        - $ref: '#/components/parameters/risk-scoring_account_id'
+      responses:
+        '200':
+          description: The high_dlp risk behavior.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/risk-scoring_HighDlpBehaviorResponse'
+        4XX:
+          description: Failed to get the high_dlp risk behavior.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/risk-scoring_api-response-common-failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Zero Trust Risk Scoring
+      x-api-token-group:
+        - Zero Trust Read
+        - Zero Trust Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.risk-scoring.behaviours.high-dlp
+      x-fern-sdk-method-name: get
+      x-forge-availability: generally-available
+      x-forge-group-name: zero-trust.risk-scoring.behaviours.high-dlp
+      x-forge-method-name: get
+      x-forge-oauth-scopes:
+        - teams.read
+        - teams.write
+    put:
+      operationId: dlp-risk-score-behaviors-high-dlp-put
+      summary: Update the high_dlp risk behavior
+      description: |
+        Updates the high_dlp risk behavior and its DLP configuration. Returns 404 when the account does
+        not have the gates or entitlements for the behavior.
+      parameters:
+        - $ref: '#/components/parameters/risk-scoring_account_id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/risk-scoring_UpdateHighDlpBehavior'
+      responses:
+        '200':
+          description: The high_dlp risk behavior after the update.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/risk-scoring_HighDlpBehaviorResponse'
+        4XX:
+          description: Failed to update the high_dlp risk behavior.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/risk-scoring_api-response-common-failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Zero Trust Risk Scoring
+      x-api-token-group:
+        - Zero Trust Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.risk-scoring.behaviours.high-dlp
+      x-fern-sdk-method-name: update
+      x-forge-availability: generally-available
+      x-forge-group-name: zero-trust.risk-scoring.behaviours.high-dlp
+      x-forge-method-name: update
+      x-forge-oauth-scopes:
+        - teams.write
   /accounts/{account_id}/zt_risk_scoring/integrations:
     get:
       operationId: dlp-zt-risk-score-integration-list
@@ -285448,6 +285872,59 @@ paths:
       x-forge-oauth-scopes:
         - teams.read
         - teams.write
+  /accounts/{account_id}/zt_risk_scoring/summary:
+    get:
+      operationId: dlp-risk-score-summary-get
+      summary: Get risk score info for all users in the account
+      description: |
+        Gets the users in an account that have risk events, with the highest risk level, the event
+        count, and the time of the last event for each user. The server reads risk events from at most
+        180 days before the current time, and after the last reset of each user.
+        Returns 404 when the request reaches a server outside of the configured region of the account.
+      parameters:
+        - $ref: '#/components/parameters/risk-scoring_account_id'
+        - $ref: '#/components/parameters/risk-scoring_page'
+        - $ref: '#/components/parameters/risk-scoring_per_page'
+        - name: order_by
+          in: query
+          description: Field to sort the users by.
+          schema:
+            type: string
+            default: last_event
+            enum:
+              - last_event
+              - event_count
+              - max_risk_level
+        - $ref: '#/components/parameters/risk-scoring_direction'
+      responses:
+        '200':
+          description: Risk score summary for the account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/risk-scoring_RiskSummaryResponse'
+        4XX:
+          description: Failed to get the risk score summary.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/risk-scoring_api-response-common-failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+      tags:
+        - Zero Trust Risk Scoring
+      x-api-token-group:
+        - 'Zero Trust: PII Read'
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.risk-scoring.summary
+      x-fern-sdk-method-name: get
+      x-forge-availability: generally-available
+      x-forge-group-name: zero-trust.risk-scoring.summary
+      x-forge-method-name: get
+      x-forge-oauth-scopes:
+        - teams-pii.read
   /analytics/sql:
     get:
       operationId: sql-api-query-get
@@ -440787,6 +441264,77 @@ components:
       name: type
       schema:
         $ref: '#/components/schemas/resource-tagging_resource_type'
+    risk-scoring_account_id:
+      description: Cloudflare account tag.
+      in: path
+      name: account_id
+      required: true
+      schema:
+        type: string
+        example: 0ee7ea44703746e777422a5a11d797b9
+    risk-scoring_behavior_id:
+      description: ID of a risk behavior that has no additional configuration.
+      in: path
+      name: behavior_id
+      required: true
+      schema:
+        type: string
+        example: imp_travel
+        enum:
+          - imp_travel
+          - malware
+          - sentinel_one
+          - crowdstrike_low
+          - crowdstrike_med
+          - suspicious_domain_visited
+          - high_risk_domain_visited
+          - unusual_access_login
+          - new_domain_rotating_ips
+          - beaconing
+          - novel_mcp_usage
+          - cloud_storage_upload_anomaly
+          - new_access_app
+          - new_access_device
+          - new_access_country
+          - new_access_location
+          - unusual_access_day
+          - unusual_access_hour
+    risk-scoring_direction:
+      description: Sort direction.
+      in: query
+      name: direction
+      schema:
+        type: string
+        default: desc
+        enum:
+          - asc
+          - desc
+    risk-scoring_page:
+      description: Page number, starting at 1.
+      in: query
+      name: page
+      schema:
+        type: integer
+        default: 1
+        minimum: 1
+    risk-scoring_per_page:
+      description: Number of results per page. The server uses 100 for a larger value.
+      in: query
+      name: per_page
+      schema:
+        type: integer
+        default: 25
+        maximum: 100
+        minimum: 1
+    risk-scoring_user_id:
+      description: User ID (UUID v4).
+      in: path
+      name: user_id
+      required: true
+      schema:
+        type: string
+        format: uuid
+        example: f174e90a-fafe-4643-bbbc-4a0ed4fc8415
     rulesets_DryRun:
       description: 'Validates the request without persisting changes when set to `true`. Responses that normally return 200 return `result: null`; endpoints that normally return 204 continue to return 204.'
       in: query
@@ -495764,6 +496312,7 @@ components:
           type: string
           maxLength: 2048
           writeOnly: true
+          x-auditable: false
           x-forge-sensitive: true
           x-sensitive: true
         scheme:
@@ -495797,6 +496346,9 @@ components:
           description: Hex-encoded signature authorizing the database creation.
           type: string
           example: 9f2b8c1d4e6a7b3c5d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c
+          x-auditable: false
+          x-forge-sensitive: true
+          x-sensitive: true
         timestamp:
           description: Unix timestamp, in seconds, at which the signature was issued. The integration partner uses it to verify the signature and reject stale authorizations.
           type: string
@@ -495966,6 +496518,7 @@ components:
           type: string
           example: 0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
           writeOnly: true
+          x-auditable: false
           x-forge-sensitive: true
           x-sensitive: true
         host:
@@ -535715,6 +536268,510 @@ components:
         - zone
         - zone_ruleset
       x-auditable: true
+    risk-scoring_Behavior:
+      description: A risk behavior and its configuration.
+      type: object
+      properties:
+        description:
+          description: Explains what the behavior detects.
+          type: string
+          example: A user signed in from two locations that are too far apart for the time between them.
+        enabled:
+          description: Whether the behavior counts toward the risk score.
+          type: boolean
+          example: true
+        name:
+          description: Display name of the behavior.
+          type: string
+          example: Impossible travel
+        points:
+          $ref: '#/components/schemas/risk-scoring_Points'
+        risk_level:
+          $ref: '#/components/schemas/risk-scoring_RiskLevel'
+      required:
+        - name
+        - description
+        - risk_level
+        - points
+        - enabled
+    risk-scoring_BehaviorResponse:
+      allOf:
+        - $ref: '#/components/schemas/risk-scoring_api-response-single'
+        - properties:
+            result:
+              $ref: '#/components/schemas/risk-scoring_Behavior'
+          type: object
+    risk-scoring_Behaviors:
+      description: Risk behaviors, keyed by behavior ID.
+      type: object
+      properties:
+        behaviors:
+          description: Risk behaviors, keyed by behavior ID.
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/risk-scoring_Behavior'
+      required:
+        - behaviors
+    risk-scoring_BehaviorsResponse:
+      allOf:
+        - $ref: '#/components/schemas/risk-scoring_api-response-single'
+        - properties:
+            result:
+              $ref: '#/components/schemas/risk-scoring_Behaviors'
+          type: object
+    risk-scoring_DlpBehaviorConfig:
+      description: DLP configuration of the high_dlp behavior.
+      type: object
+      properties:
+        duration_secs:
+          description: Rolling window in seconds, from 60 to 172800.
+          type: integer
+          format: int64
+          example: 3600
+          maximum: 172800
+          minimum: 60
+        hits:
+          description: Number of DLP policy matches that triggers the behavior.
+          type: integer
+          format: int64
+          example: 15
+          minimum: 1
+      required:
+        - hits
+        - duration_secs
+    risk-scoring_Empty:
+      description: Empty result.
+      type: object
+      nullable: true
+    risk-scoring_EmptyResponse:
+      allOf:
+        - $ref: '#/components/schemas/risk-scoring_api-response-single'
+        - properties:
+            result:
+              $ref: '#/components/schemas/risk-scoring_Empty'
+          type: object
+    risk-scoring_HighDlpBehavior:
+      description: The high_dlp risk behavior and its DLP configuration.
+      type: object
+      properties:
+        config:
+          $ref: '#/components/schemas/risk-scoring_DlpBehaviorConfig'
+        description:
+          description: Explains what the behavior detects.
+          type: string
+        enabled:
+          description: Whether the behavior counts toward the risk score.
+          type: boolean
+        name:
+          description: Display name of the behavior.
+          type: string
+          example: High number of DLP policies triggered
+        points:
+          $ref: '#/components/schemas/risk-scoring_Points'
+        risk_level:
+          $ref: '#/components/schemas/risk-scoring_RiskLevel'
+      required:
+        - name
+        - description
+        - risk_level
+        - points
+        - enabled
+        - config
+    risk-scoring_HighDlpBehaviorResponse:
+      allOf:
+        - $ref: '#/components/schemas/risk-scoring_api-response-single'
+        - properties:
+            result:
+              $ref: '#/components/schemas/risk-scoring_HighDlpBehavior'
+          type: object
+    risk-scoring_MaxRiskLevel:
+      description: Highest risk level. The value is unset when no event maps to a configured behavior.
+      type: string
+      enum:
+        - unset
+        - info
+        - low
+        - medium
+        - high
+    risk-scoring_Points:
+      description: Risk score points of a behavior.
+      type: integer
+      example: 85
+      maximum: 100
+      minimum: 1
+    risk-scoring_ResultInfo:
+      description: Pagination information. The server always returns every field.
+      type: object
+      properties:
+        count:
+          description: Number of results on this page.
+          type: integer
+          example: 25
+        page:
+          description: Current page within the paginated list of results.
+          type: integer
+          example: 1
+        per_page:
+          description: Number of results per page.
+          type: integer
+          example: 25
+        total_count:
+          description: Total number of results that match the request.
+          type: integer
+          example: 2000
+      required:
+        - page
+        - per_page
+        - count
+        - total_count
+    risk-scoring_RiskEvent:
+      description: One risk event of a user.
+      type: object
+      properties:
+        event_details:
+          description: Details of the event. The fields depend on the behavior. The server omits the field when the details are not valid JSON.
+          type: object
+          additionalProperties: true
+        id:
+          description: ID of the behavior that caused the event.
+          type: string
+          example: high_dlp
+        name:
+          description: Name of the behavior that caused the event.
+          type: string
+          example: High number of DLP policies triggered
+        points:
+          $ref: '#/components/schemas/risk-scoring_Points'
+        risk_level:
+          $ref: '#/components/schemas/risk-scoring_RiskLevel'
+        timestamp:
+          description: Time of the event.
+          type: string
+          format: date-time
+          example: 2026-04-08T13:48:01Z
+      required:
+        - id
+        - risk_level
+        - points
+        - name
+        - timestamp
+    risk-scoring_RiskEventCluster:
+      description: The risk events of one user on one calendar day.
+      type: object
+      properties:
+        end_time:
+          description: End of the calendar day of the cluster, in the requested time zone.
+          type: string
+          format: date-time
+        event_count:
+          description: Number of events in the cluster.
+          type: integer
+          minimum: 0
+        events:
+          description: At most 25 events of the cluster, oldest first.
+          type: array
+          items:
+            $ref: '#/components/schemas/risk-scoring_RiskEvent'
+        first_event_time:
+          description: Time of the first event in the cluster.
+          type: string
+          format: date-time
+        highest_risk_level:
+          $ref: '#/components/schemas/risk-scoring_MaxRiskLevel'
+        last_event_time:
+          description: Time of the last event in the cluster.
+          type: string
+          format: date-time
+        points:
+          description: Sum of the points of all events in the cluster.
+          type: integer
+          minimum: 0
+        start_time:
+          description: Start of the calendar day of the cluster, in the requested time zone.
+          type: string
+          format: date-time
+      required:
+        - start_time
+        - end_time
+        - event_count
+        - points
+        - first_event_time
+        - last_event_time
+        - highest_risk_level
+        - events
+    risk-scoring_RiskEventClusters:
+      description: Risk level, last reset time, and daily risk event clusters of one user.
+      type: object
+      properties:
+        clusters:
+          description: Daily risk event clusters on this page.
+          type: array
+          items:
+            $ref: '#/components/schemas/risk-scoring_RiskEventCluster'
+        email:
+          description: Email address of the user.
+          type: string
+          example: alice@example.com
+        last_reset_time:
+          description: Time of the last risk score reset of the user. The value is null when the score was never reset.
+          type: string
+          format: date-time
+          nullable: true
+        name:
+          description: Name of the user.
+          type: string
+          example: Alice Johnson
+        range_event_count:
+          description: Number of events in the requested time range.
+          type: integer
+          minimum: 0
+        risk_level:
+          $ref: '#/components/schemas/risk-scoring_RiskLevel'
+      required:
+        - name
+        - email
+        - last_reset_time
+        - range_event_count
+        - clusters
+    risk-scoring_RiskEventClustersResponse:
+      allOf:
+        - $ref: '#/components/schemas/risk-scoring_api-response-single'
+        - properties:
+            result:
+              $ref: '#/components/schemas/risk-scoring_RiskEventClusters'
+            result_info:
+              $ref: '#/components/schemas/risk-scoring_ResultInfo'
+          type: object
+    risk-scoring_RiskEvents:
+      description: Risk level, last reset time, and risk events of one user.
+      type: object
+      properties:
+        email:
+          description: Email address of the user.
+          type: string
+          example: jdoe@example.com
+        events:
+          description: Risk events of the user on this page.
+          type: array
+          items:
+            $ref: '#/components/schemas/risk-scoring_RiskEvent'
+        last_reset_time:
+          description: Time of the last risk score reset of the user. The value is null when the score was never reset.
+          type: string
+          format: date-time
+          nullable: true
+        name:
+          description: Name of the user.
+          type: string
+          example: John Doe
+        risk_level:
+          $ref: '#/components/schemas/risk-scoring_RiskLevel'
+      required:
+        - name
+        - email
+        - last_reset_time
+        - events
+    risk-scoring_RiskEventsResponse:
+      allOf:
+        - $ref: '#/components/schemas/risk-scoring_api-response-single'
+        - properties:
+            result:
+              $ref: '#/components/schemas/risk-scoring_RiskEvents'
+            result_info:
+              $ref: '#/components/schemas/risk-scoring_ResultInfo'
+          type: object
+    risk-scoring_RiskLevel:
+      description: Risk level of a behavior or an event.
+      type: string
+      enum:
+        - info
+        - low
+        - medium
+        - high
+    risk-scoring_RiskSummary:
+      description: Risk summary of the users in an account.
+      type: object
+      properties:
+        users:
+          description: Users on this page, with their risk summary.
+          type: array
+          items:
+            $ref: '#/components/schemas/risk-scoring_UserRiskInfo'
+      required:
+        - users
+    risk-scoring_RiskSummaryResponse:
+      allOf:
+        - $ref: '#/components/schemas/risk-scoring_api-response-single'
+        - properties:
+            result:
+              $ref: '#/components/schemas/risk-scoring_RiskSummary'
+            result_info:
+              $ref: '#/components/schemas/risk-scoring_ResultInfo'
+          type: object
+    risk-scoring_UpdateBehavior:
+      description: |
+        Settings for one risk behavior. Supply risk_level, points, or both. When you supply both,
+        points must be in the range of risk_level. When you supply only one, the server derives the
+        other.
+      type: object
+      properties:
+        enabled:
+          description: Whether the behavior counts toward the risk score.
+          type: boolean
+          example: true
+        points:
+          description: Risk score points of the behavior. A null value is the same as an omitted value.
+          type: integer
+          example: 50
+          maximum: 100
+          minimum: 1
+          nullable: true
+        risk_level:
+          $ref: '#/components/schemas/risk-scoring_RiskLevel'
+      required:
+        - enabled
+    risk-scoring_UpdateBehaviors:
+      description: Settings for one or more risk behaviors, keyed by behavior ID.
+      type: object
+      properties:
+        behaviors:
+          description: Settings for each behavior to update, keyed by behavior ID.
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/risk-scoring_UpdateBehavior'
+      required:
+        - behaviors
+    risk-scoring_UpdateHighDlpBehavior:
+      description: |
+        Settings for the high_dlp risk behavior. Supply risk_level, points, or both. When you supply
+        both, points must be in the range of risk_level. An omitted or null config keeps the stored
+        configuration.
+      type: object
+      properties:
+        config:
+          description: DLP configuration of the behavior. A null value is the same as an omitted value.
+          allOf:
+            - $ref: '#/components/schemas/risk-scoring_DlpBehaviorConfig'
+          nullable: true
+          x-fern-property-name: dlp-config
+          x-forge-property-name: dlp-config
+        enabled:
+          description: Whether the behavior counts toward the risk score.
+          type: boolean
+        points:
+          description: Risk score points of the behavior. A null value is the same as an omitted value.
+          type: integer
+          maximum: 100
+          minimum: 1
+          nullable: true
+        risk_level:
+          $ref: '#/components/schemas/risk-scoring_RiskLevel'
+      required:
+        - enabled
+    risk-scoring_UserRiskInfo:
+      description: Risk summary of one user.
+      type: object
+      properties:
+        email:
+          description: Email address of the user.
+          type: string
+        event_count:
+          description: Number of risk events of the user.
+          type: integer
+          minimum: 0
+        last_event:
+          description: Time of the most recent risk event of the user.
+          type: string
+          format: date-time
+        max_risk_level:
+          $ref: '#/components/schemas/risk-scoring_MaxRiskLevel'
+        name:
+          description: Name of the user.
+          type: string
+        user_id:
+          description: User ID (UUID v4).
+          type: string
+          format: uuid
+      required:
+        - user_id
+        - name
+        - email
+        - max_risk_level
+        - event_count
+        - last_event
+    risk-scoring_api-response-common:
+      type: object
+      properties:
+        errors:
+          $ref: '#/components/schemas/risk-scoring_messages'
+        messages:
+          $ref: '#/components/schemas/risk-scoring_messages'
+        success:
+          description: Whether the API call was successful.
+          type: boolean
+          example: true
+          enum:
+            - true
+      required:
+        - success
+        - errors
+        - messages
+    risk-scoring_api-response-common-failure:
+      type: object
+      properties:
+        errors:
+          example:
+            - code: 7003
+              message: No route for the URI
+          allOf:
+            - $ref: '#/components/schemas/risk-scoring_messages'
+          minLength: 1
+        messages:
+          example: []
+          allOf:
+            - $ref: '#/components/schemas/risk-scoring_messages'
+        result:
+          type: object
+          enum:
+            - null
+          nullable: true
+        success:
+          description: Whether the API call was successful.
+          type: boolean
+          example: false
+          enum:
+            - false
+      required:
+        - success
+        - errors
+        - messages
+        - result
+    risk-scoring_api-response-single:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/risk-scoring_api-response-common'
+    risk-scoring_messages:
+      type: array
+      items:
+        properties:
+          code:
+            type: integer
+            minimum: 1000
+          documentation_url:
+            type: string
+          message:
+            type: string
+          source:
+            type: object
+            properties:
+              pointer:
+                type: string
+        required:
+          - code
+          - message
+        type: object
+        uniqueItems: true
+      example: []
     rlanalytics_api-response-common-failure:
       type: object
       properties:
@@ -577562,10 +578619,22 @@ x-forge-commands:
         description: Data Loss Prevention - manage Worker validators
       dlp.validators.worker.status:
         description: Data Loss Prevention - retrieve Worker validator status
+      risk-scoring:
+        description: User Risk Scoring - retrieve and reset user risk scores
+      risk-scoring.behaviours:
+        description: User Risk Scoring - manage behaviors used to calculate user risk scores
+      risk-scoring.behaviours.high-dlp:
+        description: User Risk Scoring - manage the High Number of DLP Policies Triggered behavior
+      risk-scoring.behaviours.single:
+        description: User Risk Scoring - manage one behavior that has no additional configuration
+      risk-scoring.event-clusters:
+        description: User Risk Scoring - list daily clusters of user risk events
       risk-scoring.integrations:
         description: User Risk Scoring - manage integrations that provide risk score signals
       risk-scoring.integrations.references:
         description: User Risk Scoring - retrieve integrations by external reference
+      risk-scoring.summary:
+        description: User Risk Scoring - retrieve account risk score summaries
   zones:
     description: Zones are domains on Cloudflare — list, create, and configure domain settings
     groups:
