@@ -554761,6 +554761,84 @@
         "x-forge-group-name": "user.subscriptions",
         "x-forge-method-name": "delete"
       },
+      "get": {
+        "operationId": "user-subscription-get-user-subscription",
+        "summary": "Get User Subscription",
+        "description": "Gets a user's subscription by identifier.",
+        "parameters": [
+          {
+            "name": "identifier",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/bill-subs_schemas-identifier"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get User Subscription response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/bill-subs_account_subscription_response_single"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Subscription not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/bill-subs_api-response-common-failure"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Get User Subscription response failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/bill-subs_api-response-common-failure"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "tags": [
+          "User Subscription"
+        ],
+        "x-api-token-group": [
+          "Billing Write",
+          "Billing Read"
+        ],
+        "x-cfPermissionsRequired": {
+          "enum": [
+            "#billing:read"
+          ]
+        },
+        "x-cfPlanAvailability": {
+          "business": true,
+          "enterprise": true,
+          "free": true,
+          "pro": true
+        },
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "user.subscriptions",
+        "x-fern-sdk-method-name": "get",
+        "x-forge-availability": "generally-available",
+        "x-forge-group-name": "user.subscriptions",
+        "x-forge-method-name": "get"
+      },
       "put": {
         "operationId": "user-subscription-update-user-subscription",
         "summary": "Update User Subscription",
@@ -617728,7 +617806,7 @@
       "get": {
         "operationId": "zone-subscription-zone-subscription-details",
         "summary": "Zone Subscription Details",
-        "description": "Lists zone subscription details.",
+        "description": "Lists zone subscription details. Zones on the Free plan normally have no zone subscription, so this returns 404 with error code 1207.",
         "parameters": [
           {
             "name": "zone_id",
@@ -617796,7 +617874,7 @@
       "post": {
         "operationId": "zone-subscription-create-zone-subscription",
         "summary": "Create Zone Subscription",
-        "description": "Create a zone subscription, either plan or add-ons.",
+        "description": "Create a zone subscription, either plan or add-ons. Requesting the `free` rate plan does not create a subscription.",
         "parameters": [
           {
             "name": "zone_id",
@@ -617874,7 +617952,7 @@
       "put": {
         "operationId": "zone-subscription-update-zone-subscription",
         "summary": "Update Zone Subscription",
-        "description": "Updates zone subscriptions, either plan or add-ons.",
+        "description": "Updates zone subscriptions, either plan or add-ons. Updating to the `free` rate plan downgrades the zone to the Free plan, after which the zone has no zone subscription.",
         "parameters": [
           {
             "name": "zone_id",
@@ -668226,7 +668304,7 @@
           "id": {
             "description": "The ID of the rate plan.",
             "type": "string",
-            "example": "free",
+            "example": "business",
             "x-auditable": true
           },
           "is_contract": {
