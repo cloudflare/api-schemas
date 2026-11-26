@@ -336227,6 +336227,264 @@
         ]
       }
     },
+    "/accounts/{account_id}/settings/transformations/workers/{script_name}": {
+      "delete": {
+        "operationId": "account-settings-delete-worker-transformations",
+        "summary": "Delete Image Transformations setting for a Worker",
+        "description": "Removes the Worker's `/cdn-cgi/image/` URL transformations setting, so the zone-level\nImage Transformations settings apply again.\n",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/speed_identifier"
+            }
+          },
+          {
+            "name": "script_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/speed_worker_script_name"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Delete Image Transformations setting for a Worker response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/speed_api-response-common"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/speed_worker_transformations_deleted"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Delete Image Transformations setting for a Worker response failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/speed_api-response-common-failure"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Account Settings"
+        ],
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "accounts.transformations.workers",
+        "x-fern-sdk-method-name": "delete",
+        "x-forge-availability": "generally-available",
+        "x-forge-group-name": "accounts.transformations.workers",
+        "x-forge-method-name": "delete",
+        "x-forge-require-confirmation": "This removes the Worker's Image Transformations setting, so the zone-level settings apply again."
+      },
+      "get": {
+        "operationId": "account-settings-get-worker-transformations",
+        "summary": "Get Image Transformations setting for a Worker",
+        "description": "Returns the `/cdn-cgi/image/` URL transformations setting for requests served by a Worker.\nThe result is `null` when the Worker has no setting of its own, in which case the zone-level\nImage Transformations settings apply.\n",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/speed_identifier"
+            }
+          },
+          {
+            "name": "script_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/speed_worker_script_name"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get Image Transformations setting for a Worker response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/speed_api-response-common"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/speed_worker_transformations_result"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Get Image Transformations setting for a Worker response failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/speed_api-response-common-failure"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Account Settings"
+        ],
+        "x-api-token-group": [
+          "Workers Metadata Read-Only",
+          "Workers Editor",
+          "Workers Content Read-Only",
+          "Workers Admin",
+          "Zone Settings Write",
+          "Zone Settings Read",
+          "Workers Routes Write",
+          "Workers Routes Read"
+        ],
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "accounts.transformations.workers",
+        "x-fern-sdk-method-name": "get",
+        "x-forge-availability": "generally-available",
+        "x-forge-group-name": "accounts.transformations.workers",
+        "x-forge-method-name": "get",
+        "x-forge-oauth-scopes": [
+          "workers-routes.read",
+          "zone-settings.read",
+          "workers-scripts.content_read",
+          "workers-scripts.metadata_read",
+          "workers-routes.write",
+          "workers-scripts.edit",
+          "workers-scripts.admin",
+          "zone-settings.write"
+        ]
+      },
+      "put": {
+        "operationId": "account-settings-update-worker-transformations",
+        "summary": "Set Image Transformations setting for a Worker",
+        "description": "Sets the `/cdn-cgi/image/` URL transformations setting for requests served by a Worker.\nThis overrides the zone-level Image Transformations and Allowed Origins settings for\nrequests handled by the Worker.\n",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/speed_identifier"
+            }
+          },
+          {
+            "name": "script_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/speed_worker_script_name"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/speed_worker_transformations"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Set Image Transformations setting for a Worker response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/speed_api-response-common"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/speed_worker_transformations_result"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Set Image Transformations setting for a Worker response failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/speed_api-response-common-failure"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_token": []
+          },
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "tags": [
+          "Account Settings"
+        ],
+        "x-fern-availability": "generally-available",
+        "x-fern-sdk-group-name": "accounts.transformations.workers",
+        "x-fern-sdk-method-name": "update",
+        "x-forge-availability": "generally-available",
+        "x-forge-group-name": "accounts.transformations.workers",
+        "x-forge-method-name": "update"
+      }
+    },
     "/accounts/{account_id}/settings/ut-billing": {
       "get": {
         "operationId": "account-settings-get-ut-billing-setting",
@@ -785166,6 +785424,79 @@
           "on"
         ],
         "x-auditable": true
+      },
+      "speed_worker_script_name": {
+        "description": "Name of the Worker script.",
+        "type": "string",
+        "example": "my-worker",
+        "pattern": "^[a-z0-9_][a-z0-9-_]{0,255}$",
+        "x-auditable": true
+      },
+      "speed_worker_transformations": {
+        "description": "Controls `/cdn-cgi/image/` URL transformations for requests served by a Worker.",
+        "type": "object",
+        "properties": {
+          "allowed_origins": {
+            "$ref": "#/components/schemas/speed_worker_transformations_allowed_origins"
+          },
+          "enabled": {
+            "$ref": "#/components/schemas/speed_worker_transformations_enabled"
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "enabled"
+        ],
+        "title": "Worker Image Transformations setting"
+      },
+      "speed_worker_transformations_allowed_origins": {
+        "description": "Origins that source images may be fetched from, without a protocol, e.g. `images.example.com`,\n`*.example.com` or `images.example.com/uploads/`. When set, only these origins are allowed, so\ninclude the Worker's own hostname if it serves the images. Omit to allow only images from the\nzone of the request. Use `[\"*\"]` to allow any origin. Ignored when `enabled` is `false`.\n",
+        "type": "array",
+        "items": {
+          "type": "string",
+          "x-auditable": true
+        },
+        "example": [
+          "images.example.com"
+        ],
+        "maxItems": 10,
+        "minItems": 1
+      },
+      "speed_worker_transformations_deleted": {
+        "description": "Always `null`, as the zone-level settings now apply.",
+        "type": "object",
+        "nullable": true
+      },
+      "speed_worker_transformations_enabled": {
+        "description": "Whether URL transformations are enabled for the Worker. Set to `false` to disable them,\noverriding the zone-level setting.\n",
+        "type": "boolean",
+        "example": true,
+        "x-auditable": true
+      },
+      "speed_worker_transformations_result": {
+        "description": "The Worker's setting, or `null` when the zone-level settings apply.",
+        "type": "object",
+        "properties": {
+          "allowed_origins": {
+            "$ref": "#/components/schemas/speed_worker_transformations_allowed_origins"
+          },
+          "enabled": {
+            "$ref": "#/components/schemas/speed_worker_transformations_enabled"
+          },
+          "id": {
+            "description": "Name of the Worker script the setting applies to.",
+            "type": "string",
+            "example": "my-worker",
+            "readOnly": true,
+            "x-auditable": true
+          }
+        },
+        "nullable": true,
+        "required": [
+          "id",
+          "enabled"
+        ],
+        "title": "Worker Image Transformations setting"
       },
       "speed_zone_config_item": {
         "description": "A configuration item for a specific zone and feature.",
